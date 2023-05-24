@@ -5,6 +5,10 @@
 ```sql
 SELECT name FROM v$pdbs;
 ```
+在连接PDB之前，我们需要检查PDB的状态
+```sql
+ALTER PLUGGABLE DATABASE pdborcl OPEN;
+```
 然后，你可以使用以下的SQL命令连接到你的PDB）：
 ```sql
 ALTER SESSION SET container = pdborcl;---默认为pdborcl
@@ -36,7 +40,7 @@ ALTER SESSION SET CURRENT_SCHEMA = C##petrescue;
 ```
 使用以下的查询可以查看当前模式下的表格：
 ```
-SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER='SCOTT';
+SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER='C##petrescue';
 ```
 注意到有一些特殊字段是不能作为表格名的，例如user,time，因此将全部表格名前加pet_.
 
