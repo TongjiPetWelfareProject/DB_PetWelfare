@@ -746,10 +746,14 @@ EXCEPTION
         RAISE;
 END;
 /
-Create or replace view vet_labor as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from vet;
-Create or replace view employee_labor as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from employee;
-CREATE OR REPLACE VIEW ownership AS 
-SELECT 
+Create or replace view vet_labor as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from vet WITH CHECK OPTION;
+Create or replace view employee_labor as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from employee WITH CHECK OPTION;
+DROP MATERIALIZED VIEW ownership;
+CREATE MATERIALIZED VIEW ownership 
+BUILD IMMEDIATE
+  REFRESH FORCE
+  ON DEMAND
+AS SELECT 
     pet.pet_id,
     pet.pet_name,
     CASE
@@ -762,7 +766,7 @@ FROM pet
 LEFT OUTER JOIN foster ON pet.pet_id = foster.pet_id
 LEFT OUTER JOIN accommodate ON accommodate.pet_id = pet.pet_id
 LEFT OUTER JOIN adopt ON adopt.pet_id = pet.pet_id
-LEFT OUTER JOIN user2 ON user2.user_id = foster.fosterer and adopt.adopter_id= user2.user_id order by status;
+LEFT OUTER JOIN user2 ON user2.user_id = foster.fosterer and adopt.adopter_id= user2.user_id;
 
 CREATE OR REPLACE VIEW user_profile AS 
 SELECT user2.user_id,user2.user_name,
@@ -781,7 +785,7 @@ LEFT OUTER JOIN like_pet ON user2.user_id = like_pet.user_id
 LEFT OUTER JOIN forum_posts ON user2.user_id = forum_posts.user_id
 LEFT OUTER JOIN comment_post ON forum_posts.post_id = comment_post.post_id
 LEFT OUTER JOIN like_post ON forum_posts.post_id = like_post.post_id 
-GROUP BY user2.user_id,user2.user_name order by cast(user2.user_id as numeric(5,0)) asc;
+GROUP BY user2.user_id,user2.user_name order by cast(user2.user_id as numeric(5,0)) asc WITH CHECK OPTION;
 CREATE OR REPLACE VIEW pet_profile AS 
 SELECT pet.pet_id,pet.pet_name,
        COUNT(collect_pet_info.collect_time) AS collections,
@@ -791,5 +795,6 @@ FROM pet
 LEFT OUTER JOIN collect_pet_info ON pet.pet_id = collect_pet_info.pet_id
 LEFT OUTER JOIN comment_pet ON pet.pet_id = comment_pet.pet_id
 LEFT OUTER JOIN like_pet ON pet.pet_id = like_pet.pet_id
-GROUP BY pet.pet_id,pet.pet_name order by cast(pet.pet_id as numeric(5,0)) asc;
-create or replace view room_avaiable as select room.storey,(count(*))as capacity from room where  not exists(select accommodate_time from accommodate where room.room_id=accommodate.room_id ) group by room.storey;
+GROUP BY pet.pet_id,pet.pet_name order by cast(pet.pet_id as numeric(5,0)) asc WITH CHECK OPTION;
+create or replace view room_avaiable as select room.storey,(count(*))as capacity from room where  not exists(select accommodate_time from accommodate where room.room_id=accommodate.room_id ) group by room.storey 
+WITH CHECK OPTION;
