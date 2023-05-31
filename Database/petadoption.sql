@@ -195,7 +195,7 @@ create table like_post(
 create table comment_post(
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
-  comment_contents varchar2(100) not null,
+  comment_contents varchar2(150) not null,
   comment_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(comment_time,user_id,post_id)
 );
@@ -224,6 +224,7 @@ CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
 --生成用户的随机数据
 BEGIN
     FOR i IN 1..50 LOOP
+    BEGIN
         INSERT INTO user2 (user_id, user_name, password, phone_number, account_status, address) 
         VALUES (
             user_id_seq.NEXTVAL, -- 随机20位的字符串
@@ -245,6 +246,10 @@ BEGIN
             END, -- 轮流分配账户状态
             'Random Address' -- 随机地址
         );
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
     END LOOP;
     COMMIT;
 EXCEPTION
@@ -273,6 +278,7 @@ DECLARE
     v_collect_num int;
 BEGIN
     FOR i IN 1..50 LOOP
+    BEGIN
         v_pet_id := pet_id_seq.NEXTVAL; -- 使用序列生成pet_id
         v_pet_name := DBMS_RANDOM.string('A', 10);
         v_breed := CASE
@@ -307,6 +313,10 @@ BEGIN
         
         INSERT INTO pet(pet_id, pet_name, breed, age, avatar, health_state, vaccine, read_num, like_num, collect_num) 
         VALUES (v_pet_id, v_pet_name, v_breed, v_age, v_avatar, v_health_state, v_vaccine, v_read_num, v_like_num, v_collect_num);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
     END LOOP;
     COMMIT;
 EXCEPTION
@@ -321,6 +331,7 @@ DECLARE
     v_like_time varchar2(50);
 BEGIN
     FOR i IN 1..20 LOOP
+    BEGIN
         -- 根据你的要求，user_id和pet_id的值在1到50之间
         v_user_id := ROUND(DBMS_RANDOM.value(1, 50));
         v_pet_id := ROUND(DBMS_RANDOM.value(1, 50));
@@ -330,6 +341,10 @@ BEGIN
 
         INSERT INTO like_pet(user_id, pet_id, like_time) 
         VALUES (v_user_id, v_pet_id, v_like_time);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
     END LOOP;
     COMMIT;
 EXCEPTION
@@ -357,6 +372,7 @@ DECLARE
     v_working_end_min numeric(2,0);
 BEGIN
     FOR i IN 1..15 LOOP
+    BEGIN
         v_employee_id := employee_id_seq.NEXTVAL;
         v_employee_name := 'Employee ' || v_employee_id;
         v_salary := ROUND(DBMS_RANDOM.value(10000, 99999), 2);
@@ -382,6 +398,10 @@ BEGIN
         v_working_end_min :=ROUND(DBMS_RANDOM.value(0, 59), 0);
         INSERT INTO employee(employee_id, employee_name, salary, phone_number, duty, working_start_hr,working_start_min,working_end_hr, working_end_min) 
         VALUES (v_employee_id, v_employee_name, v_salary, v_phone_number, v_duty, v_working_start_hr, v_working_start_min,v_working_end_hr, v_working_end_min);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
     END LOOP;
     COMMIT;
 EXCEPTION
@@ -396,7 +416,7 @@ CREATE SEQUENCE post_id_seq
   INCREMENT BY   1
   NOCACHE
   NOCYCLE;
-
+/
 DECLARE 
     v_post_id varchar2(20);
     v_user_id varchar2(20);
@@ -406,6 +426,7 @@ DECLARE
     v_comment_num int;
 BEGIN
     FOR i IN 1..5 LOOP
+    BEGIN
         v_post_id := post_id_seq.NEXTVAL;
         v_user_id := ROUND(DBMS_RANDOM.value(0, 49), 0);
         v_post_contents := 'This is post ' || v_post_id;
@@ -414,6 +435,10 @@ BEGIN
         v_comment_num := ROUND(DBMS_RANDOM.value(0, v_like_num), 0);
         INSERT INTO forum_posts(post_id, user_id, post_contents, read_count, like_num, comment_num) 
         VALUES (v_post_id, v_user_id, v_post_contents, v_read_count, v_like_num, v_comment_num);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
     END LOOP;
     COMMIT;
 EXCEPTION
@@ -430,7 +455,8 @@ DECLARE
     room_count_by_storey numeric(2,0);
 BEGIN
     FOR i IN 1..10 LOOP
-        FOR j IN 1..10 LOOP
+        FOR j IN 1..30 LOOP
+        BEGIN
             v_room_id := LPAD(TO_CHAR(i), 2, '0') || LPAD(TO_CHAR(j), 2, '0');
             v_room_status := CASE MOD(j,2) WHEN 1 THEN 'Y' ELSE 'N' END;
             v_room_size := ROUND(DBMS_RANDOM.value(10, 100), 2);
@@ -440,6 +466,10 @@ BEGIN
                 INSERT INTO room(room_id, room_status, room_size, storey) 
                 VALUES (v_room_id, v_room_status, v_room_size, v_storey);
             END IF;
+            EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+            END; 
         END LOOP;
     END LOOP;
     COMMIT;
@@ -467,6 +497,7 @@ DECLARE
     v_working_end_min numeric(2,0);
 BEGIN
     FOR i IN 1..10 LOOP
+    BEGIN
         v_vet_id := vet_id_seq.NEXTVAL;
         v_vet_name := 'Vet ' || v_vet_id;
         v_salary := ROUND(DBMS_RANDOM.value(50000, 100000), 2);
@@ -481,6 +512,232 @@ BEGIN
         v_working_end_min :=ROUND(DBMS_RANDOM.value(0, 59), 0);
         INSERT INTO vet(vet_id, vet_name, salary, phone_number, working_start_hr,working_start_min,working_end_hr, working_end_min) 
         VALUES (v_vet_id, v_vet_name, v_salary, v_phone_number, v_working_start_hr, v_working_start_min,v_working_end_hr, v_working_end_min);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_user_id varchar2(20);
+    v_post_id varchar2(20);
+BEGIN
+    FOR i IN 1..10 LOOP
+    BEGIN
+        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_post_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 6)));
+        INSERT INTO like_post(user_id, post_id) 
+        VALUES (v_user_id, v_post_id);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_user_id varchar2(20);
+    v_post_id varchar2(20);
+    v_comment_contents varchar2(100);
+    sample_comments varchar2(150) := 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+BEGIN
+    FOR i IN 1..5 LOOP
+      BEGIN
+        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_post_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 6)));
+        v_comment_contents := SUBSTR(sample_comments, DBMS_RANDOM.value(1, 50), DBMS_RANDOM.value(1, 50));
+        INSERT INTO comment_post(user_id, post_id, comment_contents) 
+        VALUES (v_user_id, v_post_id, v_comment_contents);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_user_id varchar2(20);
+    v_pet_id varchar2(20);
+    v_comment_contents varchar2(200);
+    sample_comments varchar2(200) := 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+BEGIN
+    FOR i IN 1..30 LOOP
+      BEGIN
+        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_comment_contents := SUBSTR(sample_comments, DBMS_RANDOM.value(1, 50), DBMS_RANDOM.value(1, 50));
+        INSERT INTO comment_pet(user_id, pet_id, comment_contents) 
+        VALUES (v_user_id, v_pet_id, v_comment_contents);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_user_id varchar2(20);
+    v_pet_id varchar2(20);
+BEGIN
+    FOR i IN 1..30 LOOP
+      BEGIN
+        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        INSERT INTO collect_pet_info(user_id, pet_id) 
+        VALUES (v_user_id, v_pet_id);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_donor_id varchar2(20);
+    v_donation_amount int;
+BEGIN
+    FOR i IN 1..10 LOOP
+      BEGIN
+        v_donor_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_donation_amount := TRUNC(DBMS_RANDOM.value(1, 5000));
+        INSERT INTO donation(donor_id, donation_amount) 
+        VALUES (v_donor_id, v_donation_amount);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_pet_id varchar2(20);
+    v_user_id varchar2(20);
+    v_category varchar2(20);
+    v_reason varchar2(200);
+BEGIN
+    FOR i IN 1..10 LOOP
+    BEGIN
+        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_category := CASE 
+                        WHEN MOD(i,7) = 0 THEN 'Lost Pet'
+                        WHEN MOD(i,7) = 1 THEN 'Treatment'
+                        WHEN MOD(i,7) = 2 THEN 'Vaccination'
+                        WHEN MOD(i,7) = 3 THEN 'Breeding'
+                        WHEN MOD(i,7) = 4 THEN 'Adoption'
+                        WHEN MOD(i,7) = 5 THEN 'Donation'
+                        ELSE 'Complaint'
+                      END;
+        v_reason := 'Reason ' || v_pet_id;
+        INSERT INTO application(pet_id, user_id, category, reason) 
+        VALUES (v_pet_id, v_user_id, v_category, v_reason);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+DECLARE 
+    v_duration smallint;
+    v_fosterer varchar2(20);
+    v_pet_id varchar2(20);
+BEGIN
+    FOR i IN 1..10 LOOP
+        BEGIN
+            v_duration := TRUNC(DBMS_RANDOM.value(1, 100));
+            v_fosterer := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+            v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+            INSERT INTO foster(duration, fosterer, pet_id) 
+            VALUES (v_duration, v_fosterer, v_pet_id);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+        END;
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+DECLARE 
+    v_duration smallint;
+    v_pet_id varchar2(20);
+    v_room_id varchar2(5);
+BEGIN
+    FOR i IN 1..10 LOOP
+      BEGIN
+        v_duration := TRUNC(DBMS_RANDOM.value(1, 100));
+        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_room_id := LPAD(TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 11))), 2, '0') || LPAD(TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 31))), 2, '0');
+        INSERT INTO accommodate(duration, pet_id, room_id) 
+        VALUES (v_duration, v_pet_id, v_room_id);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_adopter_id varchar2(20);
+    v_pet_id varchar2(20);
+BEGIN
+    FOR i IN 1..10 LOOP
+    BEGIN
+        v_adopter_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
+        INSERT INTO adopt(adopter_id, pet_id) 
+        VALUES (v_adopter_id, v_pet_id);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                NULL; -- 当唯一性约束违反时，忽略并继续
+      END; 
     END LOOP;
     COMMIT;
 EXCEPTION
@@ -491,5 +748,48 @@ END;
 /
 Create or replace view vet_labor as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from vet;
 Create or replace view employee_labor as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from employee;
+CREATE OR REPLACE VIEW ownership AS 
+SELECT 
+    pet.pet_id,
+    pet.pet_name,
+    CASE
+        WHEN accommodate.room_id IS NOT NULL THEN 'accommodated at room '||accommodate.room_id||' for '||accommodate.duration||' day'
+        WHEN foster.fosterer IS NOT NULL THEN 'fostered by '||foster.fosterer|| ' at '||foster.foster_time||' for '||foster.duration||' day'
+        WHEN adopt.adopter_id IS NOT NULL THEN 'adopted by '||adopt.adopter_id  || ' at '||adopt.adoption_time
+        ELSE 'wandered'
+    END AS status
+FROM pet
+LEFT OUTER JOIN foster ON pet.pet_id = foster.pet_id
+LEFT OUTER JOIN accommodate ON accommodate.pet_id = pet.pet_id
+LEFT OUTER JOIN adopt ON adopt.pet_id = pet.pet_id
+LEFT OUTER JOIN user2 ON user2.user_id = foster.fosterer and adopt.adopter_id= user2.user_id order by status;
 
-
+CREATE OR REPLACE VIEW user_profile AS 
+SELECT user2.user_id,user2.user_name,
+       COUNT(collect_pet_info.collect_time) AS pet_collections,
+       COUNT(like_pet.like_time) AS pet_likes,
+       COUNT(comment_pet.comment_time) AS pet_comments,
+       COUNT(forum_posts.post_time) as total_posts,
+       COUNT(like_post.like_time) AS post_likes,
+       COUNT(comment_post.comment_time) AS post_comments,
+       SUM(donation.donation_amount) AS donation_totol_amounts
+FROM user2
+LEFT OUTER JOIN collect_pet_info ON user2.user_id = collect_pet_info.user_id
+LEFT OUTER JOIN comment_pet ON user2.user_id = comment_pet.user_id
+LEFT OUTER JOIN donation ON user2.user_id = donation.donor_id
+LEFT OUTER JOIN like_pet ON user2.user_id = like_pet.user_id
+LEFT OUTER JOIN forum_posts ON user2.user_id = forum_posts.user_id
+LEFT OUTER JOIN comment_post ON forum_posts.post_id = comment_post.post_id
+LEFT OUTER JOIN like_post ON forum_posts.post_id = like_post.post_id 
+GROUP BY user2.user_id,user2.user_name order by cast(user2.user_id as numeric(5,0)) asc;
+CREATE OR REPLACE VIEW pet_profile AS 
+SELECT pet.pet_id,pet.pet_name,
+       COUNT(collect_pet_info.collect_time) AS collections,
+       COUNT(like_pet.like_time) AS likes,
+       COUNT(comment_pet.comment_time) AS comments
+FROM pet
+LEFT OUTER JOIN collect_pet_info ON pet.pet_id = collect_pet_info.pet_id
+LEFT OUTER JOIN comment_pet ON pet.pet_id = comment_pet.pet_id
+LEFT OUTER JOIN like_pet ON pet.pet_id = like_pet.pet_id
+GROUP BY pet.pet_id,pet.pet_name order by cast(pet.pet_id as numeric(5,0)) asc;
+create or replace view room_avaiable as select room.storey,(count(*))as capacity from room where  not exists(select accommodate_time from accommodate where room.room_id=accommodate.room_id ) group by room.storey;
