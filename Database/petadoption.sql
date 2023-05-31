@@ -22,8 +22,8 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
   password varchar2(16),
   phone_number varchar2(20),--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
   account_status varchar2(20),
-  address varchar2(50),
-  CONSTRAINT CHK_PhoneNumber CHECK (REGEXP_LIKE(phone_number, '^\+\d{1,3}-\d{1,3}-\d{1,4}$')),--check if the phone_number is legal
+  address varchar2(100),
+  CONSTRAINT CHK_PhoneNumber CHECK (REGEXP_LIKE (phone_number, '^\d{3}-\d{4}-\d{4}$') OR REGEXP_LIKE (phone_number, '^\d{11}$') OR REGEXP_LIKE (phone_number, '^\d{3} \d{4} \d{4}$')),--check if the phone_number is legal
   CONSTRAINT CHK_Password CHECK(LENGTH(password) >= 10 AND
     REGEXP_LIKE(password, '[0-9]') AND
     REGEXP_LIKE(password, '[a-z]') AND
@@ -45,10 +45,26 @@ create table pet(
   like_num int,
   collect_num int,
   primary key(pet_id),
-  CONSTRAINT CHK_PathValue CHECK (REGEXP_LIKE(avatar, '^\/[a-zA-Z0-9_\-\/]*$')),
+  CONSTRAINT CHK_PathValue CHECK (REGEXP_LIKE (avatar, '^[A-Z]:\\([a-zA-Z0-9\s_\-]+\\)*([a-zA-Z0-9\s_\-]+\.png|[a-zA-Z0-9\s_\-]+\.jpg|[a-zA-Z0-9\s_\-]+\.jpeg)?$')),
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
 );
+--create table time2(
+--  time_id varchar2(20) not null,
+--  year numeric(4,0),
+--  month numeric(2,0),
+--  day numeric(2,0),
+--  hour numeric(2,0),
+--  minute numeric(2,0),
+--  second numeric(2,0),
+--  millisecond numeric(3,0),
+--  primary key(time_id),
+--  constraint CHK_TIME check((month between 1 and 12) and
+--  (day between 1 and 31) and
+--  (hour between 0 and 23)and
+--  (minute between 0 and 59)and
+--  (second between 0 and 59))
+--);
 
 --table room
 create table room(
@@ -56,7 +72,7 @@ create table room(
   room_status char(1),--'Y'/'N'
   room_size numeric(5,2),--since area may lead to ambiguity
   storey numeric(2,0),--since floor may lead to ambiguity
-  cleaning_time  TIMESTAMP default CURRENT_TIMESTAMP,
+  cleaning_time  varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(room_id),
   CONSTRAINT CHK_RoomStatus CHECK(room_status in('Y','N')),
   CONSTRAINT CHK_Legal CHECK(storey>0 AND room_size>=0)
@@ -75,10 +91,10 @@ create table vet(
   working_end_min numeric(2,0),
   primary key(vet_id),
   CONSTRAINT CHK_WorkingHours CHECK(
-  working_start_hr between 0 and 23 and working_end_hr between 0 and 23 
-  and working_end_hr>=working_start_hr and working_start_min>working_end_min
+  working_start_hr between 0 and 23 and working_end_hr between working_start_hr and 23 
+  and working_end_hr*60+working_end_min>=working_start_hr*60+working_start_min
   and working_start_min between 0 and 59 and working_end_min between 0 and 59 ),
-  CONSTRAINT CHK_PhoneNumber2 CHECK (REGEXP_LIKE(phone_number, '^\+\d{1,3}-\d{1,3}-\d{1,4}$'))
+  CONSTRAINT CHK_PhoneNumber2 CHECK (REGEXP_LIKE (phone_number, '^\d{3}-\d{4}-\d{4}$') OR REGEXP_LIKE (phone_number, '^\d{11}$') OR REGEXP_LIKE (phone_number, '^\d{3} \d{4} \d{4}$'))
 );
 create table employee(
   employee_id varchar2(20) not null,
@@ -88,15 +104,15 @@ create table employee(
   duty varchar2(50),
   --the following attributes as an integrity represents the interval of working hours
   working_start_hr numeric(2,0),
-  working_end_hr numeric(2,0),
   working_start_min numeric(2,0),
+  working_end_hr numeric(2,0),
   working_end_min numeric(2,0),
   primary key(employee_id),
   CONSTRAINT CHK_WorkingHours2 CHECK(
-  working_start_hr between 0 and 23 and working_end_hr between 0 and 23 
-  and working_end_hr>=working_start_hr and working_start_min>working_end_min
+  working_start_hr between 0 and 23 and working_end_hr between working_start_hr and 23 
+  and working_end_hr*60+working_end_min>=working_start_hr*60+working_start_min
   and working_start_min between 0 and 59 and working_end_min between 0 and 59 ),
-  CONSTRAINT CHK_PhoneNumber3 CHECK (REGEXP_LIKE(phone_number, '^\+\d{1,3}-\d{1,3}-\d{1,4}$')),
+  CONSTRAINT CHK_PhoneNumber3 CHECK (REGEXP_LIKE (phone_number, '^\d{3}-\d{4}-\d{4}$') OR REGEXP_LIKE (phone_number, '^\d{11}$') OR REGEXP_LIKE (phone_number, '^\d{3} \d{4} \d{4}$')),
   CONSTRAINT CHK_DUTIES CHECK(duty in('Animal Care Specialist','Adoption Counselor','Veterinary Technician',
   'Animal Behaviorist','Volunteer Coordinator','Foster Coordinator',
   'Facility Manager','Fundraising and Outreach Coordinator','Rescue Transporter'))
@@ -107,8 +123,8 @@ create table bulletin(
   employee_id varchar2(20) references employee(employee_id) ,
   heading varchar2(20),
   bulletin_contents varchar2(2000) not null,
-  published_time TIMESTAMP default CURRENT_TIMESTAMP,
   read_count int,
+  published_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(bulletin_id)
 );
 --potential primary key(user_id,post_contents,post_time)
@@ -119,47 +135,47 @@ create table forum_posts(
   read_count int,
   like_num int,
   comment_num int,
-  post_time TIMESTAMP default CURRENT_TIMESTAMP,
+  post_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(post_id),
   constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
   and read_count>= like_num and like_num>=comment_num)
 );
 --potential primary key(donor_id,donation_time,donation_amounts)
 create table donation(
-  donation_time TIMESTAMP default CURRENT_TIMESTAMP,
   donor_id varchar(20) references user2(user_id),
   donation_amount int,
+  donation_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   constraints CHK_DONATION check(donation_amount>0),
   primary key(donor_id,donation_amount,donation_time)
 );
 create table adopt(
-  adoption_time TIMESTAMP default CURRENT_TIMESTAMP,
   adopter_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
+  adoption_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(adopter_id,pet_id)
 );
 create table foster(
-  foster_time TIMESTAMP default CURRENT_TIMESTAMP,
   duration smallint,
   fosterer varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
+  foster_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(foster_time,fosterer,pet_id),
   constraint CHK_Duration check(duration>=0)
 );
 create table accommodate(
   pet_id varchar2(20) references pet(pet_id),
   room_id varchar2(5) references room(room_id),
-  accommodate_time TIMESTAMP default CURRENT_TIMESTAMP,
   duration smallint,--must be standalone since in SQL, a column cannot reference another column in a different table. Instead, it references the primary key in the other table.
+  accommodate_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(pet_id,room_id,accommodate_time),
   constraint CHK_Duration2 check(duration>=0)
 );
 --Because treat is ambiguious and treatment is usually referred in medication/surgery
 create table treatment(
-  treat_time TIMESTAMP default CURRENT_TIMESTAMP,
   category varchar2(20),
   pet_id varchar2(20) references pet(pet_id),
   vet_id varchar2(20) references vet(vet_id),
+  treat_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(treat_time,pet_id,vet_id)
 );
 create table application(
@@ -167,38 +183,313 @@ create table application(
   user_id varchar2(20) references user2(user_id),
   category varchar2(20),
   reason varchar2(200) not null,
-  apply_time TIMESTAMP default CURRENT_TIMESTAMP,
+  apply_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(pet_id,user_id,apply_time)
 );
 create table like_post(
-  like_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
+  like_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(like_time,user_id,post_id)
 );
 create table comment_post(
-  comment_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
   comment_contents varchar2(100) not null,
+  comment_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(comment_time,user_id,post_id)
 );
 create table like_pet(
-  like_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
+  like_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(like_time,user_id,pet_id)
 );
 create table comment_pet(
-  comment_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
   comment_contents varchar2(200) not null,
+  comment_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(comment_time,user_id,pet_id)
 );
 create table collect_pet_info(
-  collect_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
+  collect_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(collect_time,user_id,pet_id)
 );
+--建立用户UID的序列用于生成ID
+DROP SEQUENCE user_id_seq;
+CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
+--生成用户的随机数据
+BEGIN
+    FOR i IN 1..50 LOOP
+        INSERT INTO user2 (user_id, user_name, password, phone_number, account_status, address) 
+        VALUES (
+            user_id_seq.NEXTVAL, -- 随机20位的字符串
+            DBMS_RANDOM.string('A', 5), -- 随机20位的字符串
+            'Password1!', -- 静态密码，因为生成随机满足复杂性要求的密码在PL/SQL中会有些复杂
+            CASE 
+    WHEN MOD(i, 3) = 0 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
+    WHEN MOD(i, 3) = 1 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 9))) || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000000000, 9999999999)))
+    ELSE TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
+            END,
+            CASE 
+                WHEN MOD(i, 7) = 0 THEN 'Compliant'
+                WHEN MOD(i, 7) = 1 THEN 'In Good Standing'
+                WHEN MOD(i, 7) = 2 THEN 'Under Review'
+                WHEN MOD(i, 7) = 3 THEN 'Warning Issued'
+                WHEN MOD(i, 7) = 4 THEN 'Suspended'
+                WHEN MOD(i, 7) = 5 THEN 'Probation'
+                ELSE 'Banned'
+            END, -- 轮流分配账户状态
+            'Random Address' -- 随机地址
+        );
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+--生成随机的宠物
+-- 创建一个序列
+DROP SEQUENCE pet_id_seq;
+CREATE SEQUENCE pet_id_seq
+START WITH     1
+INCREMENT BY   1;
+-- 使用PL/SQL块生成随机的宠物条目
+DECLARE 
+    v_pet_id varchar2(20);
+    v_pet_name varchar2(20);
+    v_breed varchar2(20);
+    v_age numeric(2,0);
+    v_avatar varchar2(100);
+    v_health_state varchar2(15);
+    v_vaccine char(1);
+    v_read_num int;
+    v_like_num int;
+    v_collect_num int;
+BEGIN
+    FOR i IN 1..50 LOOP
+        v_pet_id := pet_id_seq.NEXTVAL; -- 使用序列生成pet_id
+        v_pet_name := DBMS_RANDOM.string('A', 10);
+        v_breed := CASE
+                      WHEN MOD(i,10)=0 THEN 'German Shepherd'
+                      WHEN MOD(i,10)=1 THEN 'Labrador Retriever'
+                      WHEN MOD(i,10)=2 THEN 'Golden Retriever'
+                      WHEN MOD(i,10)=3 THEN 'Bulldog'
+                      WHEN MOD(i,10)=4 THEN 'Beagle'
+                      WHEN MOD(i,10)=5 THEN 'Poodle'
+                      WHEN MOD(i,10)=6 THEN 'Rottweiler'
+                      WHEN MOD(i,10)=7 THEN 'Yorkshire Terrier'
+                      WHEN MOD(i,10)=8 THEN 'Boxer'
+                      ELSE 'Dachshund'
+                      END;
+        v_age := ROUND(DBMS_RANDOM.value(0, 20));
+        v_avatar := 'C:\RandomPath\' || DBMS_RANDOM.string('A', 10) || '.png'; 
+        v_health_state := CASE 
+                              WHEN MOD(i, 6) = 0 THEN 'Vibrant'
+                              WHEN MOD(i, 6) = 1 THEN 'Well'
+                              WHEN MOD(i, 6) = 2 THEN 'Decent'
+                              WHEN MOD(i, 6) = 3 THEN 'Unhealthy'
+                              WHEN MOD(i, 6) = 4 THEN 'Sicky'
+                              ELSE 'Critical'
+                          END; 
+        v_vaccine := CASE 
+                         WHEN MOD(i, 2) = 0 THEN 'Y'
+                         ELSE 'N'
+                     END;
+        v_read_num := ROUND(DBMS_RANDOM.value(0, 100));
+        v_like_num := ROUND(DBMS_RANDOM.value(0, v_read_num));
+        v_collect_num := ROUND(DBMS_RANDOM.value(0, v_like_num));
+        
+        INSERT INTO pet(pet_id, pet_name, breed, age, avatar, health_state, vaccine, read_num, like_num, collect_num) 
+        VALUES (v_pet_id, v_pet_name, v_breed, v_age, v_avatar, v_health_state, v_vaccine, v_read_num, v_like_num, v_collect_num);
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_user_id varchar2(20);
+    v_pet_id varchar2(20);
+    v_like_time varchar2(50);
+BEGIN
+    FOR i IN 1..20 LOOP
+        -- 根据你的要求，user_id和pet_id的值在1到50之间
+        v_user_id := ROUND(DBMS_RANDOM.value(1, 50));
+        v_pet_id := ROUND(DBMS_RANDOM.value(1, 50));
+
+        -- 获取当前的时间
+        v_like_time := TO_CHAR(CURRENT_TIMESTAMP);
+
+        INSERT INTO like_pet(user_id, pet_id, like_time) 
+        VALUES (v_user_id, v_pet_id, v_like_time);
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DROP SEQUENCE employee_id_seq;
+CREATE SEQUENCE employee_id_seq
+  START WITH     1
+  INCREMENT BY   1
+  NOCACHE
+  NOCYCLE;
+  
+DECLARE 
+    v_employee_id varchar2(20);
+    v_employee_name varchar(20);
+    v_salary numeric(9,2);
+    v_phone_number varchar2(20);
+    v_duty varchar2(50);
+    v_working_start_hr numeric(2,0);
+    v_working_end_hr numeric(2,0);
+    v_working_start_min numeric(2,0);
+    v_working_end_min numeric(2,0);
+BEGIN
+    FOR i IN 1..15 LOOP
+        v_employee_id := employee_id_seq.NEXTVAL;
+        v_employee_name := 'Employee ' || v_employee_id;
+        v_salary := ROUND(DBMS_RANDOM.value(10000, 99999), 2);
+        v_phone_number := CASE 
+    WHEN MOD(i, 3) = 0 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
+    WHEN MOD(i, 3) = 1 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 9))) || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000000000, 9999999999)))
+    ELSE TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
+            END;
+        v_duty := CASE 
+                    WHEN MOD(i,9) = 0 THEN 'Animal Care Specialist'
+                    WHEN MOD(i,9) = 1 THEN 'Adoption Counselor'
+                    WHEN MOD(i,9) = 2 THEN 'Veterinary Technician'
+                    WHEN MOD(i,9) = 3 THEN 'Animal Behaviorist'
+                    WHEN MOD(i,9) = 4 THEN 'Volunteer Coordinator'
+                    WHEN MOD(i,9) = 5 THEN 'Foster Coordinator'
+                    WHEN MOD(i,9) = 6 THEN 'Facility Manager'
+                    WHEN MOD(i,9) = 7 THEN 'Fundraising and Outreach Coordinator'
+                    ELSE 'Rescue Transporter'
+                    END;
+        v_working_start_hr := ROUND(DBMS_RANDOM.value(0, 12), 0);
+        v_working_start_min := ROUND(DBMS_RANDOM.value(0, 59), 0);
+        v_working_end_hr := ROUND(DBMS_RANDOM.value(12, 23), 0);
+        v_working_end_min :=ROUND(DBMS_RANDOM.value(0, 59), 0);
+        INSERT INTO employee(employee_id, employee_name, salary, phone_number, duty, working_start_hr,working_start_min,working_end_hr, working_end_min) 
+        VALUES (v_employee_id, v_employee_name, v_salary, v_phone_number, v_duty, v_working_start_hr, v_working_start_min,v_working_end_hr, v_working_end_min);
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DROP SEQUENCE post_id_seq;
+CREATE SEQUENCE post_id_seq
+  START WITH     1
+  INCREMENT BY   1
+  NOCACHE
+  NOCYCLE;
+
+DECLARE 
+    v_post_id varchar2(20);
+    v_user_id varchar2(20);
+    v_post_contents varchar2(1000);
+    v_read_count int;
+    v_like_num int;
+    v_comment_num int;
+BEGIN
+    FOR i IN 1..5 LOOP
+        v_post_id := post_id_seq.NEXTVAL;
+        v_user_id := ROUND(DBMS_RANDOM.value(0, 49), 0);
+        v_post_contents := 'This is post ' || v_post_id;
+        v_read_count := ROUND(DBMS_RANDOM.value(0, 1000), 0);
+        v_like_num := ROUND(DBMS_RANDOM.value(0, v_read_count), 0);
+        v_comment_num := ROUND(DBMS_RANDOM.value(0, v_like_num), 0);
+        INSERT INTO forum_posts(post_id, user_id, post_contents, read_count, like_num, comment_num) 
+        VALUES (v_post_id, v_user_id, v_post_contents, v_read_count, v_like_num, v_comment_num);
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DECLARE 
+    v_room_id varchar2(5);
+    v_room_status char(1);
+    v_room_size numeric(5,2);
+    v_storey numeric(2,0);
+    room_count_by_storey numeric(2,0);
+BEGIN
+    FOR i IN 1..10 LOOP
+        FOR j IN 1..10 LOOP
+            v_room_id := LPAD(TO_CHAR(i), 2, '0') || LPAD(TO_CHAR(j), 2, '0');
+            v_room_status := CASE MOD(j,2) WHEN 1 THEN 'Y' ELSE 'N' END;
+            v_room_size := ROUND(DBMS_RANDOM.value(10, 100), 2);
+            v_storey := i;
+            SELECT COUNT(*) INTO room_count_by_storey FROM room WHERE storey = v_storey;
+            IF room_count_by_storey < 30 THEN
+                INSERT INTO room(room_id, room_status, room_size, storey) 
+                VALUES (v_room_id, v_room_status, v_room_size, v_storey);
+            END IF;
+        END LOOP;
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+DROP SEQUENCE vet_id_seq;
+CREATE SEQUENCE vet_id_seq
+  START WITH     1
+  INCREMENT BY   1
+  NOCACHE
+  NOCYCLE;
+
+DECLARE 
+    v_vet_id varchar2(20);
+    v_vet_name varchar(20);
+    v_salary numeric(9,2);
+    v_phone_number varchar2(20);
+    v_working_start_hr numeric(2,0);
+    v_working_end_hr numeric(2,0);
+    v_working_start_min numeric(2,0);
+    v_working_end_min numeric(2,0);
+BEGIN
+    FOR i IN 1..10 LOOP
+        v_vet_id := vet_id_seq.NEXTVAL;
+        v_vet_name := 'Vet ' || v_vet_id;
+        v_salary := ROUND(DBMS_RANDOM.value(50000, 100000), 2);
+        v_phone_number := CASE 
+                            WHEN MOD(i, 3) = 0 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
+                            WHEN MOD(i, 3) = 1 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 9))) || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000000000, 9999999999)))
+                            ELSE TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
+                          END;
+        v_working_start_hr := ROUND(DBMS_RANDOM.value(0, 12), 0);
+        v_working_start_min := ROUND(DBMS_RANDOM.value(0, 59), 0);
+        v_working_end_hr := ROUND(DBMS_RANDOM.value(12, 23), 0);
+        v_working_end_min :=ROUND(DBMS_RANDOM.value(0, 59), 0);
+        INSERT INTO vet(vet_id, vet_name, salary, phone_number, working_start_hr,working_start_min,working_end_hr, working_end_min) 
+        VALUES (v_vet_id, v_vet_name, v_salary, v_phone_number, v_working_start_hr, v_working_start_min,v_working_end_hr, v_working_end_min);
+    END LOOP;
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+Create or replace view vet_labor as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from vet;
+Create or replace view employee_labor as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from employee;
+
+
