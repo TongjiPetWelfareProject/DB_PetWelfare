@@ -1,4 +1,4 @@
-drop table collect_pet_info;
+drop table collect_pet_info ;
 drop table comment_pet;
 drop table like_pet;
 drop table comment_post;
@@ -10,11 +10,10 @@ drop table foster;
 drop table adopt;
 drop table donation;
 drop table forum_posts;
-drop table notice;
+drop table bulletin;
 drop table employee;
 drop table vet;
 drop table room;
-drop table time2;
 drop table pet;
 drop table user2;
 create table user2(--since table name 'user' is not valid in that it'a a internal name of system
@@ -22,7 +21,7 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
   user_name varchar2(20),
   password varchar2(16),
   phone_number varchar2(20),--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
-  account_status numeric(2,0),
+  account_status varchar2(20),
   address varchar2(50),
   CONSTRAINT CHK_PhoneNumber CHECK (REGEXP_LIKE(phone_number, '^\+\d{1,3}-\d{1,3}-\d{1,4}$')),--check if the phone_number is legal
   CONSTRAINT CHK_Password CHECK(LENGTH(password) >= 10 AND
@@ -30,7 +29,8 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
     REGEXP_LIKE(password, '[a-z]') AND
     REGEXP_LIKE(password, '[A-Z]') AND
     REGEXP_LIKE(password, '[!@#$%^&*()]')),
-    primary key(user_id)
+    primary key(user_id),
+    check(account_status in('Compliant','In Good Standing','Under Review','Warning Issued','Suspended','Probation','Banned','Appealing'))
 );
 --table pet
 create table pet(
@@ -49,37 +49,35 @@ create table pet(
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
 );
-create table time2(
-  time_id varchar2(20) not null,
-  year numeric(4,0),
-  month numeric(2,0),
-  day numeric(2,0),
-  hour numeric(2,0),
-  minute numeric(2,0),
-  second numeric(2,0),
-  millisecond numeric(3,0),
-  primary key(time_id),
-  constraint CHK_TIME check((month between 1 and 12) and
-  (day between 1 and 31) and
-  (hour between 0 and 23)and
-  (minute between 0 and 59)and
-  (second between 0 and 59))
-);
+--create table time2(
+--  time_id varchar2(20) not null,
+--  year numeric(4,0),
+--  month numeric(2,0),
+--  day numeric(2,0),
+--  hour numeric(2,0),
+--  minute numeric(2,0),
+--  second numeric(2,0),
+--  millisecond numeric(3,0),
+--  primary key(time_id),
+--  constraint CHK_TIME check((month between 1 and 12) and
+--  (day between 1 and 31) and
+--  (hour between 0 and 23)and
+--  (minute between 0 and 59)and
+--  (second between 0 and 59))
+--);
 
 --table room
 create table room(
-  room_id varchar2(20) not null,
+  room_id varchar2(5) not null,
   room_status char(1),--'Y'/'N'
   room_size numeric(5,2),--since area may lead to ambiguity
   storey numeric(2,0),--since floor may lead to ambiguity
-  time_id varchar2(20) references time2(time_id),
+  cleaning_time  TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(room_id),
   CONSTRAINT CHK_RoomStatus CHECK(room_status in('Y','N')),
   CONSTRAINT CHK_Legal CHECK(storey>0 AND room_size>=0)
 );
-alter table user2 modify account_status varchar2(20);
-alter table user2 add constraint SUPERVISE check(account_status in
-  ('Compliant','In Good Standing','Under Review','Warning Issued','Suspended','Probation','Banned','Appealing'));
+
 --table vet(since doctor will cause ambiguity and vet is more appropriate in the context)
 create table vet(
   vet_id varchar2(20) not null,
@@ -119,15 +117,17 @@ create table employee(
   'Animal Behaviorist','Volunteer Coordinator','Foster Coordinator',
   'Facility Manager','Fundraising and Outreach Coordinator','Rescue Transporter'))
 );
-create table notice(
-  notice_id varchar2(20),
+--potential primary key(heading,bulletin_contents)
+create table bulletin(
+  bulletin_id varchar2(20),
   employee_id varchar2(20) references employee(employee_id) ,
   heading varchar2(20),
-  notice_contents varchar2(2000) not null,
-  time_id varchar2(20) references time2(time_id),
+  bulletin_contents varchar2(2000) not null,
+  published_time TIMESTAMP default CURRENT_TIMESTAMP,
   read_count int,
-  primary key(notice_id)
+  primary key(bulletin_id)
 );
+--potential primary key(user_id,post_contents,post_time)
 create table forum_posts(
   post_id varchar2(20) not null,
   user_id varchar2(20) references user2(user_id),
@@ -135,48 +135,49 @@ create table forum_posts(
   read_count int,
   like_num int,
   comment_num int,
-  time_id varchar2(20) references time2(time_id)
+  post_time TIMESTAMP default CURRENT_TIMESTAMP,
+  primary key(post_id),
+  constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
+  and read_count>= like_num and like_num>=comment_num)
 );
-alter table forum_posts add constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
-and read_count>= like_num and like_num>=comment_num);
-alter table forum_posts add primary key(post_id);
+--potential primary key(donor_id,donation_time,donation_amount)
 create table donation(
   donation_id varchar2(20) not null,
-  time_id varchar(20) references time2(time_id),
+  donation_time TIMESTAMP default CURRENT_TIMESTAMP,
   donor_id varchar(20) references user2(user_id),
   donation_amount int,
-  constraints CHK_DONATION check(donation_amount>0)
+  constraints CHK_DONATION check(donation_amount>0),
+  primary key(donation_id)
 );
 create table adopt(
-  time_id varchar2(20) references time2(time_id),
+  adoption_time TIMESTAMP default CURRENT_TIMESTAMP,
   adopter_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
   primary key(adopter_id,pet_id)
 );
 create table foster(
-  time_id varchar2(20) references time2(time_id),
+  foster_time TIMESTAMP default CURRENT_TIMESTAMP,
   duration smallint,
   fosterer varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
-  primary key(time_id,fosterer,pet_id),
+  primary key(foster_time,fosterer,pet_id),
   constraint CHK_Duration check(duration>=0)
 );
-alter table room modify room_id varchar2(5);
 create table accommodate(
   pet_id varchar2(20) references pet(pet_id),
   room_id varchar2(5) references room(room_id),
-  time_id varchar2(20) references time2(time_id),
+  accommodate_time TIMESTAMP default CURRENT_TIMESTAMP,
   duration smallint,--must be standalone since in SQL, a column cannot reference another column in a different table. Instead, it references the primary key in the other table.
-  primary key(pet_id,room_id,time_id),
+  primary key(pet_id,room_id,accommodate_time),
   constraint CHK_Duration2 check(duration>=0)
 );
 --Because treat is ambiguious and treatment is usually referred in medication/surgery
 create table treatment(
-  time_id varchar2(20) references time2(time_id),
+  treat_time TIMESTAMP default CURRENT_TIMESTAMP,
   category varchar2(20),
   pet_id varchar2(20) references pet(pet_id),
   vet_id varchar2(20) references vet(vet_id),
-  primary key(time_id,pet_id,vet_id)
+  primary key(treat_time,pet_id,vet_id)
 );
 create table application(
   application_id varchar2(20),
@@ -184,39 +185,38 @@ create table application(
   user_id varchar2(20) references user2(user_id),
   category varchar2(20),
   reason varchar2(200) not null,
-  time_id varchar2(20) references time2(time_id),
-  primary key(pet_id,user_id,time_id)
+  apply_time TIMESTAMP default CURRENT_TIMESTAMP,
+  primary key(pet_id,user_id,apply_time)
 );
 create table like_post(
-  time_id varchar2(20) references time2(time_id),
+  like_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
-  primary key(time_id,user_id,post_id)
+  primary key(like_time,user_id,post_id)
 );
 create table comment_post(
-  time_id varchar2(20) references time2(time_id),
+  comment_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
   comment_contents varchar2(100) not null,
-  primary key(time_id,user_id,post_id)
+  primary key(comment_time,user_id,post_id)
 );
 create table like_pet(
-  time_id varchar2(20) references time2(time_id),
+  like_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
-  primary key(time_id,user_id,pet_id)
+  primary key(like_time,user_id,pet_id)
 );
 create table comment_pet(
-  time_id varchar2(20) references time2(time_id),
+  comment_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
   comment_contents varchar2(200) not null,
-  primary key(time_id,user_id,pet_id)
+  primary key(comment_time,user_id,pet_id)
 );
 create table collect_pet_info(
-  time_id varchar2(20) references time2(time_id),
+  collect_time TIMESTAMP default CURRENT_TIMESTAMP,
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
-  primary key(time_id,user_id,pet_id)
+  primary key(collect_time,user_id,pet_id)
 );
-
