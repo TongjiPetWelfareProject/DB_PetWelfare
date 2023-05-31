@@ -13,9 +13,10 @@ ALTER PLUGGABLE DATABASE pdborcl OPEN;
 ```sql
 ALTER SESSION SET container = pdborcl;---默认为pdborcl
 ```
-现在，你应该能够创建用户了：
+但是我们只有在CDB下才能够创建用户
 ```sql
-CREATE USER c##petrescue IDENTIFIED BY **********;
+ALTER SESSION SET CONTAINER = cdb$root;
+CREATE USER c##petrescue IDENTIFIED BY campus;
 ```
 ***在Oracle数据库中，用户名以"C##"开头的用户是被称为"Containerized"用户的特殊类型。这种用户类型是为了支持多租户架构（Multitenant Architecture）而引入的。***
 
@@ -28,13 +29,19 @@ CREATE USER c##petrescue IDENTIFIED BY **********;
 ```sql
 -- 给新用户授权
 GRANT CONNECT, RESOURCE TO c##petrescue;
+GRANT CREATE TABLE TO c##petrescue;
+GRANT CREATE SESSION TO c##petrescue;
+GRANT CREATE VIEW TO c##petrescue;
+GRANT CREATE TTRIGGER TO c##petrescue;
+GRANT UNLIMITED TABLESPACE TO c##petrescue;-- 为用户在所有表空间上赋予无限制的配额
+GRANT CREATE SEQUENCE TO c##petrescue;
 ```
 -- 连接到新用户
 CONNECT c##petrescue/************;
 在连接成功后会立即断开，这是因为在SQL Developer中是无法切换用户的，只能在SQL Plus中切换，因此我们选择再次创建一个数据库连接，用户名为c##petrescue
 在左侧视窗中的其他用户右键，按模式C##petrescue过滤用户，此时只可以看到当前用户的数据，系统用户的数据被过滤了。
 然后我们导入SQL文档petrescue.sql，创建表格。
-如果手动创建，那么需要切换模式到C##petrescue
+如果手动创建，那么需要切换模式到C##petrescue，但是由于默认模式即与用户名重名，因此忽略以下步骤：
 ```sql
 ALTER SESSION SET CURRENT_SCHEMA = C##petrescue;
 ```
