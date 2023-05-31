@@ -49,22 +49,6 @@ create table pet(
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
 );
---create table time2(
---  time_id varchar2(20) not null,
---  year numeric(4,0),
---  month numeric(2,0),
---  day numeric(2,0),
---  hour numeric(2,0),
---  minute numeric(2,0),
---  second numeric(2,0),
---  millisecond numeric(3,0),
---  primary key(time_id),
---  constraint CHK_TIME check((month between 1 and 12) and
---  (day between 1 and 31) and
---  (hour between 0 and 23)and
---  (minute between 0 and 59)and
---  (second between 0 and 59))
---);
 
 --table room
 create table room(
@@ -140,14 +124,13 @@ create table forum_posts(
   constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
   and read_count>= like_num and like_num>=comment_num)
 );
---potential primary key(donor_id,donation_time,donation_amount)
+--potential primary key(donor_id,donation_time,donation_amounts)
 create table donation(
-  donation_id varchar2(20) not null,
   donation_time TIMESTAMP default CURRENT_TIMESTAMP,
   donor_id varchar(20) references user2(user_id),
   donation_amount int,
   constraints CHK_DONATION check(donation_amount>0),
-  primary key(donation_id)
+  primary key(donor_id,donation_amount,donation_time)
 );
 create table adopt(
   adoption_time TIMESTAMP default CURRENT_TIMESTAMP,
@@ -180,7 +163,6 @@ create table treatment(
   primary key(treat_time,pet_id,vet_id)
 );
 create table application(
-  application_id varchar2(20),
   pet_id varchar2(20) references pet(pet_id),
   user_id varchar2(20) references user2(user_id),
   category varchar2(20),
