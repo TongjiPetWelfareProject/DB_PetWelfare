@@ -1,6 +1,6 @@
 # 关于数据库创建的一些问题
 ## 配置
-  首先，按照学院服务器上的方法创建一个用户名为system的连接。
+  首先，按照学院服务器上的方法创建一个用户名为sys的连接，并且以DBA的身份登录。
   接着，你需要找出你的可插入数据库(PDB)的名称。你可以使用以下的SQL查询来查看所有的PDB：
 ```sql
 SELECT name FROM v$pdbs;
@@ -32,9 +32,10 @@ GRANT CONNECT, RESOURCE TO c##petrescue;
 GRANT CREATE TABLE TO c##petrescue;
 GRANT CREATE SESSION TO c##petrescue;
 GRANT CREATE VIEW TO c##petrescue;
-GRANT CREATE TTRIGGER TO c##petrescue;
+GRANT CREATE TRIGGER TO c##petrescue;
 GRANT UNLIMITED TABLESPACE TO c##petrescue;-- 为用户在所有表空间上赋予无限制的配额
 GRANT CREATE SEQUENCE TO c##petrescue;
+GRANT CREATE MATERIALIZED VIEW TO c##petrescue;
 ```
 -- 连接到新用户
 CONNECT c##petrescue/************;
@@ -49,7 +50,7 @@ ALTER SESSION SET CURRENT_SCHEMA = C##petrescue;
 ```
 SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER='C##petrescue';
 ```
-注意到有一些特殊字段是不能作为表格名的，例如user,time，因此将全部表格名前加pet_.
+注意到有一些特殊字段是不能作为表格名的，例如user,time，因此将user后加2.
 
 
 
