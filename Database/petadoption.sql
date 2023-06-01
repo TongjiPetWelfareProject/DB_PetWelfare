@@ -68,12 +68,13 @@ create table pet(
 
 --table room
 create table room(
-  room_id varchar2(5) not null,
   room_status char(1),--'Y'/'N'
   room_size numeric(5,2),--since area may lead to ambiguity
   storey numeric(2,0),--since floor may lead to ambiguity
+  compartment numeric(2,0),
   cleaning_time  varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
-  primary key(room_id),
+  primary key(storey,compartment),
+  check (storey between 1 and 10 and compartment between 1 and 30),
   CONSTRAINT CHK_RoomStatus CHECK(room_status in('Y','N')),
   CONSTRAINT CHK_Legal CHECK(storey>0 AND room_size>=0)
 );
@@ -151,23 +152,29 @@ create table donation(
 create table adopt(
   adopter_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
-  adoption_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  adoption_time varchar2(50) default TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD'),
   primary key(adopter_id,pet_id)
 );
 create table foster(
   duration smallint,
   fosterer varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
-  foster_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
-  primary key(foster_time,fosterer,pet_id),
+  start_year numeric(4,0) default extract(year from CURRENT_DATE),
+  start_month numeric(2,0) default extract(month from CURRENT_DATE),
+  start_day numeric(2,0) default extract(day from CURRENT_DATE),
+  primary key(start_year,start_month,start_day,fosterer,pet_id),
   constraint CHK_Duration check(duration>=0)
 );
 create table accommodate(
   pet_id varchar2(20) references pet(pet_id),
-  room_id varchar2(5) references room(room_id),
+  storey numeric(2,0) ,
+  compartment numeric(2,0) ,
   duration smallint,--must be standalone since in SQL, a column cannot reference another column in a different table. Instead, it references the primary key in the other table.
-  accommodate_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
-  primary key(pet_id,room_id,accommodate_time),
+  start_year numeric(4,0) default extract(year from CURRENT_DATE),
+  start_month numeric(2,0) default extract(month from CURRENT_DATE),
+  start_day numeric(2,0) default extract(day from CURRENT_DATE),
+  primary key(pet_id,storey,compartment,start_year,start_month,start_day),
+  foreign key(storey,compartment) references room,
   constraint CHK_Duration2 check(duration>=0)
 );
 --Because treat is ambiguious and treatment is usually referred in medication/surgery
@@ -448,7 +455,7 @@ EXCEPTION
 END;
 /
 DECLARE 
-    v_room_id varchar2(5);
+    v_compartment numeric(2,0);
     v_room_status char(1);
     v_room_size numeric(5,2);
     v_storey numeric(2,0);
@@ -457,14 +464,14 @@ BEGIN
     FOR i IN 1..10 LOOP
         FOR j IN 1..30 LOOP
         BEGIN
-            v_room_id := LPAD(TO_CHAR(i), 2, '0') || LPAD(TO_CHAR(j), 2, '0');
+            v_compartment :=j;
             v_room_status := CASE MOD(j,2) WHEN 1 THEN 'Y' ELSE 'N' END;
             v_room_size := ROUND(DBMS_RANDOM.value(10, 100), 2);
             v_storey := i;
             SELECT COUNT(*) INTO room_count_by_storey FROM room WHERE storey = v_storey;
             IF room_count_by_storey < 30 THEN
-                INSERT INTO room(room_id, room_status, room_size, storey) 
-                VALUES (v_room_id, v_room_status, v_room_size, v_storey);
+                INSERT INTO room(compartment, room_status, room_size, storey) 
+                VALUES (v_compartment, v_room_status, v_room_size, v_storey);
             END IF;
             EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
@@ -703,15 +710,17 @@ END;
 DECLARE 
     v_duration smallint;
     v_pet_id varchar2(20);
-    v_room_id varchar2(5);
+    v_storey numeric(2,0);
+    v_compartment numeric(2,0);
 BEGIN
     FOR i IN 1..10 LOOP
       BEGIN
         v_duration := TRUNC(DBMS_RANDOM.value(1, 100));
         v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_room_id := LPAD(TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 11))), 2, '0') || LPAD(TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 31))), 2, '0');
-        INSERT INTO accommodate(duration, pet_id, room_id) 
-        VALUES (v_duration, v_pet_id, v_room_id);
+        v_storey := TRUNC(DBMS_RANDOM.value(1, 11));
+        v_compartment:=TRUNC(DBMS_RANDOM.value(1,31));
+        INSERT INTO accommodate(duration, pet_id, storey,compartment) 
+        VALUES (v_duration, v_pet_id, v_storey,v_compartment);
         EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
                 NULL; -- 当唯一性约束违反时，忽略并继续
@@ -746,9 +755,9 @@ EXCEPTION
         RAISE;
 END;
 /
-Create or replace view vet_labor as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from vet WITH CHECK OPTION;
-Create or replace view employee_labor as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from employee WITH CHECK OPTION;
-DROP MATERIALIZED VIEW ownership;
+Create or replace view vet_labor as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from vet;
+Create or replace view employee_labor as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from employee;
+DROP materialized　VIEW ownership;
 CREATE MATERIALIZED VIEW ownership 
 BUILD IMMEDIATE
   REFRESH FORCE
@@ -757,17 +766,39 @@ AS SELECT
     pet.pet_id,
     pet.pet_name,
     CASE
-        WHEN accommodate.room_id IS NOT NULL THEN 'accommodated at room '||accommodate.room_id||' for '||accommodate.duration||' day'
-        WHEN foster.fosterer IS NOT NULL THEN 'fostered by '||foster.fosterer|| ' at '||foster.foster_time||' for '||foster.duration||' day'
-        WHEN adopt.adopter_id IS NOT NULL THEN 'adopted by '||adopt.adopter_id  || ' at '||adopt.adoption_time
+        WHEN accommodate.storey IS NOT NULL and accommodate.compartment IS NOT NULL 
+        THEN 'accommodated at room '||accommodate.storey||'-'||accommodate.compartment
+        WHEN foster.fosterer IS NOT NULL 
+        THEN 'fostered by '||foster.fosterer 
+        WHEN adopt.adopter_id IS NOT NULL 
+        THEN 'adopted by '||adopt.adopter_id  
         ELSE 'wandered'
-    END AS status
+    END AS status,
+    CASE
+        WHEN accommodate.storey IS NOT NULL and accommodate.compartment IS NOT NULL 
+        THEN TO_CHAR(TO_DATE(
+      accommodate.start_year || '-' || accommodate.start_month || '-' || accommodate.start_day, 'YYYY-MM-DD'),'YYYY-MM-DD')
+        WHEN foster.fosterer IS NOT NULL 
+        THEN TO_CHAR(TO_DATE(
+      foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 'YYYY-MM-DD'),'YYYY-MM-DD')
+        WHEN adopt.adopter_id IS NOT NULL 
+        THEN adopt.adoption_time
+    END AS start_time,
+    CASE
+        WHEN accommodate.storey IS NOT NULL and accommodate.compartment IS NOT NULL 
+        THEN TO_CHAR(TO_DATE(
+      accommodate.start_year || '-' || accommodate.start_month || '-' || accommodate.start_day, 
+      'YYYY-MM-DD') + NUMTODSINTERVAL(accommodate.duration, 'DAY'), 'YYYY-MM-DD')
+        WHEN foster.fosterer IS NOT NULL 
+        THEN TO_CHAR(TO_DATE(
+      foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 
+      'YYYY-MM-DD') + NUMTODSINTERVAL(foster.duration, 'DAY'), 'YYYY-MM-DD')
+    END AS end_time
 FROM pet
 LEFT OUTER JOIN foster ON pet.pet_id = foster.pet_id
 LEFT OUTER JOIN accommodate ON accommodate.pet_id = pet.pet_id
 LEFT OUTER JOIN adopt ON adopt.pet_id = pet.pet_id
-LEFT OUTER JOIN user2 ON user2.user_id = foster.fosterer and adopt.adopter_id= user2.user_id;
-
+LEFT OUTER JOIN user2 ON user2.user_id = foster.fosterer and adopt.adopter_id= user2.user_id; 
 CREATE OR REPLACE VIEW user_profile AS 
 SELECT user2.user_id,user2.user_name,
        COUNT(collect_pet_info.collect_time) AS pet_collections,
@@ -785,7 +816,7 @@ LEFT OUTER JOIN like_pet ON user2.user_id = like_pet.user_id
 LEFT OUTER JOIN forum_posts ON user2.user_id = forum_posts.user_id
 LEFT OUTER JOIN comment_post ON forum_posts.post_id = comment_post.post_id
 LEFT OUTER JOIN like_post ON forum_posts.post_id = like_post.post_id 
-GROUP BY user2.user_id,user2.user_name order by cast(user2.user_id as numeric(5,0)) asc WITH CHECK OPTION;
+GROUP BY user2.user_id,user2.user_name order by cast(user2.user_id as numeric(5,0)) asc;
 CREATE OR REPLACE VIEW pet_profile AS 
 SELECT pet.pet_id,pet.pet_name,
        COUNT(collect_pet_info.collect_time) AS collections,
@@ -795,6 +826,5 @@ FROM pet
 LEFT OUTER JOIN collect_pet_info ON pet.pet_id = collect_pet_info.pet_id
 LEFT OUTER JOIN comment_pet ON pet.pet_id = comment_pet.pet_id
 LEFT OUTER JOIN like_pet ON pet.pet_id = like_pet.pet_id
-GROUP BY pet.pet_id,pet.pet_name order by cast(pet.pet_id as numeric(5,0)) asc WITH CHECK OPTION;
-create or replace view room_avaiable as select room.storey,(count(*))as capacity from room where  not exists(select accommodate_time from accommodate where room.room_id=accommodate.room_id ) group by room.storey 
-WITH CHECK OPTION;
+GROUP BY pet.pet_id,pet.pet_name order by cast(pet.pet_id as numeric(5,0)) asc;
+create or replace view room_avaiable as select room.storey,(count(*))as capacity from room where  not exists(select * from accommodate where room.storey=accommodate.storey and room.compartment=accommodate.compartment ) group by room.storey;
