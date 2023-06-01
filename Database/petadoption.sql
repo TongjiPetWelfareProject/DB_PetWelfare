@@ -1,3 +1,4 @@
+
 drop table collect_pet_info ;
 drop table comment_pet;
 drop table like_pet;
@@ -41,9 +42,9 @@ create table pet(
   avatar varchar2(100),
   health_state varchar2(15),
   vaccine char(1),--Y represents vaccination done while N represents undone.
-  read_num int,
-  like_num int,
-  collect_num int,
+  read_num int default 0,
+  like_num int default 0,
+  collect_num int default 0,
   primary key(pet_id),
   CONSTRAINT CHK_PathValue CHECK (REGEXP_LIKE (avatar, '^[A-Z]:\\([a-zA-Z0-9\s_\-]+\\)*([a-zA-Z0-9\s_\-]+\.png|[a-zA-Z0-9\s_\-]+\.jpg|[a-zA-Z0-9\s_\-]+\.jpeg)?$')),
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
@@ -133,13 +134,13 @@ create table forum_posts(
   post_id varchar2(20) not null,
   user_id varchar2(20) references user2(user_id),
   post_contents varchar2(1000) not null,
-  read_count int,
-  like_num int,
-  comment_num int,
+  read_count int default 0,
+  like_num int default 0,
+  comment_num int default 0,
   post_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(post_id),
   constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
-  and read_count>= like_num and like_num>=comment_num)
+  and read_count>= like_num and read_count>=comment_num)
 );
 --potential primary key(donor_id,donation_time,donation_amounts)
 create table donation(
@@ -225,6 +226,80 @@ create table collect_pet_info(
   collect_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
   primary key(collect_time,user_id,pet_id)
 );
+CREATE OR REPLACE TRIGGER increase_like_count
+AFTER INSERT ON like_post
+FOR EACH ROW
+BEGIN
+   UPDATE forum_posts
+   SET like_num = like_num + 1
+   WHERE post_id = :NEW.post_id;
+END;
+/
+
+CREATE OR REPLACE TRIGGER decrease_like_count
+AFTER DELETE ON like_post
+FOR EACH ROW
+BEGIN
+   UPDATE forum_posts
+   SET like_num = like_num - 1
+   WHERE post_id = :OLD.post_id;
+END;
+/
+CREATE OR REPLACE TRIGGER increase_comment_count
+AFTER INSERT ON comment_post
+FOR EACH ROW
+BEGIN
+   UPDATE forum_posts
+   SET comment_num = comment_num + 1
+   WHERE post_id = :NEW.post_id;
+END;
+/
+CREATE OR REPLACE TRIGGER decrease_comment_count
+AFTER DELETE ON comment_post
+FOR EACH ROW
+BEGIN
+   UPDATE forum_posts
+   SET comment_num = comment_num - 1
+   WHERE post_id = :NEW.post_id;
+END;
+/
+
+CREATE OR REPLACE TRIGGER increase_pet_like_count
+AFTER INSERT ON like_pet
+FOR EACH ROW
+BEGIN
+   UPDATE pet
+   SET like_num = like_num + 1
+   WHERE pet_id = :NEW.pet_id;
+END;
+/
+CREATE OR REPLACE TRIGGER decrease_pet_like_count
+AFTER DELETE ON like_pet
+FOR EACH ROW
+BEGIN
+   UPDATE pet
+   SET like_num = like_num - 1
+   WHERE pet_id = :NEW.pet_id;
+END;
+/
+CREATE OR REPLACE TRIGGER increase_pet_collect_count
+AFTER INSERT ON collect_pet_info
+FOR EACH ROW
+BEGIN
+   UPDATE pet
+   SET collect_num = collect_num + 1
+   WHERE pet_id = :NEW.pet_id;
+END;
+/
+CREATE OR REPLACE TRIGGER decrease_pet_collect_count
+AFTER DELETE ON collect_pet_info
+FOR EACH ROW
+BEGIN
+   UPDATE pet
+   SET collect_num = collect_num - 1
+   WHERE pet_id = :NEW.pet_id;
+END;
+/
 --建立用户UID的序列用于生成ID
 DROP SEQUENCE user_id_seq;
 CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
@@ -281,8 +356,6 @@ DECLARE
     v_health_state varchar2(15);
     v_vaccine char(1);
     v_read_num int;
-    v_like_num int;
-    v_collect_num int;
 BEGIN
     FOR i IN 1..50 LOOP
     BEGIN
@@ -315,11 +388,9 @@ BEGIN
                          ELSE 'N'
                      END;
         v_read_num := ROUND(DBMS_RANDOM.value(0, 100));
-        v_like_num := ROUND(DBMS_RANDOM.value(0, v_read_num));
-        v_collect_num := ROUND(DBMS_RANDOM.value(0, v_like_num));
         
-        INSERT INTO pet(pet_id, pet_name, breed, age, avatar, health_state, vaccine, read_num, like_num, collect_num) 
-        VALUES (v_pet_id, v_pet_name, v_breed, v_age, v_avatar, v_health_state, v_vaccine, v_read_num, v_like_num, v_collect_num);
+        INSERT INTO pet(pet_id, pet_name, breed, age, avatar, health_state, vaccine, read_num) 
+        VALUES (v_pet_id, v_pet_name, v_breed, v_age, v_avatar, v_health_state, v_vaccine, v_read_num);
         EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
                 NULL; -- 当唯一性约束违反时，忽略并继续
@@ -429,19 +500,15 @@ DECLARE
     v_user_id varchar2(20);
     v_post_contents varchar2(1000);
     v_read_count int;
-    v_like_num int;
-    v_comment_num int;
 BEGIN
-    FOR i IN 1..5 LOOP
+    FOR i IN 1..20 LOOP
     BEGIN
         v_post_id := post_id_seq.NEXTVAL;
         v_user_id := ROUND(DBMS_RANDOM.value(0, 49), 0);
         v_post_contents := 'This is post ' || v_post_id;
         v_read_count := ROUND(DBMS_RANDOM.value(0, 1000), 0);
-        v_like_num := ROUND(DBMS_RANDOM.value(0, v_read_count), 0);
-        v_comment_num := ROUND(DBMS_RANDOM.value(0, v_like_num), 0);
-        INSERT INTO forum_posts(post_id, user_id, post_contents, read_count, like_num, comment_num) 
-        VALUES (v_post_id, v_user_id, v_post_contents, v_read_count, v_like_num, v_comment_num);
+        INSERT INTO forum_posts(post_id, user_id, post_contents, read_count) 
+        VALUES (v_post_id, v_user_id, v_post_contents, v_read_count);
         EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
                 NULL; -- 当唯一性约束违反时，忽略并继续
@@ -535,10 +602,10 @@ DECLARE
     v_user_id varchar2(20);
     v_post_id varchar2(20);
 BEGIN
-    FOR i IN 1..10 LOOP
+    FOR i IN 1..50 LOOP
     BEGIN
         v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_post_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 6)));
+        v_post_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 21)));
         INSERT INTO like_post(user_id, post_id) 
         VALUES (v_user_id, v_post_id);
         EXCEPTION
@@ -559,10 +626,10 @@ DECLARE
     v_comment_contents varchar2(100);
     sample_comments varchar2(150) := 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
 BEGIN
-    FOR i IN 1..5 LOOP
+    FOR i IN 1..20 LOOP
       BEGIN
         v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_post_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 6)));
+        v_post_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 21)));
         v_comment_contents := SUBSTR(sample_comments, DBMS_RANDOM.value(1, 50), DBMS_RANDOM.value(1, 50));
         INSERT INTO comment_post(user_id, post_id, comment_contents) 
         VALUES (v_user_id, v_post_id, v_comment_contents);
@@ -755,8 +822,12 @@ EXCEPTION
         RAISE;
 END;
 /
-Create or replace view vet_labor as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from vet WITH CHECK OPTION;
-Create or replace view employee_labor as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours from employee WITH CHECK OPTION;
+Create or replace view vet_labor 
+as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
+from vet WITH CHECK OPTION;
+Create or replace view employee_labor 
+as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
+from employee WITH CHECK OPTION;
 DROP materialized　VIEW ownership;
 CREATE MATERIALIZED VIEW ownership 
 BUILD IMMEDIATE
@@ -801,30 +872,16 @@ LEFT OUTER JOIN adopt ON adopt.pet_id = pet.pet_id
 LEFT OUTER JOIN user2 ON user2.user_id = foster.fosterer and adopt.adopter_id= user2.user_id; 
 CREATE OR REPLACE VIEW user_profile AS 
 SELECT user2.user_id,user2.user_name,
-       COUNT(collect_pet_info.collect_time) AS pet_collections,
-       COUNT(like_pet.like_time) AS pet_likes,
-       COUNT(comment_pet.comment_time) AS pet_comments,
-       COUNT(forum_posts.post_time) as total_posts,
-       COUNT(like_post.like_time) AS post_likes,
-       COUNT(comment_post.comment_time) AS post_comments,
+       COUNT(forum_posts.post_id) as total_posts,
+       SUM(forum_posts.read_count) AS total_reads,
+       SUM(forum_posts.like_num) AS total_post_likes,
+       SUM(forum_posts.comment_num) AS total_post_comments,
        SUM(donation.donation_amount) AS donation_totol_amounts
 FROM user2
-LEFT OUTER JOIN collect_pet_info ON user2.user_id = collect_pet_info.user_id
-LEFT OUTER JOIN comment_pet ON user2.user_id = comment_pet.user_id
 LEFT OUTER JOIN donation ON user2.user_id = donation.donor_id
-LEFT OUTER JOIN like_pet ON user2.user_id = like_pet.user_id
 LEFT OUTER JOIN forum_posts ON user2.user_id = forum_posts.user_id
-LEFT OUTER JOIN comment_post ON forum_posts.post_id = comment_post.post_id
-LEFT OUTER JOIN like_post ON forum_posts.post_id = like_post.post_id 
 GROUP BY user2.user_id,user2.user_name order by cast(user2.user_id as numeric(5,0)) asc WITH CHECK OPTION; 
-CREATE OR REPLACE VIEW pet_profile AS 
-SELECT pet.pet_id,pet.pet_name,
-       COUNT(collect_pet_info.collect_time) AS collections,
-       COUNT(like_pet.like_time) AS likes,
-       COUNT(comment_pet.comment_time) AS comments
-FROM pet
-LEFT OUTER JOIN collect_pet_info ON pet.pet_id = collect_pet_info.pet_id
-LEFT OUTER JOIN comment_pet ON pet.pet_id = comment_pet.pet_id
-LEFT OUTER JOIN like_pet ON pet.pet_id = like_pet.pet_id
-GROUP BY pet.pet_id,pet.pet_name order by cast(pet.pet_id as numeric(5,0)) asc WITH CHECK OPTION;
-create or replace view room_avaiable as select room.storey,(count(*))as capacity from room where  not exists(select * from accommodate where room.storey=accommodate.storey and room.compartment=accommodate.compartment ) group by room.storey WITH CHECK OPTION;
+create or replace view room_avaiable 
+as select room.storey,(count(*))as capacity from room where  
+not exists(select * from accommodate where room.storey=accommodate.storey and room.compartment=accommodate.compartment ) 
+group by room.storey WITH CHECK OPTION;
