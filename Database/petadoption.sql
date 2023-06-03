@@ -1,4 +1,3 @@
-
 drop table collect_pet_info ;
 drop table comment_pet;
 drop table like_pet;
@@ -39,17 +38,16 @@ create table pet(
   pet_name varchar2(20),
   breed varchar2(20),
   age numeric(2,0),
-  avatar varchar2(100),
+  avatar BLOB,
   health_state varchar2(15),
   vaccine char(1),--Y represents vaccination done while N represents undone.
   read_num int default 0,
   like_num int default 0,
   collect_num int default 0,
   primary key(pet_id),
-  CONSTRAINT CHK_PathValue CHECK (REGEXP_LIKE (avatar, '^[A-Z]:\\([a-zA-Z0-9\s_\-]+\\)*([a-zA-Z0-9\s_\-]+\.png|[a-zA-Z0-9\s_\-]+\.jpg|[a-zA-Z0-9\s_\-]+\.jpeg)?$')),
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
-);
+)LOB(avatar) STORE AS SECUREFILE;
 --create table time2(
 --  time_id varchar2(20) not null,
 --  year numeric(4,0),
@@ -352,10 +350,11 @@ DECLARE
     v_pet_name varchar2(20);
     v_breed varchar2(20);
     v_age numeric(2,0);
-    v_avatar varchar2(100);
+    v_avatar BLOB;
     v_health_state varchar2(15);
     v_vaccine char(1);
     v_read_num int;
+    src_bfile BFILE;
 BEGIN
     FOR i IN 1..50 LOOP
     BEGIN
@@ -374,7 +373,16 @@ BEGIN
                       ELSE 'Dachshund'
                       END;
         v_age := ROUND(DBMS_RANDOM.value(0, 20));
-        v_avatar := 'C:\RandomPath\' || DBMS_RANDOM.string('A', 10) || '.png'; 
+
+        -- Assuming the file is stored on the server's file system
+        src_bfile := BFILENAME('MY_DIR', 'picture' || TO_CHAR(ROUND(DBMS_RANDOM.value(1, 8), 0)) || '.jfif'); -- modify 'MY_DIR' and 'my_file.jpg' accordingly
+   
+        -- Load the BFILE data into the BLOB
+        DBMS_LOB.createtemporary(v_avatar, TRUE);
+        DBMS_LOB.fileopen(src_bfile, DBMS_LOB.file_readonly);
+        DBMS_LOB.loadfromfile(v_avatar, src_bfile, DBMS_LOB.getlength(src_bfile));
+        DBMS_LOB.fileclose(src_bfile);
+
         v_health_state := CASE 
                               WHEN MOD(i, 6) = 0 THEN 'Vibrant'
                               WHEN MOD(i, 6) = 1 THEN 'Well'
