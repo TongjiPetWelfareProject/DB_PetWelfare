@@ -1,4 +1,3 @@
-
 drop table collect_pet_info ;
 drop table comment_pet;
 drop table like_pet;
@@ -39,17 +38,16 @@ create table pet(
   pet_name varchar2(20),
   breed varchar2(20),
   age numeric(2,0),
-  avatar varchar2(100),
+  avatar BLOB,
   health_state varchar2(15),
   vaccine char(1),--Y represents vaccination done while N represents undone.
   read_num int default 0,
   like_num int default 0,
   collect_num int default 0,
   primary key(pet_id),
-  CONSTRAINT CHK_PathValue CHECK (REGEXP_LIKE (avatar, '^[A-Z]:\\([a-zA-Z0-9\s_\-]+\\)*([a-zA-Z0-9\s_\-]+\.png|[a-zA-Z0-9\s_\-]+\.jpg|[a-zA-Z0-9\s_\-]+\.jpeg)?$')),
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
-);
+)LOB(avatar) STORE AS SECUREFILE;
 --create table time2(
 --  time_id varchar2(20) not null,
 --  year numeric(4,0),
@@ -126,9 +124,10 @@ create table bulletin(
   heading varchar2(20),
   bulletin_contents varchar2(2000) not null,
   read_count int,
-  published_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  published_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(bulletin_id)
-);
+)partition by range(published_time)interval(interval '1' year)
+(partition start_bulletion values less than(TIMESTAMP '2023-09-01 00:00:00'));
 --potential primary key(user_id,post_contents,post_time)
 create table forum_posts(
   post_id varchar2(20) not null,
@@ -137,25 +136,28 @@ create table forum_posts(
   read_count int default 0,
   like_num int default 0,
   comment_num int default 0,
-  post_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  post_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(post_id),
   constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
   and read_count>= like_num and read_count>=comment_num)
-);
+)partition by range(post_time)interval(interval '1' year)
+(partition start_post values less than(TIMESTAMP '2023-09-01 00:00:00'));
 --potential primary key(donor_id,donation_time,donation_amounts)
 create table donation(
   donor_id varchar(20) references user2(user_id),
   donation_amount int,
-  donation_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  donation_time TIMESTAMP default CURRENT_TIMESTAMP,
   constraints CHK_DONATION check(donation_amount>0),
   primary key(donor_id,donation_amount,donation_time)
-);
+)partition by range(donation_time)interval(interval '1' year)
+(partition start_donate values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table adopt(
   adopter_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
-  adoption_time varchar2(50) default TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD'),
+  adoption_time DATE default CURRENT_DATE,
   primary key(adopter_id,pet_id)
-);
+)partition by range(adoption_time)interval(interval '1' year)
+(partition start_donate values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table foster(
   duration smallint,
   fosterer varchar2(20) references user2(user_id),
@@ -165,7 +167,8 @@ create table foster(
   start_day numeric(2,0) default extract(day from CURRENT_DATE),
   primary key(start_year,start_month,start_day,fosterer,pet_id),
   constraint CHK_Duration check(duration>=0)
-);
+)partition by range(start_year)
+(partition start_foster values less than('2024'));
 create table accommodate(
   pet_id varchar2(20) references pet(pet_id),
   storey numeric(2,0) ,
@@ -177,55 +180,63 @@ create table accommodate(
   primary key(pet_id,storey,compartment,start_year,start_month,start_day),
   foreign key(storey,compartment) references room,
   constraint CHK_Duration2 check(duration>=0)
-);
+)partition by range(start_year)
+(partition start_accommodate values less than('2024'));
 --Because treat is ambiguious and treatment is usually referred in medication/surgery
 create table treatment(
   category varchar2(20),
   pet_id varchar2(20) references pet(pet_id),
   vet_id varchar2(20) references vet(vet_id),
-  treat_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  treat_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(treat_time,pet_id,vet_id)
-);
+)partition by range(treat_time)interval(interval '1' year)
+(partition start_treatment values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table application(
   pet_id varchar2(20) references pet(pet_id),
   user_id varchar2(20) references user2(user_id),
   category varchar2(20),
   reason varchar2(200) not null,
-  apply_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  apply_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(pet_id,user_id,apply_time)
-);
+)partition by range(apply_time)interval(interval '1' year)
+(partition start_apply values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table like_post(
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
-  like_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  like_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(like_time,user_id,post_id)
-);
+)partition by range(like_time)interval(interval '1' year)
+(partition start_like_post values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table comment_post(
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
   comment_contents varchar2(150) not null,
-  comment_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  comment_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(comment_time,user_id,post_id)
-);
+)partition by range(comment_time)interval(interval '1' year)
+(partition start_comment_post values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table like_pet(
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
-  like_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  like_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(like_time,user_id,pet_id)
-);
+)partition by range(like_time)interval(interval '1' year)
+(partition start_like_pet values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table comment_pet(
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
   comment_contents varchar2(200) not null,
-  comment_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  comment_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(comment_time,user_id,pet_id)
-);
+)partition by range(comment_time)interval(interval '1' year)
+(partition start_comment_pet values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table collect_pet_info(
   user_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
-  collect_time varchar2(50) default TO_CHAR(CURRENT_TIMESTAMP),
+  collect_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(collect_time,user_id,pet_id)
-);
+)partition by range(collect_time)interval(interval '1' year)
+(partition start_collect_pet values less than(TIMESTAMP '2023-09-01 00:00:00'));
 CREATE OR REPLACE TRIGGER increase_like_count
 AFTER INSERT ON like_post
 FOR EACH ROW
@@ -352,10 +363,11 @@ DECLARE
     v_pet_name varchar2(20);
     v_breed varchar2(20);
     v_age numeric(2,0);
-    v_avatar varchar2(100);
+    v_avatar BLOB;
     v_health_state varchar2(15);
     v_vaccine char(1);
     v_read_num int;
+    src_bfile BFILE;
 BEGIN
     FOR i IN 1..50 LOOP
     BEGIN
@@ -374,7 +386,16 @@ BEGIN
                       ELSE 'Dachshund'
                       END;
         v_age := ROUND(DBMS_RANDOM.value(0, 20));
-        v_avatar := 'C:\RandomPath\' || DBMS_RANDOM.string('A', 10) || '.png'; 
+
+        -- Assuming the file is stored on the server's file system
+        src_bfile := BFILENAME('MY_DIR', 'picture' || TO_CHAR(ROUND(DBMS_RANDOM.value(1, 4), 0)) || '.jfif'); -- modify 'MY_DIR' and 'my_file.jpg' accordingly
+   
+        -- Load the BFILE data into the BLOB
+        DBMS_LOB.createtemporary(v_avatar, TRUE);
+        DBMS_LOB.fileopen(src_bfile, DBMS_LOB.file_readonly);
+        DBMS_LOB.loadfromfile(v_avatar, src_bfile, DBMS_LOB.getlength(src_bfile));
+        DBMS_LOB.fileclose(src_bfile);
+
         v_health_state := CASE 
                               WHEN MOD(i, 6) = 0 THEN 'Vibrant'
                               WHEN MOD(i, 6) = 1 THEN 'Well'
@@ -406,7 +427,6 @@ END;
 DECLARE 
     v_user_id varchar2(20);
     v_pet_id varchar2(20);
-    v_like_time varchar2(50);
 BEGIN
     FOR i IN 1..20 LOOP
     BEGIN
@@ -414,11 +434,8 @@ BEGIN
         v_user_id := ROUND(DBMS_RANDOM.value(1, 50));
         v_pet_id := ROUND(DBMS_RANDOM.value(1, 50));
 
-        -- 获取当前的时间
-        v_like_time := TO_CHAR(CURRENT_TIMESTAMP);
-
-        INSERT INTO like_pet(user_id, pet_id, like_time) 
-        VALUES (v_user_id, v_pet_id, v_like_time);
+        INSERT INTO like_pet(user_id, pet_id) 
+        VALUES (v_user_id, v_pet_id);
         EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
                 NULL; -- 当唯一性约束违反时，忽略并继续
@@ -486,6 +503,33 @@ EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE;
+END;
+/
+DECLARE 
+  v_bulletin_id bulletin.bulletin_id%TYPE;
+  v_employee_id bulletin.employee_id%TYPE;
+  v_heading bulletin.heading%TYPE;
+  v_bulletin_contents bulletin.bulletin_contents%TYPE;
+  v_read_count bulletin.read_count%TYPE;
+  v_published_time bulletin.published_time%TYPE;
+BEGIN
+  FOR i IN 1..50 LOOP
+    v_bulletin_id := 'B' || TO_CHAR(i);
+    v_employee_id := TO_CHAR(TRUNC(dbms_random.value(1, 16))); -- Random employee_id from E01 to E15
+    v_heading := 'Heading' || TO_CHAR(i);
+    v_bulletin_contents := 'Bulletin Content ' || TO_CHAR(i);
+    v_read_count := TRUNC(dbms_random.value(0, 1001)); -- Random read count from 0 to 1000
+    
+    -- Random timestamp generation
+    v_published_time := CURRENT_TIMESTAMP + NUMTODSINTERVAL(FLOOR(dbms_random.value(0, (365.25*3))), 'DAY') + NUMTODSINTERVAL(FLOOR(dbms_random.value(0, 24*60*60)), 'SECOND');
+    
+    INSERT INTO bulletin(bulletin_id, employee_id, heading, bulletin_contents, read_count, published_time)
+    VALUES(v_bulletin_id, v_employee_id, v_heading, v_bulletin_contents, v_read_count, v_published_time);
+  END LOOP;
+  COMMIT;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('An error was encountered - '||SQLCODE||' -ERROR- '||SQLERRM);
 END;
 /
 DROP SEQUENCE post_id_seq;
@@ -853,7 +897,7 @@ AS SELECT
         THEN TO_CHAR(TO_DATE(
       foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 'YYYY-MM-DD'),'YYYY-MM-DD')
         WHEN adopt.adopter_id IS NOT NULL 
-        THEN adopt.adoption_time
+        THEN TO_CHAR(adopt.adoption_time,'YYYY-MM-DD')
     END AS start_time,
     CASE
         WHEN accommodate.storey IS NOT NULL and accommodate.compartment IS NOT NULL 

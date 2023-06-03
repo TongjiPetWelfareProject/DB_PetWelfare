@@ -36,6 +36,8 @@ GRANT CREATE TRIGGER TO c##petrescue;
 GRANT UNLIMITED TABLESPACE TO c##petrescue;-- 为用户在所有表空间上赋予无限制的配额
 GRANT CREATE SEQUENCE TO c##petrescue;
 GRANT CREATE MATERIALIZED VIEW TO c##petrescue;
+CREATE OR REPLACE DIRECTORY my_dir AS 'D:/Desktop';--将D:/Desktop转化为存储图片的路径
+GRANT READ, WRITE ON DIRECTORY my_dir TO c##petrescue;
 ```
 -- 连接到新用户
 CONNECT c##petrescue/************;
