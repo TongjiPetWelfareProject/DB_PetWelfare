@@ -39,6 +39,18 @@ GRANT CREATE MATERIALIZED VIEW TO c##petrescue;
 CREATE OR REPLACE DIRECTORY my_dir AS 'D:/Desktop';--将D:/Desktop转化为存储图片的路径
 GRANT READ, WRITE ON DIRECTORY my_dir TO c##petrescue;
 ```
+接下来我们创建几个表空间：
+- PETS--默认存储
+- SOCIAL--社交媒体信息存储（由于需要高I/O，因此存到更高性能的硬盘上）
+- ARCHIVE--存档数据(存到性能较差的磁盘上)
+下面是创建表空间的一般语句，地址需要自己指定
+```sql
+CREATE TABLESPACE mytablespace
+    DATAFILE 'path_to_your_directory/mytablespace.dbf' SIZE 50M 
+    AUTOEXTEND ON 
+    NEXT 250K 
+    MAXSIZE UNLIMITED;
+```
 -- 连接到新用户
 CONNECT c##petrescue/************;
 在连接成功后会立即断开，这是因为在SQL Developer中是无法切换用户的，只能在SQL Plus中切换，因此我们选择再次创建一个数据库连接，用户名为c##petrescue
