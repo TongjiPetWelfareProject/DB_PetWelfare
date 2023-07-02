@@ -51,6 +51,29 @@ CREATE TABLESPACE mytablespace
     NEXT 250K 
     MAXSIZE UNLIMITED;
 ```
+**注意，上述代码只是一个模板！！！**
+具体来说就是你需要先在F盘或者任意一个盘下新建一个Tablespace文件夹即可，里面的dbf会自动生成。
+```sql
+CREATE TABLESPACE pets
+    DATAFILE 'F:/Tablespace/pets.dbf' SIZE 50M 
+    AUTOEXTEND ON 
+    NEXT 250K 
+    MAXSIZE UNLIMITED;
+CREATE TABLESPACE social
+    DATAFILE 'F:/Tablespace/social.dbf' SIZE 50M 
+    AUTOEXTEND ON 
+    NEXT 250K 
+    MAXSIZE UNLIMITED;
+CREATE TABLESPACE archive
+    DATAFILE 'F:/Tablespace/archive.dbf' SIZE 50M 
+    AUTOEXTEND ON 
+    NEXT 250K 
+    MAXSIZE UNLIMITED;
+```
+修改默认表空间为pet
+```sql
+ALTER DATABASE DEFAULT TABLESPACE pet;
+```
 -- 连接到新用户
 CONNECT c##petrescue/************;
 在连接成功后会立即断开，这是因为在SQL Developer中是无法切换用户的，只能在SQL Plus中切换，因此我们选择再次创建一个数据库连接，用户名为c##petrescue
