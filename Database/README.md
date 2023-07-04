@@ -28,16 +28,16 @@ CREATE USER c##pet IDENTIFIED BY campus;
 创建完用户之后，需要授予用户权限：
 ```sql
 -- 给新用户授权
-GRANT CONNECT, RESOURCE TO c##petrescue;
-GRANT CREATE TABLE TO c##petrescue;
-GRANT CREATE SESSION TO c##petrescue;
-GRANT CREATE VIEW TO c##petrescue;
-GRANT CREATE TRIGGER TO c##petrescue;
-GRANT UNLIMITED TABLESPACE TO c##petrescue;-- 为用户在所有表空间上赋予无限制的配额
+GRANT CONNECT, RESOURCE TO c##pet;
+GRANT CREATE TABLE TO c##pet;
+GRANT CREATE SESSION TO c##pet;
+GRANT CREATE VIEW TO c##pet;
+GRANT CREATE TRIGGER TO c##pet;
+GRANT UNLIMITED TABLESPACE TO c##pet;-- 为用户在所有表空间上赋予无限制的配额
 GRANT CREATE SEQUENCE TO c##petrescue;
-GRANT CREATE MATERIALIZED VIEW TO c##petrescue;
+GRANT CREATE MATERIALIZED VIEW TO c##pet;
 CREATE OR REPLACE DIRECTORY my_dir AS 'D:/Desktop';--将D:/Desktop转化为存储图片的路径
-GRANT READ, WRITE ON DIRECTORY my_dir TO c##petrescue;
+GRANT READ, WRITE ON DIRECTORY my_dir TO c##pet;
 ```
 接下来我们创建几个表空间：
 - PETS--默认存储
@@ -75,17 +75,17 @@ CREATE TABLESPACE archive
 ALTER DATABASE DEFAULT TABLESPACE pet;
 ```
 -- 连接到新用户
-CONNECT c##petrescue/************;
+CONNECT c##pet/************;
 在连接成功后会立即断开，这是因为在SQL Developer中是无法切换用户的，只能在SQL Plus中切换，因此我们选择再次创建一个数据库连接，用户名为c##petrescue
 在左侧视窗中的其他用户右键，按模式C##petrescue过滤用户，此时只可以看到当前用户的数据，系统用户的数据被过滤了。
 然后我们导入SQL文档petrescue.sql，创建表格。
 如果手动创建，那么需要切换模式到C##petrescue，但是由于默认模式即与用户名重名，因此忽略以下步骤：
 ```sql
-ALTER SESSION SET CURRENT_SCHEMA = C##petrescue;
+ALTER SESSION SET CURRENT_SCHEMA = C##pet;
 ```
 使用以下的查询可以查看当前模式下的表格：
 ```
-SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER='C##petrescue';
+SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER='C##pet';
 ```
 注意到有一些特殊字段是不能作为表格名的，例如user,time，因此将user后加2.
 
