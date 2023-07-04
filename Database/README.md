@@ -16,7 +16,7 @@ ALTER SESSION SET container = pdborcl;---默认为pdborcl
 但是我们只有在CDB下才能够创建用户
 ```sql
 ALTER SESSION SET CONTAINER = cdb$root;
-CREATE USER c##petrescue IDENTIFIED BY campus;
+CREATE USER c##pet IDENTIFIED BY campus;
 ```
 ***在Oracle数据库中，用户名以"C##"开头的用户是被称为"Containerized"用户的特殊类型。这种用户类型是为了支持多租户架构（Multitenant Architecture）而引入的。***
 
