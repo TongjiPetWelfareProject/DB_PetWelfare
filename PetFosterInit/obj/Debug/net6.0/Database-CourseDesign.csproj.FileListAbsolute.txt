@@ -1,0 +1,46 @@
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\Database-CourseDesign.exe
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\Database-CourseDesign.deps.json
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\Database-CourseDesign.runtimeconfig.json
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\Database-CourseDesign.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\Database-CourseDesign.pdb
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\System.Data.OracleClient.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\System.Data.SqlClient.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\runtimes\win-arm64\native\sni.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\runtimes\win-x64\native\sni.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\runtimes\win-x86\native\sni.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\bin\Debug\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.csproj.AssemblyReference.cache
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.GeneratedMSBuildEditorConfig.editorconfig
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.AssemblyInfoInputs.cache
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.AssemblyInfo.cs
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.csproj.CoreCompileInputs.cache
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.csproj.CopyComplete
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\refint\Database-CourseDesign.dll
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.pdb
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\Database-CourseDesign.genruntimeconfig.cache
+E:\NewlyDownload\Tongji-DatabasePrinciples-CourseDesign-main\Tongji-DatabasePrinciples-CourseDesign-main\obj\Debug\net6.0\ref\Database-CourseDesign.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\Database-CourseDesign.exe
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\Database-CourseDesign.deps.json
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\Database-CourseDesign.runtimeconfig.json
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\Database-CourseDesign.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\Database-CourseDesign.pdb
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\System.Data.OracleClient.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\System.Data.SqlClient.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\runtimes\win-arm64\native\sni.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\runtimes\win-x64\native\sni.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\runtimes\win-x86\native\sni.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\bin\Debug\net6.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.csproj.AssemblyReference.cache
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.GeneratedMSBuildEditorConfig.editorconfig
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.AssemblyInfoInputs.cache
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.AssemblyInfo.cs
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.csproj.CoreCompileInputs.cache
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.csproj.CopyComplete
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\refint\Database-CourseDesign.dll
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.pdb
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\Database-CourseDesign.genruntimeconfig.cache
+D:\WeChat\WeChat Files\wxid_vb0nf99gf7r522\FileStorage\File\2023-07\PetFosterInit\PetFosterInit\obj\Debug\net6.0\ref\Database-CourseDesign.dll

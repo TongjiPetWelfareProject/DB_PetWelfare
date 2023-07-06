@@ -1,0 +1,16 @@
+{
+  "dataSource": "localhost:1521/orcl",
+  "tableSpacePath": "B:\\Tablespace",
+  "tableSpaceTemp": "temp",
+  "tableSpaceData": "pets",
+  "systemID": "system",
+  "systemPwd": "Aa123456",
+  "managerID": "C##pet",
+  "managerPwd": "campus",
+  "adminID": "c##VictorHu",
+  "adminPwd": "FransisBacon",
+  "readerID": "c##Alice",
+  "readerPwd": "123456",
+  "picturePath": "F:\\Picture"
+}
+  
