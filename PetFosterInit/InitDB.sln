@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.6.33815.320
+VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database-CourseDesign", "Database-CourseDesign.csproj", "{8C1E4345-C567-4D70-AF12-F0BA58A64D3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InitDB", "InitDB.csproj", "{C6F007B5-7FD2-4C73-AE19-57BA96067C2A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C1E4345-C567-4D70-AF12-F0BA58A64D3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C1E4345-C567-4D70-AF12-F0BA58A64D3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C1E4345-C567-4D70-AF12-F0BA58A64D3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C1E4345-C567-4D70-AF12-F0BA58A64D3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6F007B5-7FD2-4C73-AE19-57BA96067C2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6F007B5-7FD2-4C73-AE19-57BA96067C2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6F007B5-7FD2-4C73-AE19-57BA96067C2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6F007B5-7FD2-4C73-AE19-57BA96067C2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B8D51BF2-0ACA-4875-B933-76A48614C786}
+		SolutionGuid = {4EDE3F82-D0BB-4C9A-914C-17A5DC5B4121}
 	EndGlobalSection
 EndGlobal

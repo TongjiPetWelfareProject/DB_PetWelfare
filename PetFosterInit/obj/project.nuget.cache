@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bU6zCmU8vzxceI+kzvAgg1JWJX48KUVoVpHtXIYLDMykesf6XMVcWlYtKJvLPkhIcPK9c+4HSn1XEHLhLfQxZw==",
+  "dgSpecHash": "VWh8q9qNN3a8Rze7j3OlZSec+WTyDM5yMY3ryd4sucTsxpi/ia8ixGUqdxqMxr0cX3ohiIOhqgEw8cqva3FBhw==",
   "success": true,
-  "projectFilePath": "D:\\WeChat\\WeChat Files\\wxid_vb0nf99gf7r522\\FileStorage\\File\\2023-07\\PetFosterInit\\PetFosterInit\\Database-CourseDesign.csproj",
+  "projectFilePath": "D:\\Desktop\\GitRepo\\DataBase_Program_Pet-Rescue-Station\\PetFosterInit\\InitDB.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Victor\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\Victor\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",

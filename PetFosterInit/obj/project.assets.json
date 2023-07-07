@@ -1549,11 +1549,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\WeChat\\WeChat Files\\wxid_vb0nf99gf7r522\\FileStorage\\File\\2023-07\\PetFosterInit\\PetFosterInit\\Database-CourseDesign.csproj",
-      "projectName": "Database-CourseDesign",
-      "projectPath": "D:\\WeChat\\WeChat Files\\wxid_vb0nf99gf7r522\\FileStorage\\File\\2023-07\\PetFosterInit\\PetFosterInit\\Database-CourseDesign.csproj",
+      "projectUniqueName": "D:\\Desktop\\GitRepo\\DataBase_Program_Pet-Rescue-Station\\PetFosterInit\\InitDB.csproj",
+      "projectName": "InitDB",
+      "projectPath": "D:\\Desktop\\GitRepo\\DataBase_Program_Pet-Rescue-Station\\PetFosterInit\\InitDB.csproj",
       "packagesPath": "C:\\Users\\Victor\\.nuget\\packages\\",
-      "outputPath": "D:\\WeChat\\WeChat Files\\wxid_vb0nf99gf7r522\\FileStorage\\File\\2023-07\\PetFosterInit\\PetFosterInit\\obj\\",
+      "outputPath": "D:\\Desktop\\GitRepo\\DataBase_Program_Pet-Rescue-Station\\PetFosterInit\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "D:\\VS_SDK\\NuGetPackages"
