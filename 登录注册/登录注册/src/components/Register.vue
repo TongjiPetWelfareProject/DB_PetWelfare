@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch , reactive} from 'vue';
 import axios from "axios";
 import jsonData from './values.json';
 const provinces = ref(jsonData.provinces);
@@ -7,6 +7,7 @@ const selectedProvince = ref('');
 const cities = ref([]);
 const selectedCity = ref('');
 const phone= ref('');
+const phoneError = ref(false);
 const username= ref('');
 const password= ref('');
 const confirmPassword= ref('');
@@ -17,6 +18,11 @@ watch(selectedProvince, (newSelectedProvince) => {
     value
   }));
 });
+
+const validatePhoneNumber = () => {
+  const phoneNumberPattern = /^1\d{10}$/;
+  phoneError.value = !phoneNumberPattern.test(phone.value);
+};
 
 const submitForm = (event) => {
     event.preventDefault();
@@ -46,9 +52,22 @@ const submitForm = (event) => {
 	  <div class="left-half">
 	    <h1>注册信息</h1>
 	    <div class="form-group">
-	      <label for="phone">您的电话</label>
-	      <input type="text" v-model="phone" name="phone" placeholder="请输入电话" />
-	    </div>
+        <div class="phone-input">
+	        <label for="phone">您的电话号码</label>
+          <span v-if="!phoneError && phone" class="success-icon fas fa-check-circle" style="color: green;
+          position: absolute;
+          margin-left: 35%;"></span>
+          <span v-if="phoneError && phone" class="error-message">您的号码格式不正确</span>
+        </div>
+          <input
+            type="text"
+            v-model="phone"
+            name="phone"
+            placeholder="请输入电话"
+            @input="validatePhoneNumber"
+          />
+      </div>
+
 	    <div class="form-group">
 	      <label for="region">选择地区</label>
 
@@ -96,80 +115,103 @@ html, body {
 }
 
 .form-group {
-    margin-bottom: 20px; /* 设置表单项目之间的垂直间距 */
-	margin-left:10%;
+  margin-bottom: 20px; /* 设置表单项目之间的垂直间距 */
+  margin-left:10%;
 }
 
 .form-container {
-    position: absolute;
-    width: 60%;
-    height: 60%;
-    top: 20%;
-    right: 5%;
-    display: flex;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    background-color: #7A7A7A;
-    background-color: rgba(122, 122, 122, 0.5);
-    padding: 8px 12px;
-  }
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  right: 5%;
+  display: flex;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: #7A7A7A;
+  background-color: rgba(122, 122, 122, 0.5);
+  padding: 8px 12px;
+}
 
-  .left-half {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+.left-half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
-  .right-half {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+.right-half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
-  .right-half form {
-    display: flex;
-    flex-direction: column;
-	margin-top: 12%;
-  }
-  
- .province-select {
-     /* 调整下拉选项的宽度 */
-     width: 40%;
-     /* 调整下拉选项的高度 */
-     height: 50%;
-     /* 调整下拉选项的字体大小 */
-     font-size: 16px;
-     /* 调整下拉选项的背景颜色 */
-     background-color: #ffffff;
-     /* 调整下拉选项的边框样式 */
-     border: 1px solid #cccccc;
-     /* 调整下拉选项的边框圆角 */
-     border-radius: 4px;
-     /* 调整下拉选项的内边距 */
-     padding: 6px;
-     /* 调整下拉选项的颜色 */
-     color: #333333;
-   }
+.right-half form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12%;
+}
+
+.province-select {
+  /* 调整下拉选项的宽度 */
+  width: 40%;
+  /* 调整下拉选项的高度 */
+  height: 50%;
+  /* 调整下拉选项的字体大小 */
+  font-size: 16px;
+  /* 调整下拉选项的背景颜色 */
+  background-color: #ffffff;
+  /* 调整下拉选项的边框样式 */
+  border: 1px solid #cccccc;
+  /* 调整下拉选项的边框圆角 */
+  border-radius: 4px;
+  /* 调整下拉选项的内边距 */
+  padding: 6px;
+  /* 调整下拉选项的颜色 */
+  color: #333333;
+}
    
-   .city-select {
-       /* 调整下拉选项的宽度 */
-       width: 40%;
-       /* 调整下拉选项的高度 */
-       height: 50%;
-       /* 调整下拉选项的字体大小 */
-       font-size: 16px;
-       /* 调整下拉选项的背景颜色 */
-       background-color: #ffffff;
-       /* 调整下拉选项的边框样式 */
-       border: 1px solid #cccccc;
-       /* 调整下拉选项的边框圆角 */
-       border-radius: 4px;
-       /* 调整下拉选项的内边距 */
-       padding: 6px;
-       /* 调整下拉选项的颜色 */
-       color: #333333;
-	   margin-left: 5%;
-     }
+.city-select {
+  /* 调整下拉选项的宽度 */
+  width: 40%;
+  /* 调整下拉选项的高度 */
+  height: 50%;
+  /* 调整下拉选项的字体大小 */
+  font-size: 16px;
+  /* 调整下拉选项的背景颜色 */
+  background-color: #ffffff;
+  /* 调整下拉选项的边框样式 */
+  border: 1px solid #cccccc;
+  /* 调整下拉选项的边框圆角 */
+  border-radius: 4px;
+  /* 调整下拉选项的内边距 */
+  padding: 6px;
+  /* 调整下拉选项的颜色 */
+  color: #333333;
+  margin-left: 5%;
+}
    
+.phone-input {
+  /* Add this to have both input and error message in the same line */
+  display: flex;
+  align-items: center;
+}
+
+.success-icon,
+.error-message {
+  display: none; /* Hide the elements by default */
+}
+
+.phone-input .success-icon,
+.phone-input .error-message {
+  display: inline-block; /* Show the elements when they are applicable */
+}
+
+.error-message {
+  /* Style the error message as desired */
+  color: red;
+  position: absolute;
+  margin-left: 22%;
+}
+
 .register-link {
   color: #fff; /* 设置链接的文字颜色 */
   text-decoration: none; /* 移除链接的下划线 */
@@ -212,4 +254,6 @@ button[type="submit"] {
 .register-link a:hover {
   text-decoration: underline; /* 鼠标悬停时添加下划线效果 */
 }
+
+
 </style>
