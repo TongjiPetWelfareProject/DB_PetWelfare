@@ -23,6 +23,8 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
   phone_number varchar2(20),--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
   account_status varchar2(20),
   address varchar2(100),
+  role varchar2(10) default 'User',
+  CONSTRAINT CHK_Role CHECK(role in('Admin','User','Unknown','Other')),
   CONSTRAINT CHK_PhoneNumber CHECK (REGEXP_LIKE (phone_number, '^\d{3}-\d{4}-\d{4}$') OR REGEXP_LIKE (phone_number, '^\d{11}$') OR REGEXP_LIKE (phone_number, '^\d{3} \d{4} \d{4}$')),--check if the phone_number is legal
   CONSTRAINT CHK_Password CHECK(LENGTH(password) >= 10 AND
     REGEXP_LIKE(password, '[0-9]') AND
@@ -37,7 +39,7 @@ create table pet(
   pet_id varchar2(20) not null,
   pet_name varchar2(20),
   breed varchar2(20),
-  age numeric(2,0),
+  birthdate DATE,
   avatar BLOB,
   health_state varchar2(15),
   vaccine char(1),--Y represents vaccination done while N represents undone.
@@ -48,22 +50,6 @@ create table pet(
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
 )LOB(avatar) STORE AS SECUREFILE;
---create table time2(
---  time_id varchar2(20) not null,
---  year numeric(4,0),
---  month numeric(2,0),
---  day numeric(2,0),
---  hour numeric(2,0),
---  minute numeric(2,0),
---  second numeric(2,0),
---  millisecond numeric(3,0),
---  primary key(time_id),
---  constraint CHK_TIME check((month between 1 and 12) and
---  (day between 1 and 31) and
---  (hour between 0 and 23)and
---  (minute between 0 and 59)and
---  (second between 0 and 59))
---);
 
 --table room
 create table room(
@@ -136,6 +122,7 @@ create table forum_posts(
   read_count int default 0,
   like_num int default 0,
   comment_num int default 0,
+  censored CHAR(1) CHECK(censored in('Y','N')),
   post_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(post_id),
   constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
@@ -147,6 +134,8 @@ create table donation(
   donor_id varchar(20) references user2(user_id),
   donation_amount int,
   donation_time TIMESTAMP default CURRENT_TIMESTAMP,
+  censor_state VARCHAR2(20) default 'to be censored',
+  CHECK (censor_state IN ('to be censored', 'aborted', 'legitimate')),
   constraints CHK_DONATION check(donation_amount>0),
   primary key(donor_id,donation_amount,donation_time)
 )partition by range(donation_time)interval(interval '1' year)
@@ -174,6 +163,8 @@ create table accommodate(
   storey numeric(2,0) ,
   compartment numeric(2,0) ,
   duration smallint,--must be standalone since in SQL, a column cannot reference another column in a different table. Instead, it references the primary key in the other table.
+  censor_state VARCHAR2(20) default 'to be censored',
+  CHECK (censor_state IN ('to be censored', 'aborted', 'legitimate')),
   start_year numeric(4,0) default extract(year from CURRENT_DATE),
   start_month numeric(2,0) default extract(month from CURRENT_DATE),
   start_day numeric(2,0) default extract(day from CURRENT_DATE),
@@ -929,3 +920,7 @@ create or replace view room_avaiable
 as select room.storey,(count(*))as capacity from room where  
 not exists(select * from accommodate where room.storey=accommodate.storey and room.compartment=accommodate.compartment ) 
 group by room.storey WITH CHECK OPTION;
+create or replace view foster_window 
+as select user2.user_name as owner,pet_id,pet_name,start_year,duration,age,breed 
+from foster 
+natural join  pet join  user2 on fosterer=user_id;
