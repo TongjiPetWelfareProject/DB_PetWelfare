@@ -920,6 +920,6 @@ as select room.storey,(count(*))as capacity from room where
 not exists(select * from accommodate where room.storey=accommodate.storey and room.compartment=accommodate.compartment ) 
 group by room.storey WITH CHECK OPTION;
 create or replace view foster_window 
-as select user2.user_name as owner,pet_id,pet_name,start_year,duration,age,breed 
+as select user2.user_name as owner,pet_id,pet_name,start_year,duration,TRUNC(MONTHS_BETWEEN(SYSDATE, birthdate) / 12) AS age,breed 
 from foster 
 natural join  pet join  user2 on fosterer=user_id;
