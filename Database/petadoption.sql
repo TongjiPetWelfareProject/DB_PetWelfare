@@ -353,7 +353,7 @@ DECLARE
     v_pet_id varchar2(20);
     v_pet_name varchar2(20);
     v_breed varchar2(20);
-    v_age numeric(2,0);
+    v_birthdate date;
     v_avatar BLOB;
     v_health_state varchar2(15);
     v_vaccine char(1);
@@ -376,10 +376,9 @@ BEGIN
                       WHEN MOD(i,10)=8 THEN 'Boxer'
                       ELSE 'Dachshund'
                       END;
-        v_age := ROUND(DBMS_RANDOM.value(0, 20));
-
+        v_birthdate := SYSDATE-(ROUND(DBMS_RANDOM.value(0, 20))*INTERVAL '1' YEAR);
         -- Assuming the file is stored on the server's file system
-        src_bfile := BFILENAME('MY_DIR', 'picture' || TO_CHAR(ROUND(DBMS_RANDOM.value(1, 4), 0)) || '.jfif'); -- modify 'MY_DIR' and 'my_file.jpg' accordingly
+        src_bfile := BFILENAME('MY_DIR', 'picture' || TO_CHAR(ROUND(DBMS_RANDOM.value(1, 3), 0)) || '.png'); -- modify 'MY_DIR' and 'my_file.jpg' accordingly
    
         -- Load the BFILE data into the BLOB
         DBMS_LOB.createtemporary(v_avatar, TRUE);
@@ -401,8 +400,8 @@ BEGIN
                      END;
         v_read_num := ROUND(DBMS_RANDOM.value(0, 100));
         
-        INSERT INTO pet(pet_id, pet_name, breed, age, avatar, health_state, vaccine, read_num) 
-        VALUES (v_pet_id, v_pet_name, v_breed, v_age, v_avatar, v_health_state, v_vaccine, v_read_num);
+        INSERT INTO pet(pet_id, pet_name, breed, birthdate, avatar, health_state, vaccine, read_num) 
+        VALUES (v_pet_id, v_pet_name, v_breed, v_birthdate, v_avatar, v_health_state, v_vaccine, v_read_num);
         EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
                 NULL; -- 当唯一性约束违反时，忽略并继续
@@ -921,6 +920,6 @@ as select room.storey,(count(*))as capacity from room where
 not exists(select * from accommodate where room.storey=accommodate.storey and room.compartment=accommodate.compartment ) 
 group by room.storey WITH CHECK OPTION;
 create or replace view foster_window 
-as select user2.user_name as owner,pet_id,pet_name,start_year,duration,age,breed 
+as select user2.user_name as owner,pet_id,pet_name,start_year,duration,TRUNC(MONTHS_BETWEEN(SYSDATE, birthdate) / 12) AS age,breed 
 from foster 
 natural join  pet join  user2 on fosterer=user_id;
