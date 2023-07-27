@@ -2,11 +2,14 @@
 import { ref } from 'vue';
 import axios from "axios";
 
+const username= ref('');
+const password= ref('');
+
 const submitForm = (event) => {
     // event.preventDefault();
     const data = {
-        username: this.username,
-        password: this.password
+        username: username.value,
+        password: password.value
     };
     axios
         .post('/api/login', data)
