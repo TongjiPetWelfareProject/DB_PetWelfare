@@ -8,18 +8,12 @@
       <el-input v-model="form.name"  style="width: 50%"/>
     </el-form-item>
     <el-form-item label="宠物类型">
-        <!-- <el-cascader 
-      v-model="form.type"
-      :options="options"
-      :props="props"
-      @change="handleChange"
-    /> -->
     <el-row>
       <el-radio-group v-model="radio">
     <el-radio  label="猫" value="猫">猫猫</el-radio>
     <el-radio label="狗" value="狗">狗狗</el-radio>
   </el-radio-group>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp;
-  <el-radio-group v-model="radio3" size="small" v-if="radio==='狗'">
+  <el-radio-group v-model="size_radio" size="small" v-if="radio==='狗'">
       <el-radio-button label="大型犬" />
       <el-radio-button label="中型犬" />
       <el-radio-button label="小型犬" />
@@ -31,7 +25,7 @@
     <el-form-item label="寄养起始时间">
       <el-col :span="11">
         <el-date-picker
-          v-model="form.date1"
+          v-model="form.date"
           type="date"
           placeholder="Pick a date"
           style="width: 100%"
@@ -58,11 +52,10 @@
         <el-text class="mx-1">{{ calculatedFee }}元</el-text>
       </el-form-item>
     <el-form-item label="备注">
-      <el-input v-model="form.desc" type="textarea" />
+      <el-input v-model="form.remark" type="textarea" />
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">提交</el-button>
-      <!-- <el-button>Cancel</el-button> -->
     </el-form-item>
 
   </el-form>
@@ -75,15 +68,13 @@ import axios from 'axios';
 // do not use same name with ref
 const form = reactive({
   name: '',
-  date1: '',
-  date2: '',
+  date: '',
   num:'',
-  desc: '',
-  type:''
+  remark: ''
 })
 
 const radio = ref("猫")
-const radio3 = ref('大型犬')
+const size_radio = ref('大型犬')
 
 const onSubmit = () => {
   ElMessageBox.confirm(
@@ -100,16 +91,15 @@ const onSubmit = () => {
       const foster_table = {
         name: form.name,
         type: radio.value, 
-        radio3: radio3.value,
-        date1: form.date1,
+        size: size_radio.value,
+        date: form.date,
         num: form.num,
-        desc: form.desc,
+        remark: form.remark,
       };
 
       axios.post('/api/pet_foster', foster_table)
             .then(response => {
               // 处理后端返回的响应
-              // console.log(response.data);
               ElMessage({
                 type: 'success',
                 message: '提交成功',
@@ -117,7 +107,6 @@ const onSubmit = () => {
             })
             .catch(error => {
               // 处理错误
-              // console.error(error);
               ElMessage({
                 type: 'error',
                 message: '提交失败',
@@ -128,7 +117,7 @@ const onSubmit = () => {
       ElMessage({
         type: 'info',
         message: '取消提交',
-      });
+      })
     })
 }
 
@@ -136,9 +125,9 @@ const calculatedFee = computed(function() {
   const duration = Number(form.num) || 0;
   let fee = 0;
   
-  if (radio3.value === '大型犬'&&radio.value!="猫") {
+  if (size_radio.value === '大型犬'&&radio.value!="猫") {
     fee = 30 * duration;
-  } else if (radio3.value === '中型犬') {
+  } else if (size_radio.value === '中型犬') {
     fee = 25 * duration;
   } else{
     fee = 20 * duration;
@@ -147,41 +136,6 @@ const calculatedFee = computed(function() {
   return fee;
 });
   const value = ref([])
-
-const props = {
-  expandTrigger: 'hover' as const,
-}
-
-
-const handleChange = (value) => {
-  console.log(value);
-}
-
-const options = [
-  {
-    value: 'dog',
-    label: '狗狗',
-    children: [
-      {
-        value: 'big',
-        label: '大型犬',
-      },
-      {
-        value: 'medium',
-        label: '中型犬',
-      },
-      {
-        value: 'small',
-        label: '小型犬',
-      },
-    ],
-  },
-  {
-    value: 'cat',
-    label: '猫猫',
-  },
-]
-
 
 </script>
 
