@@ -862,7 +862,8 @@ as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,sta
 to_char(foster.start_year)||'-'||to_char(foster.start_month)||'-'||to_char(foster.start_day) as foster_start_date,breed,pet.psize,
 to_char(accommodate.storey)||'-'||to_char(accommodate.compartment) as room_id,room_size,censor_state
 from foster 
-natural join  pet join  user2 on fosterer=user_id join accommodate on accommodate.owner_id=foster.fosterer join room on room.storey=accommodate.storey and
+join  pet on pet.pet_id=foster.pet_id join  user2 on fosterer=user_id join accommodate on accommodate.owner_id=foster.fosterer and accommodate.pet_id=foster.pet_id 
+join room on room.storey=accommodate.storey and
 room.compartment=accommodate.compartment;
 create or replace 
 TRIGGER trg_check_foster_censor_state
