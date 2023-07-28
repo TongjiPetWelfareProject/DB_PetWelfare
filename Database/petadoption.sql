@@ -39,6 +39,7 @@ create table pet(
   pet_id varchar2(20) not null,
   pet_name varchar2(20),
   breed varchar2(20),
+  psize varchar2(20) check (psize in('small','large','medium')),
   birthdate DATE,
   avatar BLOB,
   health_state varchar2(15),
@@ -134,8 +135,7 @@ create table donation(
   donor_id varchar(20) references user2(user_id),
   donation_amount int,
   donation_time TIMESTAMP default CURRENT_TIMESTAMP,
-  censor_state VARCHAR2(20) default 'to be censored',
-  CHECK (censor_state IN ('to be censored', 'aborted', 'legitimate')),
+  censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
   constraints CHK_DONATION check(donation_amount>0),
   primary key(donor_id,donation_amount,donation_time)
 )partition by range(donation_time)interval(interval '1' year)
@@ -154,25 +154,20 @@ create table foster(
   start_year numeric(4,0) default extract(year from CURRENT_DATE),
   start_month numeric(2,0) default extract(month from CURRENT_DATE),
   start_day numeric(2,0) default extract(day from CURRENT_DATE),
+  censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
+  remark varchar2(100) default 'May the censorship passed!',
   primary key(start_year,start_month,start_day,fosterer,pet_id),
   constraint CHK_Duration check(duration>=0)
 )partition by range(start_year)
 (partition start_foster values less than('2024'));
 create table accommodate(
+  owner_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
   storey numeric(2,0) ,
   compartment numeric(2,0) ,
-  duration smallint,--must be standalone since in SQL, a column cannot reference another column in a different table. Instead, it references the primary key in the other table.
-  censor_state VARCHAR2(20) default 'to be censored',
-  CHECK (censor_state IN ('to be censored', 'aborted', 'legitimate')),
-  start_year numeric(4,0) default extract(year from CURRENT_DATE),
-  start_month numeric(2,0) default extract(month from CURRENT_DATE),
-  start_day numeric(2,0) default extract(day from CURRENT_DATE),
   primary key(pet_id,storey,compartment,start_year,start_month,start_day),
-  foreign key(storey,compartment) references room,
-  constraint CHK_Duration2 check(duration>=0)
-)partition by range(start_year)
-(partition start_accommodate values less than('2024'));
+  foreign key(storey,compartment) references room
+);
 --Because treat is ambiguious and treatment is usually referred in medication/surgery
 create table treatment(
   category varchar2(20),
