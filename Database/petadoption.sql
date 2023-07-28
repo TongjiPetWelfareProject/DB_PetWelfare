@@ -858,8 +858,12 @@ Create or replace view employee_labor
 as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
 from employee WITH CHECK OPTION;
 create or replace view foster_window 
-as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,start_year,duration,
-to_char(foster.start_year)||'-'||to_char(foster.start_month)||'-'||to_char(foster.start_day) as foster_start_date,breed,pet.psize,
+as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,breed,pet.psize,duration,
+to_char(foster.start_year)||'-'||to_char(foster.start_month)||'-'||to_char(foster.start_day) as foster_start_date,
+TO_CHAR(
+        TO_DATE(foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 'YYYY-MM-DD') + duration,
+        'YYYY-MM-DD'
+    ) AS foster_end_date,
 to_char(accommodate.storey)||'-'||to_char(accommodate.compartment) as room_id,room_size,censor_state
 from foster 
 join  pet on pet.pet_id=foster.pet_id join  user2 on fosterer=user_id join accommodate on accommodate.owner_id=foster.fosterer and accommodate.pet_id=foster.pet_id 
