@@ -864,3 +864,69 @@ to_char(accommodate.storey)||'-'||to_char(accommodate.compartment) as room_id,ro
 from foster 
 natural join  pet join  user2 on fosterer=user_id join accommodate on accommodate.owner_id=foster.fosterer join room on room.storey=accommodate.storey and
 room.compartment=accommodate.compartment;
+create or replace 
+TRIGGER trg_check_foster_censor_state
+AFTER UPDATE ON foster
+FOR EACH ROW
+BEGIN
+    -- 当censor_state由'legitimate'变为'outdated'
+    IF :NEW.censor_state = 'outdated' OR :NEW.censor_state = 'aborted' THEN
+        -- 删除对应的accommodate表中宠物与用户ID相同的条目
+        DELETE FROM accommodate
+        WHERE pet_id = :NEW.pet_id AND owner_id = :NEW.fosterer;
+    END IF;
+END;
+/
+create or replace 
+TRIGGER trg_before_delete_accommodate
+BEFORE DELETE ON accommodate
+FOR EACH ROW
+DECLARE
+    v_room_status room.room_status%TYPE;
+BEGIN
+    -- 在删除accommodate记录之前，获取对应room的room_status
+    SELECT room_status
+    INTO v_room_status
+    FROM room
+    WHERE storey = :OLD.storey AND compartment = :OLD.compartment;
+
+    -- 如果对应room的room_status不为'N'，则更新为'N'
+    IF v_room_status = 'Y' THEN
+        UPDATE room
+        SET room_status = 'N'
+        WHERE storey = :OLD.storey AND compartment = :OLD.compartment;
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        -- 处理找不到对应room记录的情况，可以根据需要进行处理，比如抛出异常或记录日志。
+        NULL;
+END;
+/
+CREATE OR REPLACE PROCEDURE check_foster_duration_proc AS
+    foster_start_date DATE;
+    foster_end_date DATE;
+BEGIN
+    FOR foster_rec IN (SELECT * FROM foster WHERE censor_state = 'legitimate') LOOP
+        -- 计算寄养开始日期和结束日期
+        foster_start_date := TO_DATE(foster_rec.start_year || '-' || foster_rec.start_month || '-' || foster_rec.start_day, 'YYYY-MM-DD');
+        foster_end_date := foster_start_date + foster_rec.duration;
+
+        IF foster_end_date < SYSDATE THEN
+            -- 当寄养期限超限时
+            UPDATE foster SET censor_state = 'outdated';
+        END IF;
+    END LOOP;
+END;
+/
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+    job_name        => 'CHECK_FOSTER_DURATION_JOB',
+    job_type        => 'PLSQL_BLOCK',
+    job_action      => 'BEGIN check_foster_duration_proc; END;',
+    start_date      => TRUNC(SYSDATE) + INTERVAL '1' DAY,
+    repeat_interval => 'FREQ=DAILY; BYHOUR=0; BYMINUTE=0; BYSECOND=0;',
+    enabled         => TRUE,
+    comments        => 'Daily job to check and update foster durations'
+  );
+END;
+/
