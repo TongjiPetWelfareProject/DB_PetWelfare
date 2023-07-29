@@ -11,6 +11,18 @@ const phoneError = ref(false);
 const username= ref('');
 const password= ref('');
 const confirmPassword= ref('');
+const passwordError = ref(false);
+const passwordTooShort = ref(false);
+const passwordTooLong = ref(false);
+const passwordMinLength = 6;
+const passwordMaxLength = 20;
+
+const validatePasswordLength = () => {
+  const passwordLength = password.value.length;
+  passwordTooShort.value = passwordLength < passwordMinLength;
+  passwordTooLong.value = passwordLength > passwordMaxLength;
+};
+
 
 watch(selectedProvince, (newSelectedProvince) => {
   cities.value = Object.entries(jsonData[newSelectedProvince] || {}).map(([key, value]) => ({
@@ -23,6 +35,13 @@ const validatePhoneNumber = () => {
   const phoneNumberPattern = /^1\d{10}$/;
   phoneError.value = !phoneNumberPattern.test(phone.value);
 };
+
+const validconfirmPassword = () => {
+  if(password.value!=confirmPassword.value)
+    passwordError.value = true;
+  else
+    passwordError.value = false;
+}
 
 const submitForm = (event) => {
     event.preventDefault();
@@ -57,15 +76,9 @@ const submitForm = (event) => {
           <span v-if="!phoneError && phone" class="success-icon fas fa-check-circle" style="color: green;
           position: absolute;
           margin-left: 35%;"></span>
-          <span v-if="phoneError && phone" class="error-message">您的号码格式不正确</span>
+          <span v-if="phoneError && phone" class="error-phone">您的号码格式不正确</span>
         </div>
-          <input
-            type="text"
-            v-model="phone"
-            name="phone"
-            placeholder="请输入电话"
-            @input="validatePhoneNumber"
-          />
+          <input type="text" v-model="phone" name="phone" placeholder="请输入电话" @input="validatePhoneNumber"/>
       </div>
 
 	    <div class="form-group">
@@ -86,13 +99,25 @@ const submitForm = (event) => {
 	        <input type="text" v-model="username" name="username" placeholder="请输入账号" />
 	      </div>
 	      <div class="form-group">
-	        <label for="password">填写密码</label>
-	        <input type="password" v-model="password" name="password" placeholder="请输入密码" />
-	      </div>
+          <div class="password-input">
+	          <label for="password">填写密码</label>
+            <span v-if="!(passwordTooShort || passwordTooLong) && password" class="success-icon fas fa-check-circle" style="color: green;
+            position: absolute;
+            margin-left: 35%;"></span>
+            <span v-if="(passwordTooShort || passwordTooLong) && password" class="error-password" style="margin-left:19% ;">密码长度请在{{ passwordMinLength }}~{{ passwordMaxLength }}之间</span>
+          </div>
+	          <input type="password" v-model="password" name="password" placeholder="请输入密码" @input="validatePasswordLength" />
+        </div>
 	      <div class="form-group">
-	        <label for="password">确认密码</label>
-	        <input type="password" v-model="confirmPassword" name="confirmPassword" placeholder="请确认密码" />
-	      </div>
+          <div class="password-input">
+            <label for="password">确认密码</label>
+            <span v-if="!passwordError && confirmPassword" class="success-icon fas fa-check-circle" style="color: green;
+            position: absolute;
+            margin-left: 35%;"></span>
+            <span v-if="passwordError && confirmPassword" class="error-password">前后密码不一致</span>
+          </div>
+          <input type="password" v-model="confirmPassword" name="confirmPassword" placeholder="请确认密码" @input="validconfirmPassword"/>
+        </div>
 	      <button type="submit" @click="submitForm">注册</button>
 	    </form>
 	    <div class="register-link">
@@ -190,26 +215,28 @@ html, body {
 }
    
 .phone-input {
-  /* Add this to have both input and error message in the same line */
+  display: flex;
+  align-items: center;
+}
+.password-input {
   display: flex;
   align-items: center;
 }
 
-.success-icon,
-.error-message {
-  display: none; /* Hide the elements by default */
+
+.phone-input .success-icon {
+  display: inline-block; 
 }
 
-.phone-input .success-icon,
-.phone-input .error-message {
-  display: inline-block; /* Show the elements when they are applicable */
-}
-
-.error-message {
-  /* Style the error message as desired */
+.error-phone {
   color: red;
   position: absolute;
   margin-left: 22%;
+}
+.error-password {
+  color: red;
+  position: absolute;
+  margin-left: 25%;
 }
 
 .register-link {
