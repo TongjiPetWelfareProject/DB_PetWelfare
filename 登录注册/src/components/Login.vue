@@ -4,23 +4,39 @@ import axios from "axios";
 
 const username= ref('');
 const password= ref('');
+const usernameError = ref(false);
+const passwordError = ref(false);
+
+const validateForm = () => {
+  usernameError.value = username.value.trim() === '';
+  passwordError.value = password.value.trim() === '';
+};
 
 const submitForm = (event) => {
-    // event.preventDefault();
     const data = {
         username: username.value,
         password: password.value
     };
-    axios
-        .post('/api/login', data)
-        .then(response => {
-          // 处理响应
-          alert(`Hello ${state.username}!，登录成功！`);
-        })
-        .catch(error => {
-          alert('登录失败！');
-          console.error('请求出错:', error);
-        });
+
+    validateForm();
+
+    if (usernameError.value) {
+      alert('请输入用户名！');
+    }
+    if (passwordError.value) {
+      alert('请输入密码！');
+    }
+
+    axios.post('/api/login', data)
+  .then(response => {
+    // 处理响应成功的情况
+    if (response.status === 200) {
+      alert('登录成功！');
+    }
+  })
+  .catch(error => {
+    alert('登录失败，用户名或密码错误！');
+  });
 };
 
 </script>
@@ -28,12 +44,12 @@ const submitForm = (event) => {
 
 <template>
 	<div class="form-container">
-	        <!-- 登录表单 -->
+	  <!-- 登录表单 -->
 		<form>
 			<h1>Welcome!</h1>
 		    <div class="form-group">
-		      <label for="username">用户名</label>
-		      <input type="text" v-model="username" name="username" placeholder="请输入账号" />
+          <label for="username">用户名</label>
+		      <input type="text" v-model="username" name="username" placeholder="请输入账号"/>
 		    </div>
 		
 		    <div class="form-group">
@@ -48,7 +64,7 @@ const submitForm = (event) => {
 		      </label>
 		    </div>
 		
-		    <button type="submit" @click="submitForm">登录</button>
+		    <button type="button" @click="submitForm">登录</button>
 		  </form>
 		
 		  <div class="register-link">
@@ -81,7 +97,6 @@ html, body {
 	top: 20%; 
 	right: 5%; 
 	display: flex;
-	/* align-items: center; */
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加黑色阴影底板 */
 	background-color: #7A7A7A; 
 	background-color: rgba(122, 122, 122, 0.5); /* 设置底板为半透明的 #7A7A7A */
@@ -99,7 +114,6 @@ html, body {
 .register-link a {
   color: #007bff; /* 设置链接的文字颜色 */
 }
-
 
 label {
   display: block; /* 让标签元素独占一行 */
@@ -121,7 +135,7 @@ input[type="password"]
   align-items: center;
 }
 
-button[type="submit"] {
+button[type="button"] {
   width: 77%;
   padding: 10px 20px; /* 调整按钮的内边距 */
   background-color: #007bff; /* 设置按钮的背景颜色 */
