@@ -15,7 +15,7 @@ import pet_foster_table from '@/components/pet_foster_table.vue'
 import post_details from '@/components/post_details.vue'
 
 const routes = [
-    { path: '/pet_foster', component: pet_foster },
+    { path: '/', component: pet_foster },
     { path: '/first_page', component: first_page },
     { path: '/donate', component: donate },
     { path: '/notice', component: notice},
