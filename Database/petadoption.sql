@@ -39,6 +39,7 @@ create table pet(
   pet_id varchar2(20) not null,
   pet_name varchar2(20),
   breed varchar2(20),
+  psize varchar2(20) default 'small' check (psize in('small','large','medium')),
   birthdate DATE,
   avatar BLOB,
   health_state varchar2(15),
@@ -134,8 +135,7 @@ create table donation(
   donor_id varchar(20) references user2(user_id),
   donation_amount int,
   donation_time TIMESTAMP default CURRENT_TIMESTAMP,
-  censor_state VARCHAR2(20) default 'to be censored',
-  CHECK (censor_state IN ('to be censored', 'aborted', 'legitimate')),
+  censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
   constraints CHK_DONATION check(donation_amount>0),
   primary key(donor_id,donation_amount,donation_time)
 )partition by range(donation_time)interval(interval '1' year)
@@ -154,25 +154,20 @@ create table foster(
   start_year numeric(4,0) default extract(year from CURRENT_DATE),
   start_month numeric(2,0) default extract(month from CURRENT_DATE),
   start_day numeric(2,0) default extract(day from CURRENT_DATE),
+  censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
+  remark varchar2(100) default 'May the censorship passed!',
   primary key(start_year,start_month,start_day,fosterer,pet_id),
   constraint CHK_Duration check(duration>=0)
 )partition by range(start_year)
 (partition start_foster values less than('2024'));
 create table accommodate(
+  owner_id varchar2(20) references user2(user_id),
   pet_id varchar2(20) references pet(pet_id),
   storey numeric(2,0) ,
   compartment numeric(2,0) ,
-  duration smallint,--must be standalone since in SQL, a column cannot reference another column in a different table. Instead, it references the primary key in the other table.
-  censor_state VARCHAR2(20) default 'to be censored',
-  CHECK (censor_state IN ('to be censored', 'aborted', 'legitimate')),
-  start_year numeric(4,0) default extract(year from CURRENT_DATE),
-  start_month numeric(2,0) default extract(month from CURRENT_DATE),
-  start_day numeric(2,0) default extract(day from CURRENT_DATE),
-  primary key(pet_id,storey,compartment,start_year,start_month,start_day),
-  foreign key(storey,compartment) references room,
-  constraint CHK_Duration2 check(duration>=0)
-)partition by range(start_year)
-(partition start_accommodate values less than('2024'));
+  primary key(pet_id,storey,compartment),
+  foreign key(storey,compartment) references room
+);
 --Because treat is ambiguious and treatment is usually referred in medication/surgery
 create table treatment(
   category varchar2(20),
@@ -809,19 +804,19 @@ END;
 /
 
 DECLARE 
-    v_duration smallint;
+    v_user_id varchar2(20);
     v_pet_id varchar2(20);
     v_storey numeric(2,0);
     v_compartment numeric(2,0);
 BEGIN
     FOR i IN 1..10 LOOP
       BEGIN
-        v_duration := TRUNC(DBMS_RANDOM.value(1, 100));
+        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
         v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
         v_storey := TRUNC(DBMS_RANDOM.value(1, 11));
         v_compartment:=TRUNC(DBMS_RANDOM.value(1,31));
-        INSERT INTO accommodate(duration, pet_id, storey,compartment) 
-        VALUES (v_duration, v_pet_id, v_storey,v_compartment);
+        INSERT INTO accommodate(owner_id,pet_id, storey,compartment) 
+        VALUES (v_user_id,v_pet_id, v_storey,v_compartment);
         EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
                 NULL; -- 当唯一性约束违反时，忽略并继续
@@ -862,64 +857,81 @@ from vet WITH CHECK OPTION;
 Create or replace view employee_labor 
 as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
 from employee WITH CHECK OPTION;
-DROP materialized　VIEW ownership;
-CREATE MATERIALIZED VIEW ownership 
-BUILD IMMEDIATE
-  REFRESH FORCE
-  ON DEMAND
-AS SELECT 
-    pet.pet_id,
-    pet.pet_name,
-    CASE
-        WHEN accommodate.storey IS NOT NULL and accommodate.compartment IS NOT NULL 
-        THEN 'accommodated at room '||accommodate.storey||'-'||accommodate.compartment
-        WHEN foster.fosterer IS NOT NULL 
-        THEN 'fostered by '||foster.fosterer 
-        WHEN adopt.adopter_id IS NOT NULL 
-        THEN 'adopted by '||adopt.adopter_id  
-        ELSE 'wandered'
-    END AS status,
-    CASE
-        WHEN accommodate.storey IS NOT NULL and accommodate.compartment IS NOT NULL 
-        THEN TO_CHAR(TO_DATE(
-      accommodate.start_year || '-' || accommodate.start_month || '-' || accommodate.start_day, 'YYYY-MM-DD'),'YYYY-MM-DD')
-        WHEN foster.fosterer IS NOT NULL 
-        THEN TO_CHAR(TO_DATE(
-      foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 'YYYY-MM-DD'),'YYYY-MM-DD')
-        WHEN adopt.adopter_id IS NOT NULL 
-        THEN TO_CHAR(adopt.adoption_time,'YYYY-MM-DD')
-    END AS start_time,
-    CASE
-        WHEN accommodate.storey IS NOT NULL and accommodate.compartment IS NOT NULL 
-        THEN TO_CHAR(TO_DATE(
-      accommodate.start_year || '-' || accommodate.start_month || '-' || accommodate.start_day, 
-      'YYYY-MM-DD') + NUMTODSINTERVAL(accommodate.duration, 'DAY'), 'YYYY-MM-DD')
-        WHEN foster.fosterer IS NOT NULL 
-        THEN TO_CHAR(TO_DATE(
-      foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 
-      'YYYY-MM-DD') + NUMTODSINTERVAL(foster.duration, 'DAY'), 'YYYY-MM-DD')
-    END AS end_time
-FROM pet
-LEFT OUTER JOIN foster ON pet.pet_id = foster.pet_id
-LEFT OUTER JOIN accommodate ON accommodate.pet_id = pet.pet_id
-LEFT OUTER JOIN adopt ON adopt.pet_id = pet.pet_id
-LEFT OUTER JOIN user2 ON user2.user_id = foster.fosterer and adopt.adopter_id= user2.user_id; 
-CREATE OR REPLACE VIEW user_profile AS 
-SELECT user2.user_id,user2.user_name,
-       COUNT(forum_posts.post_id) as total_posts,
-       SUM(forum_posts.read_count) AS total_reads,
-       SUM(forum_posts.like_num) AS total_post_likes,
-       SUM(forum_posts.comment_num) AS total_post_comments,
-       SUM(donation.donation_amount) AS donation_totol_amounts
-FROM user2
-LEFT OUTER JOIN donation ON user2.user_id = donation.donor_id
-LEFT OUTER JOIN forum_posts ON user2.user_id = forum_posts.user_id
-GROUP BY user2.user_id,user2.user_name order by cast(user2.user_id as numeric(5,0)) asc WITH CHECK OPTION; 
-create or replace view room_avaiable 
-as select room.storey,(count(*))as capacity from room where  
-not exists(select * from accommodate where room.storey=accommodate.storey and room.compartment=accommodate.compartment ) 
-group by room.storey WITH CHECK OPTION;
 create or replace view foster_window 
-as select user2.user_name as owner,pet_id,pet_name,start_year,duration,TRUNC(MONTHS_BETWEEN(SYSDATE, birthdate) / 12) AS age,breed 
+as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,breed,pet.psize,duration,
+to_char(foster.start_year)||'-'||to_char(foster.start_month)||'-'||to_char(foster.start_day) as foster_start_date,
+TO_CHAR(
+        TO_DATE(foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 'YYYY-MM-DD') + duration,
+        'YYYY-MM-DD'
+    ) AS foster_end_date,
+to_char(accommodate.storey)||'-'||to_char(accommodate.compartment) as room_id,room_size,censor_state
 from foster 
-natural join  pet join  user2 on fosterer=user_id;
+join  pet on pet.pet_id=foster.pet_id join  user2 on fosterer=user_id join accommodate on accommodate.owner_id=foster.fosterer and accommodate.pet_id=foster.pet_id 
+join room on room.storey=accommodate.storey and
+room.compartment=accommodate.compartment;
+create or replace 
+TRIGGER trg_check_foster_censor_state
+AFTER UPDATE ON foster
+FOR EACH ROW
+BEGIN
+    -- 当censor_state由'legitimate'变为'outdated'
+    IF :NEW.censor_state = 'outdated' OR :NEW.censor_state = 'aborted' THEN
+        -- 删除对应的accommodate表中宠物与用户ID相同的条目
+        DELETE FROM accommodate
+        WHERE pet_id = :NEW.pet_id AND owner_id = :NEW.fosterer;
+    END IF;
+END;
+/
+create or replace 
+TRIGGER trg_before_delete_accommodate
+BEFORE DELETE ON accommodate
+FOR EACH ROW
+DECLARE
+    v_room_status room.room_status%TYPE;
+BEGIN
+    -- 在删除accommodate记录之前，获取对应room的room_status
+    SELECT room_status
+    INTO v_room_status
+    FROM room
+    WHERE storey = :OLD.storey AND compartment = :OLD.compartment;
+
+    -- 如果对应room的room_status不为'N'，则更新为'N'
+    IF v_room_status = 'Y' THEN
+        UPDATE room
+        SET room_status = 'N'
+        WHERE storey = :OLD.storey AND compartment = :OLD.compartment;
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        -- 处理找不到对应room记录的情况，可以根据需要进行处理，比如抛出异常或记录日志。
+        NULL;
+END;
+/
+CREATE OR REPLACE PROCEDURE check_foster_duration_proc AS
+    foster_start_date DATE;
+    foster_end_date DATE;
+BEGIN
+    FOR foster_rec IN (SELECT * FROM foster WHERE censor_state = 'legitimate') LOOP
+        -- 计算寄养开始日期和结束日期
+        foster_start_date := TO_DATE(foster_rec.start_year || '-' || foster_rec.start_month || '-' || foster_rec.start_day, 'YYYY-MM-DD');
+        foster_end_date := foster_start_date + foster_rec.duration;
+
+        IF foster_end_date < SYSDATE THEN
+            -- 当寄养期限超限时
+            UPDATE foster SET censor_state = 'outdated';
+        END IF;
+    END LOOP;
+END;
+/
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+    job_name        => 'CHECK_FOSTER_DURATION_JOB',
+    job_type        => 'PLSQL_BLOCK',
+    job_action      => 'BEGIN check_foster_duration_proc; END;',
+    start_date      => TRUNC(SYSDATE) + INTERVAL '1' DAY,
+    repeat_interval => 'FREQ=DAILY; BYHOUR=0; BYMINUTE=0; BYSECOND=0;',
+    enabled         => TRUE,
+    comments        => 'Daily job to check and update foster durations'
+  );
+END;
+/
