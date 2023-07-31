@@ -1,35 +1,38 @@
 <script lang="ts" setup>
-// import { ref } from 'vue'
-import { reactive, toRefs, ref, watch } from 'vue'
-const activeIndex = ref('1')
-const activeIndex2 = ref('1')
-const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
+// import { reactive, toRefs, ref, watch, inject } from 'vue'
+// import { useRoute } from 'vue-router'
+// const activeIndex = ref('1')
+// const activeIndex2 = ref('1')
+// const handleSelect = (key: string, keyPath: string[]) => {
+//   console.log(key, keyPath)
+// }
 
+// const showHeader = ref(true)
+// const showFooter = ref(true)
+// const showTitle = ref(true)
+// const route = useRoute()
+// const loggedIn = ref(false)
+// const username = ref()
 
-import { useRoute } from 'vue-router'
+// watch(() => route.path, (newPath, oldPath) => {
+//   // 检查需要隐藏header和footer的路径
+//   const pathsToHide = ['/dog_foster_table','/cat_foster_table', '/reservationdoctor','/mypage','/pet_adopt_form','/myinfo']
+//   showHeader.value = !pathsToHide.includes(newPath)
+//   showFooter.value = !pathsToHide.includes(newPath)
+//   showTitle.value = !pathsToHide.includes(newPath)
 
-const showHeader = ref(true)
-const showFooter = ref(true)
-const showTitle = ref(true)
-const route = useRoute()
-const username = ref()
-const loggedIn = ref()
+// })
 
-watch(() => route.path, (newPath, oldPath) => {
-  // 检查需要隐藏header和footer的路径
-  const pathsToHide = ['/dog_foster_table','/cat_foster_table', '/reservationdoctor','/mypage','/pet_adopt_form','/myinfo']
-  showHeader.value = !pathsToHide.includes(newPath)
-  showFooter.value = !pathsToHide.includes(newPath)
-  showTitle.value = !pathsToHide.includes(newPath)
+// const onLoginSuccess = (name) => {
+//   loggedIn.value = true;
+//   username.value = name;
+// };
 
-})
 </script>
 
 
 <template>
-  <div class="common-layout" >
+  <!-- <div class="common-layout" >
     <el-container>
       <div class="container" v-if="showTitle">
    <div class="left">
@@ -39,14 +42,14 @@ watch(() => route.path, (newPath, oldPath) => {
       </div>
     </div>
     <div class="right">
-          <!-- <img src="我的.png" style="height: 50px;width: 50px;margin-left: 20px;margin-right: 20px;margin-top: 40px;">
+           <img src="我的.png" style="height: 50px;width: 50px;margin-left: 20px;margin-right: 20px;margin-top: 40px;">
             <router-link to="/mypage">我的页面</router-link>
             <div class="common-layout"> -->
           <!-- 根据登录状态显示不同的内容 -->
-          <div v-if="loggedIn">
-            <p>Hello, {{ username }}</p>
+          <!-- <div v-if="loggedIn">
+            <p>Hello, {{ username }},欢迎回来</p>
           </div>
-          <div v-else>
+          <div>
             <router-link to="/login">登录</router-link>
           </div>
         </div>
@@ -63,7 +66,7 @@ watch(() => route.path, (newPath, oldPath) => {
     @select="handleSelect"
     router
   >
-    <el-menu-item index="/first_page">首页</el-menu-item>
+    <el-menu-item index="/">首页</el-menu-item>
     <el-menu-item index="/pet_foster">寄养</el-menu-item>
     <el-menu-item index="/pet_adopt">领养</el-menu-item>
     <el-menu-item index="/donate">捐款</el-menu-item>
@@ -79,18 +82,21 @@ watch(() => route.path, (newPath, oldPath) => {
         <div class="main_content">
           <p>联系我们</p>
           <p>电话：15279570357</p>
-          <p>邮箱</p>
-          <p>地址</p>
+          <p>邮箱：1664524275@qq.com</p>
+          <p>地址：上海市嘉定区</p>
         </div>
       </el-footer>
     </el-container>
-  </div>
+  </div> --> 
+
+  <RouterView/>
+
 </template>
 
 
 
 <style >
-.welcome-text{
+/* .welcome-text{
  font-size: 40px;
  font-weight: bold;
  color:#1fa0cb;
@@ -107,7 +113,7 @@ watch(() => route.path, (newPath, oldPath) => {
   background-color: rgba(226, 226, 214, 0.8);
   height: 100%;
   align-items: center;
-  flex-direction: column; /* 将子元素垂直排列 */
+  flex-direction: column; 
   padding:5px
 }
  .el-footer{ 
@@ -124,6 +130,6 @@ watch(() => route.path, (newPath, oldPath) => {
     width: 100%;
     height: 100%;
   }
-
+ */
 
 </style>

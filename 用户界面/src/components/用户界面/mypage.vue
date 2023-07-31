@@ -10,7 +10,7 @@
     border
   >
     <template #extra>
-      <el-button type="primary">编辑</el-button>
+      <el-button type="primary" @click="onEdit">编辑</el-button>
     </template>
     <el-descriptions-item>
       <template #label>
@@ -21,7 +21,7 @@
          用户名
         </div>
       </template>
-     柴犬的奴
+     {{ user_name }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -32,7 +32,7 @@
           Telephone
         </div>
       </template>
-      18100000000
+      {{ phone_number }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -43,7 +43,7 @@
           点赞量
         </div>
       </template>
-      78
+      {{ like_num }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -54,7 +54,7 @@
           阅读量
         </div>
       </template>
-      89
+      {{ read_num }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -65,9 +65,11 @@
          地址
         </div>
       </template>
-      上海市嘉定区曹安公路4800号
+      {{ address }}
+      <!-- 上海市嘉定区曹安公路4800号 -->
     </el-descriptions-item>
   </el-descriptions>
+
 
       </el-header>
 
@@ -80,10 +82,10 @@
           <el-col :span="6">
             <el-text class="mx-1" size="large">我的点赞</el-text>
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：汤姆</span>
-                <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span>
+            <li v-for="i in count5" :key="i" class="infinite-list-item">
+                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name5 }}</span>
+                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
             </li>
             </ul>
           </el-col>
@@ -91,10 +93,10 @@
           <el-col :span="6">
             <el-text class="mx-1" size="large">我的收藏</el-text>
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：汤姆</span>
-                <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span>
+            <li v-for="i in count6" :key="i" class="infinite-list-item">
+                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name6 }}</span>
+                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
             </li>
             </ul>
           </el-col>
@@ -102,10 +104,10 @@
          <el-col :span="6">
             <el-text class="mx-1" size="large">我的评论</el-text>
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：汤姆</span>
-                <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span>
+            <li v-for="i in count7" :key="i" class="infinite-list-item">
+                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name7 }}</span>
+                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
             </li>
             </ul>
           </el-col>
@@ -113,10 +115,10 @@
           <el-col :span="6">
             <el-text class="mx-1" size="large">我的浏览</el-text>
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：汤姆</span>
-                <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span>
+            <li v-for="i in count8" :key="i" class="infinite-list-item">
+                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name8 }}</span>
+                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
             </li>
             </ul>
             <br>
@@ -135,12 +137,10 @@
                 </div>
               </template>
               <div v-for="o in 6" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:00001</span>
-                <span v-if="o === 2">宠物名称：乐乐</span>
-                <span v-if="o === 3">领养时间:2023-5-1</span>
-                <span v-if="o === 4">宠物年龄:5岁</span>
-                <span v-if="o === 5">宠物性别:男</span>
-                <span v-if="o === 6">宠物种类:柴犬</span>
+                <span v-if="o === 1">宠物ID:{{ pet_id1 }}</span>
+                <span v-if="o === 2">宠物名称：{{ pet_name9 }}</span>
+                <span v-if="o === 3">领养时间:{{ adoption_time }}</span>
+                
               </div>
             </el-card>
           </el-col>
@@ -153,13 +153,11 @@
                 </div>
               </template>
               <div v-for="o in 7" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:54321</span>
-                <span v-if="o === 2">宠物名称:美美</span>
-                <span v-if="o === 3">寄养时间:2023-5-1</span>
-                <span v-if="o === 4">寄养时长:3天</span>
-                <span v-if="o === 5">宠物年龄:5岁</span>
-                <span v-if="o === 6">宠物性别:女</span>
-                <span v-if="o === 7">宠物种类:柴犬</span>
+                <span v-if="o === 1">宠物ID:{{ pet_id2 }}</span>
+                <span v-if="o === 2">宠物名称:{{ pet_name10 }}</span>
+                <span v-if="o === 3">寄养开始时间:{{start_year}}-{{start_month}}-{{start_day}}</span>
+                
+                
               </div>
             </el-card>
           </el-col>
@@ -175,10 +173,10 @@
           <el-col :span="6">
             <el-text class="mx-1" size="large">我的点赞</el-text>
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：汤姆</span>
-                <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span>
+            <li v-for="i in count1" :key="i" class="infinite-list-item">
+                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name1 }}</span>
+                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
             </li>
             </ul>
           </el-col>
@@ -186,10 +184,10 @@
           <el-col :span="6">
             <el-text class="mx-1" size="large">我的收藏</el-text>
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：汤姆</span>
-                <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span>
+            <li v-for="i in count2" :key="i" class="infinite-list-item">
+              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name2 }}</span>
+                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
             </li>
             </ul>
           </el-col>
@@ -197,10 +195,10 @@
          <el-col :span="6">
             <el-text class="mx-1" size="large">我的评论</el-text>
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：汤姆</span>
-                <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span>
+            <li v-for="i in count3" :key="i" class="infinite-list-item">
+              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name3 }}</span>
+                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
             </li>
             </ul>
           </el-col>
@@ -208,10 +206,10 @@
           <el-col :span="6">
             <el-text class="mx-1" size="large">我的浏览</el-text>
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：汤姆</span>
-                <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span>
+            <li v-for="i in count4" :key="i" class="infinite-list-item">
+              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name4 }}</span>
+                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
             </li>
             </ul>
           </el-col>
@@ -229,13 +227,11 @@
                 </div>
               </template>
               <div v-for="o in 7" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:00001</span>
-                <span v-if="o === 2">宠物名称：乐乐</span>
-                <span v-if="o === 3">医生ID：001</span>
-                <span v-if="o === 4">领养时间:2023-5-1</span>
-                <span v-if="o === 5">宠物年龄:5岁</span>
-                <span v-if="o === 6">宠物性别:男</span>
-                <span v-if="o === 7">宠物种类:柴犬</span>
+                <span v-if="o === 1">宠物ID:{{ pet_id3 }}</span>
+                <span v-if="o === 2">宠物名称：{{ pet_name11 }}</span>
+                <span v-if="o === 3">医生ID：{{ doctor_id }}</span>                
+                <span v-if="o === 4">治疗ID:{{ vet_id }}</span>
+                
               </div>
             </el-card>
           </el-col>
@@ -248,9 +244,9 @@
                 </div>
               </template>
               <div v-for="o in 3" :key="o" class="text item">
-                <span v-if="o === 1">捐款ID:12581</span>
-                <span v-if="o === 2">捐款金额:500</span>
-                <span v-if="o === 3">捐款时间:2023-5-1</span>
+                <span v-if="o === 1">捐款ID:{{ donor_id }}</span>
+                <span v-if="o === 2">捐款金额:{{ donation_amount }}</span>
+                <span v-if="o === 3">捐款时间:{{ donation_time }}</span>
               </div>
             </el-card>
           </el-col>
@@ -290,6 +286,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
+import axios from 'axios';
 
 const activeName = ref('first')
 
@@ -306,11 +303,30 @@ import {
   UserFilled,
   Star
 } from '@element-plus/icons-vue'
+
 const tabPosition = ref('left')
-const count = ref(0)
+
 const load = () => {
-  count.value += 2
+  count1.value += 2
+  count2.value += 2
+  count3.value += 2
+  count4.value += 2
+  count5.value += 2
+  count6.value += 2
+  count7.value += 2
+  count8.value += 2
+
 }
+const count1 = ref(0)
+const count2 = ref(0)
+const count3 = ref(0)
+const count4 = ref(0)
+const count5 = ref(0)
+const count6 = ref(0)
+const count7 = ref(0)
+const count8 = ref(0)
+
+
 const size = ref('')
 const iconStyle = computed(() => {
   const marginMap = {
@@ -318,10 +334,14 @@ const iconStyle = computed(() => {
     default: '6px',
     small: '4px',
   }
+  
   return {
     marginRight: marginMap[size.value] || marginMap.default,
+    
   }
 })
+
+
 const blockMargin = computed(() => {
   const marginMap = {
     large: '32px',
@@ -332,6 +352,311 @@ const blockMargin = computed(() => {
     marginTop: marginMap[size.value] || marginMap.default,
   }
 })
+
+
+
+//added 2023/7/30
+
+const user_name = ref('柴犬奴')
+const phone_number = ref('13355719896')
+const like_num = ref(99)
+const read_num = ref(99)
+const address = ref('上海市嘉定区曹安公路4800号')
+const pet_name1 = ref('乐乐')
+const pet_name2 = ref('乐乐')
+const pet_name3 = ref('乐乐')
+const pet_name4 = ref('乐乐')
+const pet_name5 = ref('乐乐')
+const pet_name6 = ref('乐乐')
+const pet_name7 = ref('乐乐')
+const pet_name8 = ref('乐乐')
+const pet_name9 = ref('乐乐')//领养
+const pet_name10 = ref('乐乐')//领养
+const pet_name11 = ref('乐乐')//医疗
+const pet_id1 = ref('111222')//领养
+const pet_id2 = ref('111222')//领养
+const pet_id3 = ref('111222')//医疗
+const donor_id = ref('111000')
+const donation_time = ref(2023-5-1)
+const donation_amount = ref(2023)
+const doctor_id = ref('111001')
+const vet_id = ref('111001')
+const adoption_time = ref(2023-5-2)
+const start_year = ref(2022)
+const start_month = ref(12)
+const start_day = ref(19)
+
+
+axios.get('/api/user')
+        .then(response => {
+          user_name.value = response.data;
+          
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+axios.get('/api/user')
+        .then(response => {
+          phone_number.value = response.data;
+          
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/user')
+        .then(response => {
+          like_num.value = response.data;
+          
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/user')
+        .then(response => {
+          read_num.value = response.data;
+          
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/user')
+        .then(response => {
+          address.value = response.data;
+          
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+
+//我的论坛
+axios.get('/api/like-list')
+        .then(response => {
+          pet_name1.value = response.data; // 将返回的数据保存在pet_name数组中
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/like-count')
+      .then(response => {
+        count1.value = response.data; // 将返回的数据保存在count属性中
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
+axios.get('/api/collect-list')
+        .then(response => {
+          pet_name2.value = response.data; // 将返回的数据保存在pet_name数组中
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/collect-count')
+      .then(response => {
+        count2.value = response.data; // 将返回的数据保存在count属性中
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
+axios.get('/api/comment-list')
+        .then(response => {
+          pet_name3.value = response.data; // 将返回的数据保存在pet_name数组中
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/comment-count')
+      .then(response => {
+        count3.value = response.data; // 将返回的数据保存在count属性中
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
+
+axios.get('/api/view-list')
+        .then(response => {
+          pet_name4.value = response.data; // 将返回的数据保存在pet_name数组中
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/view-count')
+      .then(response => {
+        count4.value = response.data; // 将返回的数据保存在count属性中
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
+//我的宠物
+axios.get('/api/like-list')
+        .then(response => {
+          pet_name5.value = response.data; // 将返回的数据保存在pet_name数组中
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/like-count')
+      .then(response => {
+        count5.value = response.data; // 将返回的数据保存在count属性中
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
+axios.get('/api/collect-list')
+        .then(response => {
+          pet_name6.value = response.data; // 将返回的数据保存在pet_name数组中
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/collect-count')
+      .then(response => {
+        count6.value = response.data; // 将返回的数据保存在count属性中
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
+axios.get('/api/comment-list')
+        .then(response => {
+          pet_name7.value = response.data; // 将返回的数据保存在pet_name数组中
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/comment-count')
+      .then(response => {
+        count7.value = response.data; // 将返回的数据保存在count属性中
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+
+
+axios.get('/api/view-list')
+        .then(response => {
+          pet_name8.value = response.data; // 将返回的数据保存在pet_name数组中
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/view-count')
+      .then(response => {
+        count8.value = response.data; // 将返回的数据保存在count属性中
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+//收养
+axios.get('/api/adopt')
+        .then(response => {
+          pet_id1.value = response.data; 
+          
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/adopt')
+        .then(response => {
+          pet_name9.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/adopt')
+        .then(response => {
+          adoption_time.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+
+//寄养
+axios.get('/api/foster')
+      .then(response => {
+        pet_id2.value = response.data; 
+      })
+      .catch(error => {
+        console.log(error);
+      });
+axios.get('/api/foster')
+        .then(response => {
+          pet_name10.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/foster')
+        .then(response => {
+          start_year.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/foster')
+        .then(response => {
+          start_month.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/foster')
+        .then(response => {
+          start_day.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+//医疗
+axios.get('/api/treatment')
+      .then(response => {
+        pet_id3.value = response.data; 
+      })
+      .catch(error => {
+        console.log(error);
+      });
+axios.get('/api/treatment')
+        .then(response => {
+          pet_name11.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/treatment')
+        .then(response => {
+          doctor_id.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+axios.get('/api/treatment')
+        .then(response => {
+          vet_id.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+  
+
+//edit 
+//编辑按钮跳转到个人信息编辑页面还没有实现（ps：ysj暑期实习也要做网页和网站，现在有点忙）
+
 </script>
 
 <style>
