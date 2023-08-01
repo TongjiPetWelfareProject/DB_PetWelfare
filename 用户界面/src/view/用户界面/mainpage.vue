@@ -44,18 +44,6 @@ watch(() => route.path, (newPath, oldPath) => {
         <p class="welcome-text">宠物救助站</p>
       </div>
     </div>
-    <div class="right">
-          <img src="我的.png" style="height: 50px;width: 50px;margin-left: 20px;margin-right: 20px;margin-top: 40px;">
-            <router-link to="/mypage">我的页面</router-link>
-            
-          <!-- 根据登录状态显示不同的内容 -->
-          <div v-if="loggedIn">
-            <p>Hello, {{ username }},欢迎回来</p>
-          </div>
-          <div>
-            <router-link to="/login">登录</router-link>
-          </div>
-        </div>
 
 </div>
   <el-header v-if="showHeader">
