@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch , reactive} from 'vue';
 import axios from "axios";
+import { registerAPI } from "@/api/user"
 import jsonData from './values.json';
 import background from './login-register.vue'
 
@@ -45,24 +46,20 @@ const validconfirmPassword = () => {
     passwordError.value = false;
 }
 
-const submitForm = (event) => {
-    event.preventDefault();
+const submitForm = async() => {
     const data = {
-        phone: phone.value,
-        region: selectedCity.value,
-        username: username.value,
-        password: password.value
+      username: username.value,
+      password: password.value,
+      phoneNumber: phone.value,
+      city: selectedProvince.value+selectedCity.value,
     };
-    axios
-        .post('/api/register', data)
-        .then(response => {
-          // 处理响应
-          alert(`Hello ${username.value}!，注册成功！`);
-        })
-        .catch(error => {
-          alert('注册失败！');
-          console.error('请求出错:', error);
-        });
+    console.log(data)
+    try {
+        const res = await registerAPI(data);
+        console.log(res); // 输出注册API返回的结果到控制台
+    } catch (error) {
+        console.error('出错'); // 如果有错误发生，输出错误到控制台
+    }
 };
 
 </script>
@@ -91,7 +88,7 @@ const submitForm = (event) => {
 	        <option v-for="(key,value) in provinces" :value="key" :key="key">{{ value }}</option>
 	      </select>
         <select v-model="selectedCity" name="cities" class="city-select">
-            <option v-for="city in cities" :value="city.key" :key="city.key">{{ city.key }}</option>
+            <option v-for="city in cities" :value="city.value" :key="city.key">{{ city.key }}</option>
         </select>
 	    </div>
 	  </div>
@@ -121,7 +118,7 @@ const submitForm = (event) => {
           </div>
           <input type="password" v-model="confirmPassword" name="confirmPassword" placeholder="请确认密码" @input="validconfirmPassword"/>
         </div>
-	      <button type="submit" @click="submitForm">注册</button>
+	      <button type="button" @click="submitForm">注册</button>
 	    </form>
 	    <div class="register-link">
 	      已有账号？<router-link to="/login">去登录</router-link>
@@ -269,8 +266,8 @@ input[type="password"]
 }
 
 
-button[type="submit"] {
-  width: 77%;
+button[type="button"] {
+  width: 76%;
   padding: 10px 20px; /* 调整按钮的内边距 */
   background-color: #007bff; /* 设置按钮的背景颜色 */
   color: #fff; /* 设置按钮的文字颜色 */
@@ -278,8 +275,8 @@ button[type="submit"] {
   border-radius: 4px; /* 设置按钮的圆角 */
   cursor: pointer; /* 设置按钮的鼠标样式为手型 */
   margin-left: 10%;
+  margin-top: 20px;
 }
-
 
 .register-link a:hover {
   text-decoration: underline; /* 鼠标悬停时添加下划线效果 */

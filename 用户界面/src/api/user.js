@@ -11,3 +11,17 @@ export const loginAPI = ({username,password}) => {
         }
     })
 }
+
+export const registerAPI = ({username,password,phoneNumber,city}) => {
+
+    return request({
+        url:'/register',
+        method:'POST',
+        data:{
+            username,
+            password,
+            phoneNumber,
+            city
+        }
+    })
+}

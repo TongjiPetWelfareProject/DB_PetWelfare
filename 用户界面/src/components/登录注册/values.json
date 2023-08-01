@@ -100,6 +100,25 @@
         "临汾市": "Linfen",
         "吕梁市": "Lüliang"
       },
+      "Henan": {
+        "郑州市": "Zhengzhou",
+        "开封市": "Kaifeng",
+        "洛阳市": "Luoyang",
+        "平顶山市": "Pingdingshan",
+        "安阳市": "Anyang",
+        "鹤壁市": "Hebi",
+        "新乡市": "Xinxiang",
+        "焦作市": "Jiaozuo",
+        "濮阳市": "Puyang",
+        "许昌市": "Xuchang",
+        "漯河市": "Luohe",
+        "三门峡市": "Sanmenxia",
+        "南阳市": "Nanyang",
+        "商丘市": "Shangqiu",
+        "信阳市": "Xinyang",
+        "周口市": "Zhoukou",
+        "驻马店市": "Zhumadian"
+      },
       "Inner Mongolia": {
         "呼和浩特市": "Hohhot",
         "包头市": "Baotou",

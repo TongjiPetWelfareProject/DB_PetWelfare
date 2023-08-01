@@ -64,16 +64,4 @@ const router = createRouter({
   routes
 });
 
-// router.beforeEach((to, from, next) => {
-//     const token = localStorage.getItem('token');
-  
-//     if (to.path !== '/login' && !token) {
-//       // Redirect to the login page if no token is found
-//       next('/login');
-//     } else {
-//       // Continue to the requested route
-//       next();
-//     }
-//   });
-
 export default router;

@@ -56,7 +56,7 @@ const submitForm = () => {
         <label for="phone">密码</label>
         <el-form-item prop="password"><el-input class="custom-input" resize="true" type="password" v-model="form.password"/></el-form-item>
       </el-form>
-		  <button type="button" @click="submitForm" style="margin-top: 20px;">点击登录</button>
+		  <button type="button" @click="submitForm">点击登录</button>
 		</form>
 		<div class="register-link">
 		  没有账号？<router-link to="/register">这里注册</router-link>
@@ -129,6 +129,7 @@ button[type="button"] {
   border-radius: 4px; /* 设置按钮的圆角 */
   cursor: pointer; /* 设置按钮的鼠标样式为手型 */
   margin-left: 13%;
+  margin-top: 20px;
 }
 
 .register-link {
