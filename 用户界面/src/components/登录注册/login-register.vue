@@ -1,16 +1,22 @@
 <script setup>
-import { ref,watch } from 'vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router'
 import backgroundImage1 from './photos/猫互动.jpg';
 import backgroundImage2 from './photos/狗互动.jpg';
 import backgroundImage3 from './photos/主人怀抱小狗.jpg';
-
-const backgroundImages = [backgroundImage1, backgroundImage2,backgroundImage3];//需要更多随机图片就再加
+const router = useRouter();
+const backgroundImages = [backgroundImage1, backgroundImage2,backgroundImage3];
 const selectedBackgroundImage = ref(backgroundImages[Math.floor(Math.random() * backgroundImages.length)]);
+
+const mainpage = () => {
+  router.replace({path:'/'})
+}
+
 </script>
 
 <template>
   <div class="background-container" :style="{ backgroundImage: `url(${selectedBackgroundImage})` }">
-    <div class="logo-container">
+    <div class="logo-container" @click="mainpage">
           <img src="./photos/logo.ico" alt="Logo" class="logo">
           <span class="logo-text">同济宠物救助中心</span>
     </div>
@@ -52,6 +58,7 @@ html, body {
   background-color: #7A7A7A; 
   padding: 8px 12px; /* 调整底板内边距 */
   border-radius: 4px; 
+  cursor: pointer;
 }
 
 .logo {
