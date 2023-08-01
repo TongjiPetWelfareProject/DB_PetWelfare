@@ -3,11 +3,13 @@ drop table comment_pet;
 drop table like_pet;
 drop table comment_post;
 drop table like_post;
+drop table post_images;
 drop table application;
 drop table treatment;
 drop table accommodate;
 drop table foster;
 drop table adopt;
+drop table adopt_apply;
 drop table donation;
 drop table forum_posts;
 drop table bulletin;
@@ -141,8 +143,23 @@ create table donation(
   primary key(donor_id,donation_amount,donation_time)
 )partition by range(donation_time)interval(interval '1' year)
 (partition start_donate values less than(TIMESTAMP '2023-09-01 00:00:00'));
+CREATE TABLE adopt_apply (
+    adopter_id VARCHAR2(20)  REFERENCES user2(user_id),
+    adopter_gender VARCHAR2(1) CHECK (adopter_gender IN ('M', 'F')),
+    apply_date TIMESTAMP default CURRENT_TIMESTAMP, -- 领养时间（年月日）
+    pet_experience VARCHAR2(1) CHECK (pet_experience IN ('Y', 'N')), 
+    long_term_care VARCHAR2(1) CHECK (long_term_care IN ('Y', 'N')), 
+    willing_to_treat VARCHAR2(1) CHECK (willing_to_treat IN ('Y', 'N')), 
+    daily_care_hours NUMERIC(2,0) CHECK (daily_care_hours between 0 and 24), 
+    primary_caregiver VARCHAR2(50),
+    family_population NUMERIC(2,0), 
+    has_children VARCHAR2(1) CHECK (has_children IN ('Y', 'N')), 
+    accept_visits VARCHAR2(1) CHECK (accept_visits IN ('Y', 'N')),
+    censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
+    PRIMARY KEY(adopter_id)
+);
 create table adopt(
-  adopter_id varchar2(20) references user2(user_id),
+  adopter_id varchar2(20) references adopt_apply(adopter_id),
   pet_id varchar2(20) references pet(pet_id),
   adoption_time DATE default CURRENT_DATE,
   primary key(adopter_id,pet_id)
@@ -308,6 +325,7 @@ END;
 DROP SEQUENCE user_id_seq;
 CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
 --建立图片image_id的序列
+DROP SEQUENCE img_id_seq;
 CREATE SEQUENCE img_id_seq START WITH 1 INCREMENT BY 1;
 --生成用户的随机数据
 BEGIN
@@ -838,28 +856,6 @@ EXCEPTION
         RAISE;
 END;
 /
-DECLARE 
-    v_adopter_id varchar2(20);
-    v_pet_id varchar2(20);
-BEGIN
-    FOR i IN 1..10 LOOP
-    BEGIN
-        v_adopter_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        INSERT INTO adopt(adopter_id, pet_id) 
-        VALUES (v_adopter_id, v_pet_id);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
 Create or replace view vet_labor 
 as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
 from vet WITH CHECK OPTION;
@@ -935,6 +931,15 @@ BEGIN
             UPDATE foster SET censor_state = 'outdated';
         END IF;
     END LOOP;
+END;
+/
+BEGIN
+  -- Drop the job
+  DBMS_SCHEDULER.DROP_JOB(
+    job_name        => 'CHECK_FOSTER_DURATION_JOB',
+    force           => FALSE,
+    commit_semantics => 'TRANSACTIONAL'
+  );
 END;
 /
 BEGIN
