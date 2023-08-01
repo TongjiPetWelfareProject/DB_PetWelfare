@@ -1,9 +1,15 @@
+<script setup>
+import { useUserStore } from '@/store/user';
+const userStore = useUserStore()
+
+</script>
+
 <template>
     <nav class="app-topnav">
         <div class="container">
             <ul>
-                <template v-if="true">
-                    <li><a helf="javascript:;"><i class=" iconfont icon user"></i>Default User</a></li>
+                <template v-if="userStore.userInfo.User_ID">
+                    <li><a helf="javascript:;"><i class=" iconfont icon user"></i>{{userStore.userInfo.User_Name}}</a></li>
                     <li>
                         <el-popconfirm title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
                             <template #reference>
@@ -24,7 +30,7 @@
 
 <style scoped lang="scss">
 .app-topnav {
-    background: #333;
+    background: #fff;
     
     ul {
        display: flex;
