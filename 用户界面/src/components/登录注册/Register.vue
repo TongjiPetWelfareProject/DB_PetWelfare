@@ -1,7 +1,8 @@
 <script setup>
-import { ref, watch , reactive} from 'vue';
-import axios from "axios";
+import { ref, watch} from 'vue';
 import { registerAPI } from "@/api/user"
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
 import jsonData from './values.json';
 import background from './login-register.vue'
 
@@ -17,8 +18,10 @@ const confirmPassword= ref('');
 const passwordError = ref(false);
 const passwordTooShort = ref(false);
 const passwordTooLong = ref(false);
-const passwordMinLength = 6;
-const passwordMaxLength = 20;
+const passwordMinLength = 8;
+const passwordMaxLength = 16;
+
+const router = useRouter();
 
 const validatePasswordLength = () => {
   const passwordLength = password.value.length;
@@ -35,7 +38,7 @@ watch(selectedProvince, (newSelectedProvince) => {
 });
 
 const validatePhoneNumber = () => {
-  const phoneNumberPattern = /^1\d{10}$/;
+  const phoneNumberPattern = /^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199|(147))\d{8}$/;
   phoneError.value = !phoneNumberPattern.test(phone.value);
 };
 
@@ -56,6 +59,8 @@ const submitForm = async() => {
     console.log(data)
     try {
         const res = await registerAPI(data);
+        ElMessage({type:'success',message:res})
+        router.push('/login')
         console.log(res); // 输出注册API返回的结果到控制台
     } catch (error) {
         console.error('出错'); // 如果有错误发生，输出错误到控制台
@@ -91,6 +96,8 @@ const submitForm = async() => {
             <option v-for="city in cities" :value="city.value" :key="city.key">{{ city.key }}</option>
         </select>
 	    </div>
+
+      <div class="password-requirement">密码长度在8~16之间，必须包含数字、大小写字母、特殊字符（/!@#$%^&*()）</div>
 	  </div>
 	  <div class="right-half">
 	    <form>
@@ -101,10 +108,6 @@ const submitForm = async() => {
 	      <div class="form-group">
           <div class="password-input">
 	          <label for="password">填写密码</label>
-            <span v-if="!(passwordTooShort || passwordTooLong) && password" class="success-icon fas fa-check-circle" style="color: green;
-            position: absolute;
-            margin-left: 35%;"></span>
-            <span v-if="(passwordTooShort || passwordTooLong) && password" class="error-password" style="margin-left:19% ;">密码长度请在{{ passwordMinLength }}~{{ passwordMaxLength }}之间</span>
           </div>
 	          <input type="password" v-model="password" name="password" placeholder="请输入密码" @input="validatePasswordLength" />
         </div>
@@ -282,5 +285,21 @@ button[type="button"] {
   text-decoration: underline; /* 鼠标悬停时添加下划线效果 */
 }
 
+.password-requirement {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+      max-width: 300px;
+      margin: 0 auto;
+      margin-top: 60px;
+    }
 
+.password-requirement::before {
+  content: '*';
+  color: red;
+  margin-right: 5px;
+}
 </style>
