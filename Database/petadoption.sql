@@ -40,7 +40,8 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
 create table pet(
   pet_id varchar2(20) not null,
   pet_name varchar2(20),
-  breed varchar2(20),
+  species varchar2(20) default 'dog' check(species in('bird','dog','snake','cat','parrot','bear','goldfish')),
+  sex varchar2(1) default 'M' check( sex in('M','F')),
   psize varchar2(20) default 'small' check (psize in('small','large','medium')),
   birthdate DATE,
   avatar BLOB,
@@ -374,7 +375,7 @@ INCREMENT BY   1;
 DECLARE 
     v_pet_id varchar2(20);
     v_pet_name varchar2(20);
-    v_breed varchar2(20);
+    v_species varchar2(20);
     v_birthdate date;
     v_avatar BLOB;
     v_health_state varchar2(15);
@@ -386,17 +387,13 @@ BEGIN
     BEGIN
         v_pet_id := pet_id_seq.NEXTVAL; -- 使用序列生成pet_id
         v_pet_name := DBMS_RANDOM.string('A', 10);
-        v_breed := CASE
-                      WHEN MOD(i,10)=0 THEN 'German Shepherd'
-                      WHEN MOD(i,10)=1 THEN 'Labrador Retriever'
-                      WHEN MOD(i,10)=2 THEN 'Golden Retriever'
-                      WHEN MOD(i,10)=3 THEN 'Bulldog'
-                      WHEN MOD(i,10)=4 THEN 'Beagle'
-                      WHEN MOD(i,10)=5 THEN 'Poodle'
-                      WHEN MOD(i,10)=6 THEN 'Rottweiler'
-                      WHEN MOD(i,10)=7 THEN 'Yorkshire Terrier'
-                      WHEN MOD(i,10)=8 THEN 'Boxer'
-                      ELSE 'Dachshund'
+        v_species := CASE
+                      WHEN MOD(i,6)=0 THEN 'dog'
+                      WHEN MOD(i,6)=1 THEN 'cat'
+                      WHEN MOD(i,6)=2 THEN 'goldfish'
+                      WHEN MOD(i,6)=3 THEN 'snake'
+                      WHEN MOD(i,6)=4 THEN 'bear'
+                      ELSE 'parrot'
                       END;
         v_birthdate := SYSDATE-(ROUND(DBMS_RANDOM.value(0, 20))*INTERVAL '1' YEAR);
         -- Assuming the file is stored on the server's file system
@@ -422,8 +419,8 @@ BEGIN
                      END;
         v_read_num := ROUND(DBMS_RANDOM.value(0, 100));
         
-        INSERT INTO pet(pet_id, pet_name, breed, birthdate, avatar, health_state, vaccine, read_num) 
-        VALUES (v_pet_id, v_pet_name, v_breed, v_birthdate, v_avatar, v_health_state, v_vaccine, v_read_num);
+        INSERT INTO pet(pet_id, pet_name, species, birthdate, avatar, health_state, vaccine, read_num) 
+        VALUES (v_pet_id, v_pet_name, v_species, v_birthdate, v_avatar, v_health_state, v_vaccine, v_read_num);
         EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
                 NULL; -- 当唯一性约束违反时，忽略并继续
@@ -863,7 +860,7 @@ Create or replace view employee_labor
 as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
 from employee WITH CHECK OPTION;
 create or replace view foster_window 
-as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,breed,pet.psize,duration,
+as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,species,pet.psize,duration,
 to_char(foster.start_year)||'-'||to_char(foster.start_month)||'-'||to_char(foster.start_day) as foster_start_date,
 TO_CHAR(
         TO_DATE(foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 'YYYY-MM-DD') + duration,
