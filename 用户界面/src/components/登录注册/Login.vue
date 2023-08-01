@@ -2,11 +2,11 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-// import { userUserStore } from '@/store/user'
+import { useUserStore } from '@/store/user'
 import background from './login-register.vue'
 
 const router = useRouter()
-// const userStore = userUserStore()
+const userStore = useUserStore()
 
 const form = ref({
   username:'',
@@ -31,17 +31,7 @@ const validateForm = () => {
 const formRef = ref(null)
 
 const submitForm = () => {
-  //   axios.post('/api/login', data)
-  //   .then(response => {
-  //     alert('登录成功！'); 
-  //     router.push({ path: '/' });
-  // })
-  // .catch(error => {
-  //   alert('登录失败，用户名或密码错误！');
-  //   return;
-  // });
     formRef.value.validate(async(valid)=>{
-      console.log(valid)
       const {username,password} = form.value
       if(valid){
         await userStore.getUserInfo({username,password})

@@ -113,7 +113,6 @@ const images = [
   '轮播3.png',
   '轮播4.png'
 ];
-console.log(images[1]);
 
 </script>
 
