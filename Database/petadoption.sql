@@ -32,7 +32,7 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
     REGEXP_LIKE(password, '[0-9]') AND
     REGEXP_LIKE(password, '[a-z]') AND
     REGEXP_LIKE(password, '[A-Z]') AND
-    REGEXP_LIKE(password, '[!@#$%^&*()]')),
+    REGEXP_LIKE(password, '[!@#$%^&*().,=-——+/;:<>?]')),
     primary key(user_id),
     check(account_status in('Compliant','In Good Standing','Under Review','Warning Issued','Suspended','Probation','Banned','Appealing'))
 );
