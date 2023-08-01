@@ -119,11 +119,12 @@ create table bulletin(
 create table forum_posts(
   post_id varchar2(20) not null,
   user_id varchar2(20) references user2(user_id),
+  heading varchar2(50),
   post_contents varchar2(1000) not null,
   read_count int default 0,
   like_num int default 0,
   comment_num int default 0,
-  censored CHAR(1) CHECK(censored in('Y','N')),
+  censored CHAR(1) default 'N' CHECK(censored in('Y','N')),
   post_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(post_id),
   constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
@@ -186,6 +187,12 @@ create table application(
   primary key(pet_id,user_id,apply_time)
 )partition by range(apply_time)interval(interval '1' year)
 (partition start_apply values less than(TIMESTAMP '2023-09-01 00:00:00'));
+CREATE TABLE post_images (
+  image_id INT,
+  post_id varchar2(50),
+  image_data BLOB,
+  FOREIGN KEY (post_id) REFERENCES forum_posts(post_id)
+);
 create table like_post(
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
@@ -300,6 +307,8 @@ END;
 --建立用户UID的序列用于生成ID
 DROP SEQUENCE user_id_seq;
 CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
+--建立图片image_id的序列
+CREATE SEQUENCE img_id_seq START WITH 1 INCREMENT BY 1;
 --生成用户的随机数据
 BEGIN
     FOR i IN 1..50 LOOP
@@ -869,6 +878,11 @@ from foster
 join  pet on pet.pet_id=foster.pet_id join  user2 on fosterer=user_id join accommodate on accommodate.owner_id=foster.fosterer and accommodate.pet_id=foster.pet_id 
 join room on room.storey=accommodate.storey and
 room.compartment=accommodate.compartment;
+create or replace view verbosepost as 
+select forum_posts.post_id,forum_posts.user_id as poster,heading,read_count,comment_num,like_num,comment_post.user_id 
+as commenter,comment_post.comment_contents,forum_posts.post_contents,post_images.image_data,comment_post.comment_time 
+from forum_posts
+join post_images on post_images.post_id=forum_posts.post_id join comment_post on forum_posts.post_id = comment_post.post_id;
 create or replace 
 TRIGGER trg_check_foster_censor_state
 AFTER UPDATE ON foster
