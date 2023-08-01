@@ -147,7 +147,8 @@ create table donation(
 CREATE TABLE adopt_apply (
     adopter_id VARCHAR2(20)  REFERENCES user2(user_id),
     adopter_gender VARCHAR2(1) CHECK (adopter_gender IN ('M', 'F')),
-    apply_date TIMESTAMP default CURRENT_TIMESTAMP, -- 领养时间（年月日）
+    apply_date date default CURRENT_DATE, -- 领养时间（年月日）
+    species varchar2(20) default 'dog' check(species in('bird','dog','snake','cat','parrot','bear','goldfish')),
     pet_experience VARCHAR2(1) CHECK (pet_experience IN ('Y', 'N')), 
     long_term_care VARCHAR2(1) CHECK (long_term_care IN ('Y', 'N')), 
     willing_to_treat VARCHAR2(1) CHECK (willing_to_treat IN ('Y', 'N')), 
@@ -951,3 +952,19 @@ BEGIN
   );
 END;
 /
+CREATE OR REPLACE FUNCTION comment_num_func(pid IN VARCHAR2) RETURN NUMBER IS
+    comment_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO comment_count
+    FROM comment_pet
+    WHERE pet_id = pid;
+
+    RETURN comment_count;
+END;
+/
+create or replace view  pet_profile as SELECT
+   p.read_num * 1 + p.like_num * 2 + comment_num_func(p.pet_id) * 5 + p.collect_num as popularity, p.*,
+    comment_num_func(p.pet_id) as comment_num,comment_pet.comment_contents,comment_pet.comment_time
+    
+FROM
+    pet p left outer join comment_pet  on comment_pet.pet_id=p.pet_id order by popularity desc;
