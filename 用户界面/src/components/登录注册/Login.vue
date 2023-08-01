@@ -50,25 +50,17 @@ const submitForm = () => {
 	  <!-- 登录表单 -->
 		<form>
 			<h1>账户登录</h1>
-		    <!-- <div class="form-group">
-          <label for="username">用户名</label>
-		      <input type="text" v-model="username" name="username" placeholder="请输入账号"/>
-		    </div>
-		
-		    <div class="form-group">
-		      <label for="password">密码</label>
-		      <input type="password" v-model="password" name="password" placeholder="请输入密码" />
-		    </div> -->
-        <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="60px" status-ico>
-          <el-form-item prop="username" label="账号"><el-input v-model="form.username"/></el-form-item>
-          <el-form-item prop="password" label="密码"><el-input type="password" v-model="form.password"/></el-form-item>
-        </el-form>
-		    <button type="button" @click="submitForm" >点击登录</button>
-		  </form>
-		
-		  <div class="register-link">
-		    没有账号？<router-link to="/register">这里注册</router-link>
-		  </div>
+      <el-form ref="formRef" :model="form" :rules="rules" label-position="center" label-width="60px" status-ico>
+        <label for="phone">账号</label>
+        <el-form-item prop="username"><el-input class="custom-input" resize="true" v-model="form.username"/></el-form-item>
+        <label for="phone">密码</label>
+        <el-form-item prop="password"><el-input class="custom-input" resize="true" type="password" v-model="form.password"/></el-form-item>
+      </el-form>
+		  <button type="button" @click="submitForm" style="margin-top: 20px;">点击登录</button>
+		</form>
+		<div class="register-link">
+		  没有账号？<router-link to="/register">这里注册</router-link>
+		</div>
 	</div>
 </template>
 
@@ -79,14 +71,20 @@ html, body {
   overflow: hidden; /* 禁止页面滚动 */
 }
 
+.form-container {
+  text-align: left;
+}
+
 .form-container h1 {
   text-align: center;
   color: #fff;
 }
 
-.form-group {
-  margin-bottom: 20px; /* 设置表单项目之间的垂直间距 */
-	margin-left:10%;
+.custom-input {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  height:60%;
+  width: 85%;
 }
 
 .form-container {
@@ -114,30 +112,27 @@ html, body {
   color: #007bff; /* 设置链接的文字颜色 */
 }
 
+
 label {
   display: block; /* 让标签元素独占一行 */
-  margin-bottom: 5px; /* 调整标签和输入框之间的垂直间距 */
+  margin-left: 13%;
   color:#fff;
 }
 
-input[type="text"],
-input[type="password"]
-{
-  width: 80%; /* 设置输入框宽度为100% */
-  padding: 10px; /* 调整输入框的内边距 */
-  border: 1px solid #ccc; /* 设置输入框的边框样式 */
-  border-radius: 4px; /* 设置输入框的圆角 */
-}
 
 button[type="button"] {
-  width: 77%;
+  width: 74%;
   padding: 10px 20px; /* 调整按钮的内边距 */
   background-color: #007bff; /* 设置按钮的背景颜色 */
   color: #fff; /* 设置按钮的文字颜色 */
   border: none; /* 移除按钮的边框 */
   border-radius: 4px; /* 设置按钮的圆角 */
   cursor: pointer; /* 设置按钮的鼠标样式为手型 */
-  margin-left: 10%;
+  margin-left: 13%;
+}
+
+.register-link {
+  margin-left: 13%;
 }
 
 .register-link a:hover {
