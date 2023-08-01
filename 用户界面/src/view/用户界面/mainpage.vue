@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { reactive, toRefs, ref, watch, inject } from 'vue'
 import { useRoute } from 'vue-router'
+import headnav from './nav.vue'
+
 const activeIndex = ref('1')
 const activeIndex2 = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
@@ -32,6 +34,7 @@ watch(() => route.path, (newPath, oldPath) => {
 
 
 <template>
+  <headnav></headnav>
   <div class="common-layout" >
     <el-container>
       <div class="container" v-if="showTitle">
