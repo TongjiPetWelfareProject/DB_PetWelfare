@@ -3,11 +3,13 @@ drop table comment_pet;
 drop table like_pet;
 drop table comment_post;
 drop table like_post;
+drop table post_images;
 drop table application;
 drop table treatment;
 drop table accommodate;
 drop table foster;
 drop table adopt;
+drop table adopt_apply;
 drop table donation;
 drop table forum_posts;
 drop table bulletin;
@@ -20,7 +22,7 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
   user_id varchar2(20) not null,
   user_name varchar2(20),
   password varchar2(16),
-  phone_number varchar2(20),--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
+  phone_number varchar2(20) unique,--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
   account_status varchar2(20),
   address varchar2(100),
   role varchar2(10) default 'User',
@@ -30,7 +32,7 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
     REGEXP_LIKE(password, '[0-9]') AND
     REGEXP_LIKE(password, '[a-z]') AND
     REGEXP_LIKE(password, '[A-Z]') AND
-    REGEXP_LIKE(password, '[!@#$%^&*()]')),
+    REGEXP_LIKE(password, '[!@#$%^&*().,=-——+/;:<>?]')),
     primary key(user_id),
     check(account_status in('Compliant','In Good Standing','Under Review','Warning Issued','Suspended','Probation','Banned','Appealing'))
 );
@@ -38,7 +40,8 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
 create table pet(
   pet_id varchar2(20) not null,
   pet_name varchar2(20),
-  breed varchar2(20),
+  species varchar2(20) default 'dog' check(species in('bird','dog','snake','cat','parrot','bear','goldfish')),
+  sex varchar2(1) default 'M' check( sex in('M','F')),
   psize varchar2(20) default 'small' check (psize in('small','large','medium')),
   birthdate DATE,
   avatar BLOB,
@@ -119,11 +122,12 @@ create table bulletin(
 create table forum_posts(
   post_id varchar2(20) not null,
   user_id varchar2(20) references user2(user_id),
+  heading varchar2(50),
   post_contents varchar2(1000) not null,
   read_count int default 0,
   like_num int default 0,
   comment_num int default 0,
-  censored CHAR(1) CHECK(censored in('Y','N')),
+  censored CHAR(1) default 'N' CHECK(censored in('Y','N')),
   post_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(post_id),
   constraint CHK_LEGAL2 check(read_count>=0 and like_num>=0 and comment_num>=0
@@ -140,8 +144,24 @@ create table donation(
   primary key(donor_id,donation_amount,donation_time)
 )partition by range(donation_time)interval(interval '1' year)
 (partition start_donate values less than(TIMESTAMP '2023-09-01 00:00:00'));
+CREATE TABLE adopt_apply (
+    adopter_id VARCHAR2(20)  REFERENCES user2(user_id),
+    adopter_gender VARCHAR2(1) CHECK (adopter_gender IN ('M', 'F')),
+    apply_date date default CURRENT_DATE, -- 领养时间（年月日）
+    species varchar2(20) default 'dog' check(species in('bird','dog','snake','cat','parrot','bear','goldfish')),
+    pet_experience VARCHAR2(1) CHECK (pet_experience IN ('Y', 'N')), 
+    long_term_care VARCHAR2(1) CHECK (long_term_care IN ('Y', 'N')), 
+    willing_to_treat VARCHAR2(1) CHECK (willing_to_treat IN ('Y', 'N')), 
+    daily_care_hours NUMERIC(2,0) CHECK (daily_care_hours between 0 and 24), 
+    primary_caregiver VARCHAR2(50),
+    family_population NUMERIC(2,0), 
+    has_children VARCHAR2(1) CHECK (has_children IN ('Y', 'N')), 
+    accept_visits VARCHAR2(1) CHECK (accept_visits IN ('Y', 'N')),
+    censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
+    PRIMARY KEY(adopter_id)
+);
 create table adopt(
-  adopter_id varchar2(20) references user2(user_id),
+  adopter_id varchar2(20) references adopt_apply(adopter_id),
   pet_id varchar2(20) references pet(pet_id),
   adoption_time DATE default CURRENT_DATE,
   primary key(adopter_id,pet_id)
@@ -186,6 +206,12 @@ create table application(
   primary key(pet_id,user_id,apply_time)
 )partition by range(apply_time)interval(interval '1' year)
 (partition start_apply values less than(TIMESTAMP '2023-09-01 00:00:00'));
+CREATE TABLE post_images (
+  image_id INT,
+  post_id varchar2(50),
+  image_data BLOB,
+  FOREIGN KEY (post_id) REFERENCES forum_posts(post_id)
+);
 create table like_post(
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
@@ -300,6 +326,9 @@ END;
 --建立用户UID的序列用于生成ID
 DROP SEQUENCE user_id_seq;
 CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
+--建立图片image_id的序列
+DROP SEQUENCE img_id_seq;
+CREATE SEQUENCE img_id_seq START WITH 1 INCREMENT BY 1;
 --生成用户的随机数据
 BEGIN
     FOR i IN 1..50 LOOP
@@ -347,7 +376,7 @@ INCREMENT BY   1;
 DECLARE 
     v_pet_id varchar2(20);
     v_pet_name varchar2(20);
-    v_breed varchar2(20);
+    v_species varchar2(20);
     v_birthdate date;
     v_avatar BLOB;
     v_health_state varchar2(15);
@@ -359,17 +388,13 @@ BEGIN
     BEGIN
         v_pet_id := pet_id_seq.NEXTVAL; -- 使用序列生成pet_id
         v_pet_name := DBMS_RANDOM.string('A', 10);
-        v_breed := CASE
-                      WHEN MOD(i,10)=0 THEN 'German Shepherd'
-                      WHEN MOD(i,10)=1 THEN 'Labrador Retriever'
-                      WHEN MOD(i,10)=2 THEN 'Golden Retriever'
-                      WHEN MOD(i,10)=3 THEN 'Bulldog'
-                      WHEN MOD(i,10)=4 THEN 'Beagle'
-                      WHEN MOD(i,10)=5 THEN 'Poodle'
-                      WHEN MOD(i,10)=6 THEN 'Rottweiler'
-                      WHEN MOD(i,10)=7 THEN 'Yorkshire Terrier'
-                      WHEN MOD(i,10)=8 THEN 'Boxer'
-                      ELSE 'Dachshund'
+        v_species := CASE
+                      WHEN MOD(i,6)=0 THEN 'dog'
+                      WHEN MOD(i,6)=1 THEN 'cat'
+                      WHEN MOD(i,6)=2 THEN 'goldfish'
+                      WHEN MOD(i,6)=3 THEN 'snake'
+                      WHEN MOD(i,6)=4 THEN 'bear'
+                      ELSE 'parrot'
                       END;
         v_birthdate := SYSDATE-(ROUND(DBMS_RANDOM.value(0, 20))*INTERVAL '1' YEAR);
         -- Assuming the file is stored on the server's file system
@@ -395,8 +420,8 @@ BEGIN
                      END;
         v_read_num := ROUND(DBMS_RANDOM.value(0, 100));
         
-        INSERT INTO pet(pet_id, pet_name, breed, birthdate, avatar, health_state, vaccine, read_num) 
-        VALUES (v_pet_id, v_pet_name, v_breed, v_birthdate, v_avatar, v_health_state, v_vaccine, v_read_num);
+        INSERT INTO pet(pet_id, pet_name, species, birthdate, avatar, health_state, vaccine, read_num) 
+        VALUES (v_pet_id, v_pet_name, v_species, v_birthdate, v_avatar, v_health_state, v_vaccine, v_read_num);
         EXCEPTION
             WHEN DUP_VAL_ON_INDEX THEN
                 NULL; -- 当唯一性约束违反时，忽略并继续
@@ -829,28 +854,6 @@ EXCEPTION
         RAISE;
 END;
 /
-DECLARE 
-    v_adopter_id varchar2(20);
-    v_pet_id varchar2(20);
-BEGIN
-    FOR i IN 1..10 LOOP
-    BEGIN
-        v_adopter_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        INSERT INTO adopt(adopter_id, pet_id) 
-        VALUES (v_adopter_id, v_pet_id);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
 Create or replace view vet_labor 
 as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
 from vet WITH CHECK OPTION;
@@ -858,7 +861,7 @@ Create or replace view employee_labor
 as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
 from employee WITH CHECK OPTION;
 create or replace view foster_window 
-as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,breed,pet.psize,duration,
+as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,species,pet.psize,duration,
 to_char(foster.start_year)||'-'||to_char(foster.start_month)||'-'||to_char(foster.start_day) as foster_start_date,
 TO_CHAR(
         TO_DATE(foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 'YYYY-MM-DD') + duration,
@@ -869,6 +872,15 @@ from foster
 join  pet on pet.pet_id=foster.pet_id join  user2 on fosterer=user_id join accommodate on accommodate.owner_id=foster.fosterer and accommodate.pet_id=foster.pet_id 
 join room on room.storey=accommodate.storey and
 room.compartment=accommodate.compartment;
+create or replace view verbosepost as 
+select forum_posts.post_id,forum_posts.user_id as poster,heading,read_count,comment_num,like_num,comment_post.user_id 
+as commenter,comment_post.comment_contents,forum_posts.post_contents,post_images.image_data,comment_post.comment_time 
+from forum_posts
+join post_images on post_images.post_id=forum_posts.post_id join comment_post on forum_posts.post_id = comment_post.post_id;
+create or replace view user_profile as select user2.user_id,coalesce(sum(forum_posts.like_num),0) as total_like,coalesce(sum(forum_posts.comment_num),0) as total_comment, 
+coalesce(sum(forum_posts.read_count),0) as clicks
+from user2 left outer join forum_posts on forum_posts.user_id=user2.user_id 
+group by user2.user_id order by total_like*10+total_comment*20+clicks desc;
 create or replace 
 TRIGGER trg_check_foster_censor_state
 AFTER UPDATE ON foster
@@ -924,6 +936,15 @@ BEGIN
 END;
 /
 BEGIN
+  -- Drop the job
+  DBMS_SCHEDULER.DROP_JOB(
+    job_name        => 'CHECK_FOSTER_DURATION_JOB',
+    force           => FALSE,
+    commit_semantics => 'TRANSACTIONAL'
+  );
+END;
+/
+BEGIN
   DBMS_SCHEDULER.CREATE_JOB (
     job_name        => 'CHECK_FOSTER_DURATION_JOB',
     job_type        => 'PLSQL_BLOCK',
@@ -935,3 +956,19 @@ BEGIN
   );
 END;
 /
+CREATE OR REPLACE FUNCTION comment_num_func(pid IN VARCHAR2) RETURN NUMBER IS
+    comment_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO comment_count
+    FROM comment_pet
+    WHERE pet_id = pid;
+
+    RETURN comment_count;
+END;
+/
+create or replace view  pet_profile as SELECT
+   p.read_num * 1 + p.like_num * 2 + comment_num_func(p.pet_id) * 5 + p.collect_num as popularity, p.*,
+    comment_num_func(p.pet_id) as comment_num,comment_pet.comment_contents,comment_pet.comment_time
+    
+FROM
+    pet p left outer join comment_pet  on comment_pet.pet_id=p.pet_id order by popularity desc;
