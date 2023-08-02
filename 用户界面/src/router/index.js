@@ -18,7 +18,7 @@ import pet_foster_table from '@/components/用户界面/pet_foster_table.vue'
 import post_details from '@/components/用户界面/post_details.vue'
 
 // 管理员界面路由配置
-// import manager from '@/view/管理员界面/manager.vue';
+import manager from '@/view/管理员界面/manager.vue';
 // import MyTableUser from '@/components/管理员界面/mytableuser.vue';
 // import MyTableEmployee from '@/components/管理员界面/mytableemployee.vue';
 // import PetCard from '@/components/管理员界面/petcard.vue';
@@ -57,6 +57,9 @@ const routes = [
     ] },
     { path: '/login', component: login},
     { path: '/register', component: register},
+    { path:'/manager', component: manager,children:[
+      // { path:'',component:}
+    ]   }
 ];
 
 const router = createRouter({

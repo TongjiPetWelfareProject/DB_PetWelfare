@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
@@ -22,11 +22,6 @@ const rules = {
     { min:6, max:14,message:'密码长度在6~14之间',trigger:'blur'}
   ]
 }
-
-const validateForm = () => {
-  usernameError.value = username.value.trim() === '';
-  passwordError.value = password.value.trim() === '';
-};
 
 const formRef = ref(null)
 

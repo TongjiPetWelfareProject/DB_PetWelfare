@@ -1,10 +1,13 @@
 <script setup>
 import { useUserStore } from '@/store/user';
+import { useRouter } from 'vue-router'
 const userStore = useUserStore();
+const router = useRouter();
 
 const confirm = () => {
     console.log('用户退出登录了')
     userStore.clearUserInfo()
+    router.push({path:'/login'})
 };
 </script>
 

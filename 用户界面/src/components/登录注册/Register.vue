@@ -97,7 +97,7 @@ const submitForm = async() => {
         </select>
 	    </div>
 
-      <div class="password-requirement">密码长度在8~16之间，必须包含数字、大小写字母、特殊字符（/!@#$%^&*()）</div>
+      <div class="password-requirement">密码长度在8~16之间，必须包含数字、大小写字母、特殊字符（!@#$%^&*()）</div>
 	  </div>
 	  <div class="right-half">
 	    <form>

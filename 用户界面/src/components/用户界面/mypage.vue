@@ -1,308 +1,42 @@
-<template>
-  <div class="common-layout">
-    <el-container>
-      <el-header style="height: 200px;">
-        <el-descriptions
-    class="margin-top"
-    title="我的信息"
-    :column="3"
-    :size="size"
-    border
-  >
-    <template #extra>
-      <el-button type="primary" @click="onEdit">编辑</el-button>
-    </template>
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <user />
-          </el-icon>
-         用户名
-        </div>
-      </template>
-     {{ user_name }}
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <iphone />
-          </el-icon>
-          Telephone
-        </div>
-      </template>
-      {{ phone_number }}
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <star />
-          </el-icon>
-          点赞量
-        </div>
-      </template>
-      {{ like_num }}
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <tickets />
-          </el-icon>
-          阅读量
-        </div>
-      </template>
-      {{ read_num }}
-    </el-descriptions-item>
-    <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <office-building />
-          </el-icon>
-         地址
-        </div>
-      </template>
-      {{ address }}
-      <!-- 上海市嘉定区曹安公路4800号 -->
-    </el-descriptions-item>
-  </el-descriptions>
-
-
-      </el-header>
-
-
-      <el-main>
-        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-        <el-tab-pane label="我的宠物" name="first">
-          <el-row :gutter="20">
-          
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的点赞</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count5" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name5 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的收藏</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count6" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name6 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-         <el-col :span="6">
-            <el-text class="mx-1" size="large">我的评论</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count7" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name7 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的浏览</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count8" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name8 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-            <br>
-          </el-col>
-
-          <div class="empty-column">
-          <!-- 需要空一列的代码 -->
-          </div>
-
-          <el-col :span="6">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <span>我的领养</span>
-                  <!-- <el-button class="button" text>Operation button</el-button> -->
-                </div>
-              </template>
-              <div v-for="o in 6" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:{{ pet_id1 }}</span>
-                <span v-if="o === 2">宠物名称：{{ pet_name9 }}</span>
-                <span v-if="o === 3">领养时间:{{ adoption_time }}</span>
-                
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <span>我的寄养</span>
-                  <!-- <el-button class="button" text>Operation button</el-button> -->
-                </div>
-              </template>
-              <div v-for="o in 7" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:{{ pet_id2 }}</span>
-                <span v-if="o === 2">宠物名称:{{ pet_name10 }}</span>
-                <span v-if="o === 3">寄养开始时间:{{start_year}}-{{start_month}}-{{start_day}}</span>
-                
-                
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="20">
-          
-          
-        </el-row>
-        </el-tab-pane>
-        <el-tab-pane label="我的论坛" name="second">
-          <el-row :gutter="20">
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的点赞</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count1" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name1 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的收藏</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count2" :key="i" class="infinite-list-item">
-              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name2 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-         <el-col :span="6">
-            <el-text class="mx-1" size="large">我的评论</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count3" :key="i" class="infinite-list-item">
-              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name3 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的浏览</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count4" :key="i" class="infinite-list-item">
-              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name4 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-        </el-row>
-        </el-tab-pane>
-        <el-tab-pane label="其他" name="third">
-          <el-row :gutter="20">
-          
-            <el-col :span="6">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <span>我的医疗</span>
-                  <!-- <el-button class="button" text>Operation button</el-button> -->
-                </div>
-              </template>
-              <div v-for="o in 7" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:{{ pet_id3 }}</span>
-                <span v-if="o === 2">宠物名称：{{ pet_name11 }}</span>
-                <span v-if="o === 3">医生ID：{{ doctor_id }}</span>                
-                <span v-if="o === 4">治疗ID:{{ vet_id }}</span>
-                
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <span>我的捐款</span>
-                  <!-- <el-button class="button" text>Operation button</el-button> -->
-                </div>
-              </template>
-              <div v-for="o in 3" :key="o" class="text item">
-                <span v-if="o === 1">捐款ID:{{ donor_id }}</span>
-                <span v-if="o === 2">捐款金额:{{ donation_amount }}</span>
-                <span v-if="o === 3">捐款时间:{{ donation_time }}</span>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-        </el-tab-pane>
-        
-      </el-tabs>
-
-       
-       
-         
-
-        
-      </el-main>
-      
-      
-    
-
-    
-    </el-container>
-    
-    
-  <div>
-	      <!-- 用户头像显示 -->
-		<img src="./assets/头像.jpg" class="avatar-container">
-	</div>
-   
-    
-  
-  </div>
-  
-  
-  
-
-</template>
-
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import axios from 'axios';
+import { useUserStore } from '@/store/user'
+import { userTotalLikeandReadAPI } from '@/api/userInfo'
 
+const userStore = useUserStore()
 const activeName = ref('first')
+const likesandread = ref({
+  likenum:0,
+  readnum:0
+})
+const likelist = ref([])
+const collectlist = ref([])
+const commentlist = ref([])
+
+const adoptlist = ref ([])
+const fosterlist = ref([])
+
+
+onMounted(()=>{
+  
+  // 获取用户总点赞量和阅读量
+  const getLikeandRead = async () => {
+  const res = await userTotalLikeandReadAPI(userStore.userInfo.User_ID)
+  // likesandread.value = res.data
+  }
+  // 获取用户喜欢的宠物列表
+  const getLikePet = async () => {
+    
+  }
+})
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
-import { computed} from 'vue'
-import {
-  Iphone,
-  Location,
-  OfficeBuilding,
-  Tickets,
-  User,
-  UserFilled,
-  Star
-} from '@element-plus/icons-vue'
+import { computed } from 'vue'
+import { Iphone, Location, OfficeBuilding, Tickets, User, UserFilled, Star } from '@element-plus/icons-vue'
 
 const tabPosition = ref('left')
 
@@ -341,7 +75,6 @@ const iconStyle = computed(() => {
   }
 })
 
-
 const blockMargin = computed(() => {
   const marginMap = {
     large: '32px',
@@ -353,15 +86,6 @@ const blockMargin = computed(() => {
   }
 })
 
-
-
-//added 2023/7/30
-
-const user_name = ref('柴犬奴')
-const phone_number = ref('13355719896')
-const like_num = ref(99)
-const read_num = ref(99)
-const address = ref('上海市嘉定区曹安公路4800号')
 const pet_name1 = ref('乐乐')
 const pet_name2 = ref('乐乐')
 const pet_name3 = ref('乐乐')
@@ -385,50 +109,6 @@ const adoption_time = ref(2023-5-2)
 const start_year = ref(2022)
 const start_month = ref(12)
 const start_day = ref(19)
-
-
-axios.get('/api/user')
-        .then(response => {
-          user_name.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-axios.get('/api/user')
-        .then(response => {
-          phone_number.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          like_num.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          read_num.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          address.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
 
 //我的论坛
 axios.get('/api/like-list')
@@ -658,6 +338,235 @@ axios.get('/api/treatment')
 //编辑按钮跳转到个人信息编辑页面还没有实现（ps：ysj暑期实习也要做网页和网站，现在有点忙）
 
 </script>
+
+<template>
+  <div class="common-layout">
+    <el-container>
+      <el-header style="height: 200px;">
+        <el-descriptions class="margin-top" title="我的信息" :column="3" :size="size" border>
+          <template #extra>
+            <el-button type="primary" @click="onEdit">编辑</el-button>
+          </template>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item"><el-icon :style="iconStyle"><user /></el-icon>用户名</div>
+            </template>
+            {{ userStore.userInfo.User_Name }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item"><el-icon :style="iconStyle"><iphone /></el-icon>Telephone</div>
+            </template>
+            {{ userStore.userInfo.Phone_Number }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item"><el-icon :style="iconStyle"><star /></el-icon>点赞量</div>
+            </template>
+            {{ likesandread.likenum }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item"><el-icon :style="iconStyle"><tickets /></el-icon>阅读量</div>
+            </template>
+            {{ likesandread.readnum }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template #label>
+              <div class="cell-item"><el-icon :style="iconStyle"><office-building /></el-icon>地址</div>
+            </template>
+            {{ userStore.userInfo.Address }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </el-header>
+
+      <el-main>
+        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+          <el-tab-pane label="我的宠物" name="first">
+            <el-row :gutter="20">
+            
+              <el-col :span="6">
+                <el-text class="mx-1" size="large">我的点赞</el-text>
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                <li v-for="i in count5" :key="i" class="infinite-list-item">
+                    <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name5 }}</span>
+                    <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                    <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
+                </li>
+                </ul>
+              </el-col>
+
+              <el-col :span="6">
+                <el-text class="mx-1" size="large">我的收藏</el-text>
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                <li v-for="i in count6" :key="i" class="infinite-list-item">
+                    <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name6 }}</span>
+                    <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                    <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
+                </li>
+                </ul>
+              </el-col>
+
+            <el-col :span="6">
+                <el-text class="mx-1" size="large">我的评论</el-text>
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                <li v-for="i in count7" :key="i" class="infinite-list-item">
+                    <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name7 }}</span>
+                    <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                    <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
+                </li>
+                </ul>
+              </el-col>
+
+              <el-col :span="6">
+                <el-text class="mx-1" size="large">我的浏览</el-text>
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                <li v-for="i in count8" :key="i" class="infinite-list-item">
+                    <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name8 }}</span>
+                    <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                    <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
+                </li>
+                </ul>
+                <br>
+              </el-col>
+
+              <div class="empty-column">
+              <!-- 需要空一列的代码 -->
+              </div>
+
+              <el-col :span="6">
+                <el-card class="box-card">
+                  <template #header>
+                    <div class="card-header">
+                      <span>我的领养</span>
+                      <!-- <el-button class="button" text>Operation button</el-button> -->
+                    </div>
+                  </template>
+                  <div v-for="o in 6" :key="o" class="text item">
+                    <span v-if="o === 1">宠物ID:{{ pet_id1 }}</span>
+                    <span v-if="o === 2">宠物名称：{{ pet_name9 }}</span>
+                    <span v-if="o === 3">领养时间:{{ adoption_time }}</span>
+                    
+                  </div>
+                </el-card>
+              </el-col>
+
+
+              <el-col :span="6">
+                <el-card class="box-card">
+                  <template #header>
+                    <div class="card-header">
+                      <span>我的寄养</span>
+                      <!-- <el-button class="button" text>Operation button</el-button> -->
+                    </div>
+                  </template>
+                  <div v-for="o in 7" :key="o" class="text item">
+                    <span v-if="o === 1">宠物ID:{{ pet_id2 }}</span>
+                    <span v-if="o === 2">宠物名称:{{ pet_name10 }}</span>
+                    <span v-if="o === 3">寄养开始时间:{{start_year}}-{{start_month}}-{{start_day}}</span>                
+                  </div>
+                </el-card>
+              </el-col>
+
+            </el-row>
+            <el-row :gutter="20">
+              
+            </el-row>
+          </el-tab-pane>
+          <el-tab-pane label="我的论坛" name="second">
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <el-text class="mx-1" size="large">我的点赞</el-text>
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                <li v-for="i in count1" :key="i" class="infinite-list-item">
+                    <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name1 }}</span>
+                    <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                    <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
+                </li>
+                </ul>
+              </el-col>
+
+              <el-col :span="6">
+                <el-text class="mx-1" size="large">我的收藏</el-text>
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                <li v-for="i in count2" :key="i" class="infinite-list-item">
+                  <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name2 }}</span>
+                    <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                    <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
+                </li>
+                </ul>
+              </el-col>
+
+              <el-col :span="6">
+                <el-text class="mx-1" size="large">我的评论</el-text>
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                <li v-for="i in count3" :key="i" class="infinite-list-item">
+                  <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name3 }}</span>
+                    <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                    <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
+                </li>
+                </ul>
+              </el-col>
+
+              <el-col :span="6">
+                <el-text class="mx-1" size="large">我的浏览</el-text>
+                <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                <li v-for="i in count4" :key="i" class="infinite-list-item">
+                  <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name4 }}</span>
+                    <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
+                    <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
+                </li>
+                </ul>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+
+          <el-tab-pane label="其他" name="third">
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <el-card class="box-card">
+                  <template #header>
+                    <div class="card-header">
+                      <span>我的医疗</span>
+                      <!-- <el-button class="button" text>Operation button</el-button> -->
+                    </div>
+                  </template>
+                  <div v-for="o in 7" :key="o" class="text item">
+                    <span v-if="o === 1">宠物ID:{{ pet_id3 }}</span>
+                    <span v-if="o === 2">宠物名称：{{ pet_name11 }}</span>
+                    <span v-if="o === 3">医生ID：{{ doctor_id }}</span>                
+                    <span v-if="o === 4">治疗ID:{{ vet_id }}</span>
+                    
+                  </div>
+                </el-card>
+              </el-col>
+              <el-col :span="6">
+                <el-card class="box-card">
+                  <template #header>
+                    <div class="card-header">
+                      <span>我的捐款</span>
+                      <!-- <el-button class="button" text>Operation button</el-button> -->
+                    </div>
+                  </template>
+                  <div v-for="o in 3" :key="o" class="text item">
+                    <span v-if="o === 1">捐款ID:{{ donor_id }}</span>
+                    <span v-if="o === 2">捐款金额:{{ donation_amount }}</span>
+                    <span v-if="o === 3">捐款时间:{{ donation_time }}</span>
+                  </div>
+                </el-card>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+        </el-tabs>
+      </el-main>
+    </el-container>
+
+    <div>
+      <!-- 用户头像显示 -->
+      <img src="./photos/头像.jpg" class="avatar-container">
+    </div>
+  </div>
+</template>
 
 <style>
 .el-descriptions {

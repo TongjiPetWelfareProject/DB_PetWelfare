@@ -38,33 +38,32 @@ watch(() => route.path, (newPath, oldPath) => {
   <div class="common-layout" >
     <el-container>
       <div class="container" v-if="showTitle">
-   <div class="left">
-      <div class="tableitem" >
-        <img src="main_icon.jpg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
-        <p class="welcome-text">同济宠物救助中心</p>
+        <div class="left">
+          <div class="tableitem" >
+            <img src="main_icon.jpg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
+            <p class="welcome-text">同济宠物救助中心</p>
+          </div>
+        </div>
       </div>
-    </div>
-
-</div>
-  <el-header v-if="showHeader">
-    <el-menu
-    :default-active="activeIndex2"
-    class="el-menu-demo"
-    mode="horizontal"
-    background-color="#545c64"
-    text-color="#fff"
-    active-text-color="#ffd04b"
-    @select="handleSelect"
-    router
-  >
-    <el-menu-item index="/">首页</el-menu-item>
-    <el-menu-item index="/pet_foster">寄养</el-menu-item>
-    <el-menu-item index="/pet_adopt">领养</el-menu-item>
-    <el-menu-item index="/donate">捐款</el-menu-item>
-    <el-menu-item index="/forum">论坛</el-menu-item>
-    <el-menu-item index="/medical">医疗</el-menu-item>
-    <el-menu-item index="/notice">公告</el-menu-item>
-  </el-menu>
+      <el-header v-if="showHeader">
+        <el-menu
+        :default-active="activeIndex2"
+        class="el-menu-demo"
+        mode="horizontal"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
+        @select="handleSelect"
+        router
+        >
+          <el-menu-item index="/">首页</el-menu-item>
+          <el-menu-item index="/pet_foster">寄养</el-menu-item>
+          <el-menu-item index="/pet_adopt">领养</el-menu-item>
+          <el-menu-item index="/donate">捐款</el-menu-item>
+          <el-menu-item index="/forum">论坛</el-menu-item>
+          <el-menu-item index="/medical">医疗</el-menu-item>
+          <el-menu-item index="/notice">公告</el-menu-item>
+        </el-menu>
       </el-header>
       <el-main>
         <router-view></router-view>
