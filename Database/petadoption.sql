@@ -22,7 +22,7 @@ create table user2(--since table name 'user' is not valid in that it'a a interna
   user_id varchar2(20) not null,
   user_name varchar2(20),
   password varchar2(16),
-  phone_number varchar2(20),--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
+  phone_number varchar2(20) unique,--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
   account_status varchar2(20),
   address varchar2(100),
   role varchar2(10) default 'User',
@@ -877,6 +877,10 @@ select forum_posts.post_id,forum_posts.user_id as poster,heading,read_count,comm
 as commenter,comment_post.comment_contents,forum_posts.post_contents,post_images.image_data,comment_post.comment_time 
 from forum_posts
 join post_images on post_images.post_id=forum_posts.post_id join comment_post on forum_posts.post_id = comment_post.post_id;
+create or replace view user_profile as select user2.user_id,coalesce(sum(forum_posts.like_num),0) as total_like,coalesce(sum(forum_posts.comment_num),0) as total_comment, 
+coalesce(sum(forum_posts.read_count),0) as clicks
+from user2 left outer join forum_posts on forum_posts.user_id=user2.user_id 
+group by user2.user_id order by total_like*10+total_comment*20+clicks desc;
 create or replace 
 TRIGGER trg_check_foster_censor_state
 AFTER UPDATE ON foster
