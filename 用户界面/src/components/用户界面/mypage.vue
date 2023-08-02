@@ -615,13 +615,6 @@ axios.get('/api/treatment')
   height:350px;
 }
 
-/* .common-layout {
-  background-image: url(assets/两只狗勾.jpg);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-} */
-
 .demo-type {
   display: flex;
 }
@@ -636,8 +629,8 @@ axios.get('/api/treatment')
 
 .avatar-container {
 	  position: absolute;
-    top:20px;
-	  left: 100px;
+    top: 20px;
+	  left: 40px;
 	  width: 50px;
 	  height: 50px;
 	  border-radius: 999px; /* 将border-radius设置为很大的值，使容器变成圆形 */
