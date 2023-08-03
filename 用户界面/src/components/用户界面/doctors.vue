@@ -1,11 +1,10 @@
 <template>
   <el-text size="large" tag="b">医生团队</el-text>
   <div width=50%>
-    <el-carousel :interval="4000" type="card" height="200px" max-width="200" >
+    <el-carousel :interval="4000" type="card" height="250px" max-width="200" >
       <div>
-        <el-carousel-item v-for="item in 3" :key="item">
-       <img  class="imgdoctor" style="height:200px;width:500px" src="https://img0.baidu.com/it/u=2912136480,2206555971&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800">
-     <!-- <el-text>hahahaha</el-text> -->
+        <el-carousel-item v-for="doctor in doctors" :key="doctor.id">
+        <img class="imgdoctor" :src="doctor.photoUrl" style="height: 250px; width: 500px" />
    </el-carousel-item>
       </div> 
     </el-carousel>
@@ -33,3 +32,29 @@
   }
 
   </style>
+
+
+<script>
+import medical_donate from '@/api/medical_donate';
+import{defineComponent, ref, onMounted }from 'vue';
+
+export default defineComponent({
+  setup() {
+    const doctors = ref([]);
+
+    // 在组件挂载后获取医生数据
+    onMounted(async () => {
+      try {
+        doctors.value = await medical_donate.doctorsAPI();
+      } catch (error) {
+        console.error('获取医生数据时出错：', error);
+      }
+    });
+
+    return {
+      doctors,
+    };
+  },
+});
+
+</script>
