@@ -1,19 +1,19 @@
 <template>
   <div>
     <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
-      <el-table-column prop="id" label="宠物ID" width="180" />
-      <el-table-column prop="name" label="宠物名字" width="180" />
-      <el-table-column prop="views" label="阅读量" width="190" sortable :sort-method="sortViews" />
-      <el-table-column prop="likes" label="点赞量" width="190" sortable :sort-method="sortLikes" />
+      <el-table-column prop="id" label="宠物ID" width="200" />
+      <el-table-column prop="name" label="宠物名字" width="200" />
+      <el-table-column prop="views" label="阅读量" width="220" sortable :sort-method="sortViews" />
+      <el-table-column prop="likes" label="点赞量" width="220" sortable :sort-method="sortLikes" />
       <el-table-column type="selection" width="155" />
-      <el-table-column label="操作" width="180">
+      <!-- <el-table-column label="操作" width="180">
         <template v-slot="scope">
           <el-button size="mini" type="danger" @click="deleteRow(scope.row)">删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <br>
-    <!-- <el-button type="primary" @click="addEmptyRow">添加</el-button> -->
+    <el-button type="primary" @click="addEmptyRow">发布</el-button>
   </div>
 </template>
 
@@ -34,10 +34,15 @@ export default {
       { id: "003", name: '胡儿', views: 150, likes: 60 },
       { id: "004", name: 'ponki', views: 120, likes: 70 },
       { id: "005", name: 'rudy', views: 180, likes: 90 },
+      { id: "006", name: '点点', views: 100, likes: 50 },
+      { id: "007", name: '米多', views: 200, likes: 80 },
+      { id: "008", name: '胡儿', views: 150, likes: 60 },
+      { id: "009", name: 'ponki', views: 120, likes: 70 },
+      { id: "010", name: 'rudy', views: 180, likes: 90 },
     ])
 
     const handleSelectionChange = (selectedItems) => {
-      console.log(selectedItems)
+    //  console.log(selectedItems)
     }
 
     const sortViews = (a, b) => {

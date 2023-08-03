@@ -1,19 +1,19 @@
 <template>
   <div>
     <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
-      <el-table-column prop="donationId" label="捐赠ID" width="180"></el-table-column>
-      <el-table-column prop="userId" label="用户ID" width="180"></el-table-column>
-      <el-table-column prop="donationTime" label="捐赠时间" width="200" sortable :sort-method="sortTime"></el-table-column>
-      <el-table-column prop="donationAmount" label="捐赠金额" width="120" sortable></el-table-column>
-      <el-table-column label="操作" width="180">
+      <el-table-column prop="donationId" label="捐赠ID" width="200"></el-table-column>
+      <el-table-column prop="userId" label="用户ID" width="200"></el-table-column>
+      <el-table-column prop="donationTime" label="捐赠时间" width="280" sortable :sort-method="sortTime"></el-table-column>
+      <el-table-column prop="donationAmount" label="捐赠金额" width="180" sortable></el-table-column>
+      <!-- <el-table-column label="操作" width="180">
         <template v-slot="scope">
           <el-button size="mini" type="primary" @click="editRow(scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.row)">删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <br>
-    <el-button type="primary" @click="addEmptyRow">添加</el-button>
+    <!-- <el-button type="primary" @click="addEmptyRow">添加</el-button> -->
   </div>
 </template>
 
