@@ -19,8 +19,9 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
+import gg_rqb_jk from '../api/gg_rqb_jk'
 
 export default {
   components: {
@@ -29,13 +30,7 @@ export default {
   },
   setup() {
     const tableRef = ref(null)
-    const tableData = ref([
-      { id: "001", title: '公告1', content: '这是公告1的内容', time: '2021-10-01', employeeId: '001' },
-      { id: "002", title: '公告2', content: '这是公告2的内容', time: '2021-10-02', employeeId: '002' },
-      { id: "003", title: '公告3', content: '这是公告3的内容', time: '2021-10-03', employeeId: '003' },
-      { id: "004", title: '公告4', content: '这是公告4的内容', time: '2021-10-04', employeeId: '004' },
-      { id: "005", title: '公告5', content: '这是公告5的内容', time: '2021-10-05', employeeId: '005' },
-    ])
+    const tableData = ref([])
 
     const sortTime = (a, b) => {
       return new Date(a.time) - new Date(b.time)
@@ -70,6 +65,15 @@ export default {
     const editRow = (row) => {
       console.log('编辑行', row)
     }
+    
+    onMounted(async () => {
+      try {
+        const records = await gg_rqb_jk.getNoticeAPI();
+        tableData.value = records;
+      } catch (error) {
+        console.error('获取公告数据时出错：', error);
+      }
+    });
 
     return {
       tableRef,

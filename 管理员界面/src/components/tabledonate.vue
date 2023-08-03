@@ -18,8 +18,9 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
+import gg_rqb_jk from '../api/gg_rqb_jk'
 
 export default {
   components: {
@@ -72,6 +73,15 @@ export default {
     const editRow = (row) => {
       console.log('编辑行', row)
     }
+
+    onMounted(async () => {
+      try {
+        const records = await gg_rqb_jk.getDonationAPI();
+        tableData.value = records;
+      } catch (error) {
+        console.error('获取捐款数据时出错：', error);
+      }
+    });
 
     return {
       tableRef,
