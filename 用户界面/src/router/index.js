@@ -19,18 +19,18 @@ import post_details from '@/components/用户界面/post_details.vue'
 
 // 管理员界面路由配置
 import manager from '@/view/管理员界面/manager.vue';
-// import MyTableUser from '@/components/管理员界面/mytableuser.vue';
-// import MyTableEmployee from '@/components/管理员界面/mytableemployee.vue';
-// import PetCard from '@/components/管理员界面/petcard.vue';
-// import MyTableDoctor from '@/components/管理员界面/mytabledoctor.vue';
-// import TableFoster from '@/components/管理员界面/tablefoster.vue';
-// import TableAdopt from '@/components/管理员界面/tableadopt.vue';
-// import TableHot from '@/components/管理员界面/ablehot.vue';
-// import TableNotice from '@/components/管理员界面/tablenotice.vue';
-// import TableMedical from '@/components/管理员界面/tablemedical.vue';
-// import TableCheck from '@/components/管理员界面/tablecheck.vue';
-// import TableRoom from '@/components/管理员界面/tableroom.vue';
-// import TableDonate from '@/components/管理员界面/tabledonate.vue';
+import MyTableUser from '@/components/管理员界面/mytableuser.vue';
+import MyTableEmployee from '@/components/管理员界面/mytableemployee.vue';
+import PetCard from '@/components/管理员界面/petcard.vue';
+import MyTableDoctor from '@/components/管理员界面/mytabledoctor.vue';
+import TableFoster from '@/components/管理员界面/tablefoster.vue';
+import TableAdopt from '@/components/管理员界面/tableadopt.vue';
+import TableHot from '@/components/管理员界面/tablehot.vue';
+import TableNotice from '@/components/管理员界面/tablenotice.vue';
+import TableMedical from '@/components/管理员界面/tablemedical.vue';
+import TableCheck from '@/components/管理员界面/tablecheck.vue';
+import TableRoom from '@/components/管理员界面/tableroom.vue';
+import TableDonate from '@/components/管理员界面/tabledonate.vue';
 
 //登录注册路由配置
 import login from '@/components/登录注册/Login.vue'
@@ -58,8 +58,19 @@ const routes = [
     { path: '/login', component: login},
     { path: '/register', component: register},
     { path:'/manager', component: manager,children:[
-      // { path:'',component:}
-    ]   }
+      { path: '/mytableuser', component: MyTableUser },
+      { path: '/mytableemployee', component: MyTableEmployee },
+      { path: '/petcard', component: PetCard },
+      { path: '/mytabledoctor', component: MyTableDoctor },
+      { path: '/tablefoster', component: TableFoster },
+      { path: '/tableadopt', component: TableAdopt },
+      { path: '/tablehot', component: TableHot },
+      { path: '/tablenotice', component: TableNotice },
+      { path: '/tabledonate', component: TableDonate },
+      { path: '/tablecheck', component: TableCheck },
+      { path: '/tablemedical', component: TableMedical },
+      { path: '/tableroom', component: TableRoom },
+    ]}
 ];
 
 const router = createRouter({
