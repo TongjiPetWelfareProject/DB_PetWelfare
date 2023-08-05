@@ -72,11 +72,12 @@
 
 </style>
 
-<script setup>
+<script lang="ts" setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ref,onMounted } from 'vue'
-import {Coin} from '@element-plus/icons-vue'
-import medical_donate from '@/api/medical_donate'
+import { ref } from 'vue'
+import {
+  Coin
+} from '@element-plus/icons-vue'
 
 const tabPosition = ref('left')
 const urls = [
@@ -89,88 +90,68 @@ const urls = [
   'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
 ]
 
-// const tableData = [
-//   {
-//     time: '2023-05-03 10:23',
-//     name: '白云揉碎',
-//     amount: '100',
-//   },
-//   {
-//     time: '2023-05-8 12:09',
-//     name: '**',
-//     amount: '300',
-//   },
-//   {
-//     time: '2023-05-11 11:12',
-//     name: 'Aimee_',
-//     amount: '200',
-//   },
-//   {
-//     time: '2023-05-11 11:12',
-//     name: '湫月',
-//     amount: '50',
-//   },
-//   {
-//     time: '2023-05-03 10:23',
-//     name: '白云揉碎',
-//     amount: '100',
-//   },
-//   {
-//     time: '2023-05-8 12:09',
-//     name: '**',
-//     amount: '300',
-//   },
-//   {
-//     time: '2023-05-11 11:12',
-//     name: 'Aimee_',
-//     amount: '200',
-//   },
-//   {
-//     time: '2023-05-11 11:12',
-//     name: '湫月',
-//     amount: '50',
-//   },
-// ]
+const tableData = [
+  {
+    time: '2023-05-03 10:23',
+    name: '白云揉碎',
+    amount: '100',
+  },
+  {
+    time: '2023-05-8 12:09',
+    name: '**',
+    amount: '300',
+  },
+  {
+    time: '2023-05-11 11:12',
+    name: 'Aimee_',
+    amount: '200',
+  },
+  {
+    time: '2023-05-11 11:12',
+    name: '湫月',
+    amount: '50',
+  },
+  {
+    time: '2023-05-03 10:23',
+    name: '白云揉碎',
+    amount: '100',
+  },
+  {
+    time: '2023-05-8 12:09',
+    name: '**',
+    amount: '300',
+  },
+  {
+    time: '2023-05-11 11:12',
+    name: 'Aimee_',
+    amount: '200',
+  },
+  {
+    time: '2023-05-11 11:12',
+    name: '湫月',
+    amount: '50',
+  },
+]
 
-const open = async () => {
-  try {
-    const { value } = await ElMessageBox.prompt('请输入捐款金额', '捐款', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      inputPattern: /^\d+$/,
-      inputErrorMessage: '请输入数字',
-    });
-    // 用户点击确定按钮后调用 donateAPI 函数发送捐款金额到后端
-    const response = await medical_donate.donateAPI(value);
-
-    ElMessage({
-      type: 'success',
-      message: `捐款成功，金额为：${response.amount}`,
-    });
-  } catch (error) {
-    if (error === 'cancel') {
+const open = () => {
+  ElMessageBox.prompt('请输入捐款金额', '捐款', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    inputPattern: /^\d+$/ ,
+    inputErrorMessage: '请输入数字',
+  })
+    .then(({ value }) => {
+      ElMessage({
+        type: 'success',
+        message: `您输入的金额是：${value}`,
+      })
+    })
+    .catch(() => {
       ElMessage({
         type: 'info',
         message: '取消捐款',
-      });
-    } else {
-      ElMessage({
-        type: 'error',
-        message: `捐款失败：${error.message}`,
-      });
-    }
-  }
-};
-
-const tableData = ref([]);
-
-onMounted(async () => {
-  try {
-    const records = await medical_donate.donationRecordsAPI();
-    tableData.value = records;
-  } catch (error) {
-    console.error('获取捐助记录数据时出错：', error);
-  }
-});
+      })
+    })
+}
 
 </script>
