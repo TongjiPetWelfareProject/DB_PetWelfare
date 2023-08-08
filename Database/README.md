@@ -9,11 +9,9 @@ SELECT name FROM v$pdbs;
 ```sql
 ALTER PLUGGABLE DATABASE pdborcl OPEN;
 ```
-然后，你可以使用以下的SQL命令连接到你的PDB）：
-```sql
-ALTER SESSION SET container = pdborcl;---默认为pdborcl
-```
-但是我们只有在CDB下才能够创建用户
+然后，你可以使用以下的SQL命令连接到你的PDB）,
+
+注意我们只有在CDB下才能够创建用户（PDB下是不能的）
 ```sql
 ALTER SESSION SET CONTAINER = cdb$root;
 CREATE USER c##pet IDENTIFIED BY campus;
@@ -34,7 +32,7 @@ GRANT CREATE SESSION TO c##pet;
 GRANT CREATE VIEW TO c##pet;
 GRANT CREATE TRIGGER TO c##pet;
 GRANT UNLIMITED TABLESPACE TO c##pet;-- 为用户在所有表空间上赋予无限制的配额
-GRANT CREATE SEQUENCE TO c##petrescue;
+GRANT CREATE SEQUENCE TO c##pet;
 GRANT CREATE MATERIALIZED VIEW TO c##pet;
 CREATE OR REPLACE DIRECTORY my_dir AS 'D:/Desktop';--将D:/Desktop转化为存储图片的路径
 GRANT READ, WRITE ON DIRECTORY my_dir TO c##pet;
