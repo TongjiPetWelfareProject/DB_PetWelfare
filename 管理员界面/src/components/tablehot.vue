@@ -29,16 +29,16 @@ export default {
   setup() {
     const tableRef = ref(null)
     const tableData = ref([
-      { id: "001", name: '点点', views: 100, likes: 50 },
-      { id: "002", name: '米多', views: 200, likes: 80 },
-      { id: "003", name: '胡儿', views: 150, likes: 60 },
-      { id: "004", name: 'ponki', views: 120, likes: 70 },
-      { id: "005", name: 'rudy', views: 180, likes: 90 },
-      { id: "006", name: '点点', views: 100, likes: 50 },
-      { id: "007", name: '米多', views: 200, likes: 80 },
-      { id: "008", name: '胡儿', views: 150, likes: 60 },
-      { id: "009", name: 'ponki', views: 120, likes: 70 },
-      { id: "010", name: 'rudy', views: 180, likes: 90 },
+      // { id: "001", name: '点点', views: 100, likes: 50 },
+      // { id: "002", name: '米多', views: 200, likes: 80 },
+      // { id: "003", name: '胡儿', views: 150, likes: 60 },
+      // { id: "004", name: 'ponki', views: 120, likes: 70 },
+      // { id: "005", name: 'rudy', views: 180, likes: 90 },
+      // { id: "006", name: '点点', views: 100, likes: 50 },
+      // { id: "007", name: '米多', views: 200, likes: 80 },
+      // { id: "008", name: '胡儿', views: 150, likes: 60 },
+      // { id: "009", name: 'ponki', views: 120, likes: 70 },
+      // { id: "010", name: 'rudy', views: 180, likes: 90 },
     ])
 
     const handleSelectionChange = (selectedItems) => {

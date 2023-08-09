@@ -14,6 +14,7 @@
     </el-table>
     <br>
     <!-- <el-button type="primary" @click="addEmptyRow">添加</el-button> -->
+    <el-pagination layout="prev, pager, next" :total="1000" />
   </div>
 </template>
 
@@ -30,11 +31,11 @@ export default {
   setup() {
     const tableRef = ref(null)
     const tableData = ref([
-      { donationId: "001", userId: '1001', donationTime: '2021-10-01', donationAmount: '100' },
-      { donationId: "002", userId: '1002', donationTime: '2021-10-02', donationAmount: '200' },
-      { donationId: "003", userId: '1003', donationTime: '2021-10-03', donationAmount: '300' },
-      { donationId: "004", userId: '1004', donationTime: '2021-10-04', donationAmount: '400' },
-      { donationId: "005", userId: '1005', donationTime: '2021-10-05', donationAmount: '500' },
+      // { donationId: "001", userId: '1001', donationTime: '2021-10-01', donationAmount: '100' },
+      // { donationId: "002", userId: '1002', donationTime: '2021-10-02', donationAmount: '200' },
+      // { donationId: "003", userId: '1003', donationTime: '2021-10-03', donationAmount: '300' },
+      // { donationId: "004", userId: '1004', donationTime: '2021-10-04', donationAmount: '400' },
+      // { donationId: "005", userId: '1005', donationTime: '2021-10-05', donationAmount: '500' },
     ])
 
     const handleSelectionChange = (selectedItems) => {
