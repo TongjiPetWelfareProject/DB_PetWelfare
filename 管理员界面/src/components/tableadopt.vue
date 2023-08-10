@@ -37,9 +37,9 @@
 import { ref, computed ,onMounted} from 'vue'
 import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElTag } from 'element-plus'
 import axios from 'axios'
+import { fetchAdoptionRecords, updateAdoptionRecord } from '../api/jy_ly_jk.js'; 
 interface AdoptionRecord {
   date: string
-  Id:string
   petId: string
   userId: string
   reason: string
@@ -49,8 +49,9 @@ const tableData = ref<AdoptionRecord[]>([])
 
 const fetchData = async () => {
   try {
-    const response = await axios.get('/api/manage-adopt');
-    tableData.value = response.data; // 假设API返回一个符合AdoptionRecord结构的对象数组
+    // const response = await axios.get('/api/manage-adopt');
+    // tableData.value = response.data; // 假设API返回一个符合AdoptionRecord结构的对象数组
+    tableData.value = await fetchAdoptionRecords();
   } catch (error) {
     console.error('获取数据时出错：', error);
   }
@@ -67,7 +68,9 @@ const approveApplication = async (index: number) => {
   recordToUpdate.censor_status = 'abored';
 
   try {
-    await axios.patch(`/api/manage-adopt-update/${recordToUpdate.Id}`, { censor_status: 'abored' });
+    // const { date, petId, userId } = recordToUpdate;
+    // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'abored' });
+    await updateAdoptionRecord(recordToUpdate);
   } catch (error) {
     console.error('更新数据时出错：', error);
     recordToUpdate.censor_status = 'to be censored';
@@ -81,7 +84,9 @@ const rejectApplication = async(index: number) => {
   recordToUpdate.censor_status = 'legitimate';
 
   try {
-    await axios.patch(`/api/manage-adopt-update/${recordToUpdate.Id}`, { censor_status: 'legitimate' });
+    // const { date, petId, userId } = recordToUpdate;
+    // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'legitimate' });
+    await updateAdoptionRecord(recordToUpdate);
   } catch (error) {
     console.error('更新数据时出错：', error);
     recordToUpdate.censor_status = 'to be censored';
