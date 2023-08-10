@@ -36,11 +36,10 @@
 <script setup lang="ts">
 import { ref, computed , onMounted } from 'vue'
 import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElTag } from 'element-plus'
-import axios from 'axios'
+import { fetchFosterRecords, updateFosterRecord } from '../api/jy_ly_jk.js'; // Import the new api.js file
 
 interface FosterRecord {
   date: string
-  id:string
   petId: string
   userId: string
   days: number
@@ -51,8 +50,9 @@ const tableData = ref<FosterRecord[]>([])
 
 const fetchData = async () => {
   try {
-    const response = await axios.get('/api/manage-foster');
-    tableData.value = response.data; // 假设API返回一个符合AdoptionRecord结构的对象数组
+    tableData.value = await fetchFosterRecords();
+    // const response = await axios.get('/api/manage-foster');
+    // tableData.value = response.data; // 假设API返回一个符合AdoptionRecord结构的对象数组
   } catch (error) {
     console.error('获取数据时出错：', error);
   }
@@ -70,8 +70,10 @@ const approveApplication = async(index: number) => {
   recordToUpdate.censor_status = 'abored';
 
   try {
-    await axios.patch(`/api/manage-foster-update/${recordToUpdate.id}`, { censor_status: 'abored' });
-
+    await updateFosterRecord(recordToUpdate);
+    // const { date, petId, userId } = recordToUpdate;
+    // // await axios.patch(`/api/manage-foster-update/${recordToUpdate.id}`, { censor_status: 'abored' });
+    // await axios.patch(`/api/manage-foster-update`, { date, petId, userId, censor_status: 'abored' });
   } catch (error) {
     console.error('更新数据时出错：', error);
     recordToUpdate.censor_status = 'to be censored';
@@ -85,12 +87,15 @@ const rejectApplication = async(index: number) => {
   recordToUpdate.censor_status = 'legitimate';
 
   try {
-    await axios.patch(`/api/manage-foster-update/${recordToUpdate.id}`, { censor_status: 'legitimate' });
+    await updateFosterRecord(recordToUpdate);
+    // const { date, petId, userId } = recordToUpdate;
+    // await axios.patch(`/api/manage-foster-update`, { date, petId, userId, censor_status: 'legitimate' });
+    // await axios.patch(`/api/manage-foster-update/${recordToUpdate.id}`, { censor_status: 'legitimate' });
 
   } catch (error) {
     console.error('更新数据时出错：', error);
     recordToUpdate.censor_status = 'to be censored';
 }
-}
+
 
 </script>
