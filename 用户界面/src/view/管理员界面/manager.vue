@@ -3,7 +3,7 @@
     <el-container>
       <el-aside>
         <img src="animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
-
+        <!-- <span style="display: inline-block;">同济宠物救助中心</span> -->
         <el-menu
         default-active="2"
         class="el-menu-vertical"
@@ -124,7 +124,6 @@ body, html {
 }
 
 .el-menu-vertical {
-  
   width: 15vw;
   background-color:rgb(237, 244, 249) ;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
@@ -175,7 +174,7 @@ body, html {
  box-shadow: 0 0px 2px rgba(0, 0, 0, .2);
 }
 
-.welcome{
+.welcome {
  margin-top: 10px;
  float: left;
  font-size: 20px;
