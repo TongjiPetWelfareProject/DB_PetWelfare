@@ -15,7 +15,7 @@
                 <el-input v-model="editedNoticeTitle" placeholder="输入公告标题" type="textarea"></el-input>
               </el-form-item>
               <el-form-item label="公告内容">
-               <el-input v-model="editedNoticeContent" placeholder="输入公告内容" type="textarea"></el-input>
+               <el-input v-model="editedNoticeContent" placeholder="输入公告内容" type="textarea" :rows="6"></el-input>
               </el-form-item>
             </el-form>
             
@@ -29,7 +29,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <br>
+    <el-pagination layout="prev, pager, next" :total="1000" /><br>
     <el-button type="primary" @click="showAddNoticeDialog">添加</el-button>
     <el-dialog title="发布新公告" v-model="addNoticeDialogVisible">
       <el-form>
@@ -37,16 +37,16 @@
         <el-input v-model="newNoticeTitle" placeholder="输入公告标题" ></el-input>
       </el-form-item>
       <el-form-item label="公告内容">
-        <el-input v-model="newNoticeContent" placeholder="输入公告内容" type="textarea"></el-input>
+        <el-input v-model="newNoticeContent" placeholder="输入公告内容" type="textarea" :rows="6"></el-input>
       </el-form-item>
     </el-form>
-      <br><br>
+      <br>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addNoticeDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="submitNotice">发布</el-button>
       </span>
     </el-dialog>
-    <el-pagination layout="prev, pager, next" :total="1000" />
+   
   </div>
 </template>
 
