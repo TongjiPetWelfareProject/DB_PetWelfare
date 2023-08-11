@@ -1,17 +1,17 @@
 <template>
   <div>
     <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
-      <el-table-column prop="roomId" label="房间ID" width="180"></el-table-column>
-      <el-table-column prop="petId" label="宠物ID" width="180"></el-table-column>
-      <el-table-column prop="floor" label="楼层" width="180"></el-table-column>
-      <el-table-column prop="lastCleaningTime" label="上次清理时间" width="150" sortable
+      <el-table-column prop="roomId" label="房间ID" width="180%"></el-table-column>
+      <el-table-column prop="petId" label="宠物ID" width="180%"></el-table-column>
+      <el-table-column prop="floor" label="楼层" width="180%"></el-table-column>
+      <el-table-column prop="lastCleaningTime" label="上次清理时间" width="180%" sortable
         :sort-method="sortTime"></el-table-column>
-      <el-table-column label="操作" width="180">
+      <!-- <el-table-column label="操作" width="180">
         <template v-slot="scope">
           <el-button size="mini" type="primary" @click="editRow(scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="deleteRow(scope.row)">删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <br>
     <el-button type="primary" @click="addEmptyRow">添加</el-button>
@@ -19,8 +19,9 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import {  ref,onMounted } from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
+import gg_rqb_jk from '../api/gg_rqb_jk'
 
 export default {
   components: {
@@ -30,11 +31,11 @@ export default {
   setup() {
     const tableRef = ref(null)
     const tableData = ref([
-      { roomId: "001", petId: '1001', floor: '1', lastCleaningTime: '2021-10-01' },
-      { roomId: "002", petId: '1002', floor: '2', lastCleaningTime: '2021-10-02' },
-      { roomId: "003", petId: '空闲', floor: '3', lastCleaningTime: '2021-10-03' },
-      { roomId: "004", petId: '1004', floor: '4', lastCleaningTime: '2021-10-04' },
-      { roomId: "005", petId: '1005', floor: '5', lastCleaningTime: '2021-10-05' },
+      //{ roomId: "001", petId: '1001', floor: '1', lastCleaningTime: '2021-10-01' },
+      //{ roomId: "002", petId: '1002', floor: '2', lastCleaningTime: '2021-10-02' },
+      //{ roomId: "003", petId: '空闲', floor: '3', lastCleaningTime: '2021-10-03' },
+      //{ roomId: "004", petId: '1004', floor: '4', lastCleaningTime: '2021-10-04' },
+      //{ roomId: "005", petId: '1005', floor: '5', lastCleaningTime: '2021-10-05' },
     ])
 
     const handleSelectionChange = (selectedItems) => {
@@ -73,6 +74,15 @@ export default {
     const editRow = (row) => {
       console.log('编辑行', row)
     }
+
+    onMounted(async () => {
+      try {
+        const records = await gg_rqb_jk.getRoomAPI();
+        tableData.value = records;
+      } catch (error) {
+        console.error('获取捐款数据时出错：', error);
+      }
+    });
 
     return {
       tableRef,
