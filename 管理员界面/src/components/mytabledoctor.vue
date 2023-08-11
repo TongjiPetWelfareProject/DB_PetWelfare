@@ -1,5 +1,6 @@
 <template>
-  <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="600">
+  <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
+    max-height="500">
     <el-table-column prop="id" label="医生ID" width="120" />
     <el-table-column prop="name" label="医生姓名" width="120" />
     <el-table-column prop="phone" label="电话" width="120" />
@@ -21,83 +22,72 @@
 </template>
     
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ElButton, ElTable, ElTableColumn } from 'element-plus';
-import axios from "axios";
+import axios from 'axios';
 
-// const tableData = ref([
-//   {
-//     id: '001',
-//     name: '张三',
-//     phone: '1234567890',
-//     workingHours: '10:00-18:00',
-//     salary: '5000',
-//   },
-//   {
-//     id: '002',
-//     name: '李四',
-//     phone: '0987654321',
-//     workingHours: '9:00-22:00',
-//     salary: '6000',
-//   },
-//   {
-//     id: '003',
-//     name: '王五',
-//     phone: '1234567890',
-//     workingHours: '10:00-22:00',
-//     salary: '7000',
-//   },
-//   {
-//     id: '004',
-//     name: '李四',
-//     phone: '0987654321',
-//     workingHours: '9:00-22:00',
-//     salary: '6000',
-//   },
-//   {
-//     id: '005',
-//     name: '张三',
-//     phone: '1234567890',
-//     workingHours: '10:00-18:00',
-//     salary: '5000',
-//   },
-//   {
-//     id: '006',
-//     name: '李四',
-//     phone: '0987654321',
-//     workingHours: '9:00-22:00',
-//     salary: '6000',
-//   },
-// ])
-
-const tableData = ref([])
-
-const fetchData = () => {
-  axios.get('/api/doctor')
-    .then(response => {
-      tableData.value = response.data
-    })
-    .catch(error => {
-      console.error('Error:', error)
-    })
+interface Doctor {
+  id: string;
+  name: string;
+  phone: string;
+  workingHours: string;
+  salary: string;
 }
+
+const tableData = ref<Doctor[]>([]);
+
+const fetchData = async () => {
+  try {
+    const response = await axios.get('/api/doctor');
+    tableData.value = response.data;
+  } catch (error) {
+    console.error('获取数据时出错：', error);
+  }
+};
+
+onMounted(fetchData);
 
 const deleteRow = (index: number) => {
-  tableData.value.splice(index, 1)
-}
+  const doctorId = tableData.value[index].id;
+  axios.delete(`/api/doctor/${doctorId}`) // 使用DELETE请求删除指定医生数据
+    .then(() => {
+      tableData.value.splice(index, 1); // 从tableData中移除已删除的医生数据
+    })
+    .catch(error => {
+      console.error('删除数据时出错：', error);
+    });
+};
 
 const editRow = (index: number) => {
-  // 编辑操作
-}
+  const doctor = tableData.value[index];
+  const doctorId = doctor.id;
+  axios.put(`/api/doctor/${doctorId}`, doctor) // 使用PUT请求更新指定医生数据
+    .then(() => {
+      // 更新成功的处理逻辑
+    })
+    .catch(error => {
+      console.error('编辑数据时出错:', error);
+    });
+};
 
 const addRow = () => {
-  tableData.value.push({
+  const newDoctor = {
     id: '',
     name: '',
     phone: '',
     workingHours: '',
     salary: '',
-  })
-}
+  };
+
+  axios.post('/api/doctor', newDoctor) // 使用POST请求添加医生数据
+    .then(response => {
+      const newDoctorId = response.data.id;
+      newDoctor.id = newDoctorId; // 将新的医生ID赋值给newDoctor对象
+      tableData.value.push(newDoctor); // 将新的医生数据添加到tableData中
+    })
+    .catch(error => {
+      console.error('添加数据时出错：', error);
+    });
+};
 
 </script>
