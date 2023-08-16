@@ -21,18 +21,13 @@ drop table user2;
 create table user2(--since table name 'user' is not valid in that it'a a internal name of system
   user_id varchar2(20) not null,
   user_name varchar2(20),
-  password varchar2(16),
+  password varchar2(64) default '1d707811988069ca760826861d6d63a10e8c3b7f171c4441a6472ea58c11711b',--adopt SHA256 Alg,the default password is'Password1!' abide by the same regex
   phone_number varchar2(20) unique,--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
   account_status varchar2(20),
   address varchar2(100),
   role varchar2(10) default 'User',
   CONSTRAINT CHK_Role CHECK(role in('Admin','User','Unknown','Other')),
   CONSTRAINT CHK_PhoneNumber CHECK (REGEXP_LIKE (phone_number, '^\d{3}-\d{4}-\d{4}$') OR REGEXP_LIKE (phone_number, '^\d{11}$') OR REGEXP_LIKE (phone_number, '^\d{3} \d{4} \d{4}$')),--check if the phone_number is legal
-  CONSTRAINT CHK_Password CHECK(LENGTH(password) >= 10 AND
-    REGEXP_LIKE(password, '[0-9]') AND
-    REGEXP_LIKE(password, '[a-z]') AND
-    REGEXP_LIKE(password, '[A-Z]') AND
-    REGEXP_LIKE(password, '[!@#$%^&*().,=-——+/;:<>?]')),
     primary key(user_id),
     check(account_status in('Compliant','In Good Standing','Under Review','Warning Issued','Suspended','Probation','Banned','Appealing'))
 );
