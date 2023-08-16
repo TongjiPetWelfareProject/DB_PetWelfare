@@ -4,7 +4,7 @@ drop table like_pet;
 drop table comment_post;
 drop table like_post;
 drop table post_images;
-drop table application;
+drop table appointment;
 drop table treatment;
 drop table accommodate;
 drop table foster;
@@ -192,12 +192,12 @@ create table treatment(
   primary key(treat_time,pet_id,vet_id)
 )partition by range(treat_time)interval(interval '1' year)
 (partition start_treatment values less than(TIMESTAMP '2023-09-01 00:00:00'));
-create table application(
+create table appointment(
   pet_id varchar2(20) references pet(pet_id),
   user_id varchar2(20) references user2(user_id),
-  category varchar2(20),
+  species varchar2(20),
   reason varchar2(200) not null,
-  apply_time TIMESTAMP default CURRENT_TIMESTAMP,
+  custom_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(pet_id,user_id,apply_time)
 )partition by range(apply_time)interval(interval '1' year)
 (partition start_apply values less than(TIMESTAMP '2023-09-01 00:00:00'));
