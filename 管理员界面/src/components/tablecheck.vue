@@ -7,8 +7,8 @@
       <el-table-column prop="content" label="内容" width="220"></el-table-column>
       <el-table-column label="是否通过" width="180">
         <template v-slot="scope">
-          <el-button size="mini" type="primary" @click="editRow(scope.row)">Y</el-button>
-          <el-button size="mini" type="danger" @click="deleteRow(scope.row)">N</el-button>
+          <el-button size="mini" type="primary" @click="approveApplication(scope.$index)">Y</el-button>
+          <el-button size="mini" type="danger" @click="rejectApplication(scope.$index)">N</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -18,8 +18,9 @@
 
 
 <script>
-import { ref } from 'vue'
+import {  ref,onMounted} from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
+import sh_fj_jk from '../api/sh_fj_jk'
 
 export default {
   components: {
@@ -29,11 +30,11 @@ export default {
   setup() {
     const tableRef = ref(null)
     const tableData = ref([
-      { postId: "001", employeeId: '1001', postTime: '2021-10-01', content: '帖子内容1' },
-      { postId: "002", employeeId: '1002', postTime: '2021-10-02', content: '帖子内容2' },
-      { postId: "003", employeeId: '1003', postTime: '2021-10-03', content: '帖子内容3' },
-      { postId: "004", employeeId: '1004', postTime: '2021-10-04', content: '帖子内容4' },
-      { postId: "005", employeeId: '1005', postTime: '2021-10-05', content: '帖子内容5' },
+      //{ postId: "001", employeeId: '1001', postTime: '2021-10-01', content: '帖子内容1' },
+      //{ postId: "002", employeeId: '1002', postTime: '2021-10-02', content: '帖子内容2' },
+      //{ postId: "003", employeeId: '1003', postTime: '2021-10-03', content: '帖子内容3' },
+      //{ postId: "004", employeeId: '1004', postTime: '2021-10-04', content: '帖子内容4' },
+      //{ postId: "005", employeeId: '1005', postTime: '2021-10-05', content: '帖子内容5' },
     ])
 
     const handleSelectionChange = (selectedItems) => {
@@ -44,33 +45,37 @@ export default {
       return new Date(a.postTime) - new Date(b.postTime)
     }
 
-    const deleteRow = (row) => {
-      ElMessageBox.confirm('确定该帖子审核不通过吗？', '提示', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-      }).then(() => {
-        const index = tableData.value.indexOf(row)
-        if (index !== -1) {
-          tableData.value.splice(index, 1)
-        }
-      }).catch(() => {
-        // 取消删除
-      })
-    }
-
-    const addEmptyRow = () => {
-      const emptyRow = {
-        postId: '',
-        employeeId: '',
-        postTime: '',
-        content: '',
+    onMounted(async () => {
+      try {
+        const records = await sh_fj_jk.getCheckAPI();
+        tableData.value = records;
+      } catch (error) {
+        console.error('获取数据时出错：', error);
       }
-      tableData.value.push(emptyRow)
+    });
+
+    const approveApplication = async(index) => {
+      const infoToUpdate = tableData.value[index];
+      infoToUpdate.censor_status = 'abored';
+
+      try {
+        await sh_fj_jk.updateCheckInfoAPI(infoToUpdate);
+      } catch (error) {
+        console.error('更新数据时出错：', error);
+        infoToUpdate.censor_status = 'to be censored';
+      }
     }
 
-    const editRow = (row) => {
-      console.log('编辑行', row)
+    const rejectApplication = async(index) => {
+      const infoToUpdate = tableData.value[index];
+      infoToUpdate.censor_status = 'legitimate';
+
+      try {
+        await sh_fj_jk.updateCheckInfoAPI(infoToUpdate);
+      } catch (error) {
+        console.error('更新数据时出错：', error);
+        infoToUpdate.censor_status = 'to be censored';
+      }
     }
 
     return {
@@ -78,10 +83,9 @@ export default {
       tableData,
       handleSelectionChange,
       sortTime,
-      deleteRow,
-      addEmptyRow,
-      editRow,
+      approveApplication,
+      rejectApplication,
     }
-  },
+  }
 }
 </script>
