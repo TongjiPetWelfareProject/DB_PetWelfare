@@ -8,7 +8,7 @@
         </div>
     </template>
     <template v-else>
-    <img src=@/photos/{{petInfo.props.imagePath}}  class="image"/>
+    <img src=@/photos/${petInfo.props.imagePath}  class="image"/>
     </template>
         <div style="padding: 14px">
             <span>Birthday Puppy</span>
