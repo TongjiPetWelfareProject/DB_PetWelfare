@@ -468,4 +468,4 @@ create or replace view adopt_view as SELECT
     TO_CHAR(family_population) || '-有孩子:' || has_children || '-接受访问:' || accept_visits  
      AS reason
 FROM 
-    adopt_apply;
+    adopt_apply where censor_state='to be censored';
