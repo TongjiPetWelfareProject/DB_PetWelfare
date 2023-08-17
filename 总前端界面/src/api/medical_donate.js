@@ -11,9 +11,9 @@ export default {
       });
   },
 //捐款的api
-  donateAPI(amount) {
+  donateAPI(userId, amount, donationTime) {
     return axios
-      .post('/api/donate', { amount })
+      .post('/api/donate', { userId, amount, donationTime })
       .then(response => response.data)
       .catch(error => {
         throw new Error('捐款失败：' + error.message);
