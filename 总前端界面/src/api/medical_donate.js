@@ -45,5 +45,22 @@ export default {
       .catch(error => {
         throw new Error('获取捐助记录数据时出错：' + error.message);
       });
-  }
+  },
+  //获取所有医生的姓名和id
+  getDoctorsAPI() {
+    return axios
+      .get('/api/doctors')
+      .then((response) => {
+        // response.data 包含了从服务器返回的数据
+        // 假设服务器返回的数据格式是数组，每个元素包含姓名和 ID
+        return response.data.map(doctor => ({
+          id: doctor.id,
+          name: doctor.name
+        }));
+      })
+      .catch(error => {
+        throw new Error('获取医生数据时出错：' + error.message);
+      });
+    }
+
 };
