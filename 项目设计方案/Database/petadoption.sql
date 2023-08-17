@@ -4,7 +4,7 @@ drop table like_pet;
 drop table comment_post;
 drop table like_post;
 drop table post_images;
-drop table application;
+drop table appointment;
 drop table treatment;
 drop table accommodate;
 drop table foster;
@@ -21,18 +21,13 @@ drop table user2;
 create table user2(--since table name 'user' is not valid in that it'a a internal name of system
   user_id varchar2(20) not null,
   user_name varchar2(20),
-  password varchar2(16),
+  password varchar2(64) default '1d707811988069ca760826861d6d63a10e8c3b7f171c4441a6472ea58c11711b',--adopt SHA256 Alg,the default password is'Password1!' abide by the same regex
   phone_number varchar2(20) unique,--it always comes true that a phone number will contain some special character dash or space ,so its length is variable
   account_status varchar2(20),
   address varchar2(100),
   role varchar2(10) default 'User',
   CONSTRAINT CHK_Role CHECK(role in('Admin','User','Unknown','Other')),
   CONSTRAINT CHK_PhoneNumber CHECK (REGEXP_LIKE (phone_number, '^\d{3}-\d{4}-\d{4}$') OR REGEXP_LIKE (phone_number, '^\d{11}$') OR REGEXP_LIKE (phone_number, '^\d{3} \d{4} \d{4}$')),--check if the phone_number is legal
-  CONSTRAINT CHK_Password CHECK(LENGTH(password) >= 10 AND
-    REGEXP_LIKE(password, '[0-9]') AND
-    REGEXP_LIKE(password, '[a-z]') AND
-    REGEXP_LIKE(password, '[A-Z]') AND
-    REGEXP_LIKE(password, '[!@#$%^&*().,=-——+/;:<>?]')),
     primary key(user_id),
     check(account_status in('Compliant','In Good Standing','Under Review','Warning Issued','Suspended','Probation','Banned','Appealing'))
 );
@@ -137,7 +132,7 @@ create table forum_posts(
 --potential primary key(donor_id,donation_time,donation_amounts)
 create table donation(
   donor_id varchar(20) references user2(user_id),
-  donation_amount int,
+  donation_amount decimal(10,2),
   donation_time TIMESTAMP default CURRENT_TIMESTAMP,
   censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
   constraints CHK_DONATION check(donation_amount>0),
@@ -148,7 +143,7 @@ CREATE TABLE adopt_apply (
     adopter_id VARCHAR2(20)  REFERENCES user2(user_id),
     adopter_gender VARCHAR2(1) CHECK (adopter_gender IN ('M', 'F')),
     apply_date date default CURRENT_DATE, -- 领养时间（年月日）
-    species varchar2(20) default 'dog' check(species in('bird','dog','snake','cat','parrot','bear','goldfish')),
+    pet_id varchar2(20) references pet(pet_id),
     pet_experience VARCHAR2(1) CHECK (pet_experience IN ('Y', 'N')), 
     long_term_care VARCHAR2(1) CHECK (long_term_care IN ('Y', 'N')), 
     willing_to_treat VARCHAR2(1) CHECK (willing_to_treat IN ('Y', 'N')), 
@@ -160,13 +155,16 @@ CREATE TABLE adopt_apply (
     censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
     PRIMARY KEY(adopter_id)
 );
-create table adopt(
-  adopter_id varchar2(20) references adopt_apply(adopter_id),
-  pet_id varchar2(20) references pet(pet_id),
-  adoption_time DATE default CURRENT_DATE,
-  primary key(adopter_id,pet_id)
-)partition by range(adoption_time)interval(interval '1' year)
-(partition start_donate values less than(TIMESTAMP '2023-09-01 00:00:00'));
+create table adopt (
+  adopter_id varchar2(20),
+  pet_id varchar2(20),
+  adoption_time date default current_date,
+  primary key (adopter_id, pet_id),
+  foreign key (adopter_id, pet_id) references adopt_apply(adopter_id, pet_id)
+)
+partition by range (adoption_time) interval (interval '1' year) (
+  partition start_donate values less than (timestamp '2023-09-01 00:00:00')
+);
 create table foster(
   duration smallint,
   fosterer varchar2(20) references user2(user_id),
@@ -197,12 +195,12 @@ create table treatment(
   primary key(treat_time,pet_id,vet_id)
 )partition by range(treat_time)interval(interval '1' year)
 (partition start_treatment values less than(TIMESTAMP '2023-09-01 00:00:00'));
-create table application(
+create table appointment(
   pet_id varchar2(20) references pet(pet_id),
   user_id varchar2(20) references user2(user_id),
-  category varchar2(20),
+  species varchar2(20),
   reason varchar2(200) not null,
-  apply_time TIMESTAMP default CURRENT_TIMESTAMP,
+  custom_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(pet_id,user_id,apply_time)
 )partition by range(apply_time)interval(interval '1' year)
 (partition start_apply values less than(TIMESTAMP '2023-09-01 00:00:00'));
@@ -329,530 +327,18 @@ CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
 --建立图片image_id的序列
 DROP SEQUENCE img_id_seq;
 CREATE SEQUENCE img_id_seq START WITH 1 INCREMENT BY 1;
---生成用户的随机数据
-BEGIN
-    FOR i IN 1..50 LOOP
-    BEGIN
-        INSERT INTO user2 (user_id, user_name, password, phone_number, account_status, address) 
-        VALUES (
-            user_id_seq.NEXTVAL, -- 随机20位的字符串
-            DBMS_RANDOM.string('A', 5), -- 随机20位的字符串
-            'Password1!', -- 静态密码，因为生成随机满足复杂性要求的密码在PL/SQL中会有些复杂
-            CASE 
-    WHEN MOD(i, 3) = 0 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
-    WHEN MOD(i, 3) = 1 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 9))) || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000000000, 9999999999)))
-    ELSE TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
-            END,
-            CASE 
-                WHEN MOD(i, 7) = 0 THEN 'Compliant'
-                WHEN MOD(i, 7) = 1 THEN 'In Good Standing'
-                WHEN MOD(i, 7) = 2 THEN 'Under Review'
-                WHEN MOD(i, 7) = 3 THEN 'Warning Issued'
-                WHEN MOD(i, 7) = 4 THEN 'Suspended'
-                WHEN MOD(i, 7) = 5 THEN 'Probation'
-                ELSE 'Banned'
-            END, -- 轮流分配账户状态
-            'Random Address' -- 随机地址
-        );
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
---生成随机的宠物
--- 创建一个序列
-DROP SEQUENCE pet_id_seq;
-CREATE SEQUENCE pet_id_seq
-START WITH     1
-INCREMENT BY   1;
--- 使用PL/SQL块生成随机的宠物条目
-DECLARE 
-    v_pet_id varchar2(20);
-    v_pet_name varchar2(20);
-    v_species varchar2(20);
-    v_birthdate date;
-    v_avatar BLOB;
-    v_health_state varchar2(15);
-    v_vaccine char(1);
-    v_read_num int;
-    src_bfile BFILE;
-BEGIN
-    FOR i IN 1..50 LOOP
-    BEGIN
-        v_pet_id := pet_id_seq.NEXTVAL; -- 使用序列生成pet_id
-        v_pet_name := DBMS_RANDOM.string('A', 10);
-        v_species := CASE
-                      WHEN MOD(i,6)=0 THEN 'dog'
-                      WHEN MOD(i,6)=1 THEN 'cat'
-                      WHEN MOD(i,6)=2 THEN 'goldfish'
-                      WHEN MOD(i,6)=3 THEN 'snake'
-                      WHEN MOD(i,6)=4 THEN 'bear'
-                      ELSE 'parrot'
-                      END;
-        v_birthdate := SYSDATE-(ROUND(DBMS_RANDOM.value(0, 20))*INTERVAL '1' YEAR);
-        -- Assuming the file is stored on the server's file system
-        src_bfile := BFILENAME('MY_DIR', 'picture' || TO_CHAR(ROUND(DBMS_RANDOM.value(1, 3), 0)) || '.png'); -- modify 'MY_DIR' and 'my_file.jpg' accordingly
-   
-        -- Load the BFILE data into the BLOB
-        DBMS_LOB.createtemporary(v_avatar, TRUE);
-        DBMS_LOB.fileopen(src_bfile, DBMS_LOB.file_readonly);
-        DBMS_LOB.loadfromfile(v_avatar, src_bfile, DBMS_LOB.getlength(src_bfile));
-        DBMS_LOB.fileclose(src_bfile);
-
-        v_health_state := CASE 
-                              WHEN MOD(i, 6) = 0 THEN 'Vibrant'
-                              WHEN MOD(i, 6) = 1 THEN 'Well'
-                              WHEN MOD(i, 6) = 2 THEN 'Decent'
-                              WHEN MOD(i, 6) = 3 THEN 'Unhealthy'
-                              WHEN MOD(i, 6) = 4 THEN 'Sicky'
-                              ELSE 'Critical'
-                          END; 
-        v_vaccine := CASE 
-                         WHEN MOD(i, 2) = 0 THEN 'Y'
-                         ELSE 'N'
-                     END;
-        v_read_num := ROUND(DBMS_RANDOM.value(0, 100));
-        
-        INSERT INTO pet(pet_id, pet_name, species, birthdate, avatar, health_state, vaccine, read_num) 
-        VALUES (v_pet_id, v_pet_name, v_species, v_birthdate, v_avatar, v_health_state, v_vaccine, v_read_num);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-    v_user_id varchar2(20);
-    v_pet_id varchar2(20);
-BEGIN
-    FOR i IN 1..20 LOOP
-    BEGIN
-        -- 根据你的要求，user_id和pet_id的值在1到50之间
-        v_user_id := ROUND(DBMS_RANDOM.value(1, 50));
-        v_pet_id := ROUND(DBMS_RANDOM.value(1, 50));
-
-        INSERT INTO like_pet(user_id, pet_id) 
-        VALUES (v_user_id, v_pet_id);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
 DROP SEQUENCE employee_id_seq;
 CREATE SEQUENCE employee_id_seq
   START WITH     1
   INCREMENT BY   1
   NOCACHE
   NOCYCLE;
-  
-DECLARE 
-    v_employee_id varchar2(20);
-    v_employee_name varchar(20);
-    v_salary numeric(9,2);
-    v_phone_number varchar2(20);
-    v_duty varchar2(50);
-    v_working_start_hr numeric(2,0);
-    v_working_end_hr numeric(2,0);
-    v_working_start_min numeric(2,0);
-    v_working_end_min numeric(2,0);
-BEGIN
-    FOR i IN 1..15 LOOP
-    BEGIN
-        v_employee_id := employee_id_seq.NEXTVAL;
-        v_employee_name := 'Employee ' || v_employee_id;
-        v_salary := ROUND(DBMS_RANDOM.value(10000, 99999), 2);
-        v_phone_number := CASE 
-    WHEN MOD(i, 3) = 0 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
-    WHEN MOD(i, 3) = 1 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 9))) || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000000000, 9999999999)))
-    ELSE TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
-            END;
-        v_duty := CASE 
-                    WHEN MOD(i,9) = 0 THEN 'Animal Care Specialist'
-                    WHEN MOD(i,9) = 1 THEN 'Adoption Counselor'
-                    WHEN MOD(i,9) = 2 THEN 'Veterinary Technician'
-                    WHEN MOD(i,9) = 3 THEN 'Animal Behaviorist'
-                    WHEN MOD(i,9) = 4 THEN 'Volunteer Coordinator'
-                    WHEN MOD(i,9) = 5 THEN 'Foster Coordinator'
-                    WHEN MOD(i,9) = 6 THEN 'Facility Manager'
-                    WHEN MOD(i,9) = 7 THEN 'Fundraising and Outreach Coordinator'
-                    ELSE 'Rescue Transporter'
-                    END;
-        v_working_start_hr := ROUND(DBMS_RANDOM.value(0, 12), 0);
-        v_working_start_min := ROUND(DBMS_RANDOM.value(0, 59), 0);
-        v_working_end_hr := ROUND(DBMS_RANDOM.value(12, 23), 0);
-        v_working_end_min :=ROUND(DBMS_RANDOM.value(0, 59), 0);
-        INSERT INTO employee(employee_id, employee_name, salary, phone_number, duty, working_start_hr,working_start_min,working_end_hr, working_end_min) 
-        VALUES (v_employee_id, v_employee_name, v_salary, v_phone_number, v_duty, v_working_start_hr, v_working_start_min,v_working_end_hr, v_working_end_min);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-  v_bulletin_id bulletin.bulletin_id%TYPE;
-  v_employee_id bulletin.employee_id%TYPE;
-  v_heading bulletin.heading%TYPE;
-  v_bulletin_contents bulletin.bulletin_contents%TYPE;
-  v_read_count bulletin.read_count%TYPE;
-  v_published_time bulletin.published_time%TYPE;
-BEGIN
-  FOR i IN 1..50 LOOP
-    v_bulletin_id := 'B' || TO_CHAR(i);
-    v_employee_id := TO_CHAR(TRUNC(dbms_random.value(1, 16))); -- Random employee_id from E01 to E15
-    v_heading := 'Heading' || TO_CHAR(i);
-    v_bulletin_contents := 'Bulletin Content ' || TO_CHAR(i);
-    v_read_count := TRUNC(dbms_random.value(0, 1001)); -- Random read count from 0 to 1000
-    
-    -- Random timestamp generation
-    v_published_time := CURRENT_TIMESTAMP + NUMTODSINTERVAL(FLOOR(dbms_random.value(0, (365.25*3))), 'DAY') + NUMTODSINTERVAL(FLOOR(dbms_random.value(0, 24*60*60)), 'SECOND');
-    
-    INSERT INTO bulletin(bulletin_id, employee_id, heading, bulletin_contents, read_count, published_time)
-    VALUES(v_bulletin_id, v_employee_id, v_heading, v_bulletin_contents, v_read_count, v_published_time);
-  END LOOP;
-  COMMIT;
-EXCEPTION
-  WHEN OTHERS THEN
-    DBMS_OUTPUT.PUT_LINE('An error was encountered - '||SQLCODE||' -ERROR- '||SQLERRM);
-END;
-/
 DROP SEQUENCE post_id_seq;
 CREATE SEQUENCE post_id_seq
   START WITH     1
   INCREMENT BY   1
   NOCACHE
   NOCYCLE;
-/
-DECLARE 
-    v_post_id varchar2(20);
-    v_user_id varchar2(20);
-    v_post_contents varchar2(1000);
-    v_read_count int;
-BEGIN
-    FOR i IN 1..20 LOOP
-    BEGIN
-        v_post_id := post_id_seq.NEXTVAL;
-        v_user_id := ROUND(DBMS_RANDOM.value(0, 49), 0);
-        v_post_contents := 'This is post ' || v_post_id;
-        v_read_count := ROUND(DBMS_RANDOM.value(0, 1000), 0);
-        INSERT INTO forum_posts(post_id, user_id, post_contents, read_count) 
-        VALUES (v_post_id, v_user_id, v_post_contents, v_read_count);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-    v_compartment numeric(2,0);
-    v_room_status char(1);
-    v_room_size numeric(5,2);
-    v_storey numeric(2,0);
-    room_count_by_storey numeric(2,0);
-BEGIN
-    FOR i IN 1..10 LOOP
-        FOR j IN 1..30 LOOP
-        BEGIN
-            v_compartment :=j;
-            v_room_status := CASE MOD(j,2) WHEN 1 THEN 'Y' ELSE 'N' END;
-            v_room_size := ROUND(DBMS_RANDOM.value(10, 100), 2);
-            v_storey := i;
-            SELECT COUNT(*) INTO room_count_by_storey FROM room WHERE storey = v_storey;
-            IF room_count_by_storey < 30 THEN
-                INSERT INTO room(compartment, room_status, room_size, storey) 
-                VALUES (v_compartment, v_room_status, v_room_size, v_storey);
-            END IF;
-            EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-            END; 
-        END LOOP;
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DROP SEQUENCE vet_id_seq;
-CREATE SEQUENCE vet_id_seq
-  START WITH     1
-  INCREMENT BY   1
-  NOCACHE
-  NOCYCLE;
-
-DECLARE 
-    v_vet_id varchar2(20);
-    v_vet_name varchar(20);
-    v_salary numeric(9,2);
-    v_phone_number varchar2(20);
-    v_working_start_hr numeric(2,0);
-    v_working_end_hr numeric(2,0);
-    v_working_start_min numeric(2,0);
-    v_working_end_min numeric(2,0);
-BEGIN
-    FOR i IN 1..10 LOOP
-    BEGIN
-        v_vet_id := vet_id_seq.NEXTVAL;
-        v_vet_name := 'Vet ' || v_vet_id;
-        v_salary := ROUND(DBMS_RANDOM.value(50000, 100000), 2);
-        v_phone_number := CASE 
-                            WHEN MOD(i, 3) = 0 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || '-' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
-                            WHEN MOD(i, 3) = 1 THEN TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 9))) || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000000000, 9999999999)))
-                            ELSE TO_CHAR(TRUNC(DBMS_RANDOM.value(100, 999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999))) || ' ' || TO_CHAR(TRUNC(DBMS_RANDOM.value(1000, 9999)))
-                          END;
-        v_working_start_hr := ROUND(DBMS_RANDOM.value(0, 12), 0);
-        v_working_start_min := ROUND(DBMS_RANDOM.value(0, 59), 0);
-        v_working_end_hr := ROUND(DBMS_RANDOM.value(12, 23), 0);
-        v_working_end_min :=ROUND(DBMS_RANDOM.value(0, 59), 0);
-        INSERT INTO vet(vet_id, vet_name, salary, phone_number, working_start_hr,working_start_min,working_end_hr, working_end_min) 
-        VALUES (v_vet_id, v_vet_name, v_salary, v_phone_number, v_working_start_hr, v_working_start_min,v_working_end_hr, v_working_end_min);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-    v_user_id varchar2(20);
-    v_post_id varchar2(20);
-BEGIN
-    FOR i IN 1..50 LOOP
-    BEGIN
-        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_post_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 21)));
-        INSERT INTO like_post(user_id, post_id) 
-        VALUES (v_user_id, v_post_id);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-    v_user_id varchar2(20);
-    v_post_id varchar2(20);
-    v_comment_contents varchar2(100);
-    sample_comments varchar2(150) := 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
-BEGIN
-    FOR i IN 1..20 LOOP
-      BEGIN
-        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_post_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 21)));
-        v_comment_contents := SUBSTR(sample_comments, DBMS_RANDOM.value(1, 50), DBMS_RANDOM.value(1, 50));
-        INSERT INTO comment_post(user_id, post_id, comment_contents) 
-        VALUES (v_user_id, v_post_id, v_comment_contents);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-    v_user_id varchar2(20);
-    v_pet_id varchar2(20);
-    v_comment_contents varchar2(200);
-    sample_comments varchar2(200) := 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
-BEGIN
-    FOR i IN 1..30 LOOP
-      BEGIN
-        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_comment_contents := SUBSTR(sample_comments, DBMS_RANDOM.value(1, 50), DBMS_RANDOM.value(1, 50));
-        INSERT INTO comment_pet(user_id, pet_id, comment_contents) 
-        VALUES (v_user_id, v_pet_id, v_comment_contents);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-    v_user_id varchar2(20);
-    v_pet_id varchar2(20);
-BEGIN
-    FOR i IN 1..30 LOOP
-      BEGIN
-        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        INSERT INTO collect_pet_info(user_id, pet_id) 
-        VALUES (v_user_id, v_pet_id);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-    v_donor_id varchar2(20);
-    v_donation_amount int;
-BEGIN
-    FOR i IN 1..10 LOOP
-      BEGIN
-        v_donor_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_donation_amount := TRUNC(DBMS_RANDOM.value(1, 5000));
-        INSERT INTO donation(donor_id, donation_amount) 
-        VALUES (v_donor_id, v_donation_amount);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-DECLARE 
-    v_pet_id varchar2(20);
-    v_user_id varchar2(20);
-    v_category varchar2(20);
-    v_reason varchar2(200);
-BEGIN
-    FOR i IN 1..10 LOOP
-    BEGIN
-        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_category := CASE 
-                        WHEN MOD(i,7) = 0 THEN 'Lost Pet'
-                        WHEN MOD(i,7) = 1 THEN 'Treatment'
-                        WHEN MOD(i,7) = 2 THEN 'Vaccination'
-                        WHEN MOD(i,7) = 3 THEN 'Breeding'
-                        WHEN MOD(i,7) = 4 THEN 'Adoption'
-                        WHEN MOD(i,7) = 5 THEN 'Donation'
-                        ELSE 'Complaint'
-                      END;
-        v_reason := 'Reason ' || v_pet_id;
-        INSERT INTO application(pet_id, user_id, category, reason) 
-        VALUES (v_pet_id, v_user_id, v_category, v_reason);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-
-DECLARE 
-    v_duration smallint;
-    v_fosterer varchar2(20);
-    v_pet_id varchar2(20);
-BEGIN
-    FOR i IN 1..10 LOOP
-        BEGIN
-            v_duration := TRUNC(DBMS_RANDOM.value(1, 100));
-            v_fosterer := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-            v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-            INSERT INTO foster(duration, fosterer, pet_id) 
-            VALUES (v_duration, v_fosterer, v_pet_id);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-        END;
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
-/
-
-DECLARE 
-    v_user_id varchar2(20);
-    v_pet_id varchar2(20);
-    v_storey numeric(2,0);
-    v_compartment numeric(2,0);
-BEGIN
-    FOR i IN 1..10 LOOP
-      BEGIN
-        v_user_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_pet_id := TO_CHAR(TRUNC(DBMS_RANDOM.value(1, 51)));
-        v_storey := TRUNC(DBMS_RANDOM.value(1, 11));
-        v_compartment:=TRUNC(DBMS_RANDOM.value(1,31));
-        INSERT INTO accommodate(owner_id,pet_id, storey,compartment) 
-        VALUES (v_user_id,v_pet_id, v_storey,v_compartment);
-        EXCEPTION
-            WHEN DUP_VAL_ON_INDEX THEN
-                NULL; -- 当唯一性约束违反时，忽略并继续
-      END; 
-    END LOOP;
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE;
-END;
 /
 Create or replace view vet_labor 
 as select vet_id,vet_name,salary,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
@@ -972,3 +458,14 @@ create or replace view  pet_profile as SELECT
     
 FROM
     pet p left outer join comment_pet  on comment_pet.pet_id=p.pet_id order by popularity desc;
+create or replace view adopt_view as SELECT 
+    apply_date,pet_id,
+    adopter_id,
+     '该' || adopter_gender || '性用户想要' || 
+     '领养一只宠物'|| '-养宠经验:' || pet_experience ||
+    '-长期照顾:' || long_term_care || '-愿意治疗:' || willing_to_treat || '-每日照顾小时:' || 
+    TO_CHAR(daily_care_hours) || '-主要照顾者:' || primary_caregiver || '-家庭人口:' || 
+    TO_CHAR(family_population) || '-有孩子:' || has_children || '-接受访问:' || accept_visits  
+     AS reason
+FROM 
+    adopt_apply where censor_state='to be censored';
