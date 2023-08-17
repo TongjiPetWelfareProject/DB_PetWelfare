@@ -456,10 +456,10 @@ create or replace view  pet_profile as SELECT
 FROM
     pet p left outer join comment_pet  on comment_pet.pet_id=p.pet_id order by popularity desc;
 create or replace view adopt_view as SELECT 
-    apply_date,'随机分配'as pet_name,
+    apply_date,PID,
     adopter_id,
-     adopter_id || '-该' || adopter_gender || '用户想要' || 
-     '领养一只' || species || '-养宠经验:' || pet_experience ||
+     '该' || adopter_gender || '性用户想要' || 
+     '领养一只宠物'|| '-养宠经验:' || pet_experience ||
     '-长期照顾:' || long_term_care || '-愿意治疗:' || willing_to_treat || '-每日照顾小时:' || 
     TO_CHAR(daily_care_hours) || '-主要照顾者:' || primary_caregiver || '-家庭人口:' || 
     TO_CHAR(family_population) || '-有孩子:' || has_children || '-接受访问:' || accept_visits  
