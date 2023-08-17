@@ -35,13 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Install Azure CLI
-      run: |
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-      if: runner.os == 'Linux'
-              
-    - name: Azure Login
-      uses: Azure/login@v1
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
