@@ -25,7 +25,7 @@
         <template #default="scope">
          <!-- 使用条件语句来显示对应的标签 -->
           <span v-if="scope.row.censor_status === 'to be censored'">未审核</span>
-          <span v-else-if="scope.row.censor_status === 'abored'">审核成功</span>
+          <span v-else-if="scope.row.censor_status === 'aborted'">审核成功</span>
           <span v-else-if="scope.row.censor_status === 'legitimate'">审核失败</span>
        </template>
       </el-table-column>
@@ -66,8 +66,8 @@ const approveApplication = async(index: number) => {
   // 同意申请操作
   const recordToUpdate = tableData.value[index];
 
-  // 将 censor_status 设置为 'abored'
-  recordToUpdate.censor_status = 'abored';
+  // 将 censor_status 设置为 'aborted'
+  recordToUpdate.censor_status = 'aborted';
 
   try {
     await updateFosterRecord(recordToUpdate);
