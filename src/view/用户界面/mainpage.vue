@@ -40,7 +40,7 @@ watch(() => route.path, (newPath, oldPath) => {
       <div class="container" v-if="showTitle">
         <div class="left">
           <div class="tableitem" >
-            <img src="@/photos/main_icon.jpg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
+            <img src="./main_icon.jpg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
             <p class="welcome-text">同济宠物救助中心</p>
           </div>
         </div>

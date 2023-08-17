@@ -27,7 +27,7 @@ export default {
       content: content,
       time: time
     };
-  
+
     return axios
       .post('/api/send-notice', data)
       .then(response => response.data)
@@ -51,7 +51,7 @@ export default {
       content: content,
       time: time
     };
-  
+
     return axios
       .post('/api/send-notice', data)
       .then(response => response.data)
@@ -82,7 +82,7 @@ export default {
     const data = {
       selectedPetIds: selectedPetIds
     };
-  
+
     return axios
       .post('/api/publish-popularity-chart', data) // 使用 POST 请求将选中的宠物ID数组发送到后端
       .then(response => response.data)
