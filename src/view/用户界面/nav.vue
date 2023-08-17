@@ -16,7 +16,7 @@ const confirm = () => {
       <div class="container">
         <ul>
           <template v-if="userStore.userInfo.User_ID">
-            <li><img src="我的.png" alt="我的" style="height: 22px; width: 22px;"></li>
+            <li><img src="@/photos/我的.png" alt="我的" style="height: 22px; width: 22px;"></li>
             <li><a href="javascript:;"><i class="iconfont icon user"></i><router-link to="/mypage">{{ userStore.userInfo.User_Name }}</router-link></a></li>
             <li v-if="router.currentRoute.value.fullPath === '/mypage'"><router-link to="/">返回主页</router-link></li>
             <li>
