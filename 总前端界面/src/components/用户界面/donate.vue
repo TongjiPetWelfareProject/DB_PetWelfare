@@ -12,12 +12,13 @@
   <el-tabs :tab-position="tabPosition" type="border-card" style="width:90% ;border-radius: 10px;box-shadow:1px 1px 1px 1px rgba(126, 126, 126, 0.2);">
     <el-tab-pane label="捐助需知">
     <div class="describe">
-      捐助范围:<br>
-1、我们非常乐意接受爱心朋友们经常性的捐助，这将帮助我们持续提供给小猫小狗们急需的食物、医疗和庇护。<br>
-2、我们也非常希望爱心朋友们能够为小猫小狗们捐出您的宝贵时间，与他们互动、照顾和关爱，给予他们温暖和陪伴。<br>
-3、为了更好地支持我们的工作，我们目前只接受现金的捐助。您的慷慨捐助将被用于改善小猫小狗们的生活条件和提供更好的医疗护理。<br>
-我们会认真记录每一位捐助者的善举，并定期在我们的网站上公布捐助情况。<br>
-感谢您的支持和信任，您的善举将为小猫小狗们带来希望和幸福。
+      <span style="font-weight: bold;font-size: 16px;">捐助范围:</span><br>
+      我们非常乐意接受爱心朋友们经常性的捐助，这将帮助我们持续提供给小猫小狗们急需的食物、医疗和庇护。<br>
+      我们也非常希望爱心朋友们能够为小猫小狗们捐出您的宝贵时间，与他们互动、照顾和关爱，给予他们温暖和陪伴。<br>
+      您的慷慨捐助将被用于改善小猫小狗们的生活条件和提供更好的医疗护理。<br>
+      我们会认真记录每一位捐助者的善举，并定期在我们的网站上公布捐助情况。<br>
+      <b>为了更好地支持我们的工作，我们目前只接受现金的捐助。</b><br>
+
     </div>
   <br><br>
     </el-tab-pane>
@@ -30,6 +31,10 @@
   <el-pagination layout="prev, pager, next" :total="1000" />
     </el-tab-pane>
   </el-tabs>
+  <div style="display:flex;align-items: center;justify-content: center">
+    <span style="font-size: 18px;font-weight: bold;color:#729cd4;">感谢您的支持和信任，您的善举将为小猫小狗们带来希望和幸福。</span>
+    <img src="../../../public/donateimg.png" style="width:250px;height:250px">
+  </div>
 
 
 
@@ -50,12 +55,12 @@
 
 .describe {
   font-size: 14px;
-  color: #312e2c;
+  color: #656565;
   line-height: 26px;
 }
 
 .demo-image__lazy {
-  height: 300px;
+  height: 350px;
   overflow-y: auto;
   width:90%;
   box-shadow: 0 4px 0px rgba(0, 0, 0, .2);
@@ -83,12 +88,10 @@ const urls = [
   'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
   'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
   'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-  'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-  'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-  'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-  'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
+  
 ]
-
+const userId = 123; // 当前用户ID
+const donationTime = new Date().toISOString(); // 当前时间转换为字符串格式
 // const tableData = [
 //   {
 //     time: '2023-05-03 10:23',
@@ -141,7 +144,8 @@ const open = async () => {
       inputErrorMessage: '请输入数字',
     });
     // 用户点击确定按钮后调用 donateAPI 函数发送捐款金额到后端
-    const response = await medical_donate.donateAPI(value);
+    const response = await medical_donate.donateAPI(userID,
+    value,donationTime);
 
     ElMessage({
       type: 'success',
