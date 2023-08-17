@@ -2,7 +2,7 @@
   <div class="common-layout" >
     <el-container>
       <el-aside>
-        <img src="animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
+        <img src="@/photos/animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
 
         <el-menu
         default-active="2"
@@ -59,7 +59,7 @@
           <span>房间</span>
         </el-menu-item>
       </el-menu>
-      <!-- <img src="pet-toy.png" style="height: 80px;width: 80px;margin-left: 80px;"> -->
+      <!-- <img src="@/photos/pet-toy.png" style="height: 80px;width: 80px;margin-left: 80px;"> -->
       </el-aside>
 
       <el-container>
