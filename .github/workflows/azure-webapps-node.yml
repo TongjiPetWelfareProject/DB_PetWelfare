@@ -19,7 +19,7 @@
 
 on:
   push:
-    branches: [ "deploy" ]
+    branches: [ "main2" ]
   workflow_dispatch:
 
 env:
