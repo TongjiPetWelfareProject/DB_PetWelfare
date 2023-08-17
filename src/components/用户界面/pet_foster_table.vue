@@ -1,6 +1,6 @@
 <template>
   <div class="tableitem" >
-        <img src="./photos/狗狗头像.jpeg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
+        <img src="@/photos/狗狗头像.jpeg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
         <el-text class="welcome-text" size="Large">寄养申请表</el-text>
   </div>
   <el-form :model="form" label-width="120px">
