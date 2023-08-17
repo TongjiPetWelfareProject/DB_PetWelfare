@@ -20,7 +20,7 @@
 <script>
 import {  ref,onMounted} from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
-import sh_fj_jk from '../api/sh_fj_jk'
+import sh_fj_jk from '@/api/sh_fj_jk'
 
 export default {
   components: {
