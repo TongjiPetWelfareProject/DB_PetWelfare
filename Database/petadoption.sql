@@ -143,7 +143,7 @@ CREATE TABLE adopt_apply (
     adopter_id VARCHAR2(20)  REFERENCES user2(user_id),
     adopter_gender VARCHAR2(1) CHECK (adopter_gender IN ('M', 'F')),
     apply_date date default CURRENT_DATE, -- 领养时间（年月日）
-    species varchar2(20) default 'dog' check(species in('bird','dog','snake','cat','parrot','bear','goldfish')),
+    pet_id varchar2(20) references pet(pet_id),
     pet_experience VARCHAR2(1) CHECK (pet_experience IN ('Y', 'N')), 
     long_term_care VARCHAR2(1) CHECK (long_term_care IN ('Y', 'N')), 
     willing_to_treat VARCHAR2(1) CHECK (willing_to_treat IN ('Y', 'N')), 
@@ -155,13 +155,16 @@ CREATE TABLE adopt_apply (
     censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
     PRIMARY KEY(adopter_id)
 );
-create table adopt(
-  adopter_id varchar2(20) references adopt_apply(adopter_id),
-  pet_id varchar2(20) references pet(pet_id),
-  adoption_time DATE default CURRENT_DATE,
-  primary key(adopter_id,pet_id)
-)partition by range(adoption_time)interval(interval '1' year)
-(partition start_donate values less than(TIMESTAMP '2023-09-01 00:00:00'));
+create table adopt (
+  adopter_id varchar2(20),
+  pet_id varchar2(20),
+  adoption_time date default current_date,
+  primary key (adopter_id, pet_id),
+  foreign key (adopter_id, pet_id) references adopt_apply(adopter_id, pet_id)
+)
+partition by range (adoption_time) interval (interval '1' year) (
+  partition start_donate values less than (timestamp '2023-09-01 00:00:00')
+);
 create table foster(
   duration smallint,
   fosterer varchar2(20) references user2(user_id),
@@ -456,7 +459,7 @@ create or replace view  pet_profile as SELECT
 FROM
     pet p left outer join comment_pet  on comment_pet.pet_id=p.pet_id order by popularity desc;
 create or replace view adopt_view as SELECT 
-    apply_date,PID,
+    apply_date,pet_id,
     adopter_id,
      '该' || adopter_gender || '性用户想要' || 
      '领养一只宠物'|| '-养宠经验:' || pet_experience ||
