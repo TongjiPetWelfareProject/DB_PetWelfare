@@ -20,7 +20,7 @@
 <script>
 import { ref,onMounted} from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
-import gg_rqb_jk from '../api/gg_rqb_jk'
+import gg_rqb_jk from '@/api/gg_rqb_jk'
 
 
 export default {

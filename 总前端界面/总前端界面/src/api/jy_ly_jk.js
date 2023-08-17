@@ -26,7 +26,7 @@ export const fetchFosterRecords = async () => {
       throw error;
     }
   };
-
+  
   export const updateFosterRecord = async (record) => {
     try {
       await axios.patch(`/api/manage-foster-update`, record);

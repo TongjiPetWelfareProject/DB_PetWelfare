@@ -7,7 +7,7 @@
       </el-table-column>
       <el-table-column prop="userId" label="用户ID" width="170">
       </el-table-column>
-      <el-table-column prop="reason" label="理由" width="250">
+      <el-table-column prop="days" label="天数" width="170">
       </el-table-column>
       <el-table-column label="操作" width="200">
         <template #default="scope">
@@ -34,24 +34,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed ,onMounted} from 'vue'
+import { ref, computed , onMounted } from 'vue'
 import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElTag } from 'element-plus'
 import axios from 'axios'
-import { fetchAdoptionRecords, updateAdoptionRecord } from '../api/jy_ly_jk.js'; 
-interface AdoptionRecord {
+import { fetchFosterRecords, updateFosterRecord } from '@/api/jy_ly_jk.js'
+
+interface FosterRecord {
   date: string
+  id:string
   petId: string
   userId: string
-  reason: string
-  censor_status:string
+  days: number
+  censor_status: string
 }
-const tableData = ref<AdoptionRecord[]>([])
+
+const tableData = ref<FosterRecord[]>([])
 
 const fetchData = async () => {
   try {
-    // const response = await axios.get('/api/manage-adopt');
-    // tableData.value = response.data; // 假设API返回一个符合AdoptionRecord结构的对象数组
-    tableData.value = await fetchAdoptionRecords();
+    tableData.value = await fetchFosterRecords();
   } catch (error) {
     console.error('获取数据时出错：', error);
   }
@@ -60,7 +61,8 @@ const fetchData = async () => {
 // 组件挂载时获取数据
 onMounted(fetchData);
 
-const approveApplication = async (index: number) => {
+
+const approveApplication = async(index: number) => {
   // 同意申请操作
   const recordToUpdate = tableData.value[index];
 
@@ -68,9 +70,7 @@ const approveApplication = async (index: number) => {
   recordToUpdate.censor_status = 'abored';
 
   try {
-    // const { date, petId, userId } = recordToUpdate;
-    // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'abored' });
-    await updateAdoptionRecord(recordToUpdate);
+    await updateFosterRecord(recordToUpdate);
   } catch (error) {
     console.error('更新数据时出错：', error);
     recordToUpdate.censor_status = 'to be censored';
@@ -84,12 +84,11 @@ const rejectApplication = async(index: number) => {
   recordToUpdate.censor_status = 'legitimate';
 
   try {
-    // const { date, petId, userId } = recordToUpdate;
-    // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'legitimate' });
-    await updateAdoptionRecord(recordToUpdate);
+    await updateFosterRecord(recordToUpdate);
   } catch (error) {
     console.error('更新数据时出错：', error);
     recordToUpdate.censor_status = 'to be censored';
-  }
 }
+}
+
 </script>

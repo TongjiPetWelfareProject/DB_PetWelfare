@@ -106,7 +106,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import first_page from '@/api/first_page';
+
+const topPets = ref([]);
+
+// 在组件挂载后获取领养宠物人气榜数据
+onMounted(async () => {
+  try {
+    topPets.value = await first_page.topAdoptPetsAPI();
+  } catch (error) {
+    console.error('获取领养宠物人气榜数据时出错：', error);
+  }
+});
+
 const images = [
   '轮播1.png',
   '轮播2.png',
@@ -212,5 +225,3 @@ const images = [
   /* 将子元素垂直排列 */
 }
 </style>
-
-
