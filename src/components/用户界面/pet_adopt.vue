@@ -2,11 +2,11 @@
 import { ref, computed } from 'vue'
 
 const images = [
-'./src/components/photos/pet1.jpg',
-'./src/components/photos/pet2.jpg',
-'./src/components/photos/pet3.jpg',
-'./src/components/photos/pet4.jpg',
-'./src/components/photos/pet5.jpg',
+'@/photos/pet1.jpg',
+'@/photos/pet2.jpg',
+'@/photos/pet3.jpg',
+'@/photos/pet4.jpg',
+'@/photos/pet5.jpg',
 ];
 
 const pets = [

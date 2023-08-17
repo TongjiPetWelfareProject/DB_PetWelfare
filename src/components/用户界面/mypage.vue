@@ -563,7 +563,7 @@ axios.get('/api/treatment')
 
     <div>
       <!-- 用户头像显示 -->
-      <img src="./photos/头像.jpg" class="avatar-container">
+      <img src="@/photos/头像.jpg" class="avatar-container">
     </div>
   </div>
 </template>

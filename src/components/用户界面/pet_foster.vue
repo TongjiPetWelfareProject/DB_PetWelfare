@@ -77,7 +77,7 @@ flex-direction: column; /* 将子元素垂直排列 */
 }
 .foster_container{
 height:300px;
-background-image: url("./photos/寄养背景.jpg");
+background-image: url("@/photos/寄养背景.jpg");
 background-size: cover;
 background-position: center;
 background-repeat: no-repeat;

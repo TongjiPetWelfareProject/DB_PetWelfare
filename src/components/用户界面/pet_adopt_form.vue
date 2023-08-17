@@ -1,6 +1,6 @@
 <template>
   <div class="tableitem" >
-    <img src="./photos/柯基头像.jpg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
+    <img src="@/photos/柯基头像.jpg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
     <p class="welcome-text">宠物领养申请表</p>
   </div>
   <el-form :model="form" label-width="200px">

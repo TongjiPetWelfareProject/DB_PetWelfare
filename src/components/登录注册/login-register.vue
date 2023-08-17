@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
-import backgroundImage1 from './photos/猫互动.jpg';
-import backgroundImage2 from './photos/狗互动.jpg';
-import backgroundImage3 from './photos/主人怀抱小狗.jpg';
+import backgroundImage1 from '@/photos/猫互动.jpg';
+import backgroundImage2 from '@/photos/狗互动.jpg';
+import backgroundImage3 from '@/photos/主人怀抱小狗.jpg';
 const router = useRouter();
 const backgroundImages = [backgroundImage1, backgroundImage2,backgroundImage3];
 const selectedBackgroundImage = ref(backgroundImages[Math.floor(Math.random() * backgroundImages.length)]);
@@ -17,7 +17,7 @@ const mainpage = () => {
 <template>
   <div class="background-container" :style="{ backgroundImage: `url(${selectedBackgroundImage})` }">
     <div class="logo-container" @click="mainpage">
-          <img src="./photos/logo.ico" alt="Logo" class="logo">
+          <img src="@/photos/logo.ico" alt="Logo" class="logo">
           <span class="logo-text">同济宠物救助中心</span>
     </div>
   	<div class="info-container">

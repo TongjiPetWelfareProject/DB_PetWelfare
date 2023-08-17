@@ -19,9 +19,9 @@
       <el-row gutter="50">
         <el-col :span="8"><el-card class="card2">
             <div style="padding: 10px">
-              <img src="2.png" class="img">
+              <img src="@/photos/2.png" class="img">
             </div>
-            <img src="人气榜2.jpg" class="image">
+            <img src="@/photos/人气榜2.jpg" class="image">
             <div style="padding: 14px">
               <span>Kitty</span><br>
               <span>热情友善，自信且不怕生</span>
@@ -29,9 +29,9 @@
           </el-card> </el-col>
         <el-col :span="8"> <el-card class="card1">
             <div style="padding: 10px">
-              <img src="1.png" class="img">
+              <img src="@/photos/1.png" class="img">
             </div>
-            <img src="人气榜1.jpg" class="image">
+            <img src="@/photos/人气榜1.jpg" class="image">
             <div style="padding: 10px ">
               <span>Honey</span><br>
               <span>聪明敏捷，活泼可爱</span>
@@ -39,9 +39,9 @@
           </el-card></el-col>
         <el-col :span="8"><el-card class="card3">
             <div style="padding: 10px">
-              <img src="3.png" class="img">
+              <img src="@/photos/3.png" class="img">
             </div>
-            <img src="人气榜3.jpg" class="image">
+            <img src="@/photos/人气榜3.jpg" class="image">
             <div style="padding: 10px">
               <span>旺财</span><br>
               <span>乖巧可爱，微笑天使</span>
@@ -59,16 +59,16 @@
 
       <el-row :gutter="20">
         <el-col :span="6">
-          <img src="寄养1.png" class="image1">
+          <img src="@/photos/寄养1.png" class="image1">
         </el-col>
         <el-col :span="6">
-          <img src="寄养2.png" class="image1">
+          <img src="@/photos/寄养2.png" class="image1">
         </el-col>
         <el-col :span="6">
-          <img src="寄养3.png" class="image1">
+          <img src="@/photos/寄养3.png" class="image1">
         </el-col>
         <el-col :span="6">
-          <img src="寄养1.png" class="image1">
+          <img src="@/photos/寄养1.png" class="image1">
         </el-col>
       </el-row>
 
@@ -80,7 +80,7 @@
         </div>
       </template>
       <el-row :gutter="20">
-        <el-col :span="8"> <img src="关于我们.png" class="image1"></el-col>
+        <el-col :span="8"> <img src="@/photos/关于我们.png" class="image1"></el-col>
         <el-col :span="16">
           <span style="display: block; text-indent: 2em;"> 宠物救助站是一个致力于拯救和保护流浪宠物的组织，我们的使命是提供流浪动物一个温暖、安全的家园。
 

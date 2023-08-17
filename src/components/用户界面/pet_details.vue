@@ -14,18 +14,18 @@ const pet = ref({
   comments: 0,
   favorites: 0,
   comment_contents: [
-  { id: 1, author: '用户1（后期去掉）', text: '好文章！（后期去掉）', avatar: './src/components/photos/阿尼亚.jpg' },
-  { id: 2, author: '用户2（后期去掉）', text: '感谢分享！（后期去掉）', avatar: './src/components/photos/CC.jpg' }
+  { id: 1, author: '用户1（后期去掉）', text: '好文章！（后期去掉）', avatar: '@/photos/阿尼亚.jpg' },
+  { id: 2, author: '用户2（后期去掉）', text: '感谢分享！（后期去掉）', avatar: '@/photos/CC.jpg' }
   ],
   images: [
-    './src/components/photos/汤姆1.jpg',
-    './src/components/photos/汤姆2.jpg',
-    './src/components/photos/汤姆3.jpg'
+    '@/photos/汤姆1.jpg',
+    '@/photos/汤姆2.jpg',
+    '@/photos/汤姆3.jpg'
   ],
   currentImageIndex: 0
 });
 
-const newComment = ref({ author: '', text: '', avatar: './src/components/photos/默认.jpg' });
+const newComment = ref({ author: '', text: '', avatar: '@/photos/默认.jpg' });
 const showCommentForm = ref(false);
 
 const addComment = () => {
