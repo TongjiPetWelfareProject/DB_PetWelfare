@@ -1,6 +1,3 @@
 [submodule "Backend"]
 	path = Backend
 	url = git@github.com:VictorHuu/PetFosterSystem.git
-[submodule "PetFosterInit"]
-	path = PetFosterInit
-	url = https://github.com/VictorHuu/PetFosterInit
