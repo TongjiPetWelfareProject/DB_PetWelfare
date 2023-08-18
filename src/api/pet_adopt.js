@@ -45,10 +45,11 @@ export const getPetDetails = (petId) => {
     });
 };
 
-export const submitLike = (userInfo, petInfo) => {
+export const submitLike = (userInfo, petInfo, likes) => {
   const likeData = {
     user: userInfo.User_ID,
     pet: petInfo.Pet_ID,
+    likes: likes,
   };
 
   return axios.post('/api/pet-like', likeData)  // 假设后端有名为 pet-like 的接口来处理点赞
@@ -60,10 +61,11 @@ export const submitLike = (userInfo, petInfo) => {
     });
 };
 
-export const submitFavorite = (userInfo, petInfo) => {
+export const submitFavorite = (userInfo, petInfo, favorites) => {
   const favoriteData = {
     user: userInfo.User_ID,
     pet: petInfo.Pet_ID,
+    favorites: favorites,
   };
 
   return axios.post('/api/pet-favorite', favoriteData)  // 假设后端有名为 pet-favorite 的接口来处理收藏请求
@@ -99,6 +101,20 @@ export const submitComment = (userInfo, petInfo) => {
   };
 
   return axios.post('/api/pet-comment', commentData)  // 假设后端有名为 pet-comment 的接口来处理评论请求
+    .then(response => {
+      return response.data; // 你可能希望在这里返回响应数据
+    })
+    .catch(error => {
+      throw error;
+    });
+};
+
+export const deleteComment = (commentInfo) => {
+  const commentData = {
+    comment: commentInfo.comment_ID,
+  };
+
+  return axios.post('/api/pet-comment', commentData)  // 假设后端有名为 pet-comment 的接口来处理删除评论请求
     .then(response => {
       return response.data; // 你可能希望在这里返回响应数据
     })
