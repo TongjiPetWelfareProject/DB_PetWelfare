@@ -81,7 +81,7 @@ export const submitReading = (userInfo, petInfo) => {
     pet: petInfo.Pet_ID,
   };
 
-  return axios.post('/api/pet-reading', readingData)  // 假设后端有名为 article-reading 的接口来处理阅读请求
+  return axios.post('/api/pet-reading', readingData)  // 假设后端有名为 pet-reading 的接口来处理阅读请求
     .then(response => {
       return response.data; // 你可能希望在这里返回响应数据
     })
@@ -98,11 +98,11 @@ export const submitComment = (userInfo, petInfo) => {
     time: commentTime
   };
 
-  return axios.post('/api/pet-comment', commentData)  // 假设后端有名为 article-comment 的接口来处理评论请求
+  return axios.post('/api/pet-comment', commentData)  // 假设后端有名为 pet-comment 的接口来处理评论请求
     .then(response => {
       return response.data; // 你可能希望在这里返回响应数据
     })
     .catch(error => {
       throw error;
     });
-};c
+};
