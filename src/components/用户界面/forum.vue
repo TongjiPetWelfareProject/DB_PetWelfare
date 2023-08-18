@@ -1,10 +1,8 @@
 <template>
-      <el-main>
-        <el-affix position="top-right" :offset="20" style="float:right;top: 20px;">
-          <!-- <el-button type="primary" size="medium" icon="el-icon-edit">我要发帖</el-button> -->
-          <router-link to="/posting">我要发帖
-        </router-link>
-        </el-affix>
+  <el-main>
+    <el-affix position="top-right" :offset="20" style="float:right;top: 20px;">
+      <router-link to="/posting">我要发帖</router-link>
+    </el-affix>
     <div class="content">
       <div class="sort-bar">
         <div>排序：</div>
@@ -13,17 +11,13 @@
             {{ sortOrder === 'asc' ? '日期正序' : '日期倒序' }}
           </el-button>
         </div>
-       
       </div>
-      
       <div class="search-bar">
         <el-input v-model="searchText" placeholder="搜索帖子标题"></el-input>
         <el-button type="primary" @click="search">搜索</el-button>
       </div>
-      
       <ul class="forum-posts">
-        <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="goToPost(post)"> -->
-          <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')">
+        <li v-for="post in filteredPosts" :key="post.post_id" @click="goToPost(post)">
           <div class="post-title">
             <div>{{ post.title }}</div>
           </div>
@@ -37,101 +31,72 @@
       </ul>
     </div>
   </el-main>
-      
 </template>
 
 <script>
+import { ref, onMounted, computed } from 'vue'
+import notice_forum from '@/api/notice_forum'
+
 export default {
   name: "UserInfo",
-  data() {
-    return {
-      forum_posts: [
-        {
-          post_id: 1,
-          user_id: 'thesamechen',
-          read_count: 5,
-          like_num: 3,
-          comment_num: 2,
-          title: '可爱小猫咪找新家',
-          post_time: '2023-03-01 00:00:00'
-        },
-        {
-          post_id: 2,
-          user_id: 'thesamechen',
-          read_count: 4,
-          like_num: 4,
-          comment_num: 2,
-          title: '日常遛狗分享',
-          post_time: '2023-04-15 00:00:00'
-        },
-        {
-          post_id: 3,
-          user_id: 'thesamechen',
-          read_count: 7,
-          like_num: 5,
-          comment_num: 2,
-          title: '流浪猫“果果”被收养的后续追踪记录',
-          post_time: '2023-05-01 00:00:00'
-        },
-        {
-          post_id: 4,
-          user_id: 'thesamechen',
-          read_count: 15,
-          like_num: 3,
-          comment_num: 2,
-          title: '想领养一只田园犬',
-          post_time: '2023-05-21 00:00:00'
-        },
-        {
-          post_id: 5,
-          user_id: 'thesamechen',
-          read_count: 25,
-          like_num: 23,
-          comment_num: 12,
-          title: '猫咪生病在线求助！',
-          post_time: '2023-06-01 00:00:00'
-        }
-      ],
-      searchText: '',
-      sortOrder: 'asc' // 默认按照发布时间正序排序
-    }
-  },
-  computed: {
-    sortedPosts() {
-      if (this.sortOrder === 'asc') {
-        return this.forum_posts.sort((a, b) => new Date(a.post_time) - new Date(b.post_time))
-      } else if (this.sortOrder === 'desc') {
-        return this.forum_posts.sort((a, b) => new Date(b.post_time) - new Date(a.post_time))
-      } 
-    },
-    filteredPosts() {
-      return this.sortedPosts.filter(post =>
-        post.title.toLowerCase().includes(this.searchText.toLowerCase())
-      )
-    }
-  },
-  methods: {
-    goToPost(post) {
-      // 跳转到帖子详情页
-      // router.push('/medical')
-      console.log('跳转到帖子详情页：' + post.title)
-    },
-    toggleSortOrder() {
-      if (this.sortOrder === 'asc') {
-        this.sortOrder = 'desc'
-      } else if (this.sortOrder === 'desc') {
-        this.sortOrder = 'like'
-      } else {
-        this.sortOrder = 'asc'
-      }
-    },
-    sortByLikeNum() {
-      this.sortOrder = 'like'
-    },
-    search() {
+  setup() {
+    const forum_posts = ref([]);
+    const searchText = ref('');
+    const sortOrder = ref('asc');
+
+    const toggleSortOrder = () => {
+      sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+    };
+
+    const search = () => {
       // 执行搜索操作
-      console.log('搜索：' + this.searchText)
-    }
+      console.log('搜索：' + searchText.value);
+
+      // 调用API接口搜索帖子
+      notice_forum.searchPosts(searchText.value)
+        .then(response => {
+          forum_posts.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    };
+
+    const getPosts = () => {
+      // 调用API接口获取所有帖子
+      notice_forum.getPosts()
+        .then(response => {
+          forum_posts.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    };
+
+    onMounted(() => {
+      getPosts(); // 初始加载时获取帖子列表
+    });
+
+    const goToPost = (post) => {
+      // 跳转到帖子详情页
+      console.log('跳转到帖子详情页：' + post.title);
+      this.$router.push({ path: '/post_details', query: { post_id: post.post_id }});
+    };
+
+    const filteredPosts = computed(() => {
+      return forum_posts.value.filter(post => {
+        return post.title.toLowerCase().includes(searchText.value.toLowerCase());
+      });
+    });
+
+    return {
+      searchText,
+      sortOrder,
+      toggleSortOrder,
+      search,
+      goToPost,
+      filteredPosts
+    };
   }
 }
 </script>
