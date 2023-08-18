@@ -39,8 +39,8 @@ const pet = ref({
   comments: 0,
   favorites: 0,
   comment_contents: [
-  { id: 1, author: '用户1（后期去掉）', text: '好文章！（后期去掉）', avatar: './src/components/photos/阿尼亚.jpg' },
-  { id: 2, author: '用户2（后期去掉）', text: '感谢分享！（后期去掉）', avatar: './src/components/photos/CC.jpg' }
+  { id: 1, author: '用户1（后期去掉）', text: '好文章！（后期去掉）', avatar: '@/photos/汤姆1.jpg' },//传照片没成功
+  { id: 2, author: '用户2（后期去掉）', text: '感谢分享！（后期去掉）', avatar: '@/photos/汤姆2.jpg' }//传照片没成功
   ],
   image: './photos/汤姆1.jpg',
 });
@@ -49,7 +49,7 @@ pet.value.reads++;
 
 
 
-const newComment = ref({ author: '', text: '', avatar: './src/components/photos/默认.jpg' });
+const newComment = ref({ author: '', text: '', avatar: '@/photos/汤姆1.jpg' });//传照片没成功
 newComment.value.author = '某某某';
 const showCommentForm = ref(false);
 
@@ -260,15 +260,15 @@ const favoritePet = async() => {
     <div class="interactions">
       <div>
         <button class="round-button" @click="likePet">
-          <img v-if="liked" src="./photos/like_blue.png" alt="点赞" class="icon">
-          <img v-else src="./photos/like_grey.png" alt="未点赞" class="icon">
+          <img v-if="liked" src="@/photos/like_blue.png" alt="点赞" class="icon">
+          <img v-else src="@/photos/like_grey.png" alt="未点赞" class="icon">
         </button>
         <span>{{ pet.likes }}</span>
       </div>
       <div>
         <button class="round-button" @click="favoritePet">
-          <img v-if="favorited" src="./photos/favorite_blue.png" alt="收藏" class="icon">
-          <img v-else src="./photos/favorite_grey.png" alt="未收藏" class="icon">
+          <img v-if="favorited" src="@/photos/favorite_blue.png" alt="收藏" class="icon">
+          <img v-else src="@/photos/favorite_grey.png" alt="未收藏" class="icon">
         </button>
         <span>{{ pet.favorites }}</span>
       </div>
