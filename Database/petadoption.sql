@@ -198,10 +198,10 @@ create table treatment(
 create table appointment(
   pet_id varchar2(20) references pet(pet_id),
   user_id varchar2(20) references user2(user_id),
-  species varchar2(20),
+  vet_id varchar2(20) references vet(vet_id),
   reason varchar2(200) not null,
   custom_time TIMESTAMP default CURRENT_TIMESTAMP,
-  primary key(pet_id,user_id,apply_time)
+  primary key(pet_id,user_id,apply_time,vet_id)
 )partition by range(apply_time)interval(interval '1' year)
 (partition start_apply values less than(TIMESTAMP '2023-09-01 00:00:00'));
 CREATE TABLE post_images (
