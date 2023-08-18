@@ -42,7 +42,7 @@
       <p style="margin-bottom:1px;color: #656565;">盼您与我们携手，为每一只小猫小狗带来美好的未来。</p><p style="margin-top:2px;color: #656565;">您的捐款不仅是资金的支持，更是对生命的关怀，让我们一同见证奇迹的发生。</p>
     </div>
     </div>
-    <img src="../../../public/donateimg.png" style="width:250px;height:250px">
+    <img src="@/photos/donateimg.png" style="width:250px;height:250px">
   </div>
 
 
@@ -94,9 +94,9 @@ import medical_donate from '@/api/medical_donate'
 
 const tabPosition = ref('left')
 const urls = [
-  '../../../public/home8.jpg',
-  '../../../public/home2.png',
-  '../../../public/home7.jpg', 
+  '@/photos/home8.jpg',
+  '@/photos/home2.png',
+  '@/photos/home7.jpg', 
 ]
 const userId = 123; // 当前用户ID
 const donationTime = new Date().toISOString(); // 当前时间转换为字符串格式

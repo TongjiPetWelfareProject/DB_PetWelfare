@@ -11,7 +11,7 @@
       <p style="margin-bottom:1px;color: #b4bac2;font-size: 14px;">皮肤感染、胃部、疼痛、肿块...我们尽全力帮助宠物脱离痛苦。</p>
     </div>
     </div>
-    <img src="../../../public/rcstry.png" style="margin-left:200px;width:250px;height:120px">
+    <img src="@/photos/rcstry.png" style="margin-left:200px;width:250px;height:120px">
   </div>
     <br>
     <el-collapse v-model="activeName" max-height="200" accordion>
