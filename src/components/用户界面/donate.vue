@@ -2,7 +2,7 @@
 
     <el-affix :offset="200">
       <el-button type="primary" :icon="Coin" circle @click="open" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">点击捐款</el-button>
-  </el-affix>
+   </el-affix>
 
     <div class="demo-image__lazy">
     <el-image v-for="url in urls" :key="url" :src="url" lazy />
@@ -31,8 +31,17 @@
   <el-pagination layout="prev, pager, next" :total="1000" />
     </el-tab-pane>
   </el-tabs>
+  <br>
   <div style="display:flex;align-items: center;justify-content: center">
-    <span style="font-size: 18px;font-weight: bold;color:#729cd4;">感谢您的支持和信任，您的善举将为小猫小狗们带来希望和幸福。</span>
+    <div style="display:block">
+      <div>
+      <p style="font-size: 20px;font-weight: bold;color:#729cd4;">感谢您的支持和信任，您的善举将为小猫小狗们带来希望和幸福。</p>
+    </div>
+    
+    <div style="display:block;text-align: center;justify-content: center;">
+      <p style="margin-bottom:1px;color: #656565;">盼您与我们携手，为每一只小猫小狗带来美好的未来。</p><p style="margin-top:2px;color: #656565;">您的捐款不仅是资金的支持，更是对生命的关怀，让我们一同见证奇迹的发生。</p>
+    </div>
+    </div>
     <img src="../../../public/donateimg.png" style="width:250px;height:250px">
   </div>
 
@@ -85,10 +94,9 @@ import medical_donate from '@/api/medical_donate'
 
 const tabPosition = ref('left')
 const urls = [
-  'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-  'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-  'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-  
+  '../../../public/home8.jpg',
+  '../../../public/home2.png',
+  '../../../public/home7.jpg', 
 ]
 const userId = 123; // 当前用户ID
 const donationTime = new Date().toISOString(); // 当前时间转换为字符串格式

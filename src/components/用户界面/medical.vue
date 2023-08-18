@@ -26,10 +26,10 @@ export default {
 
 
 <template>
-     <el-affix :offset="300">
+     <el-affix :offset="300" style="color: #eebe77;">
      <!-- <router-link to="/reservationdoctor" target="_blank" style="float:right">
      </router-link> -->
-     <el-button type="primary" @click="goToReservationPage" style="float: right">预约</el-button>
+     <el-button type="primary" @click="goToReservationPage" style="float: right;background-color: #eebe77;">立即预约</el-button>
      </el-affix>
     <doctors/>
     <recoverystory/>
