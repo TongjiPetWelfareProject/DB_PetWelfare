@@ -3,13 +3,47 @@ import { ref, onMounted } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import axios from 'axios';
 import { useUserStore } from '@/store/user'
-import { userTotalLikeandReadAPI } from '@/api/userInfo'
+import { userTotalLikeAPI } from '@/api/userInfo'
+import { userReadAPI } from '@/api/userInfo'
+import { userPhonerAPI } from '@/api/userInfo'
+import { userNameAPI } from '@/api/userInfo'
+import { userAddressAPI } from '@/api/userInfo'
+import { userPetLikeAPI } from '@/api/userInfo'
+import { userPetCollectAPI } from '@/api/userInfo'
+import { userPetCommentAPI } from '@/api/userInfo'
+import { userPetViewAPI } from '@/api/userInfo'
+
+import { forumPetLikeAPI } from '@/api/userInfo'
+import { forumPetCollectAPI } from '@/api/userInfo'
+import { forumPetCommentAPI } from '@/api/userInfo'
+import { forumPetViewAPI } from '@/api/userInfo'
+
+import { myAdoptIDAPI } from '@/api/userInfo'
+import { myAdoptPetAPI } from '@/api/userInfo'
+import { myAdoptStartTimeAPI } from '@/api/userInfo'
+
+import { myFosterIDAPI } from '@/api/userInfo'
+import { myFosterPetAPI } from '@/api/userInfo'
+import { myFosterStartYearAPI } from '@/api/userInfo'
+import { myFosterStartMonthAPI } from '@/api/userInfo'
+import { myFosterStartDayAPI } from '@/api/userInfo'
+
+import { myTreatIDAPI } from '@/api/userInfo'
+import { myTreatPetAPI } from '@/api/userInfo'
+import { myDocterAPI } from '@/api/userInfo'
+import { myVetIDAPI } from '@/api/userInfo'
+
+import { myDonateIDAPI } from '@/api/userInfo'
+import { myDonationAmountAPI } from '@/api/userInfo'
+import { myDonationTimeAPI } from '@/api/userInfo'
 
 const userStore = useUserStore()
 const activeName = ref('first')
-const likesandread = ref({
-  likenum:0,
-  readnum:0
+const likes = ref({
+  likenum:0
+})
+const read = ref({
+  likenum:0
 })
 const likelist = ref([])
 const collectlist = ref([])
@@ -18,19 +52,177 @@ const commentlist = ref([])
 const adoptlist = ref ([])
 const fosterlist = ref([])
 
+const pet_name1 = ref('乐乐')
+const pet_name2 = ref('乐乐')
+const pet_name3 = ref('乐乐')
+const pet_name4 = ref('乐乐')
+const pet_name5 = ref('乐乐')
+const pet_name6 = ref('乐乐')
+const pet_name7 = ref('乐乐')
+const pet_name8 = ref('乐乐')
+const pet_name9 = ref('乐乐')//领养
+const pet_name10 = ref('乐乐')//领养
+const pet_name11 = ref('乐乐')//医疗
+const pet_id1 = ref('111222')//领养
+const pet_id2 = ref('111222')//领养
+const pet_id3 = ref('111222')//医疗
+const donor_id = ref('111000')
+const donation_time = ref(2023-5-1)
+const donation_amount = ref(2023)
+const doctor_id = ref('111001')
+const vet_id = ref('111001')
+const adoption_time = ref(2023-5-2)
+const start_year = ref(2022)
+const start_month = ref(12)
+const start_day = ref(19)
 
 onMounted(()=>{
   
   // 获取用户总点赞量和阅读量
-  const getLikeandRead = async () => {
-  const res = await userTotalLikeandReadAPI(userStore.userInfo.User_ID)
-  // likesandread.value = res.data
+  const getLike = async () => {
+  const res = await userTotalLikeAPI(likes.likenum)
+  likes.value = res.data
   }
-  // 获取用户喜欢的宠物列表
-  const getLikePet = async () => {
-    
+  const getRead = async () => {
+  const res = await userReadAPI(read.read_num)
+   read.value = res.data
+  }
+  const getPhone = async () => {
+  const res = await userPhonerAPI(userStore.userInfo.Phone_Number)
+  userStore.userInfo.Phone_Number.value = res.data
+  }
+  const getName = async () => {
+  const res = await userNameAPI(userStore.userInfo.User_Name)
+  userStore.userInfo.User_Name.value = res.data
+  }
+  const getAddress = async () => {
+  const res = await userAddressAPI(userStore.userInfo.Address)
+  userStore.userInfo.User_Name.value = res.data
+  }
+  // 获取我的宠物的所有列表
+  const getMyLikePet = async () => {
+    const res = await userPetLikeAPI(pet_name5)
+    pet_name5.value = res.data
+  }
+
+  const getMyCollectPet = async () => {
+    const res = await userPetCollectAPI(pet_name6)
+    pet_name6.value = res.data
+  }
+
+  const getMyCommentPet = async () => {
+    const res = await userPetCommentAPI(pet_name7)
+    pet_name7.value = res.data
+  }
+
+  const getMyViewPet = async () => {
+    const res = await userPetViewAPI(pet_name8)
+    pet_name8.value = res.data
+  }
+  //获取我的论坛的所有列表
+  const getForumLikePet = async () => {
+    const res = await forumPetLikeAPI(pet_name1)
+    pet_name1.value = res.data
+  }
+
+  const getForumCollectPet = async () => {
+    const res = await forumPetCollectAPI(pet_name2)
+    pet_name2.value = res.data
+  }
+
+  const getForumCommentPet = async () => {
+    const res = await forumPetCommentAPI(pet_name3)
+    pet_name3.value = res.data
+  }
+
+  const getForumViewPet = async () => {
+    const res = await forumPetViewAPI(pet_name4)
+    pet_name4.value = res.data
+  }
+
+  //我的领养
+  const getMyAdoptID = async () => {
+    const res = await myAdoptIDAPI(pet_id1)
+    pet_id1.value = res.data
+  }
+
+  const getMyAdoptName = async () => {
+    const res = await myAdoptPetAPI(pet_name9)
+    pet_name9.value = res.data
+  }
+
+  const getMyAdoptStartTime = async () => {
+    const res = await myAdoptStartTimeAPI(adoption_time)
+    adoption_time.value = res.data
+  }
+
+
+  //我的寄养
+  const getMyFosterID = async () => {
+    const res = await myFosterIDAPI(pet_id2)
+    pet_id2.value = res.data
+  }
+
+  const getMyFosterName = async () => {
+    const res = await myFosterPetAPI(pet_name10)
+    pet_name10.value = res.data
+  }
+
+  const getMyFosterStartYear = async () => {
+    const res = await myFosterStartYearAPI(start_year)
+    start_year.value = res.data
+  }
+
+  const getMyFosterStartMonth = async () => {
+    const res = await myFosterStartMonthAPI(start_month)
+    start_month.value = res.data
+  }
+
+  const getMyFosterStartDay = async () => {
+    const res = await myFosterStartDayAPI(start_day)
+    start_day.value = res.data
+  }
+
+  //我的医疗
+  const getMyTreatID = async () => {
+    const res = await myTreatIDAPI(pet_id3)
+    pet_id3.value = res.data
+  }
+
+  const getMyTreatName = async () => {
+    const res = await myTreatPetAPI(pet_name11)
+    pet_name11.value = res.data
+  }
+
+  const getMyDocter = async () => {
+    const res = await myDocterAPI(doctor_id)
+    doctor_id.value = res.data
+  }
+
+  const getVetID = async () => {
+    const res = await myVetIDAPI(vet_id)
+    vet_id.value = res.data
+  }
+  //我的捐款
+  const getMyDonateID = async () => {
+    const res = await myDonateIDAPI(donor_id)
+    donor_id.value = res.data
+  }
+
+  const getMyDonationAmount = async () => {
+    const res = await myDonationAmountAPI(donation_amount)
+    donation_amount.value = res.data
+  }
+
+  const getMyDonationTime = async () => {
+    const res = await myDonationTimeAPI(donation_time)
+    donation_time.value = res.data
   }
 })
+
+
+
+
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
@@ -86,256 +278,230 @@ const blockMargin = computed(() => {
   }
 })
 
-const pet_name1 = ref('乐乐')
-const pet_name2 = ref('乐乐')
-const pet_name3 = ref('乐乐')
-const pet_name4 = ref('乐乐')
-const pet_name5 = ref('乐乐')
-const pet_name6 = ref('乐乐')
-const pet_name7 = ref('乐乐')
-const pet_name8 = ref('乐乐')
-const pet_name9 = ref('乐乐')//领养
-const pet_name10 = ref('乐乐')//领养
-const pet_name11 = ref('乐乐')//医疗
-const pet_id1 = ref('111222')//领养
-const pet_id2 = ref('111222')//领养
-const pet_id3 = ref('111222')//医疗
-const donor_id = ref('111000')
-const donation_time = ref(2023-5-1)
-const donation_amount = ref(2023)
-const doctor_id = ref('111001')
-const vet_id = ref('111001')
-const adoption_time = ref(2023-5-2)
-const start_year = ref(2022)
-const start_month = ref(12)
-const start_day = ref(19)
-
-//我的论坛
-axios.get('/api/like-list')
-        .then(response => {
-          pet_name1.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/like-count')
-      .then(response => {
-        count1.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
 
 
-axios.get('/api/collect-list')
-        .then(response => {
-          pet_name2.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/collect-count')
-      .then(response => {
-        count2.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
+// //我的论坛
+// axios.get('/api/like-list')
+//         .then(response => {
+//           pet_name1.value = response.data; // 将返回的数据保存在pet_name数组中
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/like-count')
+//       .then(response => {
+//         count1.value = response.data; // 将返回的数据保存在count属性中
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
 
 
-axios.get('/api/comment-list')
-        .then(response => {
-          pet_name3.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/comment-count')
-      .then(response => {
-        count3.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
+// axios.get('/api/collect-list')
+//         .then(response => {
+//           pet_name2.value = response.data; // 将返回的数据保存在pet_name数组中
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/collect-count')
+//       .then(response => {
+//         count2.value = response.data; // 将返回的数据保存在count属性中
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
+
+
+// axios.get('/api/comment-list')
+//         .then(response => {
+//           pet_name3.value = response.data; // 将返回的数据保存在pet_name数组中
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/comment-count')
+//       .then(response => {
+//         count3.value = response.data; // 将返回的数据保存在count属性中
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
 
 
 
-axios.get('/api/view-list')
-        .then(response => {
-          pet_name4.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/view-count')
-      .then(response => {
-        count4.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
+// axios.get('/api/view-list')
+//         .then(response => {
+//           pet_name4.value = response.data; // 将返回的数据保存在pet_name数组中
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/view-count')
+//       .then(response => {
+//         count4.value = response.data; // 将返回的数据保存在count属性中
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
 
 
-//我的宠物
-axios.get('/api/like-list')
-        .then(response => {
-          pet_name5.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/like-count')
-      .then(response => {
-        count5.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
+// //我的宠物
+// axios.get('/api/like-list')
+//         .then(response => {
+//           pet_name5.value = response.data; // 将返回的数据保存在pet_name数组中
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/like-count')
+//       .then(response => {
+//         count5.value = response.data; // 将返回的数据保存在count属性中
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
 
 
-axios.get('/api/collect-list')
-        .then(response => {
-          pet_name6.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/collect-count')
-      .then(response => {
-        count6.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
+// axios.get('/api/collect-list')
+//         .then(response => {
+//           pet_name6.value = response.data; // 将返回的数据保存在pet_name数组中
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/collect-count')
+//       .then(response => {
+//         count6.value = response.data; // 将返回的数据保存在count属性中
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
 
 
-axios.get('/api/comment-list')
-        .then(response => {
-          pet_name7.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/comment-count')
-      .then(response => {
-        count7.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
+// axios.get('/api/comment-list')
+//         .then(response => {
+//           pet_name7.value = response.data; // 将返回的数据保存在pet_name数组中
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/comment-count')
+//       .then(response => {
+//         count7.value = response.data; // 将返回的数据保存在count属性中
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
 
 
 
-axios.get('/api/view-list')
-        .then(response => {
-          pet_name8.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/view-count')
-      .then(response => {
-        count8.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
+// axios.get('/api/view-list')
+//         .then(response => {
+//           pet_name8.value = response.data; // 将返回的数据保存在pet_name数组中
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/view-count')
+//       .then(response => {
+//         count8.value = response.data; // 将返回的数据保存在count属性中
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
 
-//收养
-axios.get('/api/adopt')
-        .then(response => {
-          pet_id1.value = response.data; 
+// //收养
+// axios.get('/api/adopt')
+//         .then(response => {
+//           pet_id1.value = response.data; 
           
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/adopt')
-        .then(response => {
-          pet_name9.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/adopt')
-        .then(response => {
-          adoption_time.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/adopt')
+//         .then(response => {
+//           pet_name9.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/adopt')
+//         .then(response => {
+//           adoption_time.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
 
 
-//寄养
-axios.get('/api/foster')
-      .then(response => {
-        pet_id2.value = response.data; 
-      })
-      .catch(error => {
-        console.log(error);
-      });
-axios.get('/api/foster')
-        .then(response => {
-          pet_name10.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_year.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_month.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_day.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
+// //寄养
+// axios.get('/api/foster')
+//       .then(response => {
+//         pet_id2.value = response.data; 
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
+// axios.get('/api/foster')
+//         .then(response => {
+//           pet_name10.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/foster')
+//         .then(response => {
+//           start_year.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/foster')
+//         .then(response => {
+//           start_month.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/foster')
+//         .then(response => {
+//           start_day.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
 
-//医疗
-axios.get('/api/treatment')
-      .then(response => {
-        pet_id3.value = response.data; 
-      })
-      .catch(error => {
-        console.log(error);
-      });
-axios.get('/api/treatment')
-        .then(response => {
-          pet_name11.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/treatment')
-        .then(response => {
-          doctor_id.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/treatment')
-        .then(response => {
-          vet_id.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-  
-
-//edit 
-//编辑按钮跳转到个人信息编辑页面还没有实现（ps：ysj暑期实习也要做网页和网站，现在有点忙）
+// //医疗
+// axios.get('/api/treatment')
+//       .then(response => {
+//         pet_id3.value = response.data; 
+//       })
+//       .catch(error => {
+//         console.log(error);
+//       });
+// axios.get('/api/treatment')
+//         .then(response => {
+//           pet_name11.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/treatment')
+//         .then(response => {
+//           doctor_id.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
+// axios.get('/api/treatment')
+//         .then(response => {
+//           vet_id.value = response.data;
+//         })
+//         .catch(error => {
+//           console.log(error);
+//         });
 
 </script>
 
@@ -345,7 +511,7 @@ axios.get('/api/treatment')
       <el-header style="height: 200px;">
         <el-descriptions class="margin-top" title="我的信息" :column="3" :size="size" border>
           <template #extra>
-            <el-button type="primary" @click="onEdit">编辑</el-button>
+            <el-button type="primary">编辑</el-button>
           </template>
           <el-descriptions-item>
             <template #label>
@@ -363,13 +529,13 @@ axios.get('/api/treatment')
             <template #label>
               <div class="cell-item"><el-icon :style="iconStyle"><star /></el-icon>点赞量</div>
             </template>
-            {{ likesandread.likenum }}
+            {{ likes.likenum }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
               <div class="cell-item"><el-icon :style="iconStyle"><tickets /></el-icon>阅读量</div>
             </template>
-            {{ likesandread.readnum }}
+            {{ read.readnum }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template #label>
@@ -563,9 +729,10 @@ axios.get('/api/treatment')
 
     <div>
       <!-- 用户头像显示 -->
-      <img src="@/photos/头像.jpg" class="avatar-container">
+      <img src="./photos/头像.jpg" class="avatar-container">
     </div>
   </div>
+  
 </template>
 
 <style>
