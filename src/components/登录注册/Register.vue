@@ -73,11 +73,11 @@ const submitForm = async() => {
 <template>
   <background></background>
 	<div class="form-container">
-	  <div class="left-half">
-	    <h1>注册信息</h1>
-	    <div class="form-group">
+    <div class="left-half">
+      <h1>注册信息</h1>
+      <div class="form-group">
         <div class="phone-input">
-	        <label for="phone">您的电话号码</label>
+          <label for="phone">您的电话号码</label>
           <span v-if="!phoneError && phone" class="success-icon fas fa-check-circle" style="color: green;
           position: absolute;
           margin-left: 35%;"></span>
@@ -85,33 +85,39 @@ const submitForm = async() => {
         </div>
           <input type="text" v-model="phone" name="phone" placeholder="请输入电话" @input="validatePhoneNumber"/>
       </div>
-
-	    <div class="form-group">
-	      <label for="region">选择地区</label>
-
-	      <select v-model="selectedProvince" class="province-select">
-	        <option v-for="(key,value) in provinces" :value="key" :key="key">{{ value }}</option>
-	      </select>
+      <div class="form-group">
+        <label for="region">选择地区</label>
+        <select v-model="selectedProvince" class="province-select">
+          <option v-for="(key,value) in provinces" :value="key" :key="key">{{ value }}</option>
+        </select>
         <select v-model="selectedCity" name="cities" class="city-select">
             <option v-for="city in cities" :value="city.value" :key="city.key">{{ city.key }}</option>
         </select>
-	    </div>
-
-      <div class="password-requirement">密码长度在8~16之间，必须包含数字、大小写字母、特殊字符（!@#$%^&*()）</div>
-	  </div>
-	  <div class="right-half">
-	    <form>
-	      <div class="form-group">
-	        <label for="username">填写用户名</label>
-	        <input type="text" v-model="username" name="username" placeholder="请输入账号" />
-	      </div>
-	      <div class="form-group">
-          <div class="password-input">
-	          <label for="password">填写密码</label>
-          </div>
-	          <input type="password" v-model="password" name="password" placeholder="请输入密码" @input="validatePasswordLength" />
+      </div>
+    </div>
+    <div class="right-half">
+      <form>
+        <div class="form-group">
+          <label for="username">填写用户名</label>
+          <input type="text" v-model="username" name="username" placeholder="请输入账号" />
         </div>
-	      <div class="form-group">
+        <div class="form-group">
+          <div class="password-input">
+            <label for="password">填写密码</label>
+          </div>
+          <div class="custom-input-container">
+            <el-tooltip 
+            placement="right" 
+            content="密码长度在8~16之间，必须包含数字、大小写字母、特殊字符" 
+            open-delay="500">
+              <div class="input-with-tooltip">
+                <input type="password" v-model="password" name="password" placeholder="请输入密码" @input="validatePasswordLength" />
+              </div>
+            </el-tooltip>
+          </div>
+           
+        </div>
+        <div class="form-group">
           <div class="password-input">
             <label for="password">确认密码</label>
             <span v-if="!passwordError && confirmPassword" class="success-icon fas fa-check-circle" style="color: green;
@@ -121,12 +127,16 @@ const submitForm = async() => {
           </div>
           <input type="password" v-model="confirmPassword" name="confirmPassword" placeholder="请确认密码" @input="validconfirmPassword"/>
         </div>
-	      <button type="button" @click="submitForm">注册</button>
-	    </form>
-	    <div class="register-link">
-	      已有账号？<router-link to="/login">去登录</router-link>
-	    </div>
-	  </div>
+        <button type="button" @click="submitForm">注册</button>
+      </form>
+      <div class="register-link">
+        已有账号？<router-link to="/login">去登录</router-link>
+      </div>
+    </div>
+
+
+
+
 	</div>
 </template>
 
@@ -139,7 +149,8 @@ html, body {
 
 .form-container h1 {
   text-align: center;
-  color: #fff;
+  color: #4e73a3;
+  font-size:26px;
 }
 
 .form-group {
@@ -149,7 +160,7 @@ html, body {
 
 .form-container {
   position: absolute;
-  width: 60%;
+  /* width: 60%;
   height: 60%;
   top: 20%;
   right: 5%;
@@ -157,7 +168,14 @@ html, body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   background-color: #7A7A7A;
   background-color: rgba(122, 122, 122, 0.5);
-  padding: 8px 12px;
+  padding: 8px 12px; */
+  width:40vw;
+  height:90vh;
+  right:0%;
+  top:5%;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
 }
 
 .left-half {
@@ -175,7 +193,7 @@ html, body {
 .right-half form {
   display: flex;
   flex-direction: column;
-  margin-top: 12%;
+  margin-top: 1%;
 }
 
 .province-select {
@@ -243,20 +261,22 @@ html, body {
 }
 
 .register-link {
-  color: #fff; /* 设置链接的文字颜色 */
+  color: #4e73a3; /* 设置链接的文字颜色 */
   text-decoration: none; /* 移除链接的下划线 */
   margin-left:10%;
   margin-top: 20px;
 }
   
 .register-link a {
-  color: #007bff; /* 设置链接的文字颜色 */
+  color: #729cd4; /* 设置链接的文字颜色 */
 }
 
 label {
   display: block; /* 让标签元素独占一行 */
-  margin-bottom: 5px; /* 调整标签和输入框之间的垂直间距 */
-  color:#fff;
+  margin-bottom: 3px; /* 调整标签和输入框之间的垂直间距 */
+  color:#4e73a3;
+  font-size:14px;
+
 }
 
 input[type="text"],
@@ -272,7 +292,7 @@ input[type="password"]
 button[type="button"] {
   width: 76%;
   padding: 10px 20px; /* 调整按钮的内边距 */
-  background-color: #007bff; /* 设置按钮的背景颜色 */
+  background-color: #729cd4; /* 设置按钮的背景颜色 */
   color: #fff; /* 设置按钮的文字颜色 */
   border: none; /* 移除按钮的边框 */
   border-radius: 4px; /* 设置按钮的圆角 */
@@ -302,4 +322,6 @@ button[type="button"] {
   color: red;
   margin-right: 5px;
 }
+
+
 </style>

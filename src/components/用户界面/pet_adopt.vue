@@ -2,11 +2,11 @@
 import { ref, computed } from 'vue'
 
 const images = [
-'@/photos/pet1.jpg',
-'@/photos/pet2.jpg',
-'@/photos/pet3.jpg',
-'@/photos/pet4.jpg',
-'@/photos/pet5.jpg',
+'./src/components/photos/pet1.jpg',
+'./src/components/photos/pet2.jpg',
+'./src/components/photos/pet3.jpg',
+'./src/components/photos/pet4.jpg',
+'./src/components/photos/pet5.jpg',
 ];
 
 const pets = [
@@ -57,6 +57,40 @@ const options3 = [
 </script>
 
 <template>
+  <div style="display: flex;
+  justify-content: center; /* 在水平方向上居中 */
+  align-items: center; /* 在垂直方向上居中 */
+  /* 其他样式 */">
+  <el-row :gutter="20" style="height: 500px; width: 100%; background-color:#4b6fa5;display: flex;
+  justify-content: center; /* 在水平方向上居中 */
+  align-items: center; 
+  ">
+    <el-col :span="12" style="height:80%; display: flex;
+  justify-content: center; /* 在水平方向上居中 */
+  align-items: center; /* 在垂直方向上居中 */">
+       <div style="background-color: #4b6fa5;height:95%;padding:20px;border-radius: 10px;">
+        <br>
+        <br>
+         <div style="color: #ccdff5;font-size: 35px;">
+          宠物领养
+         </div>
+         <div style="color: #ffffff;font-size: 50px;font-family:fantasy">
+          一段奇妙的生命旅程
+         </div>
+         <br>
+         <div style="color: #ffffff;font-size: 16px;font-family:cursive">
+          有一只在角落躲闪的小家伙，正用心静静等待那个将牵起牵绊的人
+         </div>
+         <div style="color: #ffffff;font-size: 16px;font-family:cursive">
+          让我们一同为宠物们开启一扇幸福的大门，让爱在这里延续，温馨永远蔓延
+         </div>
+        
+       </div>
+    </el-col>
+    <el-col :span="12">
+      <img src="./photos/狗互动.jpg" style=" height: 500px;">
+    </el-col>
+  </el-row></div>
   <div class="background-container">
     <div class="filters-container">
         <label>品种:</label>
@@ -87,9 +121,10 @@ const options3 = [
           </el-option>
         </el-select>
     </div>
+    <br>
     <div class="pet-list-container">
       <div class="pet-list">
-        <div v-for="pet in filteredPets" :key="pet.id" class="pet-card">
+        <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card">
           <div class="pet-image">
             <img :src="pet.image" alt="宠物图片" />
           </div>
@@ -98,10 +133,27 @@ const options3 = [
             <p>品种: {{ pet.breed }}</p>
             <p>性别: {{ pet.gender }}</p>
             <p>年龄: {{ pet.age }}</p>
-            <!-- <el-button type="primary" plain>查看详情</el-button> -->
             <router-link to="/pet_details">查看详情
         </router-link>
           </div>
+        </div> -->
+        <div v-for="pet in filteredPets" :key="pet.id" class="pet-card">
+          <el-card :body-style="{ padding: '0px' }" style="width:100%">
+      <img src="../../../public/home5.jpg" class="adopt_image">
+      <div style="padding: 14px;display: flex;
+  justify-content: center;
+  flex-direction: column; ">
+        <span style="font-size: 18px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
+        <span style="font-size: 40px; color:#edb055;font-weight: bold;">{{ pet.name }}</span>
+        <br>
+        <span style="font-size: 18px">{{ pet.gender }}</span>
+        <span style="font-size: 16px; color:#6b6a68">{{ pet.age }}岁</span>
+        <br>
+        <router-link to="/pet_details" style=" text-decoration: none;
+  color:#edb055 ;">查看详情  —>
+        </router-link>
+      </div>
+    </el-card>
         </div>
       </div>
     </div>
@@ -124,10 +176,10 @@ const options3 = [
   background-repeat: no-repeat;
 }
 .filters-container {
-  width: 80%;
-  background-color:#ADD8E6;/* 设置背景颜色  rgba(166, 219, 225, 0.8)*/
-  padding-top: 20px; /* 添加顶部内边距 */
-  padding-bottom: 20px; /* 添加底部内边距 */
+  width: 100%;
+  background-color:#eaebeb;/* 设置背景颜色  rgba(166, 219, 225, 0.8)*/
+  padding-top: 10px; /* 添加顶部内边距 */
+  padding-bottom: 10px; /* 添加底部内边距 */
   border-radius: 4px; /* 设置圆角 */
   margin-bottom: 10px;
   display: flex; /* 使用 flex 布局 */
@@ -158,12 +210,12 @@ select:hover {
 /* 聚焦样式 */
 select:focus {
   outline: none; /* 移除聚焦时的外边框 */
-  box-shadow: 0 0 3px #007bff; /* 添加聚焦时的阴影效果 */
+  box-shadow: 0 0 3px #729cd4; /* 添加聚焦时的阴影效果 */
 }
 
 .pet-list-container {
   height: 70%; /* 设置容器的高度 */
-  width: 80%;
+  width: 100%;
   overflow-y: auto; /* 设置垂直滚动条 */
 }
 
@@ -175,13 +227,10 @@ select:focus {
 
 .pet-card {
   display: flex;
-  height: 200px;
-  width: 48%; /* 设置每个宠物卡片的宽度为占比的48% */
+  /* height: 200px; */
+  width: 24%; /* 设置每个宠物卡片的宽度为占比的48% */
   justify-content: space-between; /*子元素平均分布*/
   margin-bottom: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* 添加黑色阴影底板 */
-	background-color: #7A7A7A; 
-	background-color: rgb(173,216,230,0.5);/* 设置底板为半透明的 #7A7A7A  rgba(166, 219, 225, 0.8);*/
   border-radius: 4px; /* 设置圆角 */
 }
 
@@ -212,4 +261,18 @@ select:focus {
 .pet-details p {
   padding-bottom: 0px; 
 }
+
+.title{
+  height:300px;
+  background-image: url("./photos/寄养背景.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+}
+.adopt_image {
+    width: 100%;
+    display: block;
+  }
+
 </style>

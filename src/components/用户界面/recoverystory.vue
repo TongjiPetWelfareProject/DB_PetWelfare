@@ -11,11 +11,11 @@
       <p style="margin-bottom:1px;color: #b4bac2;font-size: 14px;">皮肤感染、胃部、疼痛、肿块...我们尽全力帮助宠物脱离痛苦。</p>
     </div>
     </div>
-    <img src="@/photos/rcstry.png" style="margin-left:200px;width:250px;height:120px">
+    <img src="../../../public/rcstry.png" style="margin-left:500px;width:250px;height:120px">
   </div>
     <br>
     <el-collapse v-model="activeName" max-height="200" accordion>
-      <el-collapse-item v-for="story in recoveryStories" :key="story.id" :title="story.name" :name="story.id">
+      <el-collapse-item :header-class="custom-header" v-for="story in recoveryStories" :key="story.id" :title="story.name" :name="story.id">
         <div>
           {{ story.content }}
         </div>
@@ -106,6 +106,11 @@ const recoveryStories = ref([
     border-top: 1px solid #dad9d9;
     margin-left:20px;
   }
+
+  .el-collapse-item__header {
+  font-size: 16px; /* 您希望的字体大小 */
+  color: rgb(93, 93, 93);
+}
 
 
 </style>
