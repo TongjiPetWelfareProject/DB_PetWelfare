@@ -2,84 +2,115 @@
 import { reactive, toRefs, ref, watch, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import headnav from './nav.vue'
-
+import {
+  Document,Phone,School,
+  Message,Coin,Location,House,Postcard,DocumentChecked,Collection,Memo,ChatLineRound
+} from '@element-plus/icons-vue'
 const activeIndex = ref('1')
 const activeIndex2 = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
-
 const showHeader = ref(true)
 const showFooter = ref(true)
 const showTitle = ref(true)
 const route = useRoute()
 const loggedIn = ref(false)
 const username = ref()
-
 watch(() => route.path, (newPath, oldPath) => {
   // 检查需要隐藏header和footer的路径
   const pathsToHide = ['/dog_foster_table','/cat_foster_table', '/reservationdoctor','/mypage','/pet_adopt_form','/myinfo']
   showHeader.value = !pathsToHide.includes(newPath)
   showFooter.value = !pathsToHide.includes(newPath)
   showTitle.value = !pathsToHide.includes(newPath)
-
 })
-
 // const onLoginSuccess = (name) => {
 //   loggedIn.value = true;
 //   username.value = name;
 // };
-
 </script>
-
 
 <template>
   <headnav></headnav>
   <div class="common-layout" >
-    <el-container>
+    <el-container >
       <div class="container" v-if="showTitle">
-        <div class="left">
-          <div class="tableitem" >
-            <img src="./main_icon.jpg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
-            <p class="welcome-text">同济宠物救助中心</p>
-          </div>
-        </div>
+   <div class="left">
+    </div>
+</div>
+  <el-header v-if="showHeader">
+    <el-menu
+    :default-active="activeIndex"
+    class="el-menu-demo"
+    mode="horizontal"
+    text-color="#729cd4"
+    active-text-color="#769FCD"
+    @select="handleSelect"
+    style="height: 50px;box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);border-radius: 10px; "
+    router
+  >
+    <el-menu-item index="/">
+      <div style="display: flex;align-items: center;">
+        <el-icon><house/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">首页</span>
       </div>
-      <el-header v-if="showHeader">
-        <el-menu
-        :default-active="activeIndex2"
-        class="el-menu-demo"
-        mode="horizontal"
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#ffd04b"
-        @select="handleSelect"
-        router
-        >
-          <el-menu-item index="/">首页</el-menu-item>
-          <el-menu-item index="/pet_foster">寄养</el-menu-item>
-          <el-menu-item index="/pet_adopt">领养</el-menu-item>
-          <el-menu-item index="/donate">捐款</el-menu-item>
-          <el-menu-item index="/forum">论坛</el-menu-item>
-          <el-menu-item index="/medical">医疗</el-menu-item>
-          <el-menu-item index="/notice">公告</el-menu-item>
-        </el-menu>
+    </el-menu-item>
+    <el-menu-item index="/pet_foster">
+      <div style="display: flex;align-items: center;">
+        <el-icon><school/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">寄养</span>
+      </div>
+    </el-menu-item>
+    <el-menu-item index="/pet_adopt">
+      <div style="display: flex;align-items: center;">
+        <el-icon><document/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">领养</span>
+      </div>
+    </el-menu-item>
+    <el-menu-item index="/medical">
+      <div style="display: flex;align-items: center;">
+        <el-icon><memo/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">医疗</span>
+      </div>
+    </el-menu-item>
+    <el-menu-item index="/donate">
+      <div style="display: flex;align-items: center;">
+        <el-icon><coin/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">捐款</span>
+      </div>
+    </el-menu-item>
+    <el-menu-item index="/forum">
+      <div style="display: flex;align-items: center;">
+        <el-icon><ChatLineRound/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">论坛</span>
+      </div>
+    </el-menu-item>
+    <el-menu-item index="/notice" >
+      <div style="display: flex;align-items: center;">
+        <el-icon><Postcard/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">公告</span>
+      </div>
+    </el-menu-item>
+  </el-menu>
       </el-header>
       <el-main>
         <router-view></router-view>
       </el-main>
-      <el-footer v-if="showFooter">
+      <el-footer v-if="showFooter" style="padding: 0px;" >
         <div class="main_content">
-          <p>联系我们</p>
-          <p>电话：15279570357</p>
-          <p>邮箱：1664524275@qq.com</p>
-          <p>地址：上海市嘉定区</p>
+          <div class="contact">
+            <p style="font-size: 17px;font-weight: bold;color:#729cd4;margin-bottom: 8px;margin-top: 8px;">联系我们</p>
+            <div style="display: flex;align-items: center;">
+               <el-icon class="textmini"><phone/></el-icon><span class="textmini" style="display: flex;align-items: center;justify-content: center;  ">18981729781</span>
+             </div>
+             <div style="display: flex;align-items: center;">
+               <el-icon class="textmini"><message/></el-icon><span class="textmini" style="display: flex;align-items: center;justify-content: center;  ">1040687614@qq.com</span>
+             </div>
+             <div style="display: flex;align-items: center;">
+               <el-icon class="textmini"><location/></el-icon><span class="textmini" style="display: flex;align-items: center;justify-content: center;  ">上海市嘉定区</span>
+             </div>
+          </div>
+          <div class="footerimg">
+            <img src="  ../../../public/animal-shelter.png" style="width:100px;height:100px;">
+          </div>
         </div>
       </el-footer>
     </el-container>
   </div>
 </template>
-
 
 
 <style >
@@ -95,20 +126,30 @@ watch(() => route.path, (newPath, oldPath) => {
   margin-right: 10px;
   flex: 0 0 auto;
 }
-
 .main_content{
-  background-color: rgba(226, 226, 214, 0.8);
-  height: 100%;
+  display: flex;
+  background-color: #ccdff5;
   align-items: center;
-  flex-direction: column; /* 将子元素垂直排列 */
-  padding:5px
+  justify-content: center;
+  padding: 10px;
+  border-top: 1px solid rgba(221, 221, 221, 0.8);
+  width:100%vw;
+}
+.contact,.footerimg{
+   padding-left:80px;
+   padding-right:80px;
 }
  .el-footer{ 
-    height:160px
+    height:100px
  }
 .container {
   display: flex;
   justify-content: space-between;
+}
+.textmini{
+  font-size: 13px;
+  color: #729cd4;
+  margin:4px;
 }
 #app {
     position: absolute;
@@ -117,6 +158,5 @@ watch(() => route.path, (newPath, oldPath) => {
     width: 100%;
     height: 100%;
   }
-
 
 </style>

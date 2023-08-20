@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
@@ -23,6 +23,11 @@ const rules = {
   ]
 }
 
+const validateForm = () => {
+  usernameError.value = username.value.trim() === '';
+  passwordError.value = password.value.trim() === '';
+};
+
 const formRef = ref(null)
 
 const submitForm = () => {
@@ -44,15 +49,24 @@ const submitForm = () => {
 	<div class="form-container">
 	  <!-- 登录表单 -->
 		<form>
-			<h1>账户登录</h1>
+			<h1>欢迎登录</h1>
+      <h2>请输入您的账号和密码</h2>
       <el-form ref="formRef" :model="form" :rules="rules" label-position="center" label-width="60px" status-ico>
-        <label for="phone">账号</label>
+        <div class="inputtext">
+          <img src="  ../../../public/224用户.png" style="height:20px;width: 20px;margin-right: 0;">
+          <label for="phone">账号</label>
+        </div>
+       
         <el-form-item prop="username"><el-input class="custom-input" resize="true" v-model="form.username"/></el-form-item>
-        <label for="phone">密码</label>
+        <div class="inputtext">
+          <img src="  ../../../public/pswd.png" style="height:20px;width: 20px;">
+          <label for="phone">密码</label>
+        </div>
         <el-form-item prop="password"><el-input class="custom-input" resize="true" type="password" v-model="form.password"/></el-form-item>
       </el-form>
-		  <button type="button" @click="submitForm">点击登录</button>
+		  <el-button type="button" style="background-color:#729cd4" @click="submitForm">点击登录</el-button>
 		</form>
+    <br>
 		<div class="register-link">
 		  没有账号？<router-link to="/register">这里注册</router-link>
 		</div>
@@ -72,11 +86,19 @@ html, body {
 
 .form-container h1 {
   text-align: center;
-  color: #fff;
+  color: #4e73a3;
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #8fa6c5;
+  font-size: 14px;
+  font-weight: lighter;
+  margin-top: 4px;
 }
 
 .custom-input {
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 15px;
   height:60%;
   width: 85%;
@@ -89,36 +111,37 @@ html, body {
 	top: 20%; 
 	right: 5%; 
 	display: flex;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加黑色阴影底板 */
-	background-color: #7A7A7A; 
-	background-color: rgba(122, 122, 122, 0.5); /* 设置底板为半透明的 #7A7A7A */
-	padding: 8px 12px; /* 调整底板内边距 */
+	/* box-shadow: 0 2px 4px rgba(141, 141, 141, 0.2);  */
+	background-color: #ffffff;  
+	padding: 8px 12px; 
 	flex-direction: column;
+  border-radius: 10px;
   }
   
 .register-link {
-  color: #fff; /* 设置链接的文字颜色 */
+  color: #496180; /* 设置链接的文字颜色 */
   text-decoration: none; /* 移除链接的下划线 */
   margin-left:10%;
   margin-top: 20px;
 }
   
 .register-link a {
-  color: #007bff; /* 设置链接的文字颜色 */
+  color: #5f84b4; /* 设置链接的文字颜色 */
 }
 
 
 label {
   display: block; /* 让标签元素独占一行 */
-  margin-left: 13%;
-  color:#fff;
+  margin-left:3%;
+  color:#729cd4;
+  font-size: 15px;
 }
 
 
 button[type="button"] {
   width: 74%;
   padding: 10px 20px; /* 调整按钮的内边距 */
-  background-color: #007bff; /* 设置按钮的背景颜色 */
+  background-color: #729cd4; /* 设置按钮的背景颜色 */
   color: #fff; /* 设置按钮的文字颜色 */
   border: none; /* 移除按钮的边框 */
   border-radius: 4px; /* 设置按钮的圆角 */
@@ -133,6 +156,11 @@ button[type="button"] {
 
 .register-link a:hover {
   text-decoration: underline; /* 鼠标悬停时添加下划线效果 */
+}
+
+.inputtext{
+  display:flex;
+  margin-left: 12%;
 }
 
 </style>

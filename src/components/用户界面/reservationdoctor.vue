@@ -1,9 +1,11 @@
 <template>
-     <el-text size="large" tag="b" style="margin-left:50px">预约问诊</el-text>
-     <br><br>
+      <div class="tableitem" >
+        <img src="./photos/狗狗头像.jpeg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
+        <el-text class="welcome-text" size="Large">医疗预约表</el-text>
+      </div>
     <el-form :model="form" label-width="120px" style="max-width: 90%;">
-      <el-form-item label="宠物姓名">
-        <el-input v-model="form.name"/>
+      <el-form-item label="宠物姓名" >
+        <el-input v-model="form.name" placeholder="请输入宠物姓名"/>
       </el-form-item>
       <el-form-item label="种类">
         <el-select v-model="form.kind" placeholder="请选择问题种类">
@@ -56,8 +58,8 @@
           <el-radio label="复诊" />
         </el-radio-group>
       </el-form-item> -->
-      <el-form-item label="病情描述">
-        <el-input v-model="form.desc" type="textarea" />
+      <el-form-item label="病情描述" >
+        <el-input v-model="form.desc" :autosize="{ minRows: 10, maxRows: 20 }" type="textarea" placeholder="请描述宠物病情"/>
       </el-form-item>
       <el-form-item>
         <br><br>

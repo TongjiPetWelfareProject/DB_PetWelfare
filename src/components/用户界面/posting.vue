@@ -1,15 +1,23 @@
 <template>
+ <div class="postcontainer">
+
   <div class="post-form">
-    <p>帖子标题</p>
-    <el-input v-model="input" placeholder="输入标题" clearable />
-    <p>帖子内容</p>
+    <br>
+    <div style="display: flex;align-items: center;">
+      <img src="../../../public/heading.png" style="height:18px;width:18px"><span class="textpost" style="display: flex;align-items: center;justify-content: center;  ">&nbsp;标题</span>
+    </div>
+    <el-input v-model="input" placeholder="请输入标题"  style="margin-top:-8px" clearable />
+    <div style="display: flex;align-items: center;">
+      <img src="../../../public/内容.png" style="height:18px;width:18px"><span class="textpost" style="display: flex;align-items: center;justify-content: center;  ">&nbsp;内容</span>
+    </div>
     <el-input
       v-model="textarea"
-      :autosize="{ minRows: 2, maxRows: 4 }"
+      :autosize="{ minRows: 24, maxRows: 30 }"
       type="textarea"
-      placeholder="输入内容"
+      placeholder="请输入内容"
+      style="margin-top:-8px"
     />
-    <el-upload action="#" list-type="picture-card" :auto-upload="false" :file-list="fileListRef">
+    <!-- <el-upload action="#" list-type="picture-card" :auto-upload="false" :file-list="fileListRef">
       <el-icon><Plus /></el-icon>
 
       <template #file="{ file }">
@@ -26,13 +34,16 @@
           </span>
         </div>
       </template>
-    </el-upload>
+    </el-upload> -->
 
     <el-dialog v-model="dialogVisible">
       <img w-full :src="dialogImageUrl" alt="Preview Image" />
     </el-dialog>
     <el-button type="primary" plain @click="submitPost">提交</el-button>
+    <br>
   </div>
+ </div>
+ 
 </template>
 
 <script lang="ts" setup>
@@ -66,13 +77,33 @@ const handleRemove = (file: UploadFile) => {
 </script>
 
 <style scoped>
+.postcontainer{
+  width: 100%;
+  height:100%;
+  /* background-color: rgb(244, 244, 244); */
+  background-image: url("../../../public/postbg.png");
+  background-size: 100% 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -10px;
+  border-radius: 20px;
+  box-shadow: 0 0px 2px rgba(0, 0, 0, .2);
+}
 .post-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 400px;
+  width: 90vw;
   margin: 0 auto;
-  padding: 20px;
+  /* padding: 20px; */
 }
-</style>
 
+.textpost{
+  font-size: 16px;
+  color:#1e4579;
+  margin-bottom: 0px;
+}
+
+
+</style>

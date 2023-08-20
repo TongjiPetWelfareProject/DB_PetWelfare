@@ -3,6 +3,7 @@ import axios from 'axios';
 export default {
     //获取公告ID，标题和内容
     bulletinAPI() {
+        console.log("发出公告请求");
         return axios
             .get('/api/bulletin')
             .then((response) => response.data)
@@ -32,4 +33,3 @@ export const searchPosts = async(searchText)=> {
 };
                 
                 
-
