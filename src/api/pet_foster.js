@@ -1,8 +1,7 @@
 // 寄养申请表接口
 import axios from 'axios';
 
-export default { 
-  submitFosterApplication({user, name, type, size, date, num, remark}){
+export const submitFosterApplication = ({user, name, type, size, date, num, remark}) => {
     const fosterData = {
       user,
       name,
@@ -21,5 +20,4 @@ export default {
       console.log("发送失败")
       throw error;
     });
-  }
-};
+}
