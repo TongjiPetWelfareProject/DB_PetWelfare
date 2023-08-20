@@ -70,40 +70,23 @@ import notice_forum from '@/api/notice_forum'
 
 export default {
   setup() {
-    const notices = ref([
-      {
-        id: 1,
-        title: "寄养宠物的流程通知",
-        date: "2023-03-01"
-      },
-      { 
-        id: 2,
-        title: "关于捐赠方式调整的通知",
-        date: "2023-04-15"
-      },
-      {
-        id: 3,
-        title: "流浪猫“果果”被收养的后续追踪记录",
-        date: "2023-05-01"
-      },
-      {
-        id: 4,
-        title: "流浪动物救治流程公告",
-        date: "2023-05-21"
-      },
-      {
-        id: 5,
-        title: "关于节假日放假的通知",
-        date: "2023-06-01"
-      }
-    ]);
+    const notices = ref([]);
     
     const searchText = ref("");
     const sortOrder = ref("asc");
 
     const getNotices = async () => {
       try {
-        notices.value = await notice_forum.bulletinAPI();
+        console.log("接受前公告数据："+notices.value);
+        const response = await notice_forum.bulletinAPI();
+        for (const notice of response) {
+        notices.value.push({
+        id: notice.id,
+        title: notice.heading,
+        date: notice.published_date
+      });
+    }
+        console.log("接受后公告数据："+notices.value);
       } catch (error) {
         console.error('获取公告数据时出错：', error);
       }
