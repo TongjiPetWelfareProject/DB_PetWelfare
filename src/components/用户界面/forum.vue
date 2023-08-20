@@ -65,156 +65,101 @@
 import { ref, onMounted, computed } from 'vue'
 import notice_forum from '@/api/notice_forum'
 
+
+// {
+//           post_id: 1,
+//           user_id: 'thesamechen',
+//           read_count: 5,
+//           like_num: 3,
+//           comment_num: 2,
+//           title: '可爱小猫咪找新家',
+//           post_time: '2023-03-01 00:00:00'
+// },
+
+
+
 export default {
   name: "UserInfo",
-  // setup() {
-  //   const forum_posts = ref([]);
-  //   const searchText = ref('');
-  //   const sortOrder = ref('asc');
+  setup() {
+    const forum_posts = ref([]);
+    const searchText = ref('');
+    const sortOrder = ref('asc');
 
-  //   const toggleSortOrder = () => {
-  //     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-  //   };
-
-  //   const search = () => {
-  //     // 执行搜索操作
-  //     console.log('搜索：' + searchText.value);
-
-  //     // 调用API接口搜索帖子
-  //     notice_forum.searchPosts(searchText.value)
-  //       .then(response => {
-  //         forum_posts.value = response.data;
-  //       })
-  //       .catch(error => {
-  //         console.log(error);
-  //       });
-  //   };
-
-  //   const getPosts = () => {
-  //     // 调用API接口获取所有帖子
-  //     notice_forum.getPosts()
-  //       .then(response => {
-  //         forum_posts.value = response.data;
-  //       })
-  //       .catch(error => {
-  //         console.log(error);
-  //       });
-  //   };
-
-  //   onMounted(() => {
-  //     getPosts(); // 初始加载时获取帖子列表
-  //   });
-
-  //   const goToPost = (post) => {
-  //     // 跳转到帖子详情页
-  //     console.log('跳转到帖子详情页：' + post.title);
-  //     this.$router.push({ path: '/post_details', query: { post_id: post.post_id }});
-  //   };
-
-  //   const filteredPosts = computed(() => {
-  //     return forum_posts.value.filter(post => {
-  //       return post.title.toLowerCase().includes(searchText.value.toLowerCase());
-  //     });
-  //   });
-
-  //   return {
-  //     searchText,
-  //     sortOrder,
-  //     toggleSortOrder,
-  //     search,
-  //     goToPost,
-  //     filteredPosts
-  //   };
-  // }
-  data() {
-    return {
-      forum_posts: [
-        {
-          post_id: 1,
-          user_id: 'thesamechen',
-          read_count: 5,
-          like_num: 3,
-          comment_num: 2,
-          title: '可爱小猫咪找新家',
-          post_time: '2023-03-01 00:00:00'
-        },
-        {
-          post_id: 2,
-          user_id: 'thesamechen',
-          read_count: 4,
-          like_num: 4,
-          comment_num: 2,
-          title: '日常遛狗分享',
-          post_time: '2023-04-15 00:00:00'
-        },
-        {
-          post_id: 3,
-          user_id: 'thesamechen',
-          read_count: 7,
-          like_num: 5,
-          comment_num: 2,
-          title: '流浪猫“果果”被收养的后续追踪记录',
-          post_time: '2023-05-01 00:00:00'
-        },
-        {
-          post_id: 4,
-          user_id: 'thesamechen',
-          read_count: 15,
-          like_num: 3,
-          comment_num: 2,
-          title: '想领养一只田园犬',
-          post_time: '2023-05-21 00:00:00'
-        },
-        {
-          post_id: 5,
-          user_id: 'thesamechen',
-          read_count: 25,
-          like_num: 23,
-          comment_num: 12,
-          title: '猫咪生病在线求助！',
-          post_time: '2023-06-01 00:00:00'
-        }
-      ],
-      searchText: '',
-      sortOrder: 'asc' // 默认按照发布时间正序排序
-    }
-  },
-  computed: {
-    sortedPosts() {
-      if (this.sortOrder === 'asc') {
-        return this.forum_posts.sort((a, b) => new Date(a.post_time) - new Date(b.post_time))
-      } else if (this.sortOrder === 'desc') {
-        return this.forum_posts.sort((a, b) => new Date(b.post_time) - new Date(a.post_time))
-      } 
-    },
-    filteredPosts() {
-      return this.sortedPosts.filter(post =>
-        post.title.toLowerCase().includes(this.searchText.toLowerCase())
-      )
-    }
-  },
-  methods: {
-    goToPost(post) {
-      // 跳转到帖子详情页
-      // router.push('/medical')
-      console.log('跳转到帖子详情页：' + post.title)
-    },
-    toggleSortOrder() {
-      if (this.sortOrder === 'asc') {
-        this.sortOrder = 'desc'
-      } else if (this.sortOrder === 'desc') {
-        this.sortOrder = 'like'
-      } else {
-        this.sortOrder = 'asc'
+    const getPosts= async () => {
+      try {
+        const response = await notice_forum.getposts();
+        for (const forum_post of response) {
+          forum_posts.value.push({
+          id: forum_post.postId,
+          // title: forum_post.heading,
+          title: forum_post.heading,
+          content: forum_post.content,
+          post_time: forum_post.post_time,
+          read_count: forum_post.readCount,
+          like_num:forum_post.likeNum,
+          comment_num:forum_post.commentNum,
+        });
       }
-    },
-    sortByLikeNum() {
-      this.sortOrder = 'like'
-    },
-    search() {
+      } catch (error) {
+        console.error('获取公告数据时出错：', error);
+      }
+    };
+
+    onMounted(() => {
+      getPosts(); // 初始加载时获取帖子列表
+    });
+
+    const sortedPosts = computed(() => {
+      if (sortOrder.value === 'asc') {
+        return forum_posts.value.slice().sort((a, b) => new Date(a.post_time) - new Date(b.post_time));
+      } else if (sortOrder.value === 'desc') {
+        return forum_posts.value.slice().sort((a, b) => new Date(b.post_time) - new Date(a.post_time));
+      }
+    });
+
+    const filteredPosts = computed(() => {
+      return forum_posts.value.filter(post => {
+        return post.title.toLowerCase().includes(searchText.value.toLowerCase());
+      });
+    });
+
+    const toggleSortOrder = () => {
+      sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+    };
+
+    const sortByLikeNum = () => {
+      sortOrder.value = 'like';
+    };
+
+    const search = () => {
       // 执行搜索操作
-      console.log('搜索：' + this.searchText)
-    }
+      console.log('搜索：' + searchText.value);
+
+      // 调用API接口搜索帖子
+      notice_forum.searchPosts(searchText.value)
+        .then(response => {
+          forum_posts.value = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    };
+
+    const goToPost = (post) => {
+      // 跳转到帖子详情页
+      console.log('跳转到帖子详情页：' + post.title);
+      this.$router.push({ path: '/post_details', query: { post_id: post.post_id }});
+    };
+
+    return {
+      forum_posts,
+      searchText,
+      filteredPosts,
+      goToPost,
+      toggleSortOrder,
+      sortByLikeNum,
+      search
+    };
   }
 }
 </script>
