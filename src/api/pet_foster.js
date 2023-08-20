@@ -1,22 +1,25 @@
-// api.js
+// 寄养申请表接口
 import axios from 'axios';
 
-export const submitFosterApplication = (userInfo, formData, radioValue, sizeRadioValue) => {
-  const fosterData = {
-    user: userInfo.User_ID,
-    name: formData.name,
-    type: radioValue,
-    size: sizeRadioValue,
-    date: formData.date,
-    num: formData.num,
-    remark: formData.remark,
-  };
-
-  return axios.post('/api/pet-foster', fosterData)
+export default { 
+  submitFosterApplication({user, name, type, size, date, num, remark}){
+    const fosterData = {
+      user,
+      name,
+      type,
+      size,
+      date,
+      num,
+      remark,
+    };
+  return axios.post('/api/petfoster', fosterData)
     .then(response => {
-      return response.data; // You might want to return the response data here
+      console.log("发送成功")
+      return response.data;
     })
     .catch(error => {
+      console.log("发送失败")
       throw error;
     });
+  }
 };
