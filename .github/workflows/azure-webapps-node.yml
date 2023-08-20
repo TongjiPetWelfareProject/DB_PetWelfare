@@ -19,7 +19,7 @@
 
 on:
   push:
-    branches: [ "newUI" ]
+    branches: [ "main2" ]
   workflow_dispatch:
 
 env:
