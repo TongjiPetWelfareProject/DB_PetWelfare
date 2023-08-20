@@ -107,7 +107,7 @@ const { circleUrl } = toRefs(state)
 </script>
 
 
-<style>
+<style scoped>
 
 body, html {
   height: 100%;
