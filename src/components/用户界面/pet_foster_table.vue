@@ -1,6 +1,6 @@
 <template>
   <div class="tableitem" >
-        <img src="./photos/狗狗头像.jpeg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
+        <img src="@/photos/狗狗头像.jpeg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
         <el-text class="welcome-text" size="Large">寄养申请表</el-text>
   </div>
   <el-form :model="form" label-width="120px">
@@ -64,12 +64,15 @@
 <script lang="ts" setup>
 import { reactive,computed,ref,watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useUserStore } from '@/store/user'
-import foster from '@/api/pet_foster'
+import axios from 'axios';
+import { useUserStore } from '@/store/user';
+import { submitFosterApplication } from '@/api/pet_foster'; 
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const userStore = useUserStore()
+const userStore = useUserStore();
+
+// do not use same name with ref
 const form = reactive({
   name: '',
   date: '',
@@ -91,39 +94,41 @@ const onSubmit = () => {
     }
   )
     .then(() => {
-      const foster_table = {
-        user: userStore.userInfo.User_ID,
-        name: form.name,
-        type: radio.value, 
-        size: size_radio.value,
-        date: form.date,
-        num: form.num,
-        remark: form.remark,
-      };
-      
-      console.log("发送了信息")
-      foster.submitFosterApplication(foster_table)  // 这里假设 foster.submitFosterApplication 返回一个 Promise
-        .then(response => {
-          ElMessage({
-            type: 'success',
-            message: '提交成功',
-          });
-          router.push('/');
-        })
-        .catch(error => {
-          console.error('发送出错：', error);
-          ElMessage({
-            type: 'error',
-            message: '提交失败',
-          });
-        });
+      // 构造数据对象，将表单中的值传递给它
+      // const foster_table = {
+      //   user:userStore.userInfo.User_ID,
+      //   name: form.name,
+      //   type: radio.value, 
+      //   size: size_radio.value,
+      //   date: form.date,
+      //   num: form.num,
+      //   remark: form.remark,
+      // };
+
+      // axios.post('/api/pet_foster', foster_table)
+      submitFosterApplication(userStore.userInfo, form, radio.value, size_radio.value)
+            .then(response => {
+              // 处理后端返回的响应
+              ElMessage({
+                type: 'success',
+                message: '提交成功',
+              });
+              router.push('/');
+            })
+            .catch(error => {
+              // 处理错误
+              ElMessage({
+                type: 'error',
+                message: '提交失败',
+              });
+            });
     })
     .catch(() => {
       ElMessage({
         type: 'info',
         message: '取消提交',
-      });
-    });
+      })
+    })
 }
 
 const calculatedFee = computed(function() {
