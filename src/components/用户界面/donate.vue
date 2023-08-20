@@ -91,6 +91,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref,onMounted } from 'vue'
 import {Coin} from '@element-plus/icons-vue'
 import medical_donate from '@/api/medical_donate'
+import { useUserStore } from '@/store/user';
 
 const tabPosition = ref('left')
 const urls = [
@@ -98,7 +99,8 @@ const urls = [
   '../../../public/home2.png',
   '../../../public/home7.jpg', 
 ]
-const userId = 123; // 当前用户ID
+const userStore = useUserStore();
+const userID =userStore.$id; // 当前用户ID
 const donationTime = new Date().toISOString(); // 当前时间转换为字符串格式
 // const tableData = [
 //   {
