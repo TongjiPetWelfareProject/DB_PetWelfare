@@ -66,7 +66,9 @@ import { reactive,computed,ref,watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import foster from '@/api/pet_foster'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const userStore = useUserStore()
 const form = reactive({
   name: '',
@@ -106,6 +108,7 @@ const onSubmit = () => {
             type: 'success',
             message: '提交成功',
           });
+          router.push('/');
         })
         .catch(error => {
           console.error('发送出错：', error);
