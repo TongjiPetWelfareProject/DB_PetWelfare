@@ -162,7 +162,7 @@ const open = async () => {
           );
 
           const transferMethod = await ElMessageBox.confirm(
-            '请添加微信号TongjiPetRescue后转账并保存转账证明截图即可',
+            '请添加微信号: TongjiPetRescue 后转账并保存转账证明截图即可',
             '付款方式确认', {
               confirmButtonText: '已转账',
               cancelButtonText: '取消',
@@ -178,7 +178,6 @@ const open = async () => {
           );
 
           if (paymentStatus === 'confirm') {
-            // Assuming you have 'userID', 'value', and 'donationTime' defined somewhere
             const response = await medical_donate.donateAPI(
               userStore.userInfo.User_ID,
               value,
@@ -189,6 +188,9 @@ const open = async () => {
               type: 'success',
               message: `捐款成功，金额为：${value}。我们会努力为毛孩子们提供一个更加温暖舒适的家园，感谢您的爱心捐赠！`,
             });
+           setTimeout(() => {
+              location.reload();
+            }, 3000);
           } else {
             ElMessage({
               type: 'info',
