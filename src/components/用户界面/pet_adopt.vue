@@ -24,7 +24,7 @@ const pets = ref([])
       let gender = '';
       if (adoptpet.SEX === 'M') {
         gender = '弟弟';
-      } else if (adoptpet.SEX === 'W') {
+      } else if (adoptpet.SEX === 'F') {
         gender = '妹妹';
       }
       console.log(adoptpet.PET_NAME)
