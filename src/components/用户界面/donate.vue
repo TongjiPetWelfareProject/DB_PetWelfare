@@ -1,8 +1,8 @@
 <template>
-    <div>
-      <el-button class="fixedbuttondonate" type="primary" :icon="Coin" circle @click="open" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">点击捐款</el-button>
-    </div>
 
+    <el-affix :offset="300">
+      <el-button type="primary" :icon="Coin" circle @click="open" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">点击捐款</el-button>
+   </el-affix>
 
     <div class="demo-image__lazy">
     <el-image v-for="url in urls" :key="url" :src="url" lazy />
@@ -24,9 +24,9 @@
     </el-tab-pane>
     <el-tab-pane label="捐助记录">
       <el-table :data="tableData" stripe style="width: 100%;margin-top:-80" show-header:false>
-    <el-table-column prop="time"  width="280" />
-    <el-table-column prop="name"  width="280" />
-    <el-table-column prop="amount" width="280"/>
+    <el-table-column prop="time" label="捐款日期" width="280" />
+    <el-table-column prop="name" label="用户名" width="280" />
+    <el-table-column prop="amount" label="捐款金额" width="280"/>
   </el-table>
   <el-pagination layout="prev, pager, next" :total="1000" />
     </el-tab-pane>
@@ -62,14 +62,6 @@
   width: 800px;
 }
 
-.fixedbuttondonate{
-  position: fixed;
-  top: 30%; 
-  right: 2vw; 
-  border-radius: 10px;
-  box-shadow:  0px 4px 4px rgba(116, 114, 114, 0.2);
-}
-
 .describe {
   font-size: 14px;
   color: #656565;
@@ -97,9 +89,12 @@
 <script setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref,onMounted } from 'vue'
+import { useUserStore } from '@/store/user'
 import {Coin} from '@element-plus/icons-vue'
 import medical_donate from '@/api/medical_donate'
-
+import { useRouter } from 'vue-router'
+const userStore = useUserStore()
+const router = useRouter()
 const tabPosition = ref('left')
 const urls = [
   '../../../public/home8.jpg',
@@ -151,45 +146,61 @@ const donationTime = new Date().toISOString(); // 当前时间转换为字符串
 //   },
 // ]
 
-const open = async () => {
-  try {
-    const { value } = await ElMessageBox.prompt('请输入捐款金额', '捐款', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      inputPattern: /^\d+$/,
-      inputErrorMessage: '请输入数字',
-    });
-    // 用户点击确定按钮后调用 donateAPI 函数发送捐款金额到后端
-    const response = await medical_donate.donateAPI(userID,
-    value,donationTime);
+const tableData = ref([]);
 
-    ElMessage({
-      type: 'success',
-      message: `捐款成功，金额为：${response.amount}`,
-    });
-  } catch (error) {
-    if (error === 'cancel') {
-      ElMessage({
-        type: 'info',
-        message: '取消捐款',
+const open = async () => {
+  if (userStore.userInfo.User_ID) {
+    try {
+      const { value } = await ElMessageBox.prompt('请输入捐款金额', '捐款', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^\d+$/,
+        inputErrorMessage: '请输入数字',
       });
-    } else {
+
+      // Assuming you have 'userID', 'value', and 'donationTime' defined somewhere
+      const response = await medical_donate.donateAPI(
+        userStore.userInfo.User_ID,
+        value,
+        donationTime
+      );
+
       ElMessage({
-        type: 'error',
-        message: `捐款失败：${error.message}`,
+        type: 'success',
+        message: `捐款成功，金额为：${response.amount}`,
       });
+    } catch (error) {
+      if (error === 'cancel') {
+        ElMessage({
+          type: 'info',
+          message: '取消捐款',
+        });
+      } else {
+        ElMessage({
+          type: 'error',
+          message: `捐款失败：${error.message}`,
+        });
+      }
     }
+  } else {
+    router.push('/login'); 
   }
 };
 
-const tableData = ref([]);
+
 
 onMounted(async () => {
   try {
-    const records = await medical_donate.donationRecordsAPI();
-    tableData.value = records;
+    const response = await medical_donate.donationRecordsAPI();
+    for (const donation of response) {
+            tableData.value.push({
+            time: donation.DONATED_DATE,
+            name: donation.USER_NAME,
+            amount: donation.DONATION_AMOUNT
+           });
+        }
   } catch (error) {
-    console.error('获取捐助记录数据时出错：', error);
+    console.error('获取捐助记录数据出错：', error);
   }
 });
 
