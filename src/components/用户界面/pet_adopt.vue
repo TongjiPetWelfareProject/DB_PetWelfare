@@ -27,13 +27,13 @@ const pets = ref([])
       } else if (adoptpet.SEX === 'W') {
         gender = '妹妹';
       }
-
+      console.log(adoptpet.PET_NAME)
       pets.value.push({
         id: adoptpet.PET_ID,
         name: adoptpet.PET_NAME,
         breed: adoptpet.SPECIES,
         gender: gender,
-        age: 2,
+        age: adoptpet.AGE,
         image: images[0]
       });
     }
