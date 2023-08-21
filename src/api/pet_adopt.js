@@ -1,6 +1,18 @@
 // api.js
 import axios from 'axios';
 
+export default{
+  getPetList() {
+    return axios.get('/api/petlist')
+      .then(response => {
+        return response.data;
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
+}
+
 export const submitAdoptApplication = (userInfo, petInfo, formData) => {//export可以将对象暴露给其他模块使用
   const adoptData = {
     user: userInfo.User_ID,
@@ -25,15 +37,7 @@ export const submitAdoptApplication = (userInfo, petInfo, formData) => {//export
     });
 };
 
-export const getPetList = () => {
-  return axios.get('/api/pet-list')
-    .then(response => {
-      return response.data.petList; // Adjust this according to your backend response structure
-    })
-    .catch(error => {
-      throw error;
-    });
-};
+
 
 export const getPetDetails = (petId) => {
   return axios.get(`/api/pet-details/${petId}`)
