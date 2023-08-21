@@ -187,7 +187,7 @@ const open = async () => {
 
             ElMessage({
               type: 'success',
-              message: `捐款成功，金额为：${value}。我们会努力为毛孩子们提供一个更加温暖舒适的家园，感谢您的爱心捐赠！”`,
+              message: `捐款成功，金额为：${value}。我们会努力为毛孩子们提供一个更加温暖舒适的家园，感谢您的爱心捐赠！`,
             });
           } else {
             ElMessage({
