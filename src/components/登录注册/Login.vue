@@ -30,16 +30,21 @@ const validateForm = () => {
 
 const formRef = ref(null)
 
-const submitForm = () => {
-    formRef.value.validate(async(valid)=>{
-      const {username,password} = form.value
-      if(valid){
-        await userStore.getUserInfo({username,password})
-        ElMessage({type:'success',message:'登录成功'})
-        router.replace({path:'/'})
-      }
-    })
+const submitForm = async () => {
+  formRef.value.validate(async (valid) => {
+    const { username, password } = form.value;
+    if (valid) {
+        await userStore.getUserInfo({ username, password });
+          ElMessage({ type: 'success', message: '登录成功' });
+          if (userStore.userInfo.Role === 'User') {
+            router.replace({ path: '/' });
+          } else {
+            router.replace({ path: '/manager' });
+          }
+    }
+  });
 };
+
 
 </script>
 
