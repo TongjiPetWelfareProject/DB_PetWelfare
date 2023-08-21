@@ -454,6 +454,7 @@ END;
 /
 create or replace view  pet_profile as SELECT
    p.read_num * 1 + p.like_num * 2 + comment_num_func(p.pet_id) * 5 + p.collect_num as popularity, p.*,
+   TRUNC(MONTHS_BETWEEN(SYSDATE, p.birthdate) / 12) AS age,
     comment_num_func(p.pet_id) as comment_num,comment_pet.comment_contents,comment_pet.comment_time
     
 FROM
