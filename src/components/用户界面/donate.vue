@@ -89,18 +89,19 @@
 <script setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref,onMounted } from 'vue'
+import { useUserStore } from '@/store/user'
 import {Coin} from '@element-plus/icons-vue'
 import medical_donate from '@/api/medical_donate'
-import { useUserStore } from '@/store/user';
-
+import { useRouter } from 'vue-router'
+const userStore = useUserStore()
+const router = useRouter()
 const tabPosition = ref('left')
 const urls = [
   '../../../public/home8.jpg',
   '../../../public/home2.png',
   '../../../public/home7.jpg', 
 ]
-const userStore = useUserStore();
-const userID =userStore.$id; // 当前用户ID
+const userId = 123; // 当前用户ID
 const donationTime = new Date().toISOString(); // 当前时间转换为字符串格式
 // const tableData = [
 //   {
@@ -146,33 +147,41 @@ const donationTime = new Date().toISOString(); // 当前时间转换为字符串
 // ]
 
 const open = async () => {
-  try {
-    const { value } = await ElMessageBox.prompt('请输入捐款金额', '捐款', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      inputPattern: /^\d+$/,
-      inputErrorMessage: '请输入数字',
-    });
-    // 用户点击确定按钮后调用 donateAPI 函数发送捐款金额到后端
-    const response = await medical_donate.donateAPI(userID,
-    value,donationTime);
+  if (userStore.userInfo.User_ID) {
+    try {
+      const { value } = await ElMessageBox.prompt('请输入捐款金额', '捐款', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^\d+$/,
+        inputErrorMessage: '请输入数字',
+      });
 
-    ElMessage({
-      type: 'success',
-      message: `捐款成功，金额为：${response.amount}`,
-    });
-  } catch (error) {
-    if (error === 'cancel') {
+      // Assuming you have 'userID', 'value', and 'donationTime' defined somewhere
+      const response = await medical_donate.donateAPI(
+        userStore.userInfo.User_ID,
+        value,
+        donationTime
+      );
+
       ElMessage({
-        type: 'info',
-        message: '取消捐款',
+        type: 'success',
+        message: `捐款成功，金额为：${response.amount}`,
       });
-    } else {
-      ElMessage({
-        type: 'error',
-        message: `捐款失败：${error.message}`,
-      });
+    } catch (error) {
+      if (error === 'cancel') {
+        ElMessage({
+          type: 'info',
+          message: '取消捐款',
+        });
+      } else {
+        ElMessage({
+          type: 'error',
+          message: `捐款失败：${error.message}`,
+        });
+      }
     }
+  } else {
+    router.push('/login'); 
   }
 };
 
