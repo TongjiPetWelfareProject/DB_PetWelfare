@@ -38,7 +38,7 @@ watch(() => route.path, (newPath, oldPath) => {
    <div class="left">
     </div>
 </div>
-  <el-header v-if="showHeader">
+  <el-header v-if="showHeader" class="elheader">
     <el-menu
     :default-active="activeIndex"
     class="el-menu-demo"
@@ -46,7 +46,7 @@ watch(() => route.path, (newPath, oldPath) => {
     text-color="#729cd4"
     active-text-color="#769FCD"
     @select="handleSelect"
-    style="height: 50px;box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);border-radius: 10px; "
+    style="height: 6vh;box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);border-radius: 10px; "
     router
   >
     <el-menu-item index="/">
@@ -139,6 +139,12 @@ watch(() => route.path, (newPath, oldPath) => {
    padding-left:80px;
    padding-right:80px;
 }
+
+.elheader{
+  padding: 0 0;
+  height:6vh;
+}
+
  .el-footer{ 
     height:100px
  }
