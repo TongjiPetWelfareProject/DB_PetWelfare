@@ -2,7 +2,7 @@
 
     <el-affix :offset="300">
       <el-button type="primary" :icon="Coin" circle @click="open" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">点击捐款</el-button>
-   </el-affix>
+    </el-affix>
 
     <div class="demo-image__lazy">
     <el-image v-for="url in urls" :key="url" :src="url" lazy />
@@ -149,43 +149,69 @@ const donationTime = new Date().toISOString(); // 当前时间转换为字符串
 const tableData = ref([]);
 
 const open = async () => {
-  if (userStore.userInfo.User_ID) {
-    try {
-      const { value } = await ElMessageBox.prompt('请输入捐款金额', '捐款', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /^\d+$/,
-        inputErrorMessage: '请输入数字',
-      });
+      if (userStore.userInfo.User_ID) {
+        try {
+          const { value } = await ElMessageBox.prompt(
+            '请输入捐款金额',
+            '捐款', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              inputPattern: /^\d+$/,
+              inputErrorMessage: '请输入数字',
+            }
+          );
 
-      // Assuming you have 'userID', 'value', and 'donationTime' defined somewhere
-      const response = await medical_donate.donateAPI(
-        userStore.userInfo.User_ID,
-        value,
-        donationTime
-      );
+          const transferMethod = await ElMessageBox.confirm(
+            '请添加微信号TongjiPetRescue后转账并保存转账证明截图即可',
+            '付款方式确认', {
+              confirmButtonText: '已转账',
+              cancelButtonText: '取消',
+            }
+          );
 
-      ElMessage({
-        type: 'success',
-        message: `捐款成功，金额为：${response.amount}`,
-      });
-    } catch (error) {
-      if (error === 'cancel') {
-        ElMessage({
-          type: 'info',
-          message: '取消捐款',
-        });
+          const paymentStatus = await ElMessageBox.confirm(
+            '您付款成功了吗？',
+            '付款确认', {
+              confirmButtonText: '成功付款',
+              cancelButtonText: '取消支付',
+            }
+          );
+
+          if (paymentStatus === 'confirm') {
+            // Assuming you have 'userID', 'value', and 'donationTime' defined somewhere
+            const response = await medical_donate.donateAPI(
+              userStore.userInfo.User_ID,
+              value,
+              donationTime
+            );
+
+            ElMessage({
+              type: 'success',
+              message: `捐款成功，金额为：${value}。我们会努力为毛孩子们提供一个更加温暖舒适的家园，感谢您的爱心捐赠！”`,
+            });
+          } else {
+            ElMessage({
+              type: 'info',
+              message: '取消支付',
+            });
+          }
+        } catch (error) {
+          if (error === 'cancel') {
+            ElMessage({
+              type: 'info',
+              message: '取消捐款',
+            });
+          } else {
+            ElMessage({
+              type: 'error',
+              message: `${error.message}`,
+            });
+          }
+        }
       } else {
-        ElMessage({
-          type: 'error',
-          message: `捐款失败：${error.message}`,
-        });
+        router.push('/login');
       }
-    }
-  } else {
-    router.push('/login'); 
-  }
-};
+    };
 
 
 
