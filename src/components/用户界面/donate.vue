@@ -1,8 +1,8 @@
 <template>
+    <div>
+      <el-button class="fixedbuttondonate" type="primary" :icon="Coin" circle @click="open" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">点击捐款</el-button>
+    </div>
 
-    <el-affix :offset="300">
-      <el-button type="primary" :icon="Coin" circle @click="open" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">点击捐款</el-button>
-   </el-affix>
 
     <div class="demo-image__lazy">
     <el-image v-for="url in urls" :key="url" :src="url" lazy />
@@ -62,6 +62,14 @@
   width: 800px;
 }
 
+.fixedbuttondonate{
+  position: fixed;
+  top: 30%; 
+  right: 2vw; 
+  border-radius: 10px;
+  box-shadow:  0px 4px 4px rgba(116, 114, 114, 0.2);
+}
+
 .describe {
   font-size: 14px;
   color: #656565;
@@ -89,12 +97,9 @@
 <script setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref,onMounted } from 'vue'
-import { useUserStore } from '@/store/user'
 import {Coin} from '@element-plus/icons-vue'
 import medical_donate from '@/api/medical_donate'
-import { useRouter } from 'vue-router'
-const userStore = useUserStore()
-const router = useRouter()
+
 const tabPosition = ref('left')
 const urls = [
   '../../../public/home8.jpg',
@@ -147,41 +152,33 @@ const donationTime = new Date().toISOString(); // 当前时间转换为字符串
 // ]
 
 const open = async () => {
-  if (userStore.userInfo.User_ID) {
-    try {
-      const { value } = await ElMessageBox.prompt('请输入捐款金额', '捐款', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /^\d+$/,
-        inputErrorMessage: '请输入数字',
-      });
+  try {
+    const { value } = await ElMessageBox.prompt('请输入捐款金额', '捐款', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      inputPattern: /^\d+$/,
+      inputErrorMessage: '请输入数字',
+    });
+    // 用户点击确定按钮后调用 donateAPI 函数发送捐款金额到后端
+    const response = await medical_donate.donateAPI(userID,
+    value,donationTime);
 
-      // Assuming you have 'userID', 'value', and 'donationTime' defined somewhere
-      const response = await medical_donate.donateAPI(
-        userStore.userInfo.User_ID,
-        value,
-        donationTime
-      );
-
+    ElMessage({
+      type: 'success',
+      message: `捐款成功，金额为：${response.amount}`,
+    });
+  } catch (error) {
+    if (error === 'cancel') {
       ElMessage({
-        type: 'success',
-        message: `捐款成功，金额为：${response.amount}`,
+        type: 'info',
+        message: '取消捐款',
       });
-    } catch (error) {
-      if (error === 'cancel') {
-        ElMessage({
-          type: 'info',
-          message: '取消捐款',
-        });
-      } else {
-        ElMessage({
-          type: 'error',
-          message: `捐款失败：${error.message}`,
-        });
-      }
+    } else {
+      ElMessage({
+        type: 'error',
+        message: `捐款失败：${error.message}`,
+      });
     }
-  } else {
-    router.push('/login'); 
   }
 };
 

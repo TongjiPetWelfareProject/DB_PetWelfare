@@ -1,4 +1,11 @@
 <template>
+      <div>
+      <div style="display: flex;align-items: center;">
+              <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
+              &nbsp;<a href="\medical" style="text-decoration: none;color:#538adc;">返回医疗界面</a>
+        </div>
+      </div>
+      <br>
       <div class="tableitem" >
         <img src="./photos/狗狗头像.jpeg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
         <el-text class="welcome-text" size="Large">医疗预约表</el-text>

@@ -9,6 +9,7 @@
           </el-carousel-item>
         </div> 
       </el-carousel>
+      <br>
      </div>
      <div style="display:flex;align-items: center;justify-content: center">
         <div style="display:block">
@@ -23,7 +24,7 @@
         <br><br>
         </div>
       </div>
-
+   <br>
   </div>
   </template>
   
