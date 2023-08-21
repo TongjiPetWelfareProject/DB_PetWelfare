@@ -16,7 +16,7 @@ export default {
       .post('/api/donate', { userId, amount, donationTime })
       .then(response => response.data)
       .catch(error => {
-        throw new Error('捐款失败：' + error.message);
+        throw new Error('捐款失败，错误信息：' + error.message);
       });
   },
 //获取三个医生的照片
@@ -43,7 +43,7 @@ export default {
     .get('/api/donation')
       .then((response) => response.data)
       .catch(error => {
-        throw new Error('获取捐助记录数据时出错：' + error.message);
+        throw new Error('获取捐助记录出错：' + error.message);
       });
   },
   //获取所有医生的姓名和id
