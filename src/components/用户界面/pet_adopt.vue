@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import petadopt from '@/api/pet_adopt'
 
 const images = [
 './src/components/photos/pet1.jpg',
@@ -9,13 +10,42 @@ const images = [
 './src/components/photos/pet5.jpg',
 ];
 
-const pets = [
-  { id: 1, name: '汤姆', breed: '狗', gender: '弟弟', age: 1, image:images[0]},
-  { id: 2, name: 'Honey', breed: '狗', gender: '妹妹', age: 3, image:images[1]},
-  { id: 3, name: 'Kitty', breed: '猫', gender: '弟弟', age: 5, image:images[2]},
-  { id: 4, name: '旺财', breed: '狗', gender: '妹妹', age: 7, image:images[3]},
-  { id: 5, name: '球球', breed: '猫', gender: '弟弟', age: 9, image:images[4]},
-];
+const pets = ref([])
+  // { id: 1, name: '汤姆', breed: '狗', gender: '弟弟', age: 1, image:images[0]},
+  // { id: 2, name: 'Honey', breed: '狗', gender: '妹妹', age: 3, image:images[1]},
+  // { id: 3, name: 'Kitty', breed: '猫', gender: '弟弟', age: 5, image:images[2]},
+  // { id: 4, name: '旺财', breed: '狗', gender: '妹妹', age: 7, image:images[3]},
+  // { id: 5, name: '球球', breed: '猫', gender: '弟弟', age: 9, image:images[4]},
+
+  const getpetlist = async () => {
+  try {
+    const response = await petadopt.getPetList();
+    for (const adoptpet of response) {
+      let gender = '';
+      if (adoptpet.SEX === 'M') {
+        gender = '弟弟';
+      } else if (adoptpet.SEX === 'W') {
+        gender = '妹妹';
+      }
+
+      pets.value.push({
+        id: adoptpet.PET_ID,
+        name: adoptpet.PET_NAME,
+        breed: adoptpet.SPECIES,
+        gender: gender,
+        age: 2,
+        image: images[0]
+      });
+    }
+  } catch (error) {
+    console.error('获取可领养宠物数据时出错：', error);
+  }
+};
+
+
+onMounted(() => {
+  getpetlist();
+});
 
 const value1 = ref('');
 const value2 = ref('');
@@ -27,7 +57,7 @@ const ageRangeMatches = (petAge: number, ageRange: string) => {
 };
 
 const filteredPets = computed(() => {
-  return pets.filter(pet => {
+  return pets.value.filter(pet => {
     return (
       (value1.value === '' || pet.breed === value1.value) &&
       (value2.value === '' || pet.gender === value2.value) &&
