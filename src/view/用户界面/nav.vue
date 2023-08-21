@@ -111,7 +111,7 @@ const confirm = () => {
 
 &nbsp;&nbsp;&nbsp;&nbsp;同济宠物救助中心欢迎所有有爱心的人士加入我们的行列，共同关爱每一个生命。让我们用爱心和责任，共同为宠物们的幸福努力奋斗。
                  </span><br>
-                 <img src="  ../../../public/pettoy.png" style="display:block;height: 20vh;justify-content: center;align-items: center;">
+                 <img src="@/photos/pettoy.png" style="display:block;height: 20vh;justify-content: center;align-items: center;">
                 </div>
                 </el-drawer>
             </template>
