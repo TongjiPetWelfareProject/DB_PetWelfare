@@ -41,6 +41,7 @@
 
 <script>
 import { ref } from 'vue'; // 导入 ref
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router'
 
