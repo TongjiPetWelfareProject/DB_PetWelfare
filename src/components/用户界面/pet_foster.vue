@@ -55,6 +55,10 @@ export default {
         router.push('/pet_foster_table');
       } else {
         // 用户未登录，跳转到 /login
+         ElMessage({
+          message: '请先登录',
+          type: 'warning',
+        });
         router.push('/login');
       }
     }
