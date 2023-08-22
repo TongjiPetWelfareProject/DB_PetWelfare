@@ -75,7 +75,7 @@
           <div style="padding: 10px">
             <img src="@/photos/2.png" class="img">
           </div>
-          <img src="@/photos/${topPets[1].image }.jpg" class="image">
+          <img :src="'@/photos/${topPets[1].image }.jpg'" class="image">
           <div style="padding: 14px">
             <span class="name2">{{ topPets[1].name }}</span><br>
           </div>
@@ -84,7 +84,7 @@
           <div style="padding: 10px">
             <img src="@/photos/1.png" class="img">
           </div>
-          <img src="@/photos/${ topPets[0].image }.jpg" class="image">
+          <img :src="'@/photos/${ topPets[0].image }.jpg'" class="image">
           <div style="padding: 10px ">
             <span class="name1">{{ topPets[0].name }}</span><br>
           </div>
@@ -93,7 +93,7 @@
           <div style="padding: 10px">
             <img src="@/photos/3.png" class="img">
           </div>
-          <img src="@/photos/${ topPets[2].image }.jpg" class="image">
+          <img :src="'@/photos/${ topPets[2].image }.jpg'" class="image">
           <div style="padding: 10px">
             <span class="name3">{{ topPets[2].name }}</span><br>
           </div>
