@@ -74,6 +74,22 @@ const confirm = () => {
           <a href="https://github.com/shiguangbiyi/DataBase_Program_Pet-Rescue-Station" style="margin-top:4px;margin-right:4px" title="github">
             <img src="  ../../../public/github.png" alt="描述">
           </a>
+    
+          <el-popover
+            placement="bottom"
+            title="联系我们"
+            :width="400"
+            trigger="click"
+
+          >
+            <template #reference>
+              <el-button style="color:#5d86ba;font-size: 15px;"  text>联系我们</el-button>
+            </template>
+            <p>电话：18981729781</p>
+            <p>邮箱：charlotteyanggg@qq.com</p>
+            <p>地址：上海市嘉定区曹安公路4800号</p>
+          </el-popover>
+            
           <ul>
             <template v-if="userStore.userInfo.User_ID">
               <li>
@@ -90,10 +106,11 @@ const confirm = () => {
             <template v-else>
               <li><router-link to="/login">登录</router-link></li>
               <li>
-                <el-button style="color:#5d86ba" @click="drawerOn = true" text>
+                <el-button style="color:#5d86ba;height:20px" @click="drawerOn = true" text>
                  关于我们
               </el-button>
               </li>
+    
               <el-drawer
                 v-model="drawerOn"
                 title="关于我们"
