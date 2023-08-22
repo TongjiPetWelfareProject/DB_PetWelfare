@@ -1,27 +1,31 @@
 <template>
   <div>
-    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
-      <el-table-column prop="donationId" label="捐赠ID" width="200"></el-table-column>
-      <el-table-column prop="userId" label="用户ID" width="200"></el-table-column>
-      <el-table-column prop="donationTime" label="捐赠时间" width="280" sortable :sort-method="sortTime"></el-table-column>
-      <el-table-column prop="donationAmount" label="捐赠金额" width="180" sortable></el-table-column>
-      <!-- <el-table-column label="操作" width="180">
-        <template v-slot="scope">
-          <el-button size="mini" type="primary" @click="editRow(scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="deleteRow(scope.row)">删除</el-button>
-        </template>
-      </el-table-column> -->
-    </el-table>
+    <div class="tablecontainerdonate2">
+       <el-table :data="currentPageData" stripe style="width: 100%;" show-header="false">
+          <el-table-column prop="time" label="捐款日期" sortable :sort-method="sortTime" />
+          <el-table-column prop="name" label="用户名"   />
+          <el-table-column prop="amount" label="捐款金额"  sortable/>
+        </el-table>
+      </div>
     <br>
-    <!-- <el-button type="primary" @click="addEmptyRow">添加</el-button> -->
-    <el-pagination layout="prev, pager, next" :total="1000" />
+    <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :small="small"
+      :disabled="disabled"
+      :background="background"
+      layout="prev, pager, next, jumper"
+      :total="tableData.length"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
 <script>
-import { ref,onMounted } from 'vue'
+import { ref,onMounted,computed } from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
-import gg_rqb_jk from '@/api/gg_rqb_jk'
+import medical_donate from '@/api/medical_donate'
 
 export default {
   components: {
@@ -29,70 +33,63 @@ export default {
     ElTable,
   },
   setup() {
-    const tableRef = ref(null)
-    const tableData = ref([
-      // { donationId: "001", userId: '1001', donationTime: '2021-10-01', donationAmount: '100' },
-      // { donationId: "002", userId: '1002', donationTime: '2021-10-02', donationAmount: '200' },
-      // { donationId: "003", userId: '1003', donationTime: '2021-10-03', donationAmount: '300' },
-      // { donationId: "004", userId: '1004', donationTime: '2021-10-04', donationAmount: '400' },
-      // { donationId: "005", userId: '1005', donationTime: '2021-10-05', donationAmount: '500' },
-    ])
-
-    const handleSelectionChange = (selectedItems) => {
-      console.log(selectedItems)
-    }
+    const tableData = ref([]);
+    const currentPage = ref(1);
+    const pageSize = ref(10);
 
     const sortTime = (a, b) => {
       return new Date(a.donationTime) - new Date(b.donationTime)
     }
 
-    const deleteRow = (row) => {
-      ElMessageBox.confirm('确定删除该医疗记录吗？', '提示', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-      }).then(() => {
-        const index = tableData.value.indexOf(row)
-        if (index !== -1) {
-          tableData.value.splice(index, 1)
-        }
-      }).catch(() => {
-        // 取消删除
-      })
-    }
-
-    const addEmptyRow = () => {
-      const emptyRow = {
-        donationId: '',
-        userId: '',
-        donationTime: '',
-        donationAmount: '',
-      }
-      tableData.value.push(emptyRow)
-    }
-
-    const editRow = (row) => {
-      console.log('编辑行', row)
-    }
-
     onMounted(async () => {
       try {
-        const records = await gg_rqb_jk.getDonationAPI();
-        tableData.value = records;
-      } catch (error) {
-        console.error('获取捐款数据时出错：', error);
+        const response = await medical_donate.donationRecordsAPI();
+        for (const donation of response) {
+                tableData.value.push({
+                time: donation.DONATED_DATE,
+                name: donation.USER_NAME,
+                amount: donation.DONATION_AMOUNT
+              });
+            }
+        // 在获取数据后按捐款日期排序
+        tableData.value.sort((a, b) => new Date(b.time) - new Date(a.time));
+      } 
+      catch (error) {
+        console.error('获取捐助记录数据出错：', error);
       }
+    }
+    );
+
+        
+    const currentPageData = computed(() => {
+      const startIndex = (currentPage.value - 1) * pageSize.value;
+      const endIndex = startIndex + pageSize.value;
+      return tableData.value.slice(startIndex, endIndex);
     });
 
+    const handleSizeChange = newPageSize => {
+      pageSize.value = newPageSize;
+      currentPage.value = 1;
+    };
+
+    const handleCurrentChange = newCurrentPage => {
+      currentPage.value = newCurrentPage;
+    };
+
     return {
-      tableRef,
       tableData,
-      handleSelectionChange,
+      currentPageData,
       sortTime,
-      deleteRow,
-      addEmptyRow,
-      editRow,
+      handleSizeChange,
+      handleCurrentChange
     }
   },
 }
 </script>
+
+<style>
+.tablecontainerdonate2{
+  display: flex;
+  justify-content: space-between;
+}
+</style>
