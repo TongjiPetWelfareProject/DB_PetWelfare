@@ -4,7 +4,7 @@
         <div class="foster_container">
           <p class="foster_title">宠物寄养服务</p>
           <p class="foster_sub_title">为您的宠物提供家一样的感觉</p>
-          <buttion class="foster_top_button" @click="$router.push('/pet_foster_table')">现在申请宠物寄宿</buttion>
+          <buttion class="foster_top_button" @click="handleApplyForFoster">现在申请宠物寄宿</buttion>
         </div>
       </el-col>
     </el-row>
@@ -38,6 +38,33 @@
     </el-col>
   </el-row>
 </template>
+
+<script>
+import { ref } from 'vue'; // 导入 ref
+import { useUserStore } from '@/store/user';
+import { useRouter } from 'vue-router'
+
+export default {
+  setup() {
+    const userStore = useUserStore();
+    const router = useRouter();
+
+    const handleApplyForFoster = () => {
+      if (userStore.userInfo.User_ID) {
+        // 用户已登录，跳转到 /pet_foster_table
+        router.push('/pet_foster_table');
+      } else {
+        // 用户未登录，跳转到 /login
+        router.push('/login');
+      }
+    }
+
+    return {
+      handleApplyForFoster
+    }
+  }
+}
+</script>
 
 <style>
 .foster_1{
