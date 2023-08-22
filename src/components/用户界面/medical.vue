@@ -35,8 +35,8 @@ export default {
 <style>
   .fixedbuttonmedical{
     position: fixed;
-    top: 30%; /* 距离页面底部的距离 */
-    right: 2vw; /* 距离页面右侧的距离，使用 vh 单位可以根据视口高度自动调整 */
+    top: 30%; 
+    right: 2vw; 
     border-radius: 10px;
     box-shadow:  0px 4px 4px rgba(116, 114, 114, 0.2);
   }

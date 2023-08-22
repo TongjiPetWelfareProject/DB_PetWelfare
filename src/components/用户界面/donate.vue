@@ -1,8 +1,7 @@
 <template>
 
-    <el-affix :offset="300">
-      <el-button type="primary" :icon="Coin" circle @click="open" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">点击捐款</el-button>
-    </el-affix>
+      <el-button class="fixedbuttondonate" type="primary" :icon="Coin" circle @click="open" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">点击捐款</el-button>
+    
 
     <div class="demo-image__lazy">
     <el-image v-for="url in urls" :key="url" :src="url" lazy />
@@ -12,7 +11,7 @@
   <el-tabs :tab-position="tabPosition" type="border-card" style="width:90% ;border-radius: 10px;box-shadow:1px 1px 1px 1px rgba(126, 126, 126, 0.2);">
     <el-tab-pane label="捐助需知">
     <div class="describe">
-      <span style="font-weight: bold;font-size: 16px;">捐助范围:</span><br>
+      <span style="font-weight: bold;font-size: 17px;">捐助范围:</span><br>
       我们非常乐意接受爱心朋友们经常性的捐助，这将帮助我们持续提供给小猫小狗们急需的食物、医疗和庇护。<br>
       我们也非常希望爱心朋友们能够为小猫小狗们捐出您的宝贵时间，与他们互动、照顾和关爱，给予他们温暖和陪伴。<br>
       您的慷慨捐助将被用于改善小猫小狗们的生活条件和提供更好的医疗护理。<br>
@@ -23,12 +22,27 @@
   <br><br>
     </el-tab-pane>
     <el-tab-pane label="捐助记录">
-      <el-table :data="tableData" stripe style="width: 100%;margin-top:-80" show-header:false>
-    <el-table-column prop="time" label="捐款日期" width="280" />
-    <el-table-column prop="name" label="用户名" width="280" />
-    <el-table-column prop="amount" label="捐款金额" width="280"/>
-  </el-table>
-  <el-pagination layout="prev, pager, next" :total="1000" />
+      <div class="tablecontainerdonate">
+       <el-table :data="currentPageData" stripe style="width: 100%;" show-header="false">
+          <el-table-column prop="time" label="捐款日期"  />
+          <el-table-column prop="name" label="用户名"  />
+          <el-table-column prop="amount" label="捐款金额"  />
+        </el-table>
+      </div>
+      <br>
+      
+      <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :small="small"
+      :disabled="disabled"
+      :background="background"
+      layout="prev, pager, next, jumper"
+      :total="tableData.length"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+  
     </el-tab-pane>
   </el-tabs>
   <br>
@@ -50,6 +64,16 @@
 </template>
 
 <style scoped>
+
+
+.fixedbuttondonate{
+    position: fixed;
+    top: 30%; 
+    right: 2vw; 
+    border-radius: 10px;
+    box-shadow:  0px 4px 4px rgba(116, 114, 114, 0.2);
+  }
+
 .text {
   font-size: 14px;
 }
@@ -62,8 +86,13 @@
   width: 800px;
 }
 
+.tablecontainerdonate{
+  display: flex;
+  justify-content: space-between;
+}
+
 .describe {
-  font-size: 14px;
+  font-size: 15px;
   color: #656565;
   line-height: 26px;
 }
@@ -88,7 +117,7 @@
 
 <script setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ref,onMounted } from 'vue'
+import { ref,onMounted,computed } from 'vue'
 import { useUserStore } from '@/store/user'
 import {Coin} from '@element-plus/icons-vue'
 import medical_donate from '@/api/medical_donate'
@@ -101,52 +130,12 @@ const urls = [
   '../../../public/home2.png',
   '../../../public/home7.jpg', 
 ]
-const userId = 123; // 当前用户ID
+
 const donationTime = new Date().toISOString(); // 当前时间转换为字符串格式
-// const tableData = [
-//   {
-//     time: '2023-05-03 10:23',
-//     name: '白云揉碎',
-//     amount: '100',
-//   },
-//   {
-//     time: '2023-05-8 12:09',
-//     name: '**',
-//     amount: '300',
-//   },
-//   {
-//     time: '2023-05-11 11:12',
-//     name: 'Aimee_',
-//     amount: '200',
-//   },
-//   {
-//     time: '2023-05-11 11:12',
-//     name: '湫月',
-//     amount: '50',
-//   },
-//   {
-//     time: '2023-05-03 10:23',
-//     name: '白云揉碎',
-//     amount: '100',
-//   },
-//   {
-//     time: '2023-05-8 12:09',
-//     name: '**',
-//     amount: '300',
-//   },
-//   {
-//     time: '2023-05-11 11:12',
-//     name: 'Aimee_',
-//     amount: '200',
-//   },
-//   {
-//     time: '2023-05-11 11:12',
-//     name: '湫月',
-//     amount: '50',
-//   },
-// ]
 
 const tableData = ref([]);
+const currentPage = ref(1);
+const pageSize = ref(10);
 
 const open = async () => {
       if (userStore.userInfo.User_ID) {
@@ -211,6 +200,10 @@ const open = async () => {
           }
         }
       } else {
+        ElMessage({
+          message: '请先登录',
+          type: 'warning',
+        })
         router.push('/login');
       }
     };
@@ -227,9 +220,29 @@ onMounted(async () => {
             amount: donation.DONATION_AMOUNT
            });
         }
-  } catch (error) {
+    // 在获取数据后按捐款日期排序
+    tableData.value.sort((a, b) => new Date(b.time) - new Date(a.time));
+  } 
+  catch (error) {
     console.error('获取捐助记录数据出错：', error);
   }
+}
+);
+
+const currentPageData = computed(() => {
+  const startIndex = (currentPage.value - 1) * pageSize.value;
+  const endIndex = startIndex + pageSize.value;
+  return tableData.value.slice(startIndex, endIndex);
 });
+
+const handleSizeChange = newPageSize => {
+  pageSize.value = newPageSize;
+  currentPage.value = 1;
+};
+
+const handleCurrentChange = newCurrentPage => {
+  currentPage.value = newCurrentPage;
+};
+
 
 </script>
