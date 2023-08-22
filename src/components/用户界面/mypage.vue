@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex;align-items: center;">
-	<img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
-	&nbsp;<a href="\" style="text-decoration: none;color:#538adc;">返回主页</a>
+        <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
+        &nbsp;<a href="\" style="text-decoration: none;color:#538adc;">返回主页</a>
   </div>
   <div class="common-layout">
     <el-container>
