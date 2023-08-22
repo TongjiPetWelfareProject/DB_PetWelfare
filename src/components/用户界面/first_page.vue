@@ -72,27 +72,27 @@
           <div style="padding: 10px">
             <img src="@/photos/2.png" class="img">
           </div>
-          <img src="@/photos/人气榜2.jpg" class="image">
+          <img src="@/photos/{{ topPets[1].image }}.jpg" class="image">
           <div style="padding: 14px">
-            <span class="name2">Kitty</span><br>
+            <span class="name2">{{ topPets[1].name }}</span><br>
           </div>
         </el-card>
         <el-card class="card1">
           <div style="padding: 10px">
             <img src="@/photos/1.png" class="img">
           </div>
-          <img src="@/photos/人气榜1.jpg" class="image">
+          <img src="@/photos/{{ topPets[0].image }}.jpg" class="image">
           <div style="padding: 10px ">
-            <span class="name1">Honey</span><br>
+            <span class="name1">{{ topPets[0].name }}</span><br>
           </div>
         </el-card>
         <el-card class="card3">
           <div style="padding: 10px">
             <img src="@/photos/3.png" class="img">
           </div>
-          <img src="@/photos/人气榜3.jpg" class="image">
+          <img src="@/photos/{{ topPets[2].image }}.jpg" class="image">
           <div style="padding: 10px">
-            <span class="name3">旺财</span><br>
+            <span class="name3">{{ topPets[2].name }}</span><br>
           </div>
         </el-card>
       </div>
@@ -266,9 +266,20 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import {
-  StarFilled,Check,Select
-} from '@element-plus/icons-vue'
+import { StarFilled,Check,Select} from '@element-plus/icons-vue'
+import  first_page  from '@/api/first_page';
+
+const topPets = ref([]);
+
+// 在组件挂载后获取领养宠物人气榜数据
+onMounted(async () => {
+  try {
+    topPets.value = await first_page.topAdoptPetsAPI();
+  } catch (error) {
+    console.error('获取领养宠物人气榜数据时出错：', error);
+  }
+});
+
 const images = [
   'home3.png',
   'home5.jpg',
