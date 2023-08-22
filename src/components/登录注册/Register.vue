@@ -109,7 +109,8 @@ const submitForm = async() => {
             <el-tooltip 
             placement="right" 
             content="密码长度在8~16之间，必须包含数字、大小写字母、特殊字符" 
-            open-delay="500">
+            open-delay="500"
+            effect="light">
               <div class="input-with-tooltip">
                 <input type="password" v-model="password" name="password" placeholder="请输入密码" @input="validatePasswordLength" />
               </div>
