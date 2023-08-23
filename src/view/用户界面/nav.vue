@@ -1,21 +1,27 @@
 <script setup>
 import { useUserStore } from '@/store/user';
-import{ref}from'vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   Document,Phone,School,
   Message,Coin,Location,House,Postcard,DocumentChecked,Collection,Memo,ChatLineRound
 } from '@element-plus/icons-vue'
 const userStore = useUserStore();
 const drawerOn = ref(false)
+const router = useRouter();
 const confirm = () => {
     console.log('用户退出登录了')
     userStore.clearUserInfo()
 };
+
+const mainpage = () => {
+  router.replace({path:'/'})
+}
 </script>
 <template>
     <nav class="app-topnav">
       <div class="titleall">
-        <div class="titlehead">
+        <div class="titlehead" @click="mainpage">
           <img src="  ../../../public/animal-shelter.png" style="width:2.5vw;height:2.5vw;float:left">
           <p class="titlehead-text">同济宠物救助中心</p>
         </div>
@@ -180,6 +186,7 @@ const confirm = () => {
     align-items: center; /* 垂直居中图片和文字 */
     margin-left: 40px;
     float:left;
+    cursor: pointer;
   }
   .titlehead-text{
     font-size: 23px;
