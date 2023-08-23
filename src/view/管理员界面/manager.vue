@@ -96,7 +96,9 @@ const handleClose = (key, keyPath) => {
           <el-text class="welcome">Hello!&nbsp;&nbsp;</el-text>
    
             <el-text v-if="userStore.userInfo.User_ID" class="welcome">{{ userStore.userInfo.User_Name }}</el-text>
-          
+            <el-button class="usermodel">
+              <router-link to="/" class="link-text">进入用户模式</router-link>
+            </el-button>
           <!-- <el-avatar :size="40" :src="circleUrl" style="margin-top: 1vh;margin-left: 1vw;" /> -->
           <!-- <el-input class="search-bar" v-model="input" placeholder="Please input" />
           <el-button class="search-button" :icon="Search" circle /> -->
@@ -211,6 +213,32 @@ body, html {
  float: left;
  font-size: 20px;
  font-weight: bold;
+}
+
+.usermodel {
+  margin-top: 10px;
+  margin-left: 20px;
+  background-color: #edf4f9; /* 背景颜色 */
+  color: white; /* 字体颜色 */
+  border: none; /* 去除边框 */
+  border-radius: 5px; /* 圆角 */
+  padding: 10px 20px; /* 内边距 */
+  cursor: pointer; /* 鼠标样式 */
+  transition: background-color 0.3s, color 0.3s; /* 过渡效果 */
+}
+
+.usermodel:hover {
+  background-color: #e1eff9; /* 鼠标悬停时的背景颜色 */
+}
+
+/* 去除下划线 */
+.link-text {
+  text-decoration: none;
+}
+
+/* 修改字体颜色 */
+.link-text {
+  color: #000; /* 设置自定义字体颜色 */
 }
 .my-trigger{
   background-color: rgb(237, 244, 249);
