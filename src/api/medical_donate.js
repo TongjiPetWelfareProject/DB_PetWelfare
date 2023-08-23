@@ -61,6 +61,14 @@ export default {
       .catch(error => {
         throw new Error('获取医生数据时出错：' + error.message);
       });
+    },
+    getPetInfoAPI() {
+      return axios
+        .get('/api/getPetInfo') 
+        .then(response => response.data)
+        .catch(error => {
+          throw new Error('获取宠物信息失败：' + error.message);
+        });
     }
 
 };
