@@ -13,9 +13,9 @@
          <div class="line1">
          相互交流，相互帮助
         </div>
-        <el-button type="primary" plain class="post_button"  @click="$router.push('/posting')">
-        发&nbsp;帖
-      </el-button>
+        <el-button type="primary" plain class="post_button" @click="post">
+          发&nbsp;帖
+        </el-button>
       </div>
     </el-col>
     <el-col :span="16">
@@ -64,19 +64,9 @@
 // import { Delete, EditPen, Search, Share, Upload,Coin } from '@element-plus/icons-vue'
 import { ref, onMounted, computed } from 'vue'
 import notice_forum from '@/api/notice_forum'
-
-
-// {
-//           post_id: 1,
-//           user_id: 'thesamechen',
-//           read_count: 5,
-//           like_num: 3,
-//           comment_num: 2,
-//           title: '可爱小猫咪找新家',
-//           post_time: '2023-03-01 00:00:00'
-// },
-
-
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/user';
 
 export default {
   name: "UserInfo",
@@ -84,6 +74,8 @@ export default {
     const forum_posts = ref([]);
     const searchText = ref('');
     const sortOrder = ref('asc');
+    const router = useRouter();
+    const userStore = useUserStore();
 
     const getPosts= async () => {
       try {
@@ -91,7 +83,6 @@ export default {
         for (const forum_post of response) {
           forum_posts.value.push({
           id: forum_post.postId,
-          // title: forum_post.heading,
           title: forum_post.heading,
           content: forum_post.content,
           post_time: forum_post.post_time,
@@ -108,6 +99,22 @@ export default {
     onMounted(() => {
       getPosts(); // 初始加载时获取帖子列表
     });
+
+
+    const post = () => {
+      console.log("进入该函数")
+      if (userStore.userInfo.User_ID) {
+        // 用户已登录，跳转到 /posting
+        router.push('/posting');
+      } else {
+        // 用户未登录，跳转到 /login
+         ElMessage({
+          message: '请先登录',
+          type: 'warning',
+        });
+        router.push('/login');
+      }
+    }
 
     const sortedPosts = computed(() => {
       if (sortOrder.value === 'asc') {
@@ -155,6 +162,7 @@ export default {
       forum_posts,
       searchText,
       filteredPosts,
+      post,
       goToPost,
       toggleSortOrder,
       sortByLikeNum,
