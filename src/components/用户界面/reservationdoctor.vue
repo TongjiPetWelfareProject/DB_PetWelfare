@@ -11,10 +11,35 @@
         <el-text class="welcome-text" size="Large">医疗预约表</el-text>
       </div>
     <el-form :model="form" label-width="120px" style="max-width: 90%;">
-      <el-form-item label="宠物姓名" >
+      <el-form-item label="是否初次">
+      
+      <el-radio-group v-model="form.isOld">
+      <el-radio label="它未在此治疗过" value="它未在此治疗过">它未在此治疗过</el-radio>
+      <el-radio  label="它已经在此治疗过" value="它已经在此治疗过">它已经在此治疗过</el-radio>
+    </el-radio-group>
+</el-form-item>
+    <el-form-item v-if="form.isOld==='它已经在此治疗过'">
+      <el-select v-model="petID" class="m-2" placeholder="请选择宠物" size="small" >
+        <el-option
+          v-for="pet in petOptions"
+          :key="pet.id"
+          :label="pet.name"
+          :value="pet.id"
+        />
+      </el-select>
+    </el-form-item>
+    <el-form-item v-if="form.isOld==='它未在此治疗过'">
+      <el-radio-group v-model="form.pet_kind" size="small" >
+        <el-radio label="狗" value="dog"/>
+        <el-radio label="猫" value="cat" />
+      </el-radio-group>
+    </el-form-item>
+      
+ 
+      <el-form-item label="宠物姓名" v-if="form.isOld==='它未在此治疗过'">
         <el-input v-model="form.name" placeholder="请输入宠物姓名"/>
       </el-form-item>
-      <el-form-item label="种类">
+      <el-form-item label="问题种类">
         <el-select v-model="form.kind" placeholder="请选择问题种类">
           <el-option label="皮肤问题" value="皮肤问题" />
           <el-option label="胃部问题" value="胃部问题" />
@@ -79,14 +104,23 @@
 <script>
 import { ref,defineComponent, reactive,onMounted } from 'vue';
 import medical_donate from '@/api/medical_donate';
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store/user'; // 导入用户信息管理模块
+import { useRouter } from 'vue-router'
 
+
+
+const router = useRouter()
 export default defineComponent({
   setup() {
 
     const userStore = useUserStore();
     const doctors = ref([]);
-   
+    const petOptions = ref([]); 
+    const petID=ref(0);
+    const petMap1 = ref(new Map());
+    const petMap2 = ref(new Map());
+
 
     const form = reactive({
       name: '',
@@ -94,9 +128,21 @@ export default defineComponent({
       date1: '',
       desc: '',
       selectedDoctorID:'',
+      isOld:'它未在此治疗过',
+      pet_kind:'狗'
     });
 
-
+    const fetchPetInfo = async () => {
+      try {
+        const response = await medical_donate.getPetInfoAPI(); // 根据你的实际情况修改 API 调用  
+        petOptions.value = response.data; // 使用宠物名字数组更新 petOptions
+        // 建立宠物ID与宠物名字的映射关系
+        petMap1.value = new Map(response.data.map(pet => [pet.id, pet.name]));
+        petMap2.value = new Map(response.data.map(pet => [pet.id, pet.kind]));
+      } catch (error) {
+        console.error('获取宠物信息出错：', error);
+      }
+    };
 
     const onSubmit = async () => {
       try {
@@ -105,9 +151,20 @@ export default defineComponent({
 
         // 在表单数据中添加 userId
         form.userId = userId;
-        
+        if(form.isOld==='它已经在此治疗过'){
+          form.petID = petId;
+          form.name = petMap1.value.get(petId); // 根据映射关系获取宠物名字
+          form.pet_kind=petMap2.value.get(petId);
+        }
+
         const response = await medical_donate.submitAppointmentAPI(form);
         console.log('提交成功：', response);
+        ElMessage({
+              type: 'success',
+              message: `预约成功！`,
+            });
+            router.push('/medical');
+        
       } catch (error) {
         console.error('提交数据时出错：', error);
       }
@@ -115,12 +172,15 @@ export default defineComponent({
 
     onMounted(async () => {
       doctors.value = await medical_donate.getDoctorsAPI();
+      fetchPetInfo();
     });
 
     return {
       form,
       onSubmit,
       doctors,
+      petMap1,
+      petMap2
     };
   },
 });
