@@ -14,7 +14,7 @@
     border
   >
     <template #extra>
-      <el-button type="primary" @click="onEdit">编辑</el-button>
+      <el-button type="primary" @click="showEditDialog()">编辑</el-button>
     </template>
     <el-descriptions-item>
       <template #label>
@@ -282,6 +282,29 @@
   
   </div>
   
+
+  <!--      修改用户的对话框-->
+  <el-dialog
+  title="修改用户"
+  :visible.sync="editDialogVisible"
+  width="50%" @close="editDialogClosed">
+  <el-form :model="editForm" : rules="editFormRules" ref="editFormRef" label-width="70px" >
+    <!--     disabled表示禁用状态     -->
+    <el-form-item label="用户名" prop="user_name" >
+      <el-input v-model="editForm.user_name" disabled></el-input>
+    </el-form-item>
+    <el-form-item label="地址" prop="address">
+      <el-input v-model="editForm.address"></el-input>
+    </el-form-item>
+    <el-form-item label="手机" prop="phone_number">
+      <el-input v-model="editForm.phone_number"></el-input>
+    </el-form-item>
+  </el-form>
+  <span slot="footer" class="dialog-footer">
+      <el-button @click="editDialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="editUserInfo()">确 定</el-button>
+  </span>
+  </el-dialog>
   
   
 
@@ -297,7 +320,7 @@ const activeName = ref('first')
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
-import { computed} from 'vue'
+import {computed} from 'vue'
 import {
   Iphone,
   Location,
@@ -346,17 +369,6 @@ const iconStyle = computed(() => {
 })
 
 
-const blockMargin = computed(() => {
-  const marginMap = {
-    large: '32px',
-    default: '28px',
-    small: '24px',
-  }
-  return {
-    marginTop: marginMap[size.value] || marginMap.default,
-  }
-})
-
 
 
 //added 2023/7/30
@@ -391,275 +403,36 @@ const start_month = ref(12)
 const start_day = ref(19)
 
 
-axios.get('/api/user')
-        .then(response => {
-          user_name.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
+function showEditDialog() {
+  // // 发起请求获取已存在的用户信息
+  // const { data: res } = await this.$http.get('users/' + id)
+  // // 将获取到的数据传给editForm
+  // this.editForm = res.data
+  // // 判断是否获取到了信息
+  // if (res.meta.status !== 200) {
+  //   this.$message.error('查询用户信息失败！')
+  // }
+  // 查询信息成功的话，打开对话框
+  this.editDialogVisible = true
+}
 
-axios.get('/api/user')
-        .then(response => {
-          phone_number.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          like_num.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          read_num.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          address.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-
-//我的论坛
-axios.get('/api/like-list')
-        .then(response => {
-          pet_name1.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/like-count')
-      .then(response => {
-        count1.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-axios.get('/api/collect-list')
-        .then(response => {
-          pet_name2.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/collect-count')
-      .then(response => {
-        count2.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-axios.get('/api/comment-list')
-        .then(response => {
-          pet_name3.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/comment-count')
-      .then(response => {
-        count3.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-
-axios.get('/api/view-list')
-        .then(response => {
-          pet_name4.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/view-count')
-      .then(response => {
-        count4.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-//我的宠物
-axios.get('/api/like-list')
-        .then(response => {
-          pet_name5.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/like-count')
-      .then(response => {
-        count5.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-axios.get('/api/collect-list')
-        .then(response => {
-          pet_name6.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/collect-count')
-      .then(response => {
-        count6.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-axios.get('/api/comment-list')
-        .then(response => {
-          pet_name7.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/comment-count')
-      .then(response => {
-        count7.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-
-axios.get('/api/view-list')
-        .then(response => {
-          pet_name8.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/view-count')
-      .then(response => {
-        count8.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-//收养
-axios.get('/api/adopt')
-        .then(response => {
-          pet_id1.value = response.data; 
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/adopt')
-        .then(response => {
-          pet_name9.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/adopt')
-        .then(response => {
-          adoption_time.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-
-//寄养
-axios.get('/api/foster')
-      .then(response => {
-        pet_id2.value = response.data; 
-      })
-      .catch(error => {
-        console.log(error);
-      });
-axios.get('/api/foster')
-        .then(response => {
-          pet_name10.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_year.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_month.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_day.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-//医疗
-axios.get('/api/treatment')
-      .then(response => {
-        pet_id3.value = response.data; 
-      })
-      .catch(error => {
-        console.log(error);
-      });
-axios.get('/api/treatment')
-        .then(response => {
-          pet_name11.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/treatment')
-        .then(response => {
-          doctor_id.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/treatment')
-        .then(response => {
-          vet_id.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-  
-
-//edit 
-//编辑按钮跳转到个人信息编辑页面还没有实现（ps：ysj暑期实习也要做网页和网站，现在有点忙）
+function editUserInfo(){
+ this.$refs.editFormRef.validate( async vaild =>{
+   if (!vaild) return
+  // 将修改数据传送到后端，并接收修改后的返回数据
+  const {data:res}=await this.$http.put('users/'+this.editForm.user_name,{email:this.editForm.address: this.editForm.phone_number})
+   // 判断是否修改成功
+   if (res.meta.status !== 200) {
+     return this.$message.error('更改用户信息失败！')
+   }
+   //关闭会话框
+   this.editDialogVisible = false
+   //重新获取列表
+   this.getUserList()
+   //提示修改成功
+   this.$message.success('修改数据成功')
+ })
+}
 
 </script>
 
