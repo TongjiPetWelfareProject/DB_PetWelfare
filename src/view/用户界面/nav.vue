@@ -97,6 +97,9 @@ const confirm = () => {
               </li>
               <li><a href="javascript:;"><i class="iconfont icon user"></i>{{ userStore.userInfo.User_Name }}</a></li>
               <li><router-link to="/mypage">我的页面</router-link></li>
+              <li v-if="userStore.userInfo.Role === 'Admin'">
+                <router-link to="/manager">进入管理员模式</router-link>
+              </li>
               <li>
                 <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
                   <template #reference><a href="javascript:;">退出登录</a></template>
