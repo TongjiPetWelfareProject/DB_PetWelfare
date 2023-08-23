@@ -127,5 +127,6 @@ export default {
   padding: 10px 20px;
   font-size: 16px;
   border-radius: 20px;
+  cursor: pointer; /* 将鼠标指针设置为手指指向键 */
 }
 </style>
