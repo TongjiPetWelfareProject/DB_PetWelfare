@@ -19,7 +19,7 @@
     </el-radio-group>
 </el-form-item>
     <el-form-item v-if="form.isOld==='它已经在此治疗过'">
-      <el-select v-model="petID" class="m-2" placeholder="请选择宠物" size="small" >
+      <el-select v-model="form.petID" class="m-2" placeholder="请选择宠物" size="small" >
         <el-option
           v-for="pet in petOptions"
           :key="pet.id"
@@ -128,6 +128,7 @@ export default defineComponent({
       date1: '',
       desc: '',
       selectedDoctorID:'',
+      petID:'',
       isOld:'它未在此治疗过',
       pet_kind:'dog'
     });
@@ -152,9 +153,9 @@ export default defineComponent({
         // 在表单数据中添加 userId
         form.userId = userId;
         if(form.isOld==='它已经在此治疗过'){
-          form.petID = petId;
-          form.name = petMap1.value.get(petId); // 根据映射关系获取宠物名字
-          form.pet_kind=petMap2.value.get(petId);
+          form.petID = petID;
+          form.name = petMap1.value.get(petID); // 根据映射关系获取宠物名字
+          form.pet_kind=petMap2.value.get(petID);
         }
 
         const response = await medical_donate.submitAppointmentAPI(form);
@@ -179,6 +180,7 @@ export default defineComponent({
       form,
       onSubmit,
       doctors,
+      petOptions,
       petMap1,
       petMap2
     };
