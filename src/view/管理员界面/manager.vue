@@ -1,8 +1,37 @@
+<script setup>
+import { reactive,toRefs,ref } from 'vue'
+import { useUserStore } from '@/store/user';
+import { useRouter } from 'vue-router'
+import {
+  Document,Menu as IconMenu,Setting,Search,ArrowDown,Position,School,
+  User,Coin,ArrowDownBold,House,Postcard,DocumentChecked,Collection,Memo
+} from '@element-plus/icons-vue'
+
+const userStore = useUserStore();
+const router=useRouter();
+const username=userStore.userInfo;
+
+const confirm = () => {
+    console.log('用户退出登录了')
+    userStore.clearUserInfo();
+    router.push('/');
+}
+
+
+
+const handleOpen = (key, keyPath) => {
+    console.log(key, keyPath)
+}
+const handleClose = (key, keyPath) => {
+    console.log(key, keyPath)
+}
+</script>
+
 <template>
   <div class="common-layout" >
     <el-container>
       <el-aside>
-        <img src="@/photos/animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
+        <img src="animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
 
         <el-menu
         default-active="2"
@@ -64,10 +93,17 @@
 
       <el-container>
         <el-header class="manager">
-          <el-text class="welcome">Hello!</el-text>
-          <el-avatar :size="40" :src="circleUrl" style="margin-top: 1vh;margin-left: 1vw;" />
-          <el-input class="search-bar" v-model="input" placeholder="Please input" />
-          <el-button class="search-button" :icon="Search" circle />
+          <el-text class="welcome">Hello!&nbsp;&nbsp;</el-text>
+   
+            <el-text v-if="userStore.userInfo.User_ID" class="welcome">{{ userStore.userInfo.User_Name }}</el-text>
+          
+          <!-- <el-avatar :size="40" :src="circleUrl" style="margin-top: 1vh;margin-left: 1vw;" /> -->
+          <!-- <el-input class="search-bar" v-model="input" placeholder="Please input" />
+          <el-button class="search-button" :icon="Search" circle /> -->
+          <img src="@/photos/退出.png" class="imgmanager">
+          <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
+            <template #reference><a href="javascript:;"  class="textmanager">退出登录</a></template>
+          </el-popconfirm>
         </el-header>
 
         <el-main class="manager">
@@ -82,39 +118,16 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { reactive,toRefs,ref } from 'vue'
-import {
-  Document,Menu as IconMenu,Setting,Search,ArrowDown,Position,School,
-  User,Coin,ArrowDownBold,House,Postcard,DocumentChecked,Collection,Memo
-} from '@element-plus/icons-vue'
-
-const input = ref('')
-const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-
-const state = reactive({
-  circleUrl:
-    'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202010%2F20%2F20201020100556_1838b.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1691023509&t=0e3ffefc2c20a0461851b994233624f8',
-})
-
-const { circleUrl } = toRefs(state)
-
-</script>
 
 
-<style scoped>
+
+<style scopedcd>
 
 body, html {
   height: 100%;
   margin: 0;
   padding: 0;
   width: 100%;
-  /* overflow-x: hidden; /* 防止左右滚动条出现  */
 }
 
 .common-layout{
@@ -173,6 +186,24 @@ body, html {
  float: right;
  margin-right: 10px;
  box-shadow: 0 0px 2px rgba(0, 0, 0, .2);
+}
+
+.imgmanager{
+  margin-top: 10px;
+  float: right;
+ margin-right: 1vw;
+ width:30px;
+ height:30px;
+}
+
+.textmanager{
+  margin-top: 14px;
+  float: right;
+ margin-right: 0.8vw;
+ width:60px;
+  font-size: 15px;
+  text-decoration: none;
+  color: #616161;
 }
 
 .welcome{
