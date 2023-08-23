@@ -129,7 +129,7 @@ export default defineComponent({
       desc: '',
       selectedDoctorID:'',
       isOld:'它未在此治疗过',
-      pet_kind:'狗'
+      pet_kind:'dog'
     });
 
     const fetchPetInfo = async () => {
