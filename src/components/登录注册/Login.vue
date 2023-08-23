@@ -15,7 +15,7 @@ const form = ref({
 
 const rules = {
   username: [
-    { required:true,message:'账号不能为空',trigger:'blur'}
+    { required:true,message:'手机号不能为空',trigger:'blur'}
   ],
   password:[
     { required:true,message:'密码不能为空',trigger:'blur'},
@@ -32,9 +32,9 @@ const formRef = ref(null)
 
 const submitForm = async () => {
   formRef.value.validate(async (valid) => {
-    const { username, password } = form.value;
+    const { userphone, password } = form.value;
     if (valid) {
-        await userStore.getUserInfo({ username, password });
+        await userStore.getUserInfo({ userphone, password });
           ElMessage({ type: 'success', message: '登录成功' });
           if (userStore.userInfo.Role === 'User') {
             router.replace({ path: '/' });
@@ -55,11 +55,11 @@ const submitForm = async () => {
 	  <!-- 登录表单 -->
 		<form>
 			<h1>欢迎登录</h1>
-      <h2>请输入您的账号和密码</h2>
+      <h2>请输入您的手机号和密码</h2>
       <el-form ref="formRef" :model="form" :rules="rules" label-position="center" label-width="60px" status-ico>
         <div class="inputtext">
           <img src="  ../../../public/224用户.png" style="height:20px;width: 20px;margin-right: 0;">
-          <label for="phone">账号</label>
+          <label for="phone">手机号</label>
         </div>
        
         <el-form-item prop="username"><el-input class="custom-input" resize="true" v-model="form.username"/></el-form-item>
@@ -99,7 +99,7 @@ html, body {
   color: #8fa6c5;
   font-size: 14px;
   font-weight: lighter;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .custom-input {
