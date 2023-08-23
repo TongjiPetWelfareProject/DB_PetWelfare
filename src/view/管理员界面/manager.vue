@@ -121,7 +121,7 @@ const handleClose = (key, keyPath) => {
 
 
 
-<style scopedcd>
+<style scoped>
 
 body, html {
   height: 100%;
