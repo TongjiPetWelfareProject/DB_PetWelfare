@@ -1,4 +1,5 @@
-src/components/'用户界面'/doctors.vue @llRagdoll
+# coding: utf-8
+src/components/用户界面/doctors.vue @llRagdoll
 src/components/'用户界面'/medical.vue @llRagdoll
 src/components/'用户界面'/recoverystory.vue @llRagdoll
 src/components/'用户界面'/reservationdoctor.vue @llRagdoll
