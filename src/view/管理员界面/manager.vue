@@ -31,7 +31,7 @@ const handleClose = (key, keyPath) => {
   <div class="common-layout" >
     <el-container>
       <el-aside>
-        <img src="animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
+        <img src="@/photos/animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
 
         <el-menu
         default-active="2"
