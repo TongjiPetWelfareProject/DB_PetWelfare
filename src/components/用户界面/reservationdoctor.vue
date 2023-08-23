@@ -79,10 +79,12 @@
 <script>
 import { ref,defineComponent, reactive,onMounted } from 'vue';
 import medical_donate from '@/api/medical_donate';
+import { useUserStore } from '@/store/user'; // 导入用户信息管理模块
 
 export default defineComponent({
   setup() {
 
+    const userStore = useUserStore();
     const doctors = ref([]);
    
 
@@ -94,9 +96,16 @@ export default defineComponent({
       selectedDoctorID:'',
     });
 
+
+
     const onSubmit = async () => {
       try {
         // 调用 submitAppointmentAPI 函数并传入表单数据
+        const userId = userStore.userInfo.User_ID;
+
+        // 在表单数据中添加 userId
+        form.userId = userId;
+        
         const response = await medical_donate.submitAppointmentAPI(form);
         console.log('提交成功：', response);
       } catch (error) {
