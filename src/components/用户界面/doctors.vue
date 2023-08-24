@@ -2,12 +2,13 @@
   <div class="doctors">
     <p style="font-size: 24px;font-weight: bold;color:#729cd4;">医生介绍</p>
     <div width=50%>
-      <el-carousel :interval="4000" type="card" height="250px" max-width="200" >
-        <div>
-          <el-carousel-item v-for="doctor in doctors" :key="doctor.id">
-          <img class="imgdoctor" :src="doctor.photoUrl" style="height: 250px; width: 500px" />
+      <el-carousel :interval="4000" type="card" height="300px" max-width="200" >   
+          <el-carousel-item v-for="(doctor,index) in doctors" :key="index">  
+            <div>
+              <img class="imgdoctor" :src="doctor" style="height: 300px; width: 500px" />
+            </div> 
           </el-carousel-item>
-        </div> 
+        
       </el-carousel>
       <br>
      </div>
@@ -60,16 +61,20 @@ import{defineComponent, ref, onMounted }from 'vue';
 
 export default defineComponent({
   setup() {
-    const doctors = ref([]);
+    const doctors = [
+    '../../../public/tl.png',
+    '../../../public/tl2.png',
+    '../../../public/tl3.png', 
+  ];
 
     // 在组件挂载后获取医生数据
-    onMounted(async () => {
-      try {
-        doctors.value = await medical_donate.doctorsAPI();
-      } catch (error) {
-        console.error('获取医生数据时出错：', error);
-      }
-    });
+    // onMounted(async () => {
+    //   try {
+    //     doctors.value = await medical_donate.doctorsAPI();
+    //   } catch (error) {
+    //     console.error('获取医生数据时出错：', error);
+    //   }
+    // });
 
     return {
       doctors,
