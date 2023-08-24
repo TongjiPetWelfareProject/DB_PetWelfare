@@ -1,0 +1,37 @@
+src/components/用户界面/doctors.vue @llRagdoll
+src/components/用户界面/medical.vue @llRagdoll
+src/components/用户界面/recoverystory.vue @llRagdoll
+src/components/用户界面/reservationdoctor.vue @llRagdoll
+src/api/medical_donate.js @llRagdoll
+src/api/gg_rqb_jk.js @llRagdoll
+
+src/components/用户界面/mypage.vue @RayyyyyRGB
+src/api/userInfo.js @RayyyyyRGB @shiguangbiyi
+
+src/components/用户界面/forum.vue @thesamechen
+src/components/用户界面/notice.vue @thesamechen
+src/components/管理员界面/tablecheck.vue @thesamechen
+src/components/管理员界面/tableroom.vue @thesamechen
+src/api/sh_fj_jk.js @thesamechen
+src/api/notice_forum.js @shiguangbiyi @thesamechen
+
+src/components/管理员界面/tablehot.vue @tuesaime @llRagdoll
+src/components/管理员界面/mytabledoctor.vue @tuesaime
+src/components/管理员界面/mytableemployee.vue @tuesaime
+src/api/first_page.js @tuesaime
+
+src/components/用户界面/pet_foster.vue @aodef
+src/view/管理员界面/manager.vue @aodef
+src/router/index.js @aodef
+src/api/pet_foster.js @aodef @shiguangbiyi
+src/api/jy_ly_jk.js @aodef
+
+src/components/用户界面/pet_details.vue @DaenerysTar
+src/components/用户界面/pet_adopt_form.vue @DaenerysTar
+src/api/pet_adopt.js @DaenerysTar @shiguangbiyi
+
+项目设计方案/Database @VictorHuu
+
+src/components/登陆注册/ @shiguangbiyi
+src/components/view @shiguangbiyi
+src/api/user.js @shiguangbiyi
