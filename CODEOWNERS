@@ -8,8 +8,8 @@ src/api/gg_rqb_jk.js @llRagdoll
 mypage.vue @RayyyyyRGB
 src/api/userInfo.js @RayyyyyRGB @shiguangbiyi
 
-forum.vue" @thesamechen
-notice.vue" @thesamechen
+forum.vue @thesamechen
+notice.vue @thesamechen
 tablecheck.vue @thesamechen
 tableroom.vue @thesamechen
 src/api/sh_fj_jk.js @thesamechen
