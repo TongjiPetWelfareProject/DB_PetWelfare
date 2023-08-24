@@ -35,7 +35,7 @@ export default {
   setup() {
     const tableData = ref([]);
     const currentPage = ref(1);
-    const pageSize = ref(10);
+    const pageSize = ref(12);
 
     const sortTime = (a, b) => {
       return new Date(a.donationTime) - new Date(b.donationTime)
