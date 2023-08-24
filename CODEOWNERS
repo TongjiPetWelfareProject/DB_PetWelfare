@@ -1,0 +1,40 @@
+*/doctors.vue @llRagdoll
+medical.vue @llRagdoll
+recoverystory.vue @llRagdoll
+reservationdoctor.vue @llRagdoll
+src/api/medical_donate.js @llRagdoll
+src/api/gg_rqb_jk.js @llRagdoll
+
+mypage.vue @RayyyyyRGB
+src/api/userInfo.js @RayyyyyRGB @shiguangbiyi
+
+forum.vue @thesamechen
+notice.vue @thesamechen
+tablecheck.vue @thesamechen
+tableroom.vue @thesamechen
+src/api/sh_fj_jk.js @thesamechen
+src/api/notice_forum.js @shiguangbiyi @thesamechen
+
+*/tablehot.vue @tuesaime @llRagdoll
+*/mytabledoctor.vue @tuesaime
+*/mytableemployee.vue @tuesaime
+src/api/first_page.js @tuesaime
+
+*/pet_foster.vue @aodef
+*/manager.vue @aodef
+src/router/index.js @aodef
+src/api/pet_foster.js @aodef @shiguangbiyi
+src/api/jy_ly_jk.js @aodef
+
+pet_details.vue @DaenerysTar
+pet_adopt_form.vue @DaenerysTar
+src/api/pet_adopt.js @DaenerysTar @shiguangbiyi
+
+Database/ @VictorHuu
+
+*/Login.vue @shiguangbiyi
+*/Register.vue @shiguangbiyi
+*/login-register.vue @shiguangbiyi
+*/values.json @shiguangbiyi @VictorHuu
+src/components/view @shiguangbiyi
+src/api/user.js @shiguangbiyi
