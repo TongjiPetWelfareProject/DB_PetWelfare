@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import petadopt from '@/api/pet_adopt'
 
-const images = [
+const images = [//等后端图片，后期去掉
 './src/components/photos/pet1.jpg',
 './src/components/photos/pet2.jpg',
 './src/components/photos/pet3.jpg',
@@ -11,13 +11,7 @@ const images = [
 ];
 
 const pets = ref([])
-  // { id: 1, name: '汤姆', breed: '狗', gender: '弟弟', age: 1, image:images[0]},
-  // { id: 2, name: 'Honey', breed: '狗', gender: '妹妹', age: 3, image:images[1]},
-  // { id: 3, name: 'Kitty', breed: '猫', gender: '弟弟', age: 5, image:images[2]},
-  // { id: 4, name: '旺财', breed: '狗', gender: '妹妹', age: 7, image:images[3]},
-  // { id: 5, name: '球球', breed: '猫', gender: '弟弟', age: 9, image:images[4]},
-
-  const getpetlist = async () => {
+const getpetlist = async () => {
   try {
     const response = await petadopt.getPetList();
     for (const adoptpet of response) {
@@ -47,6 +41,8 @@ onMounted(() => {
   getpetlist();
 });
 
+console.log(pets.value);
+
 const value1 = ref('');
 const value2 = ref('');
 const value3 = ref('');
@@ -68,8 +64,8 @@ const filteredPets = computed(() => {
 
 const options1 = [
   { value: '', label: '不限' },
-  { value: '猫', label: '猫' },
-  { value: '狗', label: '狗' },
+  { value: 'cat', label: '猫' },
+  { value: 'dog', label: '狗' },
 ];
 const options2 = [
   { value: '', label: '不限' },
@@ -84,6 +80,7 @@ const options3 = [
   { value: '8-10', label: '8-10岁' },
   { value: '11', label: '11岁及以上' },
 ];
+
 </script>
 
 <template>
@@ -179,9 +176,10 @@ const options3 = [
         <span style="font-size: 18px">{{ pet.gender }}</span>
         <span style="font-size: 16px; color:#6b6a68">{{ pet.age }}岁</span>
         <br>
-        <router-link to="/pet_details" style=" text-decoration: none;
-  color:#edb055 ;">查看详情  —>
-        </router-link>
+      <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none;
+  color:#edb055 ;">
+    查看详情  —>
+  </router-link>
       </div>
     </el-card>
         </div>
