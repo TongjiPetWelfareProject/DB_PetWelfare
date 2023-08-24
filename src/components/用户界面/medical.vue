@@ -19,6 +19,7 @@ export default {
 
     return {
       goToReservationPage,
+      Coin
     };
   },
 };
@@ -27,7 +28,7 @@ export default {
 
 
 <template>
-    <el-button  class="fixedbuttonmedical"  type="primary" :icon="Coin" circle @click="goToReservationPage" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">立即预约</el-button>
+    
     <doctors/>
     <recoverystory/>
 </template>

@@ -13,7 +13,7 @@
          <div class="line1">
          相互交流，相互帮助
         </div>
-        <el-button type="primary" plain class="post_button" @click="post">
+        <el-button type="primary" plain class="post_button" @click="post" :icon="EditPen">
           发&nbsp;帖
         </el-button>
       </div>
@@ -30,12 +30,12 @@
         <div style="width:100px"></div>
          <div class="search-bar">
         <el-input v-model="searchText" placeholder="搜索帖子标题"></el-input>
-        <el-button type="primary" @click="search">搜索</el-button>
+        <el-button type="primary" @click="search" :icon="Search">搜索</el-button>
         </div>
       <div >
         <div class="sort-bar">
           
-          <el-button type="primary" icon="el-icon-sort" @click="toggleSortOrder">{{ sortOrder === 'asc' ? '按照日期正序排序' : '按照日期倒序排序' }}</el-button>
+          <el-button type="primary" :icon="SortDown" @click="toggleSortOrder">{{ sortOrder === 'asc' ? '按照日期正序排序' : '按照日期倒序排序' }}</el-button>
         </div>
       </div>
       </el-row>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-// import { Delete, EditPen, Search, Share, Upload,Coin } from '@element-plus/icons-vue'
+ import { Delete, EditPen, Search, Share, Upload,SortDown} from '@element-plus/icons-vue'
 import { ref, onMounted, computed } from 'vue'
 import notice_forum from '@/api/notice_forum'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -166,7 +166,8 @@ export default {
       goToPost,
       toggleSortOrder,
       sortByLikeNum,
-      search
+      search,
+      Delete, EditPen, Search, Share, Upload,SortDown
     };
   }
 }
@@ -188,6 +189,7 @@ export default {
   display: flex;
   margin-bottom: 20px;
   padding-left: 4%;
+  margin-left: 2vw;
 }
 
 .sort-bar button {
@@ -205,6 +207,7 @@ export default {
   margin-bottom: 20px;
   width: 38%;
   padding-left: 4%;
+  
 }
 
 .search-bar input[type='text'] {
@@ -219,7 +222,7 @@ export default {
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
-  margin-left: 10px;
+  margin-left: 3vw;
 }
 
 .forum-posts {

@@ -12,7 +12,7 @@
       </el-carousel>
       <br>
      </div>
-     <div style="display:flex;align-items: center;justify-content: center">
+     <div style="display:flex;align-items: center;justify-content: center;flex-direction: column;">
         <div style="display:block">
           <div>
           <p style="font-size: 24px;font-weight: bold;color:#9a89bb;">专业的医生团队，竭诚为您的宠物保驾护航。</p>
@@ -24,6 +24,10 @@
         </div>
         <br><br>
         </div>
+        <div style="display:block">
+          <el-button type="primary" :icon="Select" circle @click="goToReservationPage" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">立即预约</el-button>
+        </div>
+        
       </div>
    <br>
   </div>
@@ -31,11 +35,11 @@
   
   <style scoped>
 .el-carousel{
-  max-width:90%
+  max-width:95%
 }
 
 .doctors{
-  margin-left:20px;
+  margin-left:6vw;
 }
   
   .el-carousel__item:nth-child(2n) {
@@ -58,6 +62,8 @@
 <script>
 import medical_donate from '@/api/medical_donate';
 import{defineComponent, ref, onMounted }from 'vue';
+import { useRouter } from 'vue-router';
+import {Select} from '@element-plus/icons-vue'
 
 export default defineComponent({
   setup() {
@@ -75,9 +81,16 @@ export default defineComponent({
     //     console.error('获取医生数据时出错：', error);
     //   }
     // });
+    const router = useRouter();
+
+    const goToReservationPage = () => {
+      router.push('/reservationdoctor');
+    };
 
     return {
       doctors,
+      goToReservationPage,
+      Select
     };
   },
 });
