@@ -37,11 +37,11 @@
         <div style="width:100px"></div>
          <div class="search-bar">
         <el-input v-model="searchText" placeholder="搜索帖子标题"></el-input>
-        <el-button type="primary" @click="search">搜索</el-button>
+        <el-button type="primary" :icon="Search" @click="search">搜索</el-button>
         </div>
       <div >
         <div class="sort-bar">
-          <el-button type="primary" icon="el-icon-sort" @click="toggleSortOrder">{{ sortOrder === 'asc' ? '按照日期正序排序' : '按照日期倒序排序' }}</el-button>
+          <el-button type="primary" :icon="SortDown" @click="toggleSortOrder">{{ sortOrder === 'asc' ? '按照日期正序排序' : '按照日期倒序排序' }}</el-button>
         </div>
       </div>
       </el-row>
@@ -66,6 +66,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
+import { Delete, EditPen, Search, Share, Upload,SortDown} from '@element-plus/icons-vue'
 import notice_forum from '@/api/notice_forum'
 
 export default {
@@ -124,7 +125,9 @@ export default {
       searchText,
       filteredNotices,
       goToNotice,
-      toggleSortOrder
+      toggleSortOrder,
+      Search,
+      SortDown
     };
   }
 }
