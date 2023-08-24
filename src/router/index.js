@@ -47,9 +47,9 @@ const routes = [
       { path: '/medical', component: medical},
       { path: '/reservationdoctor', component: reservationdoctor},
       { path: '/pet_adopt', component: pet_adopt},
-      { name: 'pet_details', path: '/pet_details/:id', component: pet_details},
+      { name: 'pet_details', path: '/pet_details/:id', component: pet_details},//这是动态路由
       { path: '/mypage', component: mypage},
-      { path: '/pet_adopt_form', component: pet_adopt_form},
+      { name: 'pet_adopt_form', path: '/pet_adopt_form/:pet_simple', component: pet_adopt_form},//这是动态路由
       { path: '/forum', component: forum},
       { path: '/posting', component: posting},
       { path: '/pet_foster_table', component: pet_foster_table},
