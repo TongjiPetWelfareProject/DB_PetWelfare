@@ -1,5 +1,5 @@
 <script setup>
-import { reactive,toRefs,ref } from 'vue'
+import { reactive,toRefs,ref,onMounted } from 'vue'
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router'
 import {
@@ -10,6 +10,7 @@ import {
 const userStore = useUserStore();
 const router=useRouter();
 const username=userStore.userInfo;
+const formattedDateTime = ref('');
 
 const confirm = () => {
     console.log('用户退出登录了')
@@ -17,7 +18,22 @@ const confirm = () => {
     router.push('/');
 }
 
+onMounted(() => {
+  formatCurrentDateTime();
+});
 
+const formatCurrentDateTime = () => {
+  const currentDate = new Date();
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth() + 1; // 注意：月份是从 0 开始计数的
+  const day = currentDate.getDate();
+  const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][currentDate.getDay()];
+  // const hours = currentDate.getHours();
+  // const minutes = currentDate.getMinutes();
+
+  formattedDateTime.value = `今天是：${year}年 ${month}月${day}日   星期${dayOfWeek}`;
+};
 
 const handleOpen = (key, keyPath) => {
     console.log(key, keyPath)
@@ -34,7 +50,7 @@ const handleClose = (key, keyPath) => {
         <img src="@/photos/animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
 
         <el-menu
-        default-active="2"
+        default-active="/mytableemployee"
         class="el-menu-vertical"
         @open="handleOpen"
         @close="handleClose"
@@ -91,24 +107,54 @@ const handleClose = (key, keyPath) => {
       <!-- <img src="pet-toy.png" style="height: 80px;width: 80px;margin-left: 80px;"> -->
       </el-aside>
 
-      <el-container>
+      <el-container class="managercontainer">
         <el-header class="manager">
-          <el-text class="welcome">Hello!&nbsp;&nbsp;</el-text>
-   
-            <el-text v-if="userStore.userInfo.User_ID" class="welcome">{{ userStore.userInfo.User_Name }}</el-text>
-            <el-button class="usermodel">
-              <router-link to="/" class="link-text">进入用户模式</router-link>
-            </el-button>
-          <!-- <el-avatar :size="40" :src="circleUrl" style="margin-top: 1vh;margin-left: 1vw;" /> -->
-          <!-- <el-input class="search-bar" v-model="input" placeholder="Please input" />
-          <el-button class="search-button" :icon="Search" circle /> -->
-          <img src="@/photos/退出.png" class="imgmanager">
-          <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
-            <template #reference><a href="javascript:;"  class="textmanager">退出登录</a></template>
-          </el-popconfirm>
-        </el-header>
+          <div class="headercontent">
+            <div class="left-content">
+              <el-text class="welcome">Hello!&nbsp;&nbsp;</el-text>
+              <el-text v-if="userStore.userInfo.User_ID" class="welcome">{{ userStore.userInfo.User_Name }}</el-text>
+              
+            </div>
+            <div class="right-content">
+              <el-text v-if="userStore.userInfo.User_ID" class="welcome2">{{ formattedDateTime }}</el-text>
+              <el-button class="usermodel">
+                <router-link to="/" class="link-text">进入用户模式</router-link>
+              </el-button>
+              <img src="@/photos/退出.png" class="imgmanager">
+              <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
+                <template #reference><a href="javascript:;" class="textmanager">退出登录</a></template>
+              </el-popconfirm>
+            </div>
+          </div>
 
-        <el-main class="manager">
+          
+       
+      </el-header>
+        
+
+        <el-main >
+      
+          <el-divider content-position="left" border-style="double" style="margin-top:-15px;font-size:40px">
+            
+
+            </el-divider>
+            <!-- <el-tabs v-model="activeName" class="demo-tabs" style="margin-top:-30px;height:100px;font-size: 30px;">
+              <el-tab-pane style="margin-top:-20px;height:1200px;font-size: 90px;" label="User" name="first">User</el-tab-pane>
+            </el-tabs> -->
+            <!-- <el-page-header  @back="$router.back()">
+              <template #content>
+                <span class="text-large font-600 mr-3"> Title </span>
+              </template>
+            </el-page-header> -->
+            <!-- <el-tabs
+              v-model="activeName"
+              type="card"
+              class="demo-tabs"
+              style="margin-top:-20px"
+            >
+              <el-tab-pane label="User" name="first">User</el-tab-pane>
+            </el-tabs> -->
+       
 
           <router-view></router-view>
 
@@ -191,17 +237,18 @@ body, html {
 }
 
 .imgmanager{
-  margin-top: 10px;
+  /* margin-top: 10px; */
   float: right;
- margin-right: 1vw;
+  margin-left: 20px;
+ /* margin-right: 1vw; */
  width:30px;
  height:30px;
 }
 
 .textmanager{
-  margin-top: 14px;
+  /* margin-top: 14px; */
   float: right;
- margin-right: 0.8vw;
+ /* margin-right: 0.8vw; */
  width:60px;
   font-size: 15px;
   text-decoration: none;
@@ -209,15 +256,24 @@ body, html {
 }
 
 .welcome{
- margin-top: 10px;
- float: left;
+ /* margin-top: -10px; */
+ /* float: left; */
  font-size: 20px;
  font-weight: bold;
 }
 
+.welcome2{
+ /* margin-top: 10px; */
+ margin-left:8vw;
+ font-size: 16px;
+ font-weight: light;
+ /* justify-content: center;
+ text-align: center; */
+}
+
 .usermodel {
-  margin-top: 10px;
-  margin-left: 20px;
+  /* margin-top: 10px; */
+  margin-left: 25vw;
   background-color: #edf4f9; /* 背景颜色 */
   color: white; /* 字体颜色 */
   border: none; /* 去除边框 */
@@ -229,6 +285,31 @@ body, html {
 
 .usermodel:hover {
   background-color: #e1eff9; /* 鼠标悬停时的背景颜色 */
+}
+
+.headercontent {
+  display: flex;
+  text-align:center;
+  /* align-items: center; */
+}
+
+.left-content {
+  display: flex;
+  align-items: center;
+}
+
+.right-content {
+  display: flex;
+  align-items: center;
+  float:right;
+  right:2vw
+}
+
+.manager{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
 }
 
 /* 去除下划线 */
@@ -281,4 +362,9 @@ body, html {
   border-radius: 4px;
   min-height: 36px;
 }
+
+.managercontainer{
+  background-color: #fdfdff;
+}
+
 </style>
