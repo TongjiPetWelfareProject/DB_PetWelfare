@@ -32,6 +32,9 @@ src/api/pet_adopt.js @DaenerysTar @shiguangbiyi
 
 Database/ @VictorHuu
 
-src/components/登陆注册/ @shiguangbiyi
+*/Login.vue @shiguangbiyi
+*/Register.vue @shiguangbiyi
+*/login-register.vue @shiguangbiyi
+*/values.json @shiguangbiyi @VictorHuu
 src/components/view @shiguangbiyi
 src/api/user.js @shiguangbiyi
