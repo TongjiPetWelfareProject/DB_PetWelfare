@@ -10,7 +10,7 @@ src/api/userInfo.js @RayyyyyRGB @shiguangbiyi
 
 "src/components\347\224\250\346\210\267\347\225\214\351\235\242/forum.vue" @thesamechen
 "src/components/\347\224\250\346\210\267\347\225\214\351\235\242/notice.vue" @thesamechen
-src/components/管理员界面/tablecheck.vue @thesamechen
+src/components/"管理员界面"/tablecheck.vue @thesamechen
 src/components/管理员界面/tableroom.vue @thesamechen
 src/api/sh_fj_jk.js @thesamechen
 src/api/notice_forum.js @shiguangbiyi @thesamechen
