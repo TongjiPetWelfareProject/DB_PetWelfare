@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { useUserStore } from '@/store/user'; // 引入用户信息存储
 
 //用户界面路由配置
 import mainpage from '@/view/用户界面/mainpage.vue';
@@ -48,7 +47,7 @@ const routes = [
       { path: '/medical', component: medical},
       { path: '/reservationdoctor', component: reservationdoctor},
       { path: '/pet_adopt', component: pet_adopt},
-      { path: '/pet_details', component: pet_details},
+      { name: 'pet_details', path: '/pet_details/:id', component: pet_details},
       { path: '/mypage', component: mypage},
       { path: '/pet_adopt_form', component: pet_adopt_form},
       { path: '/forum', component: forum},
@@ -78,25 +77,5 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 });
-
-router.beforeEach((to, from, next) => {
-  const userStore = useUserStore();
-  const userRole = userStore.userInfo ? userStore.userInfo.Role : null;
-
-  if (to.path.startsWith('/manager')||to.path.startsWith('/mytableuser')||to.path.startsWith('/mytableemployee')||to.path.startsWith('/petcard')||to.path.startsWith('/mytabledoctor')||to.path.startsWith('/tablefoster')||to.path.startsWith('/tableadopt')||to.path.startsWith('/tablehot')||to.path.startsWith('/tablenotice')||to.path.startsWith('/tabledonate')||to.path.startsWith('/tablecheck')||to.path.startsWith('/tablemedical')||to.path.startsWith('/tableroom')) {
-    // 需要管理权限的路由
-    if (!userRole || userRole === 'User') {
-      // 如果用户角色为空或为 'User'，跳转到登录页面
-      console.log("User")
-      next('/login');
-    } else {
-      console.log("Admin")
-      next(); // 允许导航到管理页面
-    }
-  } else {
-    next(); // 其他路由，不需要管理权限
-  }
-});
-
 
 export default router;
