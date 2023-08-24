@@ -117,7 +117,6 @@ export default defineComponent({
     const userStore = useUserStore();
     const doctors = ref([]);
     const petOptions = ref([]); 
-    const petID=ref(0);
     const petMap1 = ref(new Map());
     const petMap2 = ref(new Map());
 
@@ -153,9 +152,8 @@ export default defineComponent({
         // 在表单数据中添加 userId
         form.userId = userId;
         if(form.isOld==='它已经在此治疗过'){
-          form.petID = petID;
-          form.name = petMap1.value.get(petID); // 根据映射关系获取宠物名字
-          form.pet_kind=petMap2.value.get(petID);
+          form.name = petMap1.value.get(form.petID); // 根据映射关系获取宠物名字
+          form.pet_kind=petMap2.value.get(form.petID);
         }
 
         const response = await medical_donate.submitAppointmentAPI(form);
@@ -163,8 +161,8 @@ export default defineComponent({
         ElMessage({
               type: 'success',
               message: `预约成功！`,
-            });
-            router.push('/medical');
+            })
+        router.push('/login');
         
       } catch (error) {
         console.error('提交数据时出错：', error);
