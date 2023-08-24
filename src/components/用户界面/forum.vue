@@ -34,8 +34,7 @@
         </div>
       <div >
         <div class="sort-bar">
-          
-          <el-button type="primary" :icon="SortDown" @click="toggleSortOrder">{{ sortOrder === 'asc' ? '按照日期正序排序' : '按照日期倒序排序' }}</el-button>
+          <el-button type="primary" :icon="SortDown" @click="toggleSortOrder">时间顺序</el-button>
         </div>
       </div>
       </el-row>
@@ -77,22 +76,37 @@ export default {
     const router = useRouter();
     const userStore = useUserStore();
 
+    function formatBackendTime(backendTime) {
+      const date = new Date(backendTime);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      return formattedTime;
+    }
+
     const getPosts= async () => {
       try {
         const response = await notice_forum.getposts();
         for (const forum_post of response) {
+          const formattedDate = formatBackendTime(forum_post.post_time);
           forum_posts.value.push({
           id: forum_post.postId,
           title: forum_post.heading,
           content: forum_post.content,
-          post_time: forum_post.post_time,
+          post_time: formattedDate,
           read_count: forum_post.readCount,
           like_num:forum_post.likeNum,
           comment_num:forum_post.commentNum,
         });
       }
       } catch (error) {
-        console.error('获取公告数据时出错：', error);
+        console.error('获取帖子数据时出错：', error);
       }
     };
 
@@ -102,7 +116,6 @@ export default {
 
 
     const post = () => {
-      console.log("进入该函数")
       if (userStore.userInfo.User_ID) {
         // 用户已登录，跳转到 /posting
         router.push('/posting');
@@ -258,7 +271,11 @@ export default {
   font-weight: bold;
   font-size: 19px;
   margin-bottom: 10px;
-  color:#4b6fa5
+  color:#4b6fa5;
+  /* 设置标题只显示一行，超出部分显示省略号 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .post-info {
