@@ -6,21 +6,17 @@ import { useUserStore } from '@/store/user';
 import { useRoute, useRouter } from 'vue-router'
 import petadopt from '@/api/pet_adopt'
 
-//下面注释的这一段不要删，后面能登录了会用到！！！点赞收藏评论也要用！！！
+const images = [//等后端图片，后期去掉
+'./src/components/photos/pet1.jpg',
+'./src/components/photos/pet2.jpg',
+'./src/components/photos/pet3.jpg',
+'./src/components/photos/pet4.jpg',
+'./src/components/photos/pet5.jpg',
+];
 
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
-
-/*const handleApplyForAdopt = () => {
-  if (userStore.userInfo.User_ID) {
-    // 用户已登录，跳转到 /pet_adopt_form
-    router.push('/pet_adopt_form');
-  } else {
-    // 用户未登录，跳转到 /login
-    router.push('/login');
-  }
-}*/
 
 const pet = ref([]); // 单个宠物信息
 
@@ -28,24 +24,42 @@ const getPetDetails = async (petId) => {
   try {
     const response = await petadopt.getPetDetails(petId); // 假设有一个获取单个宠物信息的 API
     console.log(response);
-    let gender = '';
-    if (response.SEX === 'M') {
+    /*let gender = '';
+    if (response.sex === 'M') {
       gender = '弟弟';
     } else if (response.SEX === 'F') {
       gender = '妹妹';
+    }*/
+
+    let species = '';
+    if (response.original_pet.Species === 'cat') {
+      species = '猫';
+    } else if (response.original_pet.Species === 'dog') {
+      species = '狗';
+    }
+
+    let health_state = '';
+    if (response.original_pet.Health_State === 'Healthy') {
+      health_state = '健康';
+    } else if (response.original_pet.Health_State === 'Unhealthy') {
+      health_state = '不健康';
     }
 
 
     pet.value = {
-      id: response.PET_ID,
-      name: response.PET_NAME,
-      species: response.SPECIES,
-      gender: gender,
+      id: response.original_pet.Pet_ID,
+      name: response.original_pet.Pet_Name,
+      species: species,
+      gender: response.original_pet.sex,
       //age: response.AGE,
-      popularity: response.POPULARITY,
-      health_state: response.HEALTH_STATE,
-      vaccine: response.VACCINE,
-      image: images[0]
+      popularity: response.Popularity,
+      health_state: health_state,
+      vaccine: response.original_pet.Vaccine,
+      read_num:response.original_pet.Read_Num,
+      like_num: response.original_pet.Like_Num,
+      collect_num: response.original_pet.Collect_Num,
+      comment_num: response.Comment_Num,
+      image: images[0]//等后端图片，后期修改
     };
   } catch (error) {
     console.error('获取宠物信息时出错：', error);
@@ -54,41 +68,34 @@ const getPetDetails = async (petId) => {
 
 // 在组件加载时调用 getPetDetails 方法，传入宠物的 ID
 onMounted(() => {
-  const petId = route.params.id; // 假设你从路由参数中获取宠物的 ID
-  console.log(petId);
+  const petId = route.params.id; // 从路由参数中获取宠物的 ID
+  console.log(petId);//成功
   getPetDetails(petId);
 });
 
 console.log(pet.value);
 
-const handleApplyForAdopt = () => {
-  
-  router.push('/pet_adopt_form');
+const pet_simple = {
+  id: pet.id,
+  name: pet.name,
 }
 
-/*const pet = ref({
-  id: "00001",
-  name: "汤姆",
-  breed: "猫",
-  age: "1岁",
-  gender: true,
-  health: "良好",
-  vaccinated: true,
-  popularity: 100,
-  description: "这是一只可爱的宠物，喜欢玩耍和与人类互动。",
-  reads: 0,
-  likes: 0,
-  comments: 0,
-  favorites: 0,
-  comment_contents: [
-  { id: 1, author: '用户1（后期去掉）', text: '好文章！（后期去掉）', avatar: '@/photos/汤姆1.jpg' },//传照片没成功
-  { id: 2, author: '用户2（后期去掉）', text: '感谢分享！（后期去掉）', avatar: '@/photos/汤姆2.jpg' }//传照片没成功
-  ],
-  image: './photos/汤姆1.jpg',
-});*/
+const handleApplyForAdopt = () => {
+  if (userStore.userInfo.User_ID) {
+    // 用户已登录，跳转到 /pet_adopt_form
+    router.push({ name: 'pet_adopt_form', params: { pet_simple: pet_simple } });
+  } else {
+    // 用户未登录，跳转到 /login
+    router.push('/login');
+  }
+}
 
+/*const handleApplyForAdopt = () => {
+  
+  router.push('/pet_adopt_form');
+}*/
 
-/*pet.value.READ_NUM++;
+pet.read_num++;
 
 
 
@@ -98,9 +105,9 @@ const showCommentForm = ref(false);
 
 const addComment = () => {
 if (newComment.value.text) {
-    pet.value.COMMENT_NUM++;
-    pet.value.COMMENT_CONTENTS.push({
-        id: pet.value.comment_contents.length + 1,
+    pet.comment_num++;
+    pet.comment.push({
+        id: pet.comment.length + 1,
         author: newComment.value.author,
         text: newComment.value.text,
         avatar: newComment.value.avatar
@@ -111,27 +118,34 @@ if (newComment.value.text) {
 
 const liked = ref(false);
 const likePet = async() => {
+  if (!userStore.userInfo.User_ID)
+    router.push('/login');
+
   liked.value = !liked.value;
   if (liked.value) {
-    pet.value.LIKE_NUM++;
-    await submitLike(userStore.userInfo, pet, pet.value.LIKE_NUM);
+    pet.like_num++;
+    await petadopt.submitLike(userStore.userInfo, pet, pet.like_num);
   } else {
-    pet.value.LIKE_NUM--;
-    await submitLike(userStore.userInfo, pet, pet.value.LIKE_NUM);
+    pet.like_num--;
+    await petadopt.submitLike(userStore.userInfo, pet, pet.like_num);
   }
 };
 
 const favorited = ref(false);
 const favoritePet = async() => {
-  favorited.value = !favorited.value;
-  if (favorited.value) {
-    pet.value.COLLECT_NUM++;
-    await submitFavorite(userStore.userInfo, pet, pet.value.COLLECT_NUM);
-  } else {
-    pet.value.COLLECT_NUM--;
-    await submitFavorite(userStore.userInfo, pet, pet.value.COLLECT_NUM);
+  if (!userStore.userInfo.User_ID)
+    router.push('/login');
+  else {  
+    favorited.value = !favorited.value;
+    if (favorited.value) {
+      pet.collect_num++;
+      await petadopt.submitFavorite(userStore.userInfo, pet, pet.collect_num);
+    } else {
+      pet.collect_num--;
+      await petadopt.submitFavorite(userStore.userInfo, pet, pet.collect_num);
+    }
   }
-};*/
+};
 
 </script>
 
@@ -330,7 +344,7 @@ const favoritePet = async() => {
           </el-row>-->
       </div>
         <div class="pet-info">
-          <!--<p class="read-count">阅读{{ pet.READ_NUM }}</p>-->
+          <p class="read-count">阅读{{ pet.read_num }}</p>
           <span style="font-size: 30px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
           <span style="font-size: 60px; color:#edb055;font-weight: bold;">{{ pet.name }}</span>
           <p>  </p>
@@ -345,7 +359,7 @@ const favoritePet = async() => {
             </el-col>-->
             <el-col :span="8">
               <span class="pet-label">性别</span>
-              <p class="pet-value">{{ pet.gender}}</p>
+              <p class="pet-value">{{ pet.gender ? '弟弟' : '妹妹'}}</p>
             </el-col>
           </el-row>
           <el-row>
@@ -377,25 +391,25 @@ const favoritePet = async() => {
     </el-card>
   </div>
   <p>  </p>
-  <!--<div class="common-layout">
+  <div class="common-layout">
     <div class="interactions">
       <div>
         <button class="round-button" @click="likePet">
           <img v-if="liked" src="@/photos/like_blue.png" alt="点赞" class="icon">
           <img v-else src="@/photos/like_grey.png" alt="未点赞" class="icon">
         </button>
-        <span>{{ pet.LIKE_NUM }}</span>
+        <span>{{ pet.like_num }}</span>
       </div>
       <div>
         <button class="round-button" @click="favoritePet">
           <img v-if="favorited" src="@/photos/favorite_blue.png" alt="收藏" class="icon">
           <img v-else src="@/photos/favorite_grey.png" alt="未收藏" class="icon">
         </button>
-        <span>{{ pet.COLLECT_NUM }}</span>
+        <span>{{ pet.collect_num }}</span>
       </div>
     </div>
       <div class="comment-part">
-        <h3>评论 {{ pet.COMMENT_NUM }}</h3>
+        <h3>评论 {{ pet.comment_num }}</h3>
       <div class="comment-form">
         <el-input v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
         <p>  </p>
@@ -410,5 +424,5 @@ const favoritePet = async() => {
         </div>
       </div>
     </div>
-  </div>-->
+  </div>
 </template>
