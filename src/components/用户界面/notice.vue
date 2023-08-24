@@ -68,6 +68,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { Delete, EditPen, Search, Share, Upload,SortDown} from '@element-plus/icons-vue'
 import notice_forum from '@/api/notice_forum'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default {
   setup() {
@@ -84,7 +85,8 @@ export default {
         notices.value.push({
         id: notice.id,
         title: notice.heading,
-        date: notice.published_date
+        date: notice.published_date,
+        content: notice.content
       });
     }
         console.log("接受后公告数据："+notices.value);
@@ -115,6 +117,7 @@ export default {
 
     const goToNotice = (notice) => {
       console.log("跳转到公告详情页：" + notice.title);
+      ElMessageBox.alert(notice.content,notice.title);
     };
 
     const toggleSortOrder = () => {
