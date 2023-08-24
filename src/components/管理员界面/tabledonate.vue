@@ -4,7 +4,7 @@
        <el-table :data="currentPageData" stripe style="width: 100%;" show-header="false">
           <el-table-column prop="time" label="捐款日期" sortable :sort-method="sortTime" />
           <el-table-column prop="name" label="用户名"   />
-          <el-table-column prop="amount" label="捐款金额"  sortable/>
+          <el-table-column prop="amount" label="捐款金额"  sortable :sort-method="sortAmount"/>
         </el-table>
       </div>
     <br>
@@ -35,10 +35,14 @@ export default {
   setup() {
     const tableData = ref([]);
     const currentPage = ref(1);
-    const pageSize = ref(12);
+    const pageSize = ref(10);
 
     const sortTime = (a, b) => {
       return new Date(a.donationTime) - new Date(b.donationTime)
+    }
+
+    const sortAmount = (a, b) => {
+      return b.amount - a.amount;
     }
 
     onMounted(async () => {
@@ -81,7 +85,8 @@ export default {
       currentPageData,
       sortTime,
       handleSizeChange,
-      handleCurrentChange
+      handleCurrentChange,
+      sortAmount
     }
   },
 }
