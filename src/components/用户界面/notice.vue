@@ -1,69 +1,3 @@
-<template>
-  <!-- <div class="main_page"> -->
-    <!-- <div class="headcontainer"> -->
-      <!-- <div class="title">
-        <span>公告栏</span>
-      </div> -->
-      
-      <!-- <div class="search-bar">
-        <el-input v-model="searchText" placeholder="请输入搜索内容"></el-input>
-        <el-button type="primary" icon="el-icon-search"></el-button>
-      </div>
-      <div class="sort-bar">
-        <el-button type="primary" icon="el-icon-sort" @click="toggleSortOrder">{{ sortOrder === 'asc' ? '按照日期正序排序' : '按照日期倒序排序' }}</el-button>
-      </div>
-    </div> -->
-    <el-row :gutter="20" class="head_container_notice">
-    <el-col :span="8">
-      <div class="ftitle">
-        <div class="linetitle">
-          公      告
-        </div>
-        <br>
-        <div class="line1">
-          传递关爱，共享精彩
-        </div>
-        <div class="line1">
-          与您分享重要信息
-        </div>
-      </div>
-    </el-col>
-    <el-col :span="16">
-        
-    </el-col>
-    </el-row>
-    <br><br>
-    <el-row >
-        <div style="width:100px"></div>
-         <div class="search-bar">
-        <el-input v-model="searchText" placeholder="搜索帖子标题"></el-input>
-        <el-button type="primary" :icon="Search" @click="search">搜索</el-button>
-        </div>
-      <div >
-        <div class="sort-bar">
-          <el-button type="primary" :icon="SortDown" @click="toggleSortOrder">{{ sortOrder === 'asc' ? '按照日期正序排序' : '按照日期倒序排序' }}</el-button>
-        </div>
-      </div>
-      </el-row>
-    
-      <div class="content">
-    <div class="notices">
-      <ul>
-        <li v-for="notice in filteredNotices" :key="notice.id" >
-          <el-card class="notice-card" >
-            <span class="notice-title">{{ notice.title }}</span>
-            <div class="noticebody">
-              <div class="notice-date">{{ notice.date }}</div>
-              <el-button class="noticebutton" type="plain" text @click="goToNotice(notice)">查看详情</el-button>
-            </div>
-          </el-card>
-        </li>
-      </ul>
-    </div>
-    </div>
-  <!-- </div> -->
-</template>
-
 <script>
 import { ref, computed, onMounted } from 'vue';
 import { Delete, EditPen, Search, Share, Upload,SortDown} from '@element-plus/icons-vue'
@@ -75,21 +9,34 @@ export default {
     const notices = ref([]);
     
     const searchText = ref("");
-    const sortOrder = ref("asc");
+    const sortOrder = ref("desc");
+
+    function formatBackendTime(backendTime) {
+      const date = new Date(backendTime);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      return formattedTime;
+    }
 
     const getNotices = async () => {
       try {
-        console.log("接受前公告数据："+notices.value);
         const response = await notice_forum.bulletinAPI();
         for (const notice of response) {
+        const formattedDate = formatBackendTime(notice.published_date);
         notices.value.push({
         id: notice.id,
         title: notice.heading,
-        date: notice.published_date,
+        date: formattedDate,
         content: notice.content
       });
     }
-        console.log("接受后公告数据："+notices.value);
       } catch (error) {
         console.error('获取公告数据时出错：', error);
       }
@@ -135,6 +82,74 @@ export default {
   }
 }
 </script>
+
+<template>
+  <!-- <div class="main_page"> -->
+    <!-- <div class="headcontainer"> -->
+      <!-- <div class="title">
+        <span>公告栏</span>
+      </div> -->
+      
+      <!-- <div class="search-bar">
+        <el-input v-model="searchText" placeholder="请输入搜索内容"></el-input>
+        <el-button type="primary" icon="el-icon-search"></el-button>
+      </div>
+      <div class="sort-bar">
+        <el-button type="primary" icon="el-icon-sort" @click="toggleSortOrder">{{ sortOrder === 'asc' ? '按照日期正序排序' : '按照日期倒序排序' }}</el-button>
+      </div>
+    </div> -->
+    <el-row :gutter="20" class="head_container_notice">
+    <el-col :span="8">
+      <div class="ftitle">
+        <div class="linetitle">
+          公      告
+        </div>
+        <br>
+        <div class="line1">
+          传递关爱，共享精彩
+        </div>
+        <div class="line1">
+          与您分享重要信息
+        </div>
+      </div>
+    </el-col>
+    <el-col :span="16">
+        
+    </el-col>
+    </el-row>
+    <br><br>
+    <el-row >
+        <div style="width:100px"></div>
+         <div class="search-bar">
+        <el-input v-model="searchText" placeholder="搜索帖子标题"></el-input>
+        <el-button type="primary" :icon="Search" @click="search">搜索</el-button>
+        </div>
+      <div >
+        <div class="sort-bar">
+          <el-button type="primary" :icon="SortDown" @click="toggleSortOrder">时间顺序</el-button>
+        </div>
+      </div>
+      </el-row>
+    
+      <div class="content">
+    <div class="notices">
+      <ul>
+        <li v-for="notice in filteredNotices" :key="notice.id" >
+          <el-card class="notice-card" >
+            <span class="notice-title">{{ notice.title }}</span>
+            <div class="noticebody">
+              <div class="notice-date">{{ notice.date }}</div>
+              <el-button class="noticebutton" type="plain" text @click="goToNotice(notice)">查看详情</el-button>
+            </div>
+          </el-card>
+        </li>
+      </ul>
+    </div>
+    </div>
+  <!-- </div> -->
+</template>
+
+
 
 <style >
 
