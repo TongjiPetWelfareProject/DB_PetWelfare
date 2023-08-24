@@ -91,9 +91,17 @@ const mainpage = () => {
             <template #reference>
               <el-button style="color:#5d86ba;font-size: 15px;"  text>联系我们</el-button>
             </template>
-            <p>电话：18981729781</p>
-            <p>邮箱：charlotteyanggg@qq.com</p>
-            <p>地址：上海市嘉定区曹安公路4800号</p>
+               <div class="contactus">
+              <div>
+                <p>电话：18981729781</p>
+                <p>邮箱：charlotteyanggg@qq.com</p>
+                <p>地址：上海市嘉定区曹安公路4800号</p>
+              </div>
+              <div>
+                <img src="@/photos/contactus.png" style="height: 120px;">
+              </div>
+
+            </div>
           </el-popover>
             
           <ul>
