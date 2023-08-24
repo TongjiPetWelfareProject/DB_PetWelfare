@@ -79,7 +79,7 @@ const mainpage = () => {
        
                
         <div class="titlecontainer">
-          <a href="https://github.com/shiguangbiyi/DataBase_Program_Pet-Rescue-Station" style="margin-top:4px;margin-right:4px" title="github">
+          <a href="https://github.com/shiguangbiyi/DataBase_Program_Pet-Rescue-Station" target="_blank" style="margin-top:4px;margin-right:4px" title="github">
             <img src="  ../../../public/github.png" alt="描述">
           </a>
 
