@@ -56,7 +56,7 @@ export default {
 
     const approveApplication = async(index) => {
       const infoToUpdate = tableData.value[index];
-      infoToUpdate.censor_status = 'abored';
+      infoToUpdate.censor_status = 'aborted';
 
       try {
         await sh_fj_jk.updateCheckInfoAPI(infoToUpdate);
