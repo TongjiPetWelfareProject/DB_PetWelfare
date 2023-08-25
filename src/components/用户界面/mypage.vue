@@ -1,14 +1,20 @@
 <template>
-  <div style="display: flex;align-items: center;">
+  <div style="display: flex;align-items: center;margin-left: 5vw;">
         <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
         &nbsp;<a href="\" style="text-decoration: none;color:#538adc;">返回主页</a>
   </div>
+  <div class="bigcontainer">
+
   <div class="common-layout">
     <el-container>
       <el-header style="height: 200px;">
+        <div style="display: flex;align-items: flex-end;">
+          <img src="@/photos/头像.jpg" style="width:70px;border-radius: 50%;margin-bottom: -60px;">
+          <img src="@/photos/mypagepet.jpg" style="width:400px;margin-bottom: -60px;margin-left:24vw">
+        </div>
+       
         <el-descriptions
     class="margin-top"
-    title="我的信息"
     :column="3"
     :size="size"
     border
@@ -79,208 +85,203 @@
 
 
       <el-main>
-        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+        <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" type="border-card">
         <el-tab-pane label="我的宠物" name="first">
-          <el-row :gutter="20">
-          
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的点赞</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count5" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name5 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的收藏</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count6" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name6 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-         <el-col :span="6">
-            <el-text class="mx-1" size="large">我的评论</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count7" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name7 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的浏览</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count8" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name8 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-            <br>
-          </el-col>
-
-          <div class="empty-column">
-          <!-- 需要空一列的代码 -->
-          </div>
-
-          <el-col :span="6">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <span>我的领养</span>
-                  <!-- <el-button class="button" text>Operation button</el-button> -->
-                </div>
-              </template>
-              <div v-for="o in 6" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:{{ pet_id1 }}</span>
-                <span v-if="o === 2">宠物名称：{{ pet_name9 }}</span>
-                <span v-if="o === 3">领养时间:{{ adoption_time }}</span>
-                
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <span>我的寄养</span>
-                  <!-- <el-button class="button" text>Operation button</el-button> -->
-                </div>
-              </template>
-              <div v-for="o in 7" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:{{ pet_id2 }}</span>
-                <span v-if="o === 2">宠物名称:{{ pet_name10 }}</span>
-                <span v-if="o === 3">寄养开始时间:{{start_year}}-{{start_month}}-{{start_day}}</span>
-                
-                
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="20">
-          
-          
-        </el-row>
+          <el-tabs tab-position="left"  class="demo-tabs">
+            <el-tab-pane label="我的点赞">
+              <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
+                  <el-card :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                      <img src="../../../public/home5.jpg" class="mypagepetimage">
+                      <div style="padding: 14px;display: flex;
+                        justify-content: center;
+                        flex-direction: column; ">
+                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">花花</span>
+                        <br>
+                        <span style="font-size: 18px">妹妹</span>
+                        <span style="font-size: 16px; color:#6b6a68">10岁</span>
+                        <br>
+                      </div>
+                      <!-- <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none;
+                      color:#edb055 ;">
+                        查看详情  —>
+                      </router-link> -->
+                    </el-card>
+                <!-- </div> -->
+            </el-tab-pane>
+            <el-tab-pane label="我的收藏">
+               <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
+                <el-card :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                      <img src="../../../public/home5.jpg" class="mypagepetimage">
+                      <div style="padding: 14px;display: flex;
+                        justify-content: center;
+                        flex-direction: column; ">
+                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">花花</span>
+                        <br>
+                        <span style="font-size: 18px">妹妹</span>
+                        <span style="font-size: 16px; color:#6b6a68">10岁</span>
+                        <br>
+                      </div>
+                      <!-- <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none;
+                      color:#edb055 ;">
+                        查看详情  —>
+                      </router-link> -->
+                    </el-card>
+                <!-- </div> -->
+            </el-tab-pane>
+            <el-tab-pane label="我的评论">
+              <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
+                  <el-card class="mypage-card" shadow="always" >
+                    <template #header>
+                      <div class="mypagecard-header">
+                        <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center; margin-left: 5px;margin-top:-10px">花花</span>
+                      </div>
+                    </template>
+                    <div class="mypagecardbody">
+                      <div style="display: flex; align-items: center; margin-left: 5px;font-size: 15px;">
+                        <img src="@/photos/头像.jpg" style="width: 30px; height: 30px; border-radius: 50%;">
+                        <span style="margin-left: 5px;">Kristian:</span>
+                        <span>花花头上有三种颜色欸！</span>
+                      </div>            
+                      <div class="mypagecardtime">2023-8-25</div>
+                      <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
+                    </div>
+                  </el-card>
+              <!-- </li> -->
+              
+            </el-tab-pane>
+            <el-tab-pane label="我的领养">
+               <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
+                <el-card :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                      <img src="../../../public/home5.jpg" class="mypagepetimage">
+                      <div style="padding: 14px;display: flex;
+                        justify-content: center;
+                        flex-direction: column; ">
+                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">花花</span>
+                        <br>
+                        <span style="font-size: 18px">妹妹</span>
+                        <span style="font-size: 16px; color:#6b6a68">10岁</span>
+                        <br>
+                      </div>
+                      <!-- <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none;
+                      color:#edb055 ;">
+                        查看详情  —>
+                      </router-link> -->
+                    </el-card>
+                <!-- </div> -->
+            </el-tab-pane>
+            <el-tab-pane label="我的寄养">
+              <el-card class="mypagefoster" shadow="always">
+                <template #header>
+                  <div class="mypagecard-header">
+                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">花花</span>
+                  </div>
+                </template>
+                <div class="mypagefostertext" style="margin-top:2px">寄养时长：7天</div>
+                <div class="mypagefostertext">寄养起始时间：</div>
+                <div class="mypagefostertext">寄养费用：</div>
+              </el-card>
+            </el-tab-pane>
+          </el-tabs>
         </el-tab-pane>
+
+
+
         <el-tab-pane label="我的论坛" name="second">
-          <el-row :gutter="20">
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的点赞</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count1" :key="i" class="infinite-list-item">
-                <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name1 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
+          <el-tabs tab-position="left"  class="demo-tabs">
+            <el-tab-pane label="我的点赞">
+              <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
+                <el-card class="post-card" shadow="always" >
+                  <div class="post-title">这是一个帖子标题</div>
+                  <div class="post-info">
+                    <div>发表时间：2023-8-25</div>
+                    <div>阅读量：100</div>
+                    <div>喜爱数量：10</div>
+                    <div>评论数量：10</div>
+                    <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
+                  </div>
+                </el-card>
+            <!-- </li> -->
+            </el-tab-pane>
+            <el-tab-pane label="我的收藏">
+                 <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
+                        <el-card class="post-card" shadow="always" >
+                        <div class="post-title">这是一个帖子标题</div>
+                        <div class="post-info">
+                          <div>发表时间：2023-8-25</div>
+                          <div>阅读量：100</div>
+                          <div>喜爱数量：10</div>
+                          <div>评论数量：10</div>
+                          <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
+                        </div>
+                      </el-card>
+                  <!-- </li> -->
+            </el-tab-pane>
+            <el-tab-pane label="我的评论">
+              <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
+                  <el-card class="mypage-card" shadow="always" >
+                    <template #header>
+                      <div class="mypagecard-header">
+                        <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center; margin-left: 5px;margin-top:-10px">这是一个帖子标题</span>
+                      </div>
+                    </template>
+                    <div class="mypagecardbody">
+                      <div style="display: flex; align-items: center; margin-left: 5px;font-size: 15px;">
+                        <img src="@/photos/头像.jpg" style="width: 30px; height: 30px; border-radius: 50%;">
+                        <span style="margin-left: 5px;">Kristian:</span>
+                        <span>花花头上有三种颜色欸！</span>
+                      </div>            
+                      <div class="mypagecardtime">2023-8-25</div>
+                      <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
+                    </div>
+                  </el-card>
+              <!-- </li> -->
+              
+            </el-tab-pane>
 
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的收藏</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count2" :key="i" class="infinite-list-item">
-              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name2 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-         <el-col :span="6">
-            <el-text class="mx-1" size="large">我的评论</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count3" :key="i" class="infinite-list-item">
-              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name3 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-
-          <el-col :span="6">
-            <el-text class="mx-1" size="large">我的浏览</el-text>
-            <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-            <li v-for="i in count4" :key="i" class="infinite-list-item">
-              <span v-if="i === 1" style="color: black;">宠物名称：{{ pet_name4 }}</span>
-                <!-- <span v-if="i === 2" style="color: black;">宠物名称：杰瑞</span>
-                <span v-if="i === 3" style="color: black;">宠物名称：斯派克</span> -->
-            </li>
-            </ul>
-          </el-col>
-        </el-row>
+          </el-tabs>
         </el-tab-pane>
+
+
         <el-tab-pane label="其他" name="third">
-          <el-row :gutter="20">
-          
-            <el-col :span="6">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <span>我的医疗</span>
-                  <!-- <el-button class="button" text>Operation button</el-button> -->
-                </div>
-              </template>
-              <div v-for="o in 7" :key="o" class="text item">
-                <span v-if="o === 1">宠物ID:{{ pet_id3 }}</span>
-                <span v-if="o === 2">宠物名称：{{ pet_name11 }}</span>
-                <span v-if="o === 3">医生ID：{{ doctor_id }}</span>                
-                <span v-if="o === 4">治疗ID:{{ vet_id }}</span>
-                
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <span>我的捐款</span>
-                  <!-- <el-button class="button" text>Operation button</el-button> -->
-                </div>
-              </template>
-              <div v-for="o in 3" :key="o" class="text item">
-                <span v-if="o === 1">捐款ID:{{ donor_id }}</span>
-                <span v-if="o === 2">捐款金额:{{ donation_amount }}</span>
-                <span v-if="o === 3">捐款时间:{{ donation_time }}</span>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
+          <el-tabs tab-position="left"  class="demo-tabs">
+            <el-tab-pane label="我的医疗">
+              <el-card class="mypagefoster" shadow="always">
+                <template #header>
+                  <div class="mypagecard-header">
+                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">花花</span>
+                  </div>
+                </template>
+                <div class="mypagefostertext" style="margin-top:2px">治疗科室：皮肤感染</div>
+                <div class="mypagefostertext">治疗医生：白云揉碎</div>
+                <div class="mypagefostertext">治疗时间：2023-8-25</div>
+              </el-card>
+            </el-tab-pane>
+            <el-tab-pane label="我的捐款">
+              <el-card class="mypagedonate" shadow="always">
+                <!-- <template #header>
+                  <div class="mypagecard-header">
+                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">花花</span>
+                  </div>
+                </template> -->
+                <div class="mypagefostertext" style="margin-top:2px">捐款金额：7天</div>
+                <div class="mypagefostertext">捐款时间：2023-8-25</div>
+              </el-card>
+            </el-tab-pane>
+
+          </el-tabs>
         </el-tab-pane>
         
       </el-tabs>
-
-       
-       
-         
-
         
       </el-main>
-      
-      
-    
-
     
     </el-container>
-    
-    
-  <div>
-	      <!-- 用户头像显示 -->
-		<img src="@/photos/头像.jpg" class="avatar-container">
-	</div>
+  
    
     
   
   </div>
+</div>
   
   
   
@@ -663,7 +664,50 @@ axios.get('/api/treatment')
 
 </script>
 
-<style>
+<style scoped>
+
+
+.bigcontainer{
+  /* justify-content: center; */
+  width:100%
+}
+
+.mypagecard-header{
+  padding-left: 1%;
+  height:0px;
+  margin-top:-10px
+}
+
+.mypagecardbody{
+  padding-left: 1%;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  height:10px
+}
+
+.mypagecardtime{
+  font-size: 14px;
+  color:rgb(109, 109, 109);
+  font-weight:lighter
+}
+
+.mypagefostertext{
+  font-size: 15px;
+  color:rgb(89, 89, 89);
+  margin-top:5px
+}
+
+.mypagefoster{
+  width:300px;
+  height:150px;
+}
+
+.mypagedonate{
+  width:300px;
+  height:100px;
+}
+
 .el-descriptions {
   margin-top: 20px;
 }
@@ -710,12 +754,14 @@ axios.get('/api/treatment')
   height:350px;
 }
 
-/* .common-layout {
-  background-image: url(assets/两只狗勾.jpg);
+.common-layout {
+  /* background-image: url(assets/两只狗勾.jpg);
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
-} */
+  background-repeat: no-repeat; */
+  width:87vw;
+  margin-left: 4vw;
+}
 
 .demo-type {
   display: flex;
@@ -729,16 +775,6 @@ axios.get('/api/treatment')
   border-right: 1px solid var(--el-border-color);
 }
 
-.avatar-container {
-	  position: absolute;
-    top:20px;
-	  left: 100px;
-	  width: 50px;
-	  height: 50px;
-	  border-radius: 999px; /* 将border-radius设置为很大的值，使容器变成圆形 */
-	  background-color: #fff;
-	  /* 添加其他自定义样式 */
-	}
 
 
   .infinite-list {
@@ -770,6 +806,11 @@ axios.get('/api/treatment')
 /* 下面这个用来控制“我的宠物”下面一行card与上面一行对其用的*/
 .empty-column {
   margin-right: 10px; /* 设置空白列宽度为20像素 */
+}
+
+.mypagepetimage{
+  height:200px;
+  width:300px;
 }
 
 </style>
