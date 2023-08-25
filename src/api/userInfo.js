@@ -2,6 +2,17 @@
 import request from '@/util/http'
 import axios from 'axios';
 
+export default {
+    userInfoAPI() {
+        return axios
+            .get('/api/userinfo')
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人信息数据时出错：' + error.message);
+            });
+    }
+};
+
 export const userTotalLikeAPI = ({like_num}) => {
     return request({
         url:'/likeandread',
