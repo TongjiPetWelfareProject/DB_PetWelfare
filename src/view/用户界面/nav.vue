@@ -12,6 +12,7 @@ const router = useRouter();
 const confirm = () => {
     console.log('用户退出登录了')
     userStore.clearUserInfo()
+    router.push('/')
 };
 
 const mainpage = () => {
@@ -25,58 +26,6 @@ const mainpage = () => {
           <img src="  ../../../public/animal-shelter.png" style="width:2.5vw;height:2.5vw;float:left">
           <p class="titlehead-text">同济宠物救助中心</p>
         </div>
-        <!-- <div class="titlemenu">
-
-       
-        <el-menu
-        :default-active="activeIndex"
-          class="el-menu-demo"
-          mode="horizontal"
-          @select="handleSelect"
-          background-color="#ccdff5"
-          text-color="#5d86ba"
-          active-text-color="#1D5D9B"
-          style="height: 40px;width: 60vw; "
-          router
-        >
-          <el-menu-item index="/">
-            <div style="display: flex;align-items: center;">
-              <el-icon><house/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">首页</span>
-            </div>
-          </el-menu-item>
-          <el-menu-item index="/pet_foster">
-            <div style="display: flex;align-items: center;">
-              <el-icon><school/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">寄养</span>
-            </div>
-          </el-menu-item>
-          <el-menu-item index="/pet_adopt">
-            <div style="display: flex;align-items: center;">
-              <el-icon><document/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">领养</span>
-            </div>
-          </el-menu-item>
-          <el-menu-item index="/medical">
-            <div style="display: flex;align-items: center;">
-              <el-icon><memo/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">医疗</span>
-            </div>
-          </el-menu-item>
-          <el-menu-item index="/donate">
-            <div style="display: flex;align-items: center;">
-              <el-icon><coin/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">捐款</span>
-            </div>
-          </el-menu-item>
-          <el-menu-item index="/forum">
-            <div style="display: flex;align-items: center;">
-              <el-icon><ChatLineRound/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">论坛</span>
-            </div>
-          </el-menu-item>
-          <el-menu-item index="/notice" >
-            <div style="display: flex;align-items: center;">
-              <el-icon><Postcard/></el-icon><span style="display: flex;align-items: center;justify-content: center;  ">公告</span>
-            </div>
-          </el-menu-item>
-        </el-menu>
-        </div> -->
-       
                
         <div class="titlecontainer">
           <a href="https://github.com/shiguangbiyi/DataBase_Program_Pet-Rescue-Station" target="_blank" style="margin-top:4px;margin-right:4px" title="github">
@@ -86,8 +35,6 @@ const mainpage = () => {
           <el-button style="color:#5d86ba;font-size:15px;height:20px" @click="drawerOn = true;" text>
                  关于我们
               </el-button>
-              
-    
               <el-drawer
                 v-model="drawerOn"
                 title="关于我们"
@@ -108,14 +55,12 @@ const mainpage = () => {
                  <img src="@/photos/pettoy.png" style="display:block;height: 20vh;justify-content: center;align-items: center;">
                 </div>
                 </el-drawer>
-
     
           <el-popover
             placement="bottom"
             title="联系我们"
             :width="400"
             trigger="click"
-
           >
             <template #reference>
               <el-button style="color:#5d86ba;font-size: 15px;"  text>联系我们</el-button>
@@ -131,23 +76,10 @@ const mainpage = () => {
               </div>
 
             </div>
-          </el-popover>
-            
+          </el-popover>        
           <ul>
-              
-              
+                         
             <template v-if="userStore.userInfo.User_ID">
-              <!-- <li>
-                <i class="iconfont icon user"></i>{{ userStore.userInfo.User_Name }}
-              </li> -->
-              <!-- <li><a href="javascript:;"><i class="iconfont icon user"></i>{{ userStore.userInfo.User_Name }}</a></li>
-              <li><router-link to="/mypage">我的页面</router-link></li> -->
-              <!-- <li>
-               
-                <router-link to="/mypage">
-                  <img src="@/photos/我的.png" alt="我的" style="height: 22px; width: 22px;">
-                </router-link>
-              </li> -->
               <li>
                 <el-popover placement="bottom"  :width="50" trigger="hover" style="width:30px">
                   <template #reference>
@@ -166,18 +98,9 @@ const mainpage = () => {
                 </el-popover>
               </li>
 
-
-
-
-
               <li v-if="userStore.userInfo.Role === 'Admin'">
                 <router-link to="/manager">进入管理员模式</router-link>
               </li>
-              <!-- <li>
-                <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
-                  <template #reference><a href="javascript:;">退出登录</a></template>
-                </el-popconfirm>
-              </li> -->
             </template>
             <template v-else>
               <li><router-link to="/login">登录</router-link></li>
