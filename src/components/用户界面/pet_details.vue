@@ -151,7 +151,7 @@ const favoritePet = async() => {
   }
 
   .card {
-    width: 1000px;
+    width: 85%;
     position: relative; /* 添加相对定位 */
   }
 
@@ -265,22 +265,28 @@ const favoritePet = async() => {
 
 
   .comment-part {
-  margin-left: auto;
-  margin-right: auto;
-  width: 800px;
-  }
+    margin-left: auto;
+    margin-right: auto;
+    width: 85%;
+    }
 
-  .comment {
-  display: flex;
-  }
+    .comment {
+    display: flex;
+    }
 
-  .comment-content {
-  margin-left: 10px;
-  }
+    .comment-content {
+    margin-left: 10px;
+    }
+    
+    .comment-form {
+      display: flex;
+      align-items: center; /* 垂直居中对齐 */
+    }
 
-  .comment-form {
-  margin-top: 20px;
-  }
+    .comment-input {
+      flex: 1; /* 评论输入框占据剩余空间 */
+      margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
+    }
 
   h2, h3 {
   font-weight: bold;
@@ -348,10 +354,11 @@ const favoritePet = async() => {
               <span class="pet-label">种类</span>
               <p class="pet-value">{{ pet.species }}</p>
             </el-col>
-            <!--<el-col :span="8">
+            <el-col :span="8">
               <span class="pet-label">年龄</span>
-              <p class="pet-value">{{ pet.value.age }}</p>
-            </el-col>-->
+              <p class="pet-value">先空着</p>
+              <!--<p class="pet-value">{{ pet.value.age }}</p>-->
+            </el-col>
             <el-col :span="8">
               <span class="pet-label">性别</span>
               <p class="pet-value">{{ pet.gender ? '弟弟' : '妹妹'}}</p>
@@ -403,19 +410,23 @@ const favoritePet = async() => {
         <span>{{ pet.collect_num }}</span>
       </div>
     </div>
-      <div class="comment-part">
-        <h3>评论 {{ pet.comment_num }}</h3>
+
+    <div class="comment-part">
+      <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
       <div class="comment-form">
-        <el-input v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
-        <p>  </p>
-        <el-button type="primary" plain @click="addComment">发布</el-button>
+        <div class="comment-input">
+          <el-input v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
+        </div>
+        <div class="comment-button">
+          <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
+        </div>
       </div>
       <p>  </p>
       <div v-for="comment in pet.comment_contents" :key="comment.id" class="comment">
-        <el-avatar :src="comment.avatar" :size="40"></el-avatar>
+        <el-avatar :src="comment.avatar" :size="50"></el-avatar>
         <div class="comment-content">
-          <p>{{ comment.author }}</p>
-          <p>{{ comment.text }}</p>
+            <p class="comment-label">{{ comment.author }}</p>
+            <p class="comment-value">{{ comment.text }}</p>
         </div>
       </div>
     </div>
