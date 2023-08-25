@@ -68,10 +68,10 @@ export default{
       });
   },
 
-  submitAdoptApplication (userInfo, petInfo, formData) {//export可以将对象暴露给其他模块使用
+  submitAdoptApplication (UID, PID, formData) {//export可以将对象暴露给其他模块使用
     const adoptData = {
-      user: userInfo.User_ID,
-      pet: petInfo.Pet_ID,
+      user: UID,
+      pet: PID,
       gender: formData.gender,
       pet_exp: formData.pet_exp,
       long_term_care: formData.long_term_care,
@@ -83,7 +83,7 @@ export default{
       accept_vis: formData.accept_vis,
     };
   
-    return axios.post('/api/manage_adopt', adoptData)//指后端服务器的pet-adopt接口
+    return axios.post('/api/pet-adopt', adoptData)//指后端服务器的pet-adopt接口
       .then(response => {
         return response.data; // You might want to return the response data here
       })

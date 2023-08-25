@@ -39,7 +39,7 @@ const getPetDetails = async (petId) => {
     }
 
     let health_state = '';
-    if (response.original_pet.Health_State === 'Healthy') {
+    if (response.original_pet.Health_State === 'Vibrant') {
       health_state = '健康';
     } else if (response.original_pet.Health_State === 'Unhealthy') {
       health_state = '不健康';
@@ -73,17 +73,11 @@ onMounted(() => {
   getPetDetails(petId);
 });
 
-console.log(pet.value);
-
-const pet_simple = {
-  id: pet.id,
-  name: pet.name,
-}
 
 const handleApplyForAdopt = () => {
   if (userStore.userInfo.User_ID) {
     // 用户已登录，跳转到 /pet_adopt_form
-    router.push({ name: 'pet_adopt_form', params: { pet_simple: pet_simple } });
+    router.push({ name: 'pet_adopt_form', params: { info: pet.id }});
   } else {
     // 用户未登录，跳转到 /login
     router.push('/login');

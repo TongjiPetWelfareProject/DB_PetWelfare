@@ -7,15 +7,12 @@
     <el-form-item label="领养人ID">
       <el-input v-model="UID" readonly style="width: 600px;" />
     </el-form-item>
-    <el-form-item label="领养人用户名">
-      <el-input v-model="U_name" readonly style="width: 600px;" />
-    </el-form-item>
     <el-form-item label="宠物ID">
       <el-input v-model="PID" readonly style="width: 600px;" />
     </el-form-item>
-    <el-form-item label="宠物名字">
+    <!--<el-form-item label="宠物名字">
       <el-input v-model="P_name" readonly style="width: 600px;" />
-    </el-form-item>
+    </el-form-item>-->
     <el-form-item label="领养人性别">
       <el-radio-group v-model="form.gender">
         <el-radio label="男" :value="true"/>
@@ -72,13 +69,21 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios';
 import { useUserStore } from '@/store/user';
+import { useRoute, useRouter } from 'vue-router'
 import petadopt from '@/api/pet_adopt'; 
 
 const userStore = useUserStore(); // 请确保导入 useUserStore
+const route = useRoute();
+
+const UID = userStore.userInfo.User_ID;
+const PID = route.params.id;
+//const P_name = '花花';
+console.log(PID);
+//console.log(P_name);
 
 // do not use same name with ref
 const form = reactive({
@@ -93,13 +98,9 @@ const form = reactive({
   accept_vis: true,
 })
 
-const UID = userStore.userInfo.User_ID;
-const U_name = userStore.userInfo.User_Name;//这里参数名写对了吗？
-const PID = route.params.pet_simple.id;
-const P_name = route.params.pet_simple.name;
-
 const onSubmit = () => {
-  console.log('submit!')
+  console.log('submit!');
+  console.log(form);
   ElMessageBox.confirm(
       '点击确认将提交申请，要继续吗？',
       '确认',
