@@ -11,8 +11,8 @@ export default{
         throw error;
       });
   },
-  getPetDetails(petId) {
-    return axios.get(`/api/pet-details/${petId}`)
+  getPetDetails(PID) {
+    return axios.get(`/api/pet-details/${PID}`)
       .then(response => {
         return response.data; // Adjust this according to your backend response structure
       })
@@ -21,14 +21,13 @@ export default{
       });
   },
 
-  submitFavorite(userInfo, petInfo, favorites) {
-    const favoriteData = {
-      user: userInfo.User_ID,
-      pet: petInfo.Pet_ID,
-      favorites: favorites,
+  submitCollect(UID, PID) {
+    const submitFavoriteData = {
+      user: UID,
+      pet: PID,
     };
   
-    return axios.post('/api/pet-favorite', favoriteData)  // 假设后端有名为 pet-favorite 的接口来处理收藏请求
+    return axios.post('/api/pet-submit-favorite', submitFavoriteData)  // 假设后端有名为 pet-favorite 的接口来处理收藏请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -37,13 +36,13 @@ export default{
       });
   },
 
-  submitReading(userInfo, petInfo) {
-    const readingData = {
-      user: userInfo.User_ID,
-      pet: petInfo.Pet_ID,
+ cancelCollect(UID, PID) {
+    const cancelFavoriteData = {
+      user: UID,
+      pet: PID,
     };
   
-    return axios.post('/api/pet-reading', readingData)  // 假设后端有名为 pet-reading 的接口来处理阅读请求
+    return axios.post('/api/pet-cancel-favorite', cancelFavoriteData)  // 假设后端有名为 pet-favorite 的接口来处理收藏请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -52,14 +51,43 @@ export default{
       });
   },
 
-  submitLike(userInfo, petInfo, likes) {
-    const likeData = {
-      user: userInfo.User_ID,
-      pet: petInfo.Pet_ID,
-      likes: likes,
+  submitReading(UID, PID) {
+    const submitReadingData = {
+      user: UID,
+      pet: PID,
     };
   
-    return axios.post('/api/pet-like', likeData)  // 假设后端有名为 pet-like 的接口来处理点赞
+    return axios.post('/api/pet-reading', submitReadingData)  // 假设后端有名为 pet-reading 的接口来处理阅读请求
+      .then(response => {
+        return response.data; // 你可能希望在这里返回响应数据
+      })
+      .catch(error => {
+        throw error;
+      });
+  },
+
+  submitLike(UID, PID) {
+    const submitLikeData = {
+      user: UID,
+      pet: PID,
+    };
+  
+    return axios.post('/api/pet-submit-like', submitLikeData)  // 假设后端有名为 pet-like 的接口来处理点赞
+      .then(response => {
+        return response.data; // 你可能希望在这里返回响应数据
+      })
+      .catch(error => {
+        throw error;
+      });
+  },
+
+  cancelLike(UID, PID) {
+    const cancelLikeData = {
+      user: UID,
+      pet: PID,
+    };
+  
+    return axios.post('/api/pet-cancel-like', cancelLikeData)  // 假设后端有名为 pet-like 的接口来处理点赞
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -92,15 +120,25 @@ export default{
       });
   },
 
-  submitComment(userInfo, petInfo) {
-    const commentData = {
-      user: userInfo.User_ID,
-      pet: petInfo.Pet_ID,
-      text: commentText,
-      time: commentTime
+  getCommentList(PID) {
+    return axios.get(`/api/comment-list/${PID}`)
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      throw error;
+    });
+  },
+
+
+  submitComment(UID, PID, commentText) {
+    const submitCommentData = {
+      user: UID,
+      pet: PID,
+      commentText: commentText,
     };
   
-    return axios.post('/api/pet-comment', commentData)  // 假设后端有名为 pet-comment 的接口来处理评论请求
+    return axios.post('/api/pet-submit-comment', submitCommentData)  // 假设后端有名为 pet-comment 的接口来处理评论请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -109,12 +147,12 @@ export default{
       });
   },
 
-  deleteComment(commentInfo) {
+  deleteComment(CID) {
     const commentData = {
-      comment: commentInfo.comment_ID,
+      comment: CID,
     };
   
-    return axios.post('/api/pet-comment', commentData)  // 假设后端有名为 pet-comment 的接口来处理删除评论请求
+    return axios.post('/api/pet-delete-comment', commentData)  // 假设后端有名为 pet-comment 的接口来处理删除评论请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
