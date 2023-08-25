@@ -324,6 +324,7 @@ const favoritePet = async() => {
          </div>
         
       </div>
+      <p></p>
   <div class="pet-card">
     <el-card class="card" >
       <div class="card-content">

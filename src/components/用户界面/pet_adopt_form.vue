@@ -1,4 +1,12 @@
 <template>
+  <div>
+    <div style="display: flex;align-items: center;">
+      <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
+        &nbsp;<!--<a :href="getPetDetailsLink()" style="text-decoration: none;color:#538adc;">返回领养详情</a>-->
+        <router-link :to="{ name: 'pet_details', params: { id: PID } }" style="text-decoration: none;color:#538adc;">返回领养详情
+  </router-link>
+    </div>
+  </div>
   <div class="tableitem" >
     <img src="./photos/狗狗头像.jpeg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px; border-radius: 50%;">
     <p class="welcome-text">领养申请表</p>
@@ -63,7 +71,6 @@
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">提交</el-button>
-      <el-button>取消</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -77,6 +84,7 @@ import { useRoute, useRouter } from 'vue-router'
 import petadopt from '@/api/pet_adopt'; 
 
 const userStore = useUserStore(); // 请确保导入 useUserStore
+const router = useRouter();
 const route = useRoute();
 
 const UID = userStore.userInfo.User_ID;
@@ -97,6 +105,15 @@ const form = reactive({
   be_children: true,
   accept_vis: true,
 })
+
+/*const getPetDetailsLink = () => {
+    // 使用你的路由库来生成动态路由链接
+    // 这里使用 Vue Router 的方式来生成链接
+    return router.resolve({
+      name: 'pet-details', // 路由的名称
+      params: { id: PID } // 动态参数
+    }).href;
+  };*/
 
 const onSubmit = () => {
   console.log('submit!');

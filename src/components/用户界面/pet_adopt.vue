@@ -46,9 +46,15 @@ console.log(pets.value);
 const value1 = ref('');
 const value2 = ref('');
 const value3 = ref('');
-
+let min = 0;
+let max = 100;
 const ageRangeMatches = (petAge: number, ageRange: string) => {
-  const [min, max] = ageRange.split('-').map(Number);
+  if (ageRange != '11') {
+    [min, max] = ageRange.split('-').map(Number);
+  } else {
+    min = 11; // 默认的最小值
+    max = 100; // 默认的最大值
+  }
   return petAge >= min && petAge <= max;
 };
 
