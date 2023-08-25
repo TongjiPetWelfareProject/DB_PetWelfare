@@ -87,7 +87,7 @@ const post = ref({
     comments: 0,
     favorites: 0,
     comment_contents: [
-    { id: '', author: '', text: '', avatar: './src/components/photos/阿尼亚.jpg' }
+    { id: '', author: '', text: '', avatar: './src/photos/阿尼亚.jpg' }
     ]
 });
 
@@ -129,7 +129,7 @@ onMounted(() => {
   getpost();
 });
 
-const newComment = ref({ author: '', text: '', avatar: './src/components/photos/默认.jpg' });
+const newComment = ref({ author: '', text: '', avatar: './src/photos/默认.jpg' });
 const showCommentForm = ref(false);
 
 const addComment = () => {
