@@ -17,7 +17,7 @@
       placeholder="请输入内容"
       style="margin-top:-8px"
     />
-    <!-- <el-upload action="#" list-type="picture-card" :auto-upload="false" :file-list="fileListRef">
+    <el-upload action="#" list-type="picture-card" :auto-upload="false" :file-list="fileListRef">
       <el-icon><Plus /></el-icon>
 
       <template #file="{ file }">
@@ -34,7 +34,7 @@
           </span>
         </div>
       </template>
-    </el-upload> -->
+    </el-upload>
 
     <el-dialog v-model="dialogVisible">
       <img w-full :src="dialogImageUrl" alt="Preview Image" />
@@ -50,18 +50,44 @@
 import { ref } from 'vue'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import type { UploadFile } from 'element-plus'
+import posttocontent from '@/api/notice_forum'
+import { useUserStore } from '@/store/user';
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'; // 请确保导入 useRouter
 
 const input = ref('')
 const textarea = ref('')
 const fileListRef = ref<Array<UploadFile>>([]) // 创建fileList文件列表用于存储上传的照片
+const userStore = useUserStore();
+const router = useRouter();
+const submitPost = async () => {
+  try {
+    const response = await posttocontent.postcontent(userStore.userInfo.User_ID, input.value, textarea.value);
+    console.log('发帖成功', response);
 
-const submitPost = () => {
-  // 处理提交逻辑，可以在这里调用接口或进行其他操作
-  console.log('提交帖子:', input.value, textarea.value)
+    // 显示成功提示
+    ElMessage.success({
+      message: '发帖成功，帖子正在审核，审核通过后将展示在论坛界面中。',
+      duration: 3000 // 持续显示时间（毫秒）
+    });
 
-  // 提交后清空输入框
-  input.value = ''
-  textarea.value = ''
+    // 停顿3秒后跳转到 '/forum'
+    setTimeout(() => {
+      router.push('/forum');
+    }, 3000);
+
+  } catch (error) {
+    console.error('发帖失败：', error);
+
+    // 显示失败提示
+    ElMessage.error({
+      message: '发帖失败，错误信息：' + error.message,
+      duration: 3000 // 持续显示时间（毫秒）
+    });
+  }
+  
+  input.value = '';
+  textarea.value = '';
 }
 
 const dialogImageUrl = ref('')
