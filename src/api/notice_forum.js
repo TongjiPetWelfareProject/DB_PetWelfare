@@ -18,6 +18,15 @@ export default {
             .catch(error => {
                 throw new Error('获取帖子数据时出错：' + error.message);
             });
+    },
+
+    getpost(post_id) {
+        return axios
+            .post('/api/post',{post_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取帖子数据时出错：' + error.message);
+            });
     }
 };
 
