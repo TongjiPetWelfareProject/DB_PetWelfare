@@ -25,7 +25,7 @@ const fetchUserRecords = async () => {
     for (const data of response) {
       tableData.value.push({
         id: data.id,
-        name: data.username,
+        username: data.username,
         phone: data.phone,
         address: data.address,
       });
@@ -39,9 +39,6 @@ onMounted(() => {
     fetchUserRecords();
 });
 
-const userData = {
-    id: '1333'
-}
 
 const banUser = (userData) => {
   console.log('submit!');
