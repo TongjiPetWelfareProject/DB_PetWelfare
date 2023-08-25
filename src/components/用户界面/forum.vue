@@ -60,7 +60,7 @@
 </template>
 
 <script>
- import { Delete, EditPen, Search, Share, Upload,SortDown} from '@element-plus/icons-vue'
+import { Delete, EditPen, Search, Share, Upload,SortDown} from '@element-plus/icons-vue'
 import { ref, onMounted, computed } from 'vue'
 import notice_forum from '@/api/notice_forum'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -72,7 +72,7 @@ export default {
   setup() {
     const forum_posts = ref([]);
     const searchText = ref('');
-    const sortOrder = ref('asc');
+    const sortOrder = ref('desc');
     const router = useRouter();
     const userStore = useUserStore();
 
@@ -138,7 +138,7 @@ export default {
     });
 
     const filteredPosts = computed(() => {
-      return forum_posts.value.filter(post => {
+      return sortedPosts.value.filter(post => {
         return post.title.toLowerCase().includes(searchText.value.toLowerCase());
       });
     });
