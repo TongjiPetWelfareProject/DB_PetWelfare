@@ -41,7 +41,7 @@
    <div class="content">
       <ul class="forum-posts">
         <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="goToPost(post)"> -->
-          <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')">
+          <li v-for="post in filteredPosts" :key="post.post_id" @click="goToPost(post)">
             <el-card class="post-card" >
               <div class="post-title">{{ post.title }}</div>
               <div class="post-info">
@@ -168,7 +168,7 @@ export default {
     const goToPost = (post) => {
       // 跳转到帖子详情页
       console.log('跳转到帖子详情页：' + post.title);
-      this.$router.push({ path: '/post_details', query: { post_id: post.post_id }});
+      router.push({ path: '/post_details', query: { post_id: post.id }});
     };
 
     return {
