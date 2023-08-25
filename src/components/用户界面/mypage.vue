@@ -31,7 +31,7 @@
          用户名
         </div>
       </template>
-     {{ user_name }}
+     {{ userStore.userInfo.User_Name }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -42,7 +42,7 @@
           Telephone
         </div>
       </template>
-      {{ phone_number }}
+      {{ userStore.userInfo.Phone_Number }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -53,7 +53,7 @@
           点赞量
         </div>
       </template>
-      {{ like_num }}
+      {{ infoform.like_num }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -64,7 +64,7 @@
           阅读量
         </div>
       </template>
-      {{ read_num }}
+      {{ infoform.read_num }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -75,7 +75,7 @@
          地址
         </div>
       </template>
-      {{ address }}
+      {{ userStore.userInfo.Address }}
       <!-- 上海市嘉定区曹安公路4800号 -->
     </el-descriptions-item>
   </el-descriptions>
@@ -291,23 +291,31 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
-import axios from 'axios';
-
+import { useUserStore } from '@/store/user'
+import userinfo from '@/api/userInfo'
+import { computed } from 'vue'
+import { Iphone, Location, OfficeBuilding, Tickets, User, UserFilled, Star } from '@element-plus/icons-vue'
+const userStore = useUserStore()
 const activeName = ref('first')
+const infoform = ref([]);
+
+const getUserInfo = async () => {
+      try {
+        const response = await userinfo.userInfoAPI();
+        for (const info of response) {
+        infoform.value.push({
+        like_num: info.likenum,
+        read_num: info.readnum
+      });
+    }
+      } catch (error) {
+        console.error('获取公告数据时出错：', error);
+      }
+};
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
-import { computed} from 'vue'
-import {
-  Iphone,
-  Location,
-  OfficeBuilding,
-  Tickets,
-  User,
-  UserFilled,
-  Star
-} from '@element-plus/icons-vue'
 
 const tabPosition = ref('left')
 
@@ -360,13 +368,6 @@ const blockMargin = computed(() => {
 
 
 
-//added 2023/7/30
-
-const user_name = ref('柴犬奴')
-const phone_number = ref('13355719896')
-const like_num = ref(99)
-const read_num = ref(99)
-const address = ref('上海市嘉定区曹安公路4800号')
 const pet_name1 = ref('乐乐')
 const pet_name2 = ref('乐乐')
 const pet_name3 = ref('乐乐')
@@ -391,276 +392,6 @@ const start_year = ref(2022)
 const start_month = ref(12)
 const start_day = ref(19)
 
-
-axios.get('/api/user')
-        .then(response => {
-          user_name.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-axios.get('/api/user')
-        .then(response => {
-          phone_number.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          like_num.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          read_num.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/user')
-        .then(response => {
-          address.value = response.data;
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-
-//我的论坛
-axios.get('/api/like-list')
-        .then(response => {
-          pet_name1.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/like-count')
-      .then(response => {
-        count1.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-axios.get('/api/collect-list')
-        .then(response => {
-          pet_name2.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/collect-count')
-      .then(response => {
-        count2.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-axios.get('/api/comment-list')
-        .then(response => {
-          pet_name3.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/comment-count')
-      .then(response => {
-        count3.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-
-axios.get('/api/view-list')
-        .then(response => {
-          pet_name4.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/view-count')
-      .then(response => {
-        count4.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-//我的宠物
-axios.get('/api/like-list')
-        .then(response => {
-          pet_name5.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/like-count')
-      .then(response => {
-        count5.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-axios.get('/api/collect-list')
-        .then(response => {
-          pet_name6.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/collect-count')
-      .then(response => {
-        count6.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-axios.get('/api/comment-list')
-        .then(response => {
-          pet_name7.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/comment-count')
-      .then(response => {
-        count7.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-
-
-axios.get('/api/view-list')
-        .then(response => {
-          pet_name8.value = response.data; // 将返回的数据保存在pet_name数组中
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/view-count')
-      .then(response => {
-        count8.value = response.data; // 将返回的数据保存在count属性中
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-//收养
-axios.get('/api/adopt')
-        .then(response => {
-          pet_id1.value = response.data; 
-          
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/adopt')
-        .then(response => {
-          pet_name9.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/adopt')
-        .then(response => {
-          adoption_time.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-
-//寄养
-axios.get('/api/foster')
-      .then(response => {
-        pet_id2.value = response.data; 
-      })
-      .catch(error => {
-        console.log(error);
-      });
-axios.get('/api/foster')
-        .then(response => {
-          pet_name10.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_year.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_month.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/foster')
-        .then(response => {
-          start_day.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-//医疗
-axios.get('/api/treatment')
-      .then(response => {
-        pet_id3.value = response.data; 
-      })
-      .catch(error => {
-        console.log(error);
-      });
-axios.get('/api/treatment')
-        .then(response => {
-          pet_name11.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/treatment')
-        .then(response => {
-          doctor_id.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-axios.get('/api/treatment')
-        .then(response => {
-          vet_id.value = response.data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
-  
-
-//edit 
-//编辑按钮跳转到个人信息编辑页面还没有实现（ps：ysj暑期实习也要做网页和网站，现在有点忙）
 
 </script>
 
