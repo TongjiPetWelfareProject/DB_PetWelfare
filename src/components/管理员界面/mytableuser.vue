@@ -6,72 +6,122 @@
         <el-table-column label="地址" prop="address" width="160"></el-table-column>
         <el-table-column label="操作" width="360">
           <template #default="scope">
-            <el-button size="mini" type="danger" @click="handleBan(scope.row)">禁言</el-button>
-            <el-button size="mini" type="danger" @click="handleBlock(scope.row)">封号</el-button>
+            <el-button size="mini" type="danger" @click="banUser(scope.row)">禁言</el-button>
+            <el-button size="mini" type="danger" @click="blockUser(scope.row)">封号</el-button>
           </template>
         </el-table-column>
       </el-table>
-    </template>
+</template>
     
-    <script setup>
-    import { ref } from 'vue';
+<script setup>
+import { ref, onMounted } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import mytableuser from '@/api/yh_jk'
+const tableData = ref([])
+
+const fetchUserRecords = async () => {
+  try {
+    const response = await mytableuser.fetchUserRecords();
+    for (const data of response) {
+      tableData.value.push({
+        id: data.id,
+        name: data.username,
+        phone: data.phone,
+        address: data.address,
+      });
+    }
+  } catch (error) {
+    console.error('获取用户列表时出错：', error);
+  }
+};
+
+onMounted(() => {
+    fetchUserRecords();
+});
+
+const userData = {
+    id: '1333'
+}
+
+const banUser = (userData) => {
+  console.log('submit!');
+  ElMessageBox.confirm(
+      '确定要禁言该用户吗？',
+      '确认',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }
+    )
+    .then(() => {
+        console.log("success");
+        petadopt.banUser(userData.id)
+              .then(response => {
+                // 处理后端返回的响应
+                ElMessage({
+                  type: 'success',
+                  message: '提交成功',
+                });
+              })
+              .catch(error => {
+                // 处理错误
+                ElMessage({
+                  type: 'error',
+                  message: '提交失败',
+                });
+              });
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消提交',
+        })
+      })
+}
+
+const blockUser = (userData) => {
+  console.log('submit!');
+  ElMessageBox.confirm(
+      '确定要封号该用户吗？',
+      '确认',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }
+    )
+    .then(() => {
+        petadopt.blockUser(userData.id)
+              .then(response => {
+                // 处理后端返回的响应
+                ElMessage({
+                  type: 'success',
+                  message: '提交成功',
+                });
+              })
+              .catch(error => {
+                // 处理错误
+                ElMessage({
+                  type: 'error',
+                  message: '提交失败',
+                });
+              });
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消提交',
+        })
+      })
+}
     
-    const tableData = ref([
-      {
-        id: "00001",
-        username: '张三',
-        phone: '123-456-7890',
-        address: '同济大学四平路校区',
-      },
-      {
-        id: "00002",
-        username: '李四',
-        phone: '987-654-3210',
-        address: '同济大学嘉定校区',
-      },
-      {
-        id: "00003",
-        username: '王五',
-        phone: '123-456-7890',
-        address: '同济大学四平路校区',
-      },
-      {
-        id: "00004",
-        username: '张三',
-        phone: '987-654-3210',
-        address: '同济大学嘉定校区',
-      }, {
-        id: "00005",
-        username: '李四',
-        phone: '123-456-7890',
-        address: '同济大学四平路校区',
-      },
-      {
-        id: "00006",
-        username: '王五',
-        phone: '987-654-3210',
-        address: '同济大学嘉定校区',
-      },
-      {
-        id: "00007",
-        username: '张三',
-        phone: '987-654-3210',
-        address: '同济大学四平路校区',
-      },
-      {
-        id: "00008",
-        username: '李四',
-        phone: '987-654-3210',
-        address: '同济大学嘉定校区',
-      },
-    ]);
-    
-    const handleBan = (row) => {
+    /*const handleBan = (row) => {
       console.log('Ban user:', row);
     };
     
     const handleBlock = (row) => {
       console.log('Block user:', row);
-    };
-    </script>
+    };*/
+</script>
     
