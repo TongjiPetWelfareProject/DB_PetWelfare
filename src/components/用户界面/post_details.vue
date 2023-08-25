@@ -76,6 +76,7 @@ import { ref,watch,onMounted } from 'vue';
 import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
 import { MagicStick,Star } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
+import getpostinfo from '@/api/notice_forum'
 
 const router = useRouter();
 const post = ref({
@@ -89,14 +90,43 @@ const post = ref({
     { id: '', author: '', text: '', avatar: './src/components/photos/阿尼亚.jpg' }
     ]
 });
+
+function formatBackendTime(backendTime) {
+      const date = new Date(backendTime);
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      return formattedTime;
+    }
+
 const postId = ref('')
-// 监听路由参数的变化
+
+const getpost= async () => {
+    try {
+        const response = await getpostinfo.getpost(postId.value);
+        for (const postinfo of response) {
+        // const formattedDate = formatBackendTime(postinfo.published_date);
+        post.value.title = postinfo.heading;
+        post.value.author = postinfo.userName;
+        post.value.content = postinfo.content;
+        console.log(post.title)
+    }
+      } catch (error) {
+        console.error('获取帖子失败：', error);
+      }
+    };
+
 onMounted(() => {
   // 从路由的 query 参数中获取 post_id
   postId.value = router.currentRoute.value.query.post_id;
   console.log('当前帖子ID:', postId.value);
-
-  // 在这里可以根据 postId 去获取帖子详情数据
+  getpost();
 });
 
 const newComment = ref({ author: '', text: '', avatar: './src/components/photos/默认.jpg' });
