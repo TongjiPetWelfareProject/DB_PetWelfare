@@ -65,6 +65,15 @@ export default {
             })
     },
 
+    deletecomment(user_id,post_id,comment_time) {
+        return axios
+            .post('/api/deletecomment',{user_id,post_id,comment_time})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('评论时出错：' + error.message);
+            })
+    },
+
     postcontent(user_id,post_title,post_content) {
         return axios
             .post('/api/postcontent',{user_id,post_title,post_content})

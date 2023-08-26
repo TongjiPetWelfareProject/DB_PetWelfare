@@ -37,18 +37,18 @@
         </div>
       </div>
       <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ post.comment_num }}</h3>
-      <p>  </p>
+      <p></p>
       <div v-for="comment in sortedComments" :key="comment.id" class="comment">
-  <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
-  <div class="comment-content">
-    <p class="post-label">{{ comment.author }}</p>
-    <p class="post-value">{{ comment.text }}</p>
-    <div class="comment-actions">
-      <p class="comment-time custom-comment-time">{{ comment.time }}</p>
-      <a  v-if="comment.avatar && isOwnPost(comment.author)" href="#" @click="deleteComment(comment)">删除</a>
-    </div>
-  </div>
-</div>
+        <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
+        <div class="comment-content">
+          <p class="post-label">{{ comment.author }}</p>
+          <p class="post-value">{{ comment.text }}</p>
+          <div class="comment-actions">
+            <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.time) }}</p>
+            <a v-if="comment.avatar && isOwnPost(comment.author)" href="#" @click="deleteComment(comment)">删除</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   </template>
@@ -122,7 +122,7 @@ const getcomment= async () => {
             id: postcomment.pid,
             author: postcomment.user_Name,
             text: postcomment.content,
-            time: formatBackendTime(postcomment.comment_Time),
+            time: postcomment.comment_Time,
             avatar:'./src/photos/阿尼亚.jpg'
           });
         }
@@ -195,7 +195,7 @@ const addComment = async () => {
       // 显示失败提示
       ElMessage.error({
       message: '评论失败，错误信息：' + error.message,
-      duration: 3000 // 持续显示时间（毫秒）
+      duration: 1000 // 持续显示时间（毫秒）
     });
       }
 };
@@ -224,6 +224,28 @@ const likePost = async () => {
       console.error('获取点赞信息失败：', error);
     }
 };
+
+const deleteComment = async (comment) => {
+  try {
+    console.log("删除时间为"+comment.time+"的帖子")
+    const response = await getpostinfo.deletecomment(userStore.userInfo.User_ID,comment.id,comment.time);
+      ElMessage.success({
+      message: '删除成功',
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    // 停顿3秒后刷新
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+      } catch (error) {
+        console.error('删除失败：', error);
+      // 显示失败提示
+      ElMessage.error({
+      message: '删除失败，错误信息：' + error.message,
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+  }
+}
 
 const favoritePost = () => {
     post.value.favorites++;
