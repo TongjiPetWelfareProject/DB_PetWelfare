@@ -38,6 +38,15 @@ export default {
         });
     },
 
+    deletepost(post_id,user_id) {
+        return axios
+        .post('/api/deletepost',{post_id,user_id})
+        .then((response) => response.data)
+        .catch(error => {
+            throw new Error('删除帖子数据时出错：' + error.message);
+        });
+    },
+
     iflike(user_id,post_id) {
         return axios
         .post('/api/iflikepost',{user_id,post_id})

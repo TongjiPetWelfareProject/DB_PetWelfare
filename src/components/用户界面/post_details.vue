@@ -8,7 +8,7 @@
       <h2>{{ post.title }}</h2>
       <p>{{ post.author }}</p>
       <pre>{{ post.content }}</pre>
-      <a v-if="isOwnPost(post.author)" href="#" @click="deletePost(post)">删除</a>
+      <a v-if="isOwnPost(post.userid)" href="#" @click="deletePost(post.id,post.userid)">删除</a>
     </div>
     <br>
     <div class="interactions">
@@ -46,7 +46,7 @@
           <p class="post-value">{{ comment.text }}</p>
           <div class="comment-actions">
             <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.time) }}</p>
-            <a v-if="comment.avatar && isOwnPost(comment.author)" href="#" @click="deleteComment(comment)">删除</a>
+            <a v-if="comment.avatar && isOwnPost(comment.user_id)" href="#" @click="deleteComment(comment)">删除</a>
           </div>
         </div>
       </div>
@@ -67,6 +67,8 @@ const router = useRouter();
 const userStore = useUserStore();
 const liked = ref(false); // 初始点赞状态为未点赞
 const post = ref({
+  id: '',
+  userid: '',
   title: '',
   author: '',
   content: '',
@@ -104,11 +106,13 @@ const getpost= async () => {
         const response = await getpostinfo.getpost(postId.value);
         for (const postinfo of response) {
         // const formattedDate = formatBackendTime(postinfo.published_date);
-        post.value.title = postinfo.heading;
-        post.value.author = postinfo.userName;
-        post.value.content = postinfo.content;
-        post.value.like_num = postinfo.likeNum;
-        post.value.comment_num = postinfo.commentNum;
+        post.value.id = postinfo.postId,
+        post.value.userid = postinfo.userId,
+        post.value.title = postinfo.heading,
+        post.value.author = postinfo.userName,
+        post.value.content = postinfo.content,
+        post.value.like_num = postinfo.likeNum,
+        post.value.comment_num = postinfo.commentNum
     }
       } catch (error) {
         console.error('获取帖子失败：', error);
@@ -203,8 +207,8 @@ const addComment = async () => {
       }
 };
 
-const isOwnPost = (user) => {
-    if(user===userStore.userInfo.User_Name || userStore.userInfo.Role==='Admin')
+const isOwnPost = (userid) => {
+    if( userid.value ===userStore.userInfo.User_Id || userStore.userInfo.Role==='Admin')
       return true
     else 
       return false
@@ -250,8 +254,25 @@ const deleteComment = async (comment) => {
   }
 }
 
-const favoritePost = () => {
-    post.value.favorites++;
+const deletePost = async (postid,userid) => {
+  try {
+    const response = await getpostinfo.deletepost(postid,userid);
+      ElMessage.success({
+      message: '删除成功',
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    // 停顿1秒后跳转
+    setTimeout(() => {
+      router.push('/forum');
+    }, 1000);
+      } catch (error) {
+        console.error('删除失败：', error);
+      // 显示失败提示
+      ElMessage.error({
+      message: '删除失败，错误信息：' + error.message,
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+  }
 };
 </script>
   
