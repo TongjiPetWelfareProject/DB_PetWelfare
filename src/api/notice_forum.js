@@ -38,8 +38,16 @@ export default {
             });
     },
 
+    addcomment(user_id,post_id,added_comment) {
+        return axios
+            .post('/api/addcomment',{user_id,post_id,added_comment})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('评论时出错：' + error.message);
+            })
+    },
+
     postcontent(user_id,post_title,post_content) {
-        console.log({user_id,post_title,post_content})
         return axios
             .post('/api/postcontent',{user_id,post_title,post_content})
             .then((response) => response.data)

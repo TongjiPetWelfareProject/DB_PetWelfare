@@ -53,12 +53,13 @@
 import { ref, watch, onMounted } from 'vue';
 import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
 import { MagicStick,Star } from '@element-plus/icons-vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import getpostinfo from '@/api/notice_forum'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useUserStore } from '@/store/user';
 
 const router = useRouter();
-const route = useRoute();
-
+const userStore = useUserStore();
 const post = ref({
   title: '',
   author: '',
@@ -78,7 +79,6 @@ const comment_contents=ref([{
 
 function formatBackendTime(backendTime) {
   const date = new Date(backendTime);
-
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -102,7 +102,6 @@ const getpost= async () => {
         post.value.content = postinfo.content;
         post.value.like_num = postinfo.likeNum;
         post.value.comment_num = postinfo.commentNum;
-        console.log(post.title)
     }
       } catch (error) {
         console.error('获取帖子失败：', error);
@@ -135,35 +134,57 @@ onMounted(() => {
   getcomment();
 });
 
-const newComment = ref({ author: '', text: '', avatar: './src/photos/默认.jpg' });
-    const showCommentForm = ref(false);
-    
-    const addComment = () => {
-        if (newComment.value.author && newComment.value.text) {
-            post.value.comments++;
-            post.value.comment_contents.push({
-                id: post.value.comment_contents.length + 1,
-                author: newComment.value.author,
-                text: newComment.value.text,
-                avatar: newComment.value.avatar
-            });
-            newComment.value.author = '';
-            newComment.value.text = '';
-            showCommentForm.value = false;
-        }
-    };
-  
-    const showAddComment = () => {
-        showCommentForm.value = true;
-    }
-  
-    const likePost = () => {
-        post.value.likes++;
-    };
-  
-    const favoritePost = () => {
-        post.value.favorites++;
-    };
+const newComment = ref({ author: userStore.userInfo.User_Name, text: '', avatar: './src/photos/阿尼亚.jpg' });
+const showCommentForm = ref(false);
+
+// 这里是原本发布评论后立刻渲染的代码，后面看情况修改
+// const addComment = () => {
+//         if (newComment.value.author && newComment.value.text) {
+//             post.value.comments++;
+//             post.value.comment_contents.push({
+//                 id: post.value.comment_contents.length + 1,
+//                 author: newComment.value.author,
+//                 text: newComment.value.text,
+//                 avatar: newComment.value.avatar
+//             });
+//             newComment.value.author = '';
+//             newComment.value.text = '';
+//             showCommentForm.value = false;
+//         }
+//     };
+
+const addComment = async () => {
+  try {
+    const response = await getpostinfo.addcomment(userStore.userInfo.User_ID,postId.value,newComment.value.text);
+      ElMessage.success({
+      message: '评论成功',
+      duration: 3000 // 持续显示时间（毫秒）
+    });
+    // 停顿3秒后刷新
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
+      } catch (error) {
+        console.error('评论失败：', error);
+            // 显示失败提示
+      ElMessage.error({
+      message: '评论失败，错误信息：' + error.message,
+      duration: 3000 // 持续显示时间（毫秒）
+    });
+      }
+};
+
+const showAddComment = () => {
+    showCommentForm.value = true;
+}
+
+const likePost = () => {
+    post.value.likes++;
+};
+
+const favoritePost = () => {
+    post.value.favorites++;
+};
 </script>
   
 <style scoped>
