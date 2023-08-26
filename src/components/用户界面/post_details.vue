@@ -38,7 +38,7 @@
       </div>
       <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ post.comment_num }}</h3>
       <p>  </p>
-      <div v-for="comment in comment_contents" :key="comment.id" class="comment">
+      <div v-for="comment in sortedComments" :key="comment.id" class="comment">
         <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
         <div class="comment-content">
           <p class="post-label">{{ comment.author }}</p>
@@ -50,7 +50,7 @@
   </template>
   
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted,computed } from 'vue';
 import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
 import { MagicStick,Star } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
@@ -127,6 +127,14 @@ const getcomment= async () => {
       }
     };
 
+const sortedComments = computed(() => {
+  return comment_contents.value.slice().sort((a, b) => {
+    const dateA = new Date(a.time);
+    const dateB = new Date(b.time);
+    return dateB - dateA;
+  });
+});
+
 const getiflike= async () => {
   try {
       const response = await getpostinfo.iflike(userStore.userInfo.User_ID,postId.value);
@@ -172,12 +180,12 @@ const addComment = async () => {
     const response = await getpostinfo.addcomment(userStore.userInfo.User_ID,postId.value,newComment.value.text);
       ElMessage.success({
       message: '评论成功',
-      duration: 3000 // 持续显示时间（毫秒）
+      duration: 1000 // 持续显示时间（毫秒）
     });
     // 停顿3秒后刷新
     setTimeout(() => {
       location.reload();
-    }, 3000);
+    }, 1000);
       } catch (error) {
         console.error('评论失败：', error);
             // 显示失败提示
