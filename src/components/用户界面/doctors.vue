@@ -61,9 +61,11 @@
 
 <script>
 import medical_donate from '@/api/medical_donate';
-import{defineComponent, ref, onMounted }from 'vue';
+import { defineComponent, ref, onMounted }from 'vue';
 import { useRouter } from 'vue-router';
-import {Select} from '@element-plus/icons-vue'
+import { Select } from '@element-plus/icons-vue'
+import { useUserStore } from '@/store/user';
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default defineComponent({
   setup() {
@@ -82,9 +84,18 @@ export default defineComponent({
     //   }
     // });
     const router = useRouter();
-
+    const userStore = useUserStore();
     const goToReservationPage = () => {
-      router.push('/reservationdoctor');
+      if (userStore.userInfo.User_ID) {
+        router.push('/reservationdoctor');
+      } else {
+        // 用户未登录，跳转到 /login
+         ElMessage({
+          message: '请先登录',
+          type: 'warning',
+        });
+        router.push('/login');
+      }
     };
 
     return {
