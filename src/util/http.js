@@ -19,7 +19,7 @@ httpInstance.interceptors.response.use(res => res.data,e =>{
     // 统一错误提示
     ElMessage({
         type:'warning',
-        message:e.response.data
+        message:'服务器错误'
     })
     return Promise.reject(e)
 })
