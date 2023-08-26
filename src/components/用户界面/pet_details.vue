@@ -4,7 +4,7 @@ import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
 
 import { useUserStore } from '@/store/user';
 import { useRoute, useRouter } from 'vue-router'
-import petadopt from '@/api/pet_adopt'
+import getpetinfo from '@/api/pet_adopt'
 
 const images = [//等后端图片，后期去掉
 './src/components/photos/pet1.jpg',
@@ -19,17 +19,22 @@ const router = useRouter();
 const route = useRoute();
 
 const pet = ref([]); // 单个宠物信息
+const petId = ref('');//应将petId定义在更广阔的作用域内，onMounted之外，访问响应式数据时需要使用.value
 
-const getPetDetails = async (petId) => {
+// 在组件加载时调用 getPetDetails 方法，传入宠物的 ID
+onMounted(() => {
+  petId.value = route.params.id; // 从路由参数中获取宠物的 ID
+  console.log(petId.value);//成功
+  getPetDetails(petId.value);
+  getcomment();
+  getiflike();
+  getiffavorite();
+});
+
+const getPetDetails = async (PID) => {
   try {
-    const response = await petadopt.getPetDetails(petId); // 假设有一个获取单个宠物信息的 API
+    const response = await getpetinfo.getPetDetails(PID); // 假设有一个获取单个宠物信息的 API
     console.log(response);
-    /*let gender = '';
-    if (response.sex === 'M') {
-      gender = '弟弟';
-    } else if (response.SEX === 'F') {
-      gender = '妹妹';
-    }*/
 
     let species = '';
     if (response.original_pet.Species === 'cat') {
@@ -57,7 +62,7 @@ const getPetDetails = async (petId) => {
       vaccine: response.original_pet.Vaccine,
       read_num:response.original_pet.Read_Num,
       like_num: response.original_pet.Like_Num,
-      collect_num: response.original_pet.Collect_Num,
+      favorite_num: response.original_pet.Collect_Num,
       comment_num: response.Comment_Num,
       image: images[0]//等后端图片，后期修改
     };
@@ -65,13 +70,6 @@ const getPetDetails = async (petId) => {
     console.error('获取宠物信息时出错：', error);
   }
 };
-
-// 在组件加载时调用 getPetDetails 方法，传入宠物的 ID
-onMounted(() => {
-  const petId = route.params.id; // 从路由参数中获取宠物的 ID
-  console.log(petId);//成功
-  getPetDetails(petId);
-});
 
 
 const handleApplyForAdopt = () => {
@@ -97,7 +95,16 @@ const newComment = ref({ author: '', text: '', avatar: '@/photos/汤姆1.jpg' })
 newComment.value.author = '某某某';
 const showCommentForm = ref(false);
 
-const addComment = () => {
+const comment_contents=ref([{  
+   id: '', 
+   user_id: '',
+   author: '', 
+   text: '', 
+   avatar: '',
+   time:''
+}])
+
+/*const addComment = () => {
 if (newComment.value.text) {
     pet.comment_num++;
     pet.comment.push({
@@ -139,6 +146,141 @@ const favoritePet = async() => {
       await petadopt.submitFavorite(userStore.userInfo, pet, pet.collect_num);
     }
   }
+};*/
+
+const addComment = async () => {
+  try {
+    const response = await getpetinfo.addcomment(userStore.userInfo.User_ID,petId,newComment.value.text);
+      ElMessage.success({
+      message: '评论成功',
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    // 停顿3秒后刷新
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+      } catch (error) {
+        console.error('评论失败：', error);
+      // 显示失败提示
+      ElMessage.error({
+      message: '评论失败，错误信息：' + error.message,
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+      }
+};
+
+const isOwnPost = (UID) => {
+    if( UID === userStore.userInfo.User_ID || userStore.userInfo.Role==='Admin')
+      return true
+    else 
+      return false
+}
+
+const showAddComment = () => {
+    showCommentForm.value = true;
+}
+
+const liked = ref(false);
+const likePet = async () => {
+    console.log("点击点赞了")
+    liked.value = liked.value === true ? false : true;
+    if(liked.value === false)
+      pet.value.like_num--
+    else
+      pet.value.like_num++
+    try {
+      const response = await getpetinfo.likepet(userStore.userInfo.User_ID,petId);
+    } catch (error) {
+      console.error('获取点赞信息失败：', error);
+    }
+};
+
+const favorited = ref(false);
+const favoritePet = async () => {
+    console.log("点击点赞了")
+    favorited.value = favorited.value === true ? false : true;
+    if(favorited.value === false)
+      pet.value.favorite_num--
+    else
+      pet.value.favorite_num++
+    try {
+      const response = await getpetinfo.likepet(userStore.userInfo.User_ID,petId);
+    } catch (error) {
+      console.error('获取点赞信息失败：', error);
+    }
+};
+
+const getcomment= async () => {
+    try {
+        const response = await getpetinfo.getComment(petId);
+        for (const postcomment of response) {
+            // const formattedDate = formatBackendTime(postinfo.published_date);
+            comment_contents.value.push({
+            id: postcomment.pid,
+            user_id: postcomment.uid,
+            author: postcomment.user_Name,
+            text: postcomment.content,
+            time: postcomment.comment_Time,
+            avatar:'./src/photos/阿尼亚.jpg'
+          });
+        }
+      } catch (error) {
+        console.error('获取评论失败：', error);
+      }
+    };
+
+const sortedComments = computed(() => {
+  return comment_contents.value.slice().sort((a, b) => {
+    const dateA = new Date(a.time);
+    const dateB = new Date(b.time);
+    return dateB - dateA;
+  });
+});
+
+const deleteComment = async (comment) => {
+  try {
+    console.log("删除时间为"+comment.time+"的帖子")
+    const response = await getpostinfo.deletecomment(comment.user_id,comment.id,comment.time);
+      ElMessage.success({
+      message: '删除成功',
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    // 停顿3秒后刷新
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+      } catch (error) {
+        console.error('删除失败：', error);
+      // 显示失败提示
+      ElMessage.error({
+      message: '删除失败，错误信息：' + error.message,
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+  }
+}
+
+const getiflike= async () => {
+  try {
+      const response = await getpetinfo.ifLike(userStore.userInfo.User_ID,petId);
+      if(response === -1)
+        liked.value = false
+      else
+        liked.value = true
+    } catch (error) {
+      console.error('获取点赞信息失败：', error);
+    }
+};
+
+const getiffavorite= async () => {
+  try {
+      const response = await getpetinfo.ifFavorite(userStore.userInfo.User_ID,petId);
+      if(response === -1)
+        favorited.value = false
+      else
+        favorited.value = true
+    } catch (error) {
+      console.error('获取收藏信息失败：', error);
+    }
 };
 
 </script>
@@ -319,6 +461,27 @@ const favoritePet = async() => {
     background-color: #396097; /* 鼠标悬停时的背景颜色 */
     color: white; /* 鼠标悬停时的字体颜色 */
   }
+
+  .post-label {
+    font-weight: bold; /* 设置标签的字体为粗体 */
+    color: #000; /* 设置标签的文字颜色 */
+    font-size: 15px;
+  }
+
+  .post-value {
+      font-weight: normal; /* 设置数值的字体为普通（非粗体） */
+      color: #666; /* 设置数值的文字颜色 */
+  }
+
+  .custom-comment-time {
+    font-size: 12px; /* Adjust the font size */
+    color: #999; /* Adjust the text color to a lighter gray */
+  }
+  .comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 调整日期和链接之间的间距 */
+  }
   </style>
 
 
@@ -407,12 +570,11 @@ const favoritePet = async() => {
           <img v-if="favorited" src="@/photos/favorite_blue.png" alt="收藏" class="icon">
           <img v-else src="@/photos/favorite_grey.png" alt="未收藏" class="icon">
         </button>
-        <span>{{ pet.collect_num }}</span>
+        <span>{{ pet.favorite_num }}</span>
       </div>
     </div>
 
     <div class="comment-part">
-      <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
       <div class="comment-form">
         <div class="comment-input">
           <el-input v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
@@ -421,12 +583,17 @@ const favoritePet = async() => {
           <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
         </div>
       </div>
-      <p>  </p>
-      <div v-for="comment in pet.comment_contents" :key="comment.id" class="comment">
-        <el-avatar :src="comment.avatar" :size="50"></el-avatar>
+      <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
+      <p></p>
+      <div v-for="comment in sortedComments" :key="comment.id" class="comment">
+        <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
         <div class="comment-content">
-            <p class="comment-label">{{ comment.author }}</p>
-            <p class="comment-value">{{ comment.text }}</p>
+          <p class="post-label">{{ comment.author }}</p>
+          <p class="post-value">{{ comment.text }}</p>
+          <div class="comment-actions">
+            <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.time) }}</p>
+            <a v-if="comment.avatar && isOwnPost(comment.user_id)" href="#" @click="deleteComment(comment)">删除</a>
+          </div>
         </div>
       </div>
     </div>

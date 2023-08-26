@@ -1,77 +1,134 @@
 <template>
-<el-dropdown class="my-trigger" trigger="click">
-    <span>
-       品种 
-          <el-icon >
-        <ArrowDownBold />
-      </el-icon>
-    </span>
-
-    <template #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item>猫猫</el-dropdown-item>
-        <el-dropdown-item>狗狗</el-dropdown-item>
-      </el-dropdown-menu>
-    </template>
-  </el-dropdown>
-
-
-  <el-dropdown class="my-trigger" style="margin-left: 20px;" trigger="click">
-    <span  >
-       接种情况
-       <el-icon><CaretBottom /></el-icon>
-    </span>
-    <template #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item>已接种</el-dropdown-item>
-        <el-dropdown-item>未接种</el-dropdown-item>
-      </el-dropdown-menu>
-    </template>
-  </el-dropdown>
-
-
-  <el-row :gutter="20" style="margin-top: 20px;">
-    <el-col :span="6">
-<petcardnew :petInfo.name="petName" :petInfo.breed="petBreed" :petInfo.age="petAge" :petInfo.image-path="petImagePath"/>
-</el-col>
- <el-col :span="6"><petcardnew :name="petName" :breed="petBreed" :age="petAge" :imagePath="petImagePath"/></el-col>
- <el-col :span="6"><petcardnew :name="petName" :breed="petBreed" :age="petAge" :imagePath="petImagePath"/></el-col>
- <el-col :span="6"><petcardnew :name="petName" :breed="petBreed" :age="petAge" :imagePath="petImagePath"/></el-col>
-  </el-row>
-  
+      <el-table :data="pets" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
+        max-height="500">
+        <el-table-column label="宠物ID" prop="id" width=100></el-table-column>
+        <el-table-column label="宠物名" prop="petname" width=100></el-table-column>
+        <el-table-column label="种类" prop="breed" width="100"></el-table-column>
+        <el-table-column label="年龄" prop="age" width="50"></el-table-column>
+        <el-table-column label="性别" prop="sex" width="50"></el-table-column>
+        <el-table-column label="人气" prop="popularity" width="50"></el-table-column>
+        <el-table-column label="健康状况" prop="health" width="100"></el-table-column>
+        <el-table-column label="疫苗状况" prop="vaccine" width="100"></el-table-column>
+        <el-table-column label="归属" prop="from" width="100"></el-table-column>
+        <el-table-column label="操作" width="250">
+          <template #default="scope">
+                <el-button link type="primary" size="small" @click.prevent="editRow(scope.$index)">
+                    编辑
+                </el-button>
+                <el-button link type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
+                    删除
+                </el-button>
+            </template>
+        </el-table-column>
+      </el-table>
+    <br />
+    <el-button type="primary" @click="addRow">添加宠物</el-button>
 </template>
 
-<script>
-import petcardnew from './petcardnew.vue'
-import {
- ArrowDown,ArrowDownBold,CaretBottom
-} from '@element-plus/icons-vue'
-export default {
-  components: {
-    petcardnew
-  },
-  data() {
-    return {
-      petName: 'Tom',
-      petBreed: 'Cat',
-      petAge: 3,
-      petImagePath: 'bomei.jpg'
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import petcard from '@/api/cw_yh_yl_jk'
+
+const pets = ref([])
+const getPetList = async () => {
+  try {
+    const response = await petcard.getPetList();
+    for (const adoptpet of response) {
+      console.log(adoptpet.PET_NAME)
+      pets.value.push({
+        id: adoptpet.PET_ID,
+        petname: adoptpet.PET_NAME,
+        breed: adoptpet.SPECIES,
+        sex: adoptpet.SEX,
+        age: adoptpet.AGE,
+        popularity: adoptpet.POPULARITY,
+        health: adoptpet.HEALTH_STATE,
+        vaccine: adoptpet.VACCINE,
+      });
     }
-  },
-  methods: {
-    viewPetInfo() {
-      this.showText=!this.showText
-    }
+  } catch (error) {
+    console.error('获取所有宠物数据时出错：', error);
   }
 };
-</script>
 
-<style>
-.image {
-  margin-top: 10px;
-  margin-left:10px;
-  min-width: 200px;
-  display: block;
-  min-height:270px
+
+onMounted(() => {
+  getPetList();
+});
+
+const changePetInfo = (petData) => {
+  console.log('submit!');
+  ElMessageBox.confirm(
+      '确定要禁言该用户吗？',
+      '确认',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }
+    )
+    .then(() => {
+        console.log("success");
+        petcard.changePetInfo(petData.id)
+              .then(response => {
+                // 处理后端返回的响应
+                ElMessage({
+                  type: 'success',
+                  message: '提交成功',
+                });
+              })
+              .catch(error => {
+                // 处理错误
+                ElMessage({
+                  type: 'error',
+                  message: '提交失败',
+                });
+              });
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消提交',
+        })
+      })
 }
-</style>
+
+const deletePetInfo = (petData) => {
+  console.log('submit!');
+  ElMessageBox.confirm(
+      '确定要禁言该用户吗？',
+      '确认',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }
+    )
+    .then(() => {
+        console.log("success");
+        petcard.deletePetInfo(petData.id)
+              .then(response => {
+                // 处理后端返回的响应
+                ElMessage({
+                  type: 'success',
+                  message: '提交成功',
+                });
+              })
+              .catch(error => {
+                // 处理错误
+                ElMessage({
+                  type: 'error',
+                  message: '提交失败',
+                });
+              });
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消提交',
+        })
+      })
+}
+</script>

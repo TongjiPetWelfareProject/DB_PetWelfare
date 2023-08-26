@@ -7,13 +7,15 @@
     </el-button-group>
     <el-table :data="filteredData" :default-sort="{ prop: 'medicalDate', order: 'descending' }"
       style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
-      <el-table-column prop="petId" label="宠物ID" width="170">
+      <el-table-column prop="petId" label="宠物ID" width="100">
       </el-table-column>
-      <el-table-column prop="doctorId" label="医生ID" width="170">
+      <el-table-column prop="doctorId" label="医生ID" width="100">
       </el-table-column>
-      <el-table-column prop="medicalDate" label="医疗时间" sortable width="120">
+      <el-table-column prop="reserveTime" label="预约时间" sortable width="120">
       </el-table-column>
-      <el-table-column prop="medicalContent" label="医疗内容" width="250">
+      <el-table-column prop="treatTime" label="看病时间" sortable width="120">
+      </el-table-column>
+      <el-table-column prop="category" label="医疗内容" width="250">
       </el-table-column>
       <el-table-column label="操作" width="200">
         <template #default="scope">
@@ -47,8 +49,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElTag } from 'element-plus'
+import tableData from '@/api/cw_yh_yl_jk'
 
 interface MedicalRecord {
   petId: string
@@ -57,37 +60,27 @@ interface MedicalRecord {
   medicalContent: string
   tag: string
 }
+const treatments = ref([])
+const getTreatList = async () => {
+  try {
+    const response = await tableData.getTreatList();
+    for (const treatment of response) {
+      treatments.value.push({
+        pid: treatment.PET_ID,
+        vid: treatment.VET_ID,
+        reserveTime: treatment.RESERVE_TIME,
+        treatTime: treatment.TREAT_TIME,
+        category: treatment.CATEGORY,
+      });
+    }
+  } catch (error) {
+    console.error('获取医疗列表时出错：', error);
+  }
+};
 
-const tableData = ref<MedicalRecord[]>([
-  {
-    petId: '001',
-    doctorId: '001',
-    medicalDate: '2022-12-25',
-    medicalContent: '宠物接受一次常规体检',
-    tag: '记录',
-  },
-  {
-    petId: '002',
-    doctorId: '002',
-    medicalDate: '2023-01-06',
-    medicalContent: '宠物感冒，需要服用药物',
-    tag: '申请',
-  },
-  {
-    petId: '003',
-    doctorId: '003',
-    medicalDate: '2023-03-14',
-    medicalContent: '宠物骨折，需要进行手术治疗',
-    tag: '记录',
-  },
-  {
-    petId: '004',
-    doctorId: '004',
-    medicalDate: '2023-05-21',
-    medicalContent: '宠物接种疫苗',
-    tag: '申请',
-  },
-])
+onMounted(() => {
+  getTreatList();
+});
 
 const selectedTag = ref('全部')
 

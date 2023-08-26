@@ -12,6 +12,36 @@ export default {
             });
     },
 
+    /*fetchPetRecords() {
+        return axios.get('/api/petlist')
+            .then(response => {
+            return response.data;
+            })
+            .catch(error => {
+            throw error;
+            });
+    },*/
+
+    getPetList() {
+        return axios.get('/api/petlist')
+          .then(response => {
+            return response.data;
+          })
+          .catch(error => {
+            throw error;
+          });
+      },
+
+    getTreatList() {
+        return axios.get('/api/treatlist')
+            .then(response => {
+            return response.data;
+            })
+            .catch(error => {
+            throw error;
+            });
+    },
+
     banUser(id) {
         const UID = {
             id: id
@@ -62,5 +92,5 @@ export default {
             .catch(error => {
             throw error;
             });
-    }
+    },
 }

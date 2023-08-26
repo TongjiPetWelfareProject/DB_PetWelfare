@@ -11,6 +11,7 @@ export default{
         throw error;
       });
   },
+
   getPetDetails(PID) {
     return axios.get(`/api/pet-details/${PID}`)
       .then(response => {
@@ -21,7 +22,15 @@ export default{
       });
   },
 
-  submitCollect(UID, PID) {
+  ifFavorite(UID, PID) {
+    return axios.post('/api/iffavoritepet',{UID, PID})
+      .then((response) => response.data)
+      .catch(error => {
+          throw new Error('获取用户对宠物点赞数据时出错：' + error.message);
+      });
+  },
+
+  submitFavorite(UID, PID) {
     const submitFavoriteData = {
       user: UID,
       pet: PID,
@@ -32,11 +41,11 @@ export default{
         return response.data; // 你可能希望在这里返回响应数据
       })
       .catch(error => {
-        throw error;
+        throw new Error('提交点赞数据时出错：' + error.message);
       });
   },
 
- cancelCollect(UID, PID) {
+  cancelFavorite(UID, PID) {
     const cancelFavoriteData = {
       user: UID,
       pet: PID,
@@ -47,7 +56,7 @@ export default{
         return response.data; // 你可能希望在这里返回响应数据
       })
       .catch(error => {
-        throw error;
+        throw new Error('提交取消点赞数据时出错：' + error.message);
       });
   },
 
@@ -63,6 +72,14 @@ export default{
       })
       .catch(error => {
         throw error;
+      });
+  },
+
+  ifLike(UID, PID) {
+    return axios.post('/api/iflikepet',{UID, PID})
+      .then((response) => response.data)
+      .catch(error => {
+          throw new Error('点赞帖子数据时出错：' + error.message);
       });
   },
 
@@ -120,7 +137,7 @@ export default{
       });
   },
 
-  getCommentList(PID) {
+  getComment(PID) {
     return axios.get(`/api/comment-list/${PID}`)
     .then(response => {
       return response.data;
