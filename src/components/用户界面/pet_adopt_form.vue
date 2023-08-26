@@ -106,6 +106,21 @@ const form = reactive({
   accept_vis: true,
 })
 
+function toBoolean(value) {
+  // 在这里编写映射逻辑，将输入值映射为布尔值
+  // 你可以根据需要在这里添加更多的映射规则
+  // 返回布尔值 true 或 false
+  return value === '是' || value === '男'; // 例如，将字符串 "是" 映射为 true，其他值映射为 false
+}
+
+function mapToBoolean(form) {
+  form.gender = toBoolean(form.gender);
+  form.long_term_care = toBoolean(form.long_term_care);
+  form.w_to_treat = toBoolean(form.w_to_treat);
+  form.be_children = toBoolean(form.be_children);
+  form.accept_vis = toBoolean(form.accept_vis);
+}
+
 /*const getPetDetailsLink = () => {
     // 使用你的路由库来生成动态路由链接
     // 这里使用 Vue Router 的方式来生成链接
@@ -117,6 +132,7 @@ const form = reactive({
 
 const onSubmit = () => {
   console.log('submit!');
+  mapToBoolean(form);
   console.log(form);
   ElMessageBox.confirm(
       '点击确认将提交申请，要继续吗？',
