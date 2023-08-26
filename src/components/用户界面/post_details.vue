@@ -43,9 +43,9 @@
   <div class="comment-content">
     <p class="post-label">{{ comment.author }}</p>
     <p class="post-value">{{ comment.text }}</p>
-    <div class="comment-actions" v-if="comment.avatar && isOwnPost(comment.author)">
+    <div class="comment-actions">
       <p class="comment-time custom-comment-time">{{ comment.time }}</p>
-      <a href="#" @click="deleteComment(comment)">删除</a>
+      <a  v-if="comment.avatar && isOwnPost(comment.author)" href="#" @click="deleteComment(comment)">删除</a>
     </div>
   </div>
 </div>
@@ -255,11 +255,11 @@ const favoritePost = () => {
 }
 
 .interactions {
-display: flex;
-justify-content: center;
-align-items: center;
-gap: 1rem;
-margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .interactions span {
@@ -355,4 +355,4 @@ margin-left: 10px;
   align-items: center;
   gap: 10px; /* 调整日期和链接之间的间距 */
 }
-  </style>
+</style>
