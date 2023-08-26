@@ -208,12 +208,11 @@ const addComment = async () => {
 };
 
 const isOwnPost = (userid) => {
-    if( userid === userStore.userInfo.User_ID || userStore.userInfo.Role==='Admin'){
+    if( userid === userStore.userInfo.User_ID || userStore.userInfo.Role==='Admin')
       return true
-    }
-    else {
+    else 
       return false
-}}
+}
 
 const showAddComment = () => {
     showCommentForm.value = true;

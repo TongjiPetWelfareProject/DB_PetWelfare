@@ -18,7 +18,7 @@
 
 
 <script>
-import {  ref,onMounted} from 'vue'
+import {  ref,onMounted } from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
 import sh_fj_jk from '@/api/sh_fj_jk'
 
@@ -29,14 +29,7 @@ export default {
   },
   setup() {
     const tableRef = ref(null)
-    const tableData = ref([
-      //{ postId: "001", employeeId: '1001', postTime: '2021-10-01', content: '帖子内容1' },
-      //{ postId: "002", employeeId: '1002', postTime: '2021-10-02', content: '帖子内容2' },
-      //{ postId: "003", employeeId: '1003', postTime: '2021-10-03', content: '帖子内容3' },
-      //{ postId: "004", employeeId: '1004', postTime: '2021-10-04', content: '帖子内容4' },
-      //{ postId: "005", employeeId: '1005', postTime: '2021-10-05', content: '帖子内容5' },
-    ])
-
+    const tableData = ref([])
     const handleSelectionChange = (selectedItems) => {
       console.log(selectedItems)
     }
@@ -60,6 +53,7 @@ export default {
 
       try {
         await sh_fj_jk.updateCheckInfoAPI(infoToUpdate);
+        refreshTableData();
       } catch (error) {
         console.error('更新数据时出错：', error);
         infoToUpdate.censor_status = 'to be censored';
@@ -72,11 +66,22 @@ export default {
 
       try {
         await sh_fj_jk.updateCheckInfoAPI(infoToUpdate);
+        refreshTableData();
       } catch (error) {
         console.error('更新数据时出错：', error);
         infoToUpdate.censor_status = 'to be censored';
       }
     }
+
+    const refreshTableData = async () => {
+      // 在这里获取新的表格数据
+      try {
+        const records = await sh_fj_jk.getCheckAPI();
+        tableData.value = records;
+      } catch (error) {
+        console.error('获取数据时出错：', error);
+      }
+    };
 
     return {
       tableRef,
@@ -85,6 +90,7 @@ export default {
       sortTime,
       approveApplication,
       rejectApplication,
+      refreshTableData
     }
   }
 }
