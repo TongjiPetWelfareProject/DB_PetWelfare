@@ -39,12 +39,16 @@
       <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ post.comment_num }}</h3>
       <p>  </p>
       <div v-for="comment in sortedComments" :key="comment.id" class="comment">
-        <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
-        <div class="comment-content">
-          <p class="post-label">{{ comment.author }}</p>
-          <p class="post-value">{{ comment.text }}</p>
-        </div>
-      </div>
+  <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
+  <div class="comment-content">
+    <p class="post-label">{{ comment.author }}</p>
+    <p class="post-value">{{ comment.text }}</p>
+    <div class="comment-actions" v-if="comment.avatar && isOwnPost(comment.author)">
+      <p class="comment-time custom-comment-time">{{ comment.time }}</p>
+      <a href="#" @click="deleteComment(comment)">删除</a>
+    </div>
+  </div>
+</div>
     </div>
   </div>
   </template>
@@ -118,7 +122,7 @@ const getcomment= async () => {
             id: postcomment.pid,
             author: postcomment.user_Name,
             text: postcomment.content,
-            time: postcomment.comment_Time,
+            time: formatBackendTime(postcomment.comment_Time),
             avatar:'./src/photos/阿尼亚.jpg'
           });
         }
@@ -188,13 +192,20 @@ const addComment = async () => {
     }, 1000);
       } catch (error) {
         console.error('评论失败：', error);
-            // 显示失败提示
+      // 显示失败提示
       ElMessage.error({
       message: '评论失败，错误信息：' + error.message,
       duration: 3000 // 持续显示时间（毫秒）
     });
       }
 };
+
+const isOwnPost = (comment_user) => {
+    if(comment_user===userStore.userInfo.User_Name || userStore.userInfo.Role==='Admin')
+      return true
+    else 
+      return false
+}
 
 const showAddComment = () => {
     showCommentForm.value = true;
@@ -220,119 +231,128 @@ const favoritePost = () => {
 </script>
   
 <style scoped>
-    .postdetail {
-        margin: 0 auto; /* 水平居中 */
-        margin-bottom: 20px;
-        width: 70%;
-    }
-
-    .round-button {
-        border-radius: 20%; /* 圆形按钮 */
-        border: none; /* 去掉按钮边框 */
-        background-color: transparent; /* 设置背景颜色为透明 */
-        cursor: pointer; /* 显示指针形式 */
-    }
-
-    .round-button img {
-        vertical-align: middle;
-    }
-
-    .icon {
-        vertical-align: middle;
-        width: 30px; /* 调整图片宽度 */
-        height: 30px; /* 调整图片高度 */
-    }
-
-    .interactions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    }
-
-    .interactions span {
-    margin-left: 0.5rem;
-    }
-
-
-    .comment-part {
-    margin-left: auto;
-    margin-right: auto;
+.postdetail {
+    margin: 0 auto; /* 水平居中 */
+    margin-bottom: 20px;
     width: 70%;
-    }
+}
 
-    .comment {
-    display: flex;
-    }
+.round-button {
+    border-radius: 20%; /* 圆形按钮 */
+    border: none; /* 去掉按钮边框 */
+    background-color: transparent; /* 设置背景颜色为透明 */
+    cursor: pointer; /* 显示指针形式 */
+}
 
-    .comment-content {
-    margin-left: 10px;
-    }
-    
-    .comment-form {
-      display: flex;
-      align-items: center; /* 垂直居中对齐 */
-    }
+.round-button img {
+    vertical-align: middle;
+}
 
-    .comment-input {
-      flex: 1; /* 评论输入框占据剩余空间 */
-      margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
-    }
-    .post-label {
-        font-weight: bold; /* 设置标签的字体为粗体 */
-        color: #000; /* 设置标签的文字颜色 */
-        font-size: 15px;
-    }
+.icon {
+    vertical-align: middle;
+    width: 30px; /* 调整图片宽度 */
+    height: 30px; /* 调整图片高度 */
+}
 
-    .post-value {
-        font-weight: normal; /* 设置数值的字体为普通（非粗体） */
-        color: #666; /* 设置数值的文字颜色 */
-    }
+.interactions {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 1rem;
+margin-bottom: 1rem;
+}
 
-    .modern-button {
-        font-weight: bold; /* 设置标签的字体为粗体 */
-        background-color: #4b6fa5; /* 背景颜色 */
-        color: white; /* 字体颜色 */
-        font-size: 24px; /* 字体大小 */
-        border: none; /* 去掉边框 */
-        border-radius: 10px; /* 圆角减小 */
-        padding: 10px 20px; /* 减小按钮内边距 */
-        cursor: pointer; /* 鼠标悬停时显示手型光标 */
-        transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
-    }
-  
-    .postdetail h2 {
-        font-weight: bold;
-        color: #4b6fa5;
-        font-size: 32px;
-    }
-    .postdetail h3 {
-        margin-top: 5vh;
-        font-weight: bold;
-        color: #4b6fa5;
-        font-size: 27px;
-    }
-    .postdetail p{
-        font-size: 20px;
-        color:#737474
-  
-    }
-    .postdetail pre {
-        font-family: monospace;
-        color:#424242;
-        font-size: 16px;
-        line-height: 1.7;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        background-color: #f5f5f5;
-        padding: 1rem;
-        border-radius: 10px;
-    }
-    .postdetail p1{
-        font-size: 19px;
-    }
-    .postdetail p2{
-        font-size: 16px;
-    }
+.interactions span {
+margin-left: 0.5rem;
+}
+
+
+.comment-part {
+margin-left: auto;
+margin-right: auto;
+width: 70%;
+}
+
+.comment {
+display: flex;
+}
+
+.comment-content {
+margin-left: 10px;
+}
+
+.comment-form {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+}
+
+.comment-input {
+  flex: 1; /* 评论输入框占据剩余空间 */
+  margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
+}
+.post-label {
+    font-weight: bold; /* 设置标签的字体为粗体 */
+    color: #000; /* 设置标签的文字颜色 */
+    font-size: 15px;
+}
+
+.post-value {
+    font-weight: normal; /* 设置数值的字体为普通（非粗体） */
+    color: #666; /* 设置数值的文字颜色 */
+}
+
+.modern-button {
+    font-weight: bold; /* 设置标签的字体为粗体 */
+    background-color: #4b6fa5; /* 背景颜色 */
+    color: white; /* 字体颜色 */
+    font-size: 24px; /* 字体大小 */
+    border: none; /* 去掉边框 */
+    border-radius: 10px; /* 圆角减小 */
+    padding: 10px 20px; /* 减小按钮内边距 */
+    cursor: pointer; /* 鼠标悬停时显示手型光标 */
+    transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+}
+
+.postdetail h2 {
+    font-weight: bold;
+    color: #4b6fa5;
+    font-size: 32px;
+}
+.postdetail h3 {
+    margin-top: 5vh;
+    font-weight: bold;
+    color: #4b6fa5;
+    font-size: 27px;
+}
+.postdetail p{
+    font-size: 20px;
+    color:#737474
+
+}
+.postdetail pre {
+    font-family: monospace;
+    color:#424242;
+    font-size: 16px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    padding: 1rem;
+    border-radius: 10px;
+}
+.postdetail p1{
+    font-size: 19px;
+}
+.postdetail p2{
+    font-size: 16px;
+}
+.custom-comment-time {
+  font-size: 12px; /* Adjust the font size */
+  color: #999; /* Adjust the text color to a lighter gray */
+}
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 调整日期和链接之间的间距 */
+}
   </style>
