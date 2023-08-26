@@ -38,7 +38,7 @@
       </div>
       <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ post.comment_num }}</h3>
       <p>  </p>
-      <div v-for="comment in post.comment_contents" :key="comment.id" class="comment">
+      <div v-for="comment in comment_contents" :key="comment.id" class="comment">
         <el-avatar :src="comment.avatar" :size="50"></el-avatar>
         <div class="comment-content">
             <p class="post-label">{{ comment.author }}</p>
@@ -50,40 +50,45 @@
   </template>
   
 <script setup>
-    import { ref, watch, onMounted } from 'vue';
-    import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
-    import { MagicStick,Star } from '@element-plus/icons-vue'
-    import { useRoute, useRouter } from 'vue-router'
-    import getpostinfo from '@/api/notice_forum'
+import { ref, watch, onMounted } from 'vue';
+import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
+import { MagicStick,Star } from '@element-plus/icons-vue'
+import { useRoute, useRouter } from 'vue-router'
+import getpostinfo from '@/api/notice_forum'
 
-    const router = useRouter();
-    const route = useRoute();
+const router = useRouter();
+const route = useRoute();
 
-    const post = ref({
-        title: '',
-        author: '',
-        content: '',
-        like_num: 0,
-        comment_num: 0,
-        collect_num: 0,
-        comment_contents: [
-        { id: '', author: '', text: '', avatar: './src/photos/阿尼亚.jpg' }
-        ]
-    });
-  
-    function formatBackendTime(backendTime) {
-      const date = new Date(backendTime);
+const post = ref({
+  title: '',
+  author: '',
+  content: '',
+  like_num: 0,
+  comment_num: 0,
+  collect_num: 0,
+});
 
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
+const comment_contents=ref([{  
+   id: '', 
+   author: '', 
+   text: '', 
+   avatar: '',
+   time:''
+}])
 
-      const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      return formattedTime;
-    }
+function formatBackendTime(backendTime) {
+  const date = new Date(backendTime);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return formattedTime;
+}
 
 const postId = ref('')
 
@@ -104,11 +109,30 @@ const getpost= async () => {
       }
     };
 
+const getcomment= async () => {
+    try {
+        const response = await getpostinfo.getcomment(postId.value);
+        for (const postcomment of response) {
+            // const formattedDate = formatBackendTime(postinfo.published_date);
+            comment_contents.value.push({
+            id: postcomment.pid,
+            author: postcomment.user_Name,
+            text: postcomment.content,
+            time: postcomment.comment_Time,
+            avatar:'./src/photos/阿尼亚.jpg'
+          });
+        }
+      } catch (error) {
+        console.error('获取帖子失败：', error);
+      }
+    };
+
 onMounted(() => {
   // 从路由的 query 参数中获取 post_id
   postId.value = router.currentRoute.value.query.post_id;
   console.log('当前帖子ID:', postId.value);
   getpost();
+  getcomment();
 });
 
 const newComment = ref({ author: '', text: '', avatar: './src/photos/默认.jpg' });

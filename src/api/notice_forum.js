@@ -29,6 +29,15 @@ export default {
             });
     },
 
+    getcomment(post_id) {
+        return axios
+            .post('/api/postcomment',{post_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取帖子数据时出错：' + error.message);
+            });
+    },
+
     postcontent(user_id,post_title,post_content) {
         console.log({user_id,post_title,post_content})
         return axios
