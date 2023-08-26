@@ -3,9 +3,9 @@
     <el-table :data="tableData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
       <el-table-column prop="date" label="时间" sortable width="120">
       </el-table-column>
-      <el-table-column prop="petId" label="宠物ID" width="170">
+      <el-table-column prop="petName" label="宠物名" width="170">
       </el-table-column>
-      <el-table-column prop="userId" label="用户ID" width="170">
+      <el-table-column prop="userName" label="用户名" width="170">
       </el-table-column>
       <el-table-column prop="reason" label="理由" width="250">
       </el-table-column>
@@ -25,8 +25,8 @@
         <template #default="scope">
          <!-- 使用条件语句来显示对应的标签 -->
           <span v-if="scope.row.censor_status === 'to be censored'">未审核</span>
-          <span v-else-if="scope.row.censor_status === 'abored'">审核成功</span>
-          <span v-else-if="scope.row.censor_status === 'legitimate'">审核失败</span>
+          <span v-else-if="scope.row.censor_status === 'aborted'">审核失败</span>
+          <span v-else-if="scope.row.censor_status === 'legitimate'">审核成功</span>
        </template>
       </el-table-column>
     </el-table>
@@ -41,7 +41,9 @@ import { fetchAdoptionRecords, updateAdoptionRecord } from '@/api/jy_ly_jk.js';
 interface AdoptionRecord {
   date: string
   petId: string
+  petName:string
   userId: string
+  userName:string
   reason: string
   censor_status:string
 }
@@ -64,8 +66,7 @@ const approveApplication = async (index: number) => {
   // 同意申请操作
   const recordToUpdate = tableData.value[index];
 
-  // 将 censor_status 设置为 'abored'
-  recordToUpdate.censor_status = 'abored';
+  recordToUpdate.censor_status = 'legitimate';
 
   try {
     // const { date, petId, userId } = recordToUpdate;
@@ -81,7 +82,7 @@ const rejectApplication = async(index: number) => {
   // 拒绝申请操作
   const recordToUpdate = tableData.value[index];
 
-  recordToUpdate.censor_status = 'legitimate';
+  recordToUpdate.censor_status = 'aborted';
 
   try {
     // const { date, petId, userId } = recordToUpdate;
