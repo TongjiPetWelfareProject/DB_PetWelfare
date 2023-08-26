@@ -8,6 +8,7 @@
       <h2>{{ post.title }}</h2>
       <p>{{ post.author }}</p>
       <pre>{{ post.content }}</pre>
+      <a v-if="isOwnPost(post.author)" href="#" @click="deletePost(post)">删除</a>
     </div>
     <br>
     <div class="interactions">
@@ -200,8 +201,8 @@ const addComment = async () => {
       }
 };
 
-const isOwnPost = (comment_user) => {
-    if(comment_user===userStore.userInfo.User_Name || userStore.userInfo.Role==='Admin')
+const isOwnPost = (user) => {
+    if(user===userStore.userInfo.User_Name || userStore.userInfo.Role==='Admin')
       return true
     else 
       return false
