@@ -77,6 +77,7 @@ const post = ref({
 
 const comment_contents=ref([{  
    id: '', 
+   user_id: '',
    author: '', 
    text: '', 
    avatar: '',
@@ -121,6 +122,7 @@ const getcomment= async () => {
             // const formattedDate = formatBackendTime(postinfo.published_date);
             comment_contents.value.push({
             id: postcomment.pid,
+            user_id: postcomment.uid,
             author: postcomment.user_Name,
             text: postcomment.content,
             time: postcomment.comment_Time,
@@ -229,7 +231,7 @@ const likePost = async () => {
 const deleteComment = async (comment) => {
   try {
     console.log("删除时间为"+comment.time+"的帖子")
-    const response = await getpostinfo.deletecomment(userStore.userInfo.User_ID,comment.id,comment.time);
+    const response = await getpostinfo.deletecomment(comment.user_id,comment.id,comment.time);
       ElMessage.success({
       message: '删除成功',
       duration: 1000 // 持续显示时间（毫秒）
