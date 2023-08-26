@@ -52,8 +52,9 @@
 <script setup>
     import { ref, watch, onMounted } from 'vue';
     import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
-    import {MagicStick,Star} from '@element-plus/icons-vue'
+    import { MagicStick,Star } from '@element-plus/icons-vue'
     import { useRoute, useRouter } from 'vue-router'
+    import getpostinfo from '@/api/notice_forum'
 
     const router = useRouter();
     const route = useRoute();
@@ -158,8 +159,8 @@ const newComment = ref({ author: '', text: '', avatar: './src/photos/默认.jpg'
 
     .icon {
         vertical-align: middle;
-        width: 50px; /* 调整图片宽度 */
-        height: 50px; /* 调整图片高度 */
+        width: 30px; /* 调整图片宽度 */
+        height: 30px; /* 调整图片高度 */
     }
 
     .interactions {
