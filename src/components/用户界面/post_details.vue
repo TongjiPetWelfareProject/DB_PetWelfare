@@ -60,6 +60,7 @@ import { useUserStore } from '@/store/user';
 
 const router = useRouter();
 const userStore = useUserStore();
+const liked = ref(false); // 初始点赞状态为未点赞
 const post = ref({
   title: '',
   author: '',
@@ -126,12 +127,25 @@ const getcomment= async () => {
       }
     };
 
+const getiflike= async () => {
+  try {
+      const response = await getpostinfo.iflike(userStore.userInfo.User_ID,postId.value);
+      if(response === -1)
+        liked.value = false
+      else
+        liked.value = true
+    } catch (error) {
+      console.error('获取点赞信息失败：', error);
+    }
+};
+
 onMounted(() => {
   // 从路由的 query 参数中获取 post_id
   postId.value = router.currentRoute.value.query.post_id;
   console.log('当前帖子ID:', postId.value);
   getpost();
   getcomment();
+  getiflike();
 });
 
 const newComment = ref({ author: userStore.userInfo.User_Name, text: '', avatar: './src/photos/阿尼亚.jpg' });
@@ -178,8 +192,18 @@ const showAddComment = () => {
     showCommentForm.value = true;
 }
 
-const likePost = () => {
-    post.value.likes++;
+const likePost = async () => {
+    console.log("点击点赞了")
+    liked.value = liked.value === true ? false : true;
+    if(liked.value === false)
+      post.value.like_num--
+    else
+      post.value.like_num++
+    try {
+      const response = await getpostinfo.likepost(userStore.userInfo.User_ID,postId.value);
+    } catch (error) {
+      console.error('获取点赞信息失败：', error);
+    }
 };
 
 const favoritePost = () => {
@@ -198,6 +222,7 @@ const favoritePost = () => {
         border-radius: 20%; /* 圆形按钮 */
         border: none; /* 去掉按钮边框 */
         background-color: transparent; /* 设置背景颜色为透明 */
+        cursor: pointer; /* 显示指针形式 */
     }
 
     .round-button img {

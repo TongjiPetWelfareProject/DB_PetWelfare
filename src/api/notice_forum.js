@@ -29,6 +29,24 @@ export default {
             });
     },
 
+    likepost(user_id,post_id) {
+        return axios
+        .post('/api/likepost',{user_id,post_id})
+        .then((response) => response.data)
+        .catch(error => {
+            throw new Error('点赞帖子数据时出错：' + error.message);
+        });
+    },
+
+    iflike(user_id,post_id) {
+        return axios
+        .post('/api/iflikepost',{user_id,post_id})
+        .then((response) => response.data)
+        .catch(error => {
+            throw new Error('点赞帖子数据时出错：' + error.message);
+        });
+    },
+
     getcomment(post_id) {
         return axios
             .post('/api/postcomment',{post_id})
