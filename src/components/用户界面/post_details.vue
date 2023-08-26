@@ -18,13 +18,13 @@
         </button>
         <span>{{ post.like_num }}</span>
       </div>
-      <div>
+      <!-- <div>
         <button class="round-button" @click="favoritePost">
           <img v-if="favorited" src="@/photos/favorite_blue.png" alt="收藏" class="icon">
           <img v-else src="@/photos/favorite_grey.png" alt="未收藏" class="icon">
         </button>
         <span>{{ post.collect_num }}</span>
-      </div>
+      </div> -->
     </div>
 
     <div class="comment-part">
@@ -95,6 +95,7 @@ const getpost= async () => {
         post.value.title = postinfo.heading;
         post.value.author = postinfo.userName;
         post.value.content = postinfo.content;
+        post.value.like_num = postinfo.likeNum;
         console.log(post.title)
     }
       } catch (error) {
