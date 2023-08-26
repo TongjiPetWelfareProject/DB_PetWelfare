@@ -28,7 +28,6 @@
     </div>
 
     <div class="comment-part">
-      <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ post.comment_num }}</h3>
       <div class="comment-form">
         <div class="comment-input">
           <el-input v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
@@ -37,6 +36,7 @@
           <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
         </div>
       </div>
+      <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ post.comment_num }}</h3>
       <p>  </p>
       <div v-for="comment in post.comment_contents" :key="comment.id" class="comment">
         <el-avatar :src="comment.avatar" :size="50"></el-avatar>
@@ -96,6 +96,7 @@ const getpost= async () => {
         post.value.author = postinfo.userName;
         post.value.content = postinfo.content;
         post.value.like_num = postinfo.likeNum;
+        post.value.comment_num = postinfo.commentNum;
         console.log(post.title)
     }
       } catch (error) {
