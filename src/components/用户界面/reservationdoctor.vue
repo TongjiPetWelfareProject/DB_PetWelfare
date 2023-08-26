@@ -119,7 +119,7 @@ export default defineComponent({
     const petOptions = ref([]); 
     const petMap1 = ref(new Map());
     const petMap2 = ref(new Map());
-
+    const router = useRouter();
 
     const form = reactive({
       name: '',
@@ -155,17 +155,25 @@ export default defineComponent({
           form.name = petMap1.value.get(form.petID); // 根据映射关系获取宠物名字
           form.pet_kind=petMap2.value.get(form.petID);
         }
-
         const response = await medical_donate.submitAppointmentAPI(form);
         console.log('提交成功：', response);
-        ElMessage({
-              type: 'success',
-              message: `预约成功！`,
-            })
-        router.push('/login');
-        
+        // 显示成功提示
+        ElMessage.success({
+          message: '预约医疗成功',
+          duration: 3000 // 持续显示时间（毫秒）
+        });
+        // 停顿3秒后跳转到 '/forum'
+        setTimeout(() => {
+          router.push('/medical');
+        }, 3000);
+
       } catch (error) {
         console.error('提交数据时出错：', error);
+        // 显示失败提示
+        ElMessage.error({
+          message: '预约失败，错误信息：' + error.message,
+          duration: 3000 // 持续显示时间（毫秒）
+      });
       }
     };
 
