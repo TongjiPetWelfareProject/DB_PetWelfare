@@ -39,10 +39,10 @@
       <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ post.comment_num }}</h3>
       <p>  </p>
       <div v-for="comment in comment_contents" :key="comment.id" class="comment">
-        <el-avatar :src="comment.avatar" :size="50"></el-avatar>
+        <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
         <div class="comment-content">
-            <p class="post-label">{{ comment.author }}</p>
-            <p class="post-value">{{ comment.text }}</p>
+          <p class="post-label">{{ comment.author }}</p>
+          <p class="post-value">{{ comment.text }}</p>
         </div>
       </div>
     </div>
