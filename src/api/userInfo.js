@@ -18,6 +18,22 @@ export default {
             .catch(error => {
                 throw new Error('获取个人信息数据时出错：' + error.message);
             });
+    },
+    userDonationAPI(user_id) {
+        return axios
+            .post('/api/userdonation',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人捐款信息数据时出错：' + error.message);
+            });
+    },
+    userMedicalAPI(user_id) {
+        return axios
+            .post('/api/usermedical',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人宠物医疗信息数据时出错：' + error.message);
+            });
     }
 };
 

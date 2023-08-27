@@ -49,14 +49,32 @@ const getPetDetails = async (PID) => {
     } else if (response.original_pet.Health_State === 'Unhealthy') {
       health_state = '不健康';
     }
+    console.log("宠物生日")
+    console.log(response.original_pet.birthdate);
+    // 获取当前日期
+    const currentDate = new Date();
 
+    // 将生日字符串转换为日期对象
+    const birthDate = new Date(response.original_pet.birthdate);
+
+    // 计算年龄（以当前日期为准）
+    const age = currentDate.getFullYear() - birthDate.getFullYear();
+
+    // 如果生日还未到，年龄减一
+    if (
+      currentDate.getMonth() < birthDate.getMonth() ||
+      (currentDate.getMonth() === birthDate.getMonth() &&
+        currentDate.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
 
     pet.value = {
       id: response.original_pet.Pet_ID,
       name: response.original_pet.Pet_Name,
       species: species,
       gender: response.original_pet.sex,
-      //age: response.AGE,
+      age: age,
       popularity: response.Popularity,
       health_state: health_state,
       vaccine: response.original_pet.Vaccine,
@@ -180,6 +198,31 @@ const showAddComment = () => {
     showCommentForm.value = true;
 }
 
+
+const getiflike= async () => {
+  try {
+      const response = await getpetinfo.ifLike(userStore.userInfo.User_ID,petId.value);
+      if(response === -1)
+        liked.value = false
+      else
+        liked.value = true
+    } catch (error) {
+      console.error('获取点赞信息失败：', error);
+    }
+};
+
+const getiffavorite= async () => {
+  try {
+      const response = await getpetinfo.ifFavorite(userStore.userInfo.User_ID,petId.value);
+      if(response === -1)
+        favorited.value = false
+      else
+        favorited.value = true
+    } catch (error) {
+      console.error('获取收藏信息失败：', error);
+    }
+};
+
 const liked = ref(false);
 const likePet = async () => {
     console.log("点击点赞了")
@@ -189,30 +232,30 @@ const likePet = async () => {
     else
       pet.value.like_num++
     try {
-      const response = await getpetinfo.likepet(userStore.userInfo.User_ID,petId);
+      const response = await getpetinfo.submitLike(userStore.userInfo.User_ID,petId.value);
     } catch (error) {
-      console.error('获取点赞信息失败：', error);
+      console.error('提交点赞信息失败：', error);
     }
 };
 
 const favorited = ref(false);
 const favoritePet = async () => {
-    console.log("点击点赞了")
+    console.log("点击收藏了")
     favorited.value = favorited.value === true ? false : true;
     if(favorited.value === false)
       pet.value.favorite_num--
     else
       pet.value.favorite_num++
     try {
-      const response = await getpetinfo.likepet(userStore.userInfo.User_ID,petId);
+      const response = await getpetinfo.submitFavorite(userStore.userInfo.User_ID,petId.value);
     } catch (error) {
-      console.error('获取点赞信息失败：', error);
+      console.error('提交收藏信息失败：', error);
     }
 };
 
 const getcomment= async () => {
     try {
-        const response = await getpetinfo.getComment(petId);
+        const response = await getpetinfo.getComment(petId.value);
         for (const postcomment of response) {
             // const formattedDate = formatBackendTime(postinfo.published_date);
             comment_contents.value.push({
@@ -259,29 +302,6 @@ const deleteComment = async (comment) => {
   }
 }
 
-const getiflike= async () => {
-  try {
-      const response = await getpetinfo.ifLike(userStore.userInfo.User_ID,petId);
-      if(response === -1)
-        liked.value = false
-      else
-        liked.value = true
-    } catch (error) {
-      console.error('获取点赞信息失败：', error);
-    }
-};
-
-const getiffavorite= async () => {
-  try {
-      const response = await getpetinfo.ifFavorite(userStore.userInfo.User_ID,petId);
-      if(response === -1)
-        favorited.value = false
-      else
-        favorited.value = true
-    } catch (error) {
-      console.error('获取收藏信息失败：', error);
-    }
-};
 
 </script>
 
@@ -519,8 +539,7 @@ const getiffavorite= async () => {
             </el-col>
             <el-col :span="8">
               <span class="pet-label">年龄</span>
-              <p class="pet-value">先空着</p>
-              <!--<p class="pet-value">{{ pet.value.age }}</p>-->
+              <p class="pet-value">{{ pet.age }}</p>
             </el-col>
             <el-col :span="8">
               <span class="pet-label">性别</span>
