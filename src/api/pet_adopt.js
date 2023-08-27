@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default{
   getPetList() {
-    return axios.get('/api/petlist')
+    return axios.get('/api/pet-adopt-list')
       .then(response => {
         return response.data;
       })
@@ -79,7 +79,7 @@ export default{
     return axios.post('/api/iflikepet',{UID, PID})
       .then((response) => response.data)
       .catch(error => {
-          throw new Error('点赞帖子数据时出错：' + error.message);
+          throw error;
       });
   },
 
