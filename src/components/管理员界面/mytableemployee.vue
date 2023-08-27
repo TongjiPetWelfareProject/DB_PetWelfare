@@ -82,7 +82,7 @@ const addRow = () => {
         salary: '',
     };
 
-    axios.post('/api/employee', newEmployee)
+    axios.post('/api/addemployee', newEmployee)
         .then(response => {
             const newEmployeeId = response.data.id;
             newEmployee.id = newEmployeeId;
