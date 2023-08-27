@@ -202,35 +202,21 @@
                 </el-card>
             <!-- </li> -->
             </el-tab-pane>
-            <el-tab-pane label="我的收藏">
-                 <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
-                        <el-card class="post-card" shadow="always" >
-                        <div class="post-title">这是一个帖子标题</div>
-                        <div class="post-info">
-                          <div>发表时间：2023-8-25</div>
-                          <div>阅读量：100</div>
-                          <div>喜爱数量：10</div>
-                          <div>评论数量：10</div>
-                          <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
-                        </div>
-                      </el-card>
-                  <!-- </li> -->
-            </el-tab-pane>
             <el-tab-pane label="我的评论">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
-                  <el-card class="mypage-card" shadow="always" >
-                    <template #header>
+                <el-card v-for="postcom in postcomment" class="mypage-card" shadow="always">
+                    <template #header v-if="postcom.content">
                       <div class="mypagecard-header">
-                        <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center; margin-left: 5px;margin-top:-10px">这是一个帖子标题</span>
+                        <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center; margin-left: 5px;margin-top:-10px">{{ postcom.title }}</span>
                       </div>
                     </template>
-                    <div class="mypagecardbody">
+                    <div class="mypagecardbody" v-if="postcom.content">
                       <div style="display: flex; align-items: center; margin-left: 5px;font-size: 15px;">
                         <img src="@/photos/头像.jpg" style="width: 30px; height: 30px; border-radius: 50%;">
-                        <span style="margin-left: 5px;">Kristian:</span>
-                        <span>花花头上有三种颜色欸！</span>
+                        <span style="margin-left: 5px;">{{ postcom.username }}:</span>
+                        <span>{{ postcom.content }}</span>
                       </div>            
-                      <div class="mypagecardtime">2023-8-25</div>
+                      <div class="mypagecardtime">{{ postcom.time }}</div>
                       <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
                     </div>
                   </el-card>
@@ -301,6 +287,13 @@ const infoform = ref({
   like_num: 0,
   read_num: 0,
 });
+const postcomment = ref([{
+  title:'',
+  avator:'',
+  username:'',
+  content:'',
+  time:''
+}])
 
 const getUserInfo = async () => {
     try {
@@ -312,8 +305,26 @@ const getUserInfo = async () => {
     }
 };
 
+const getUserComment = async () => {
+    try {
+      const response = await userinfo.userPostCommentAPI(userStore.userInfo.User_ID);
+      for(const comment of response ){
+        postcomment.value.push({
+          title: comment.post_Title,
+          avator:'@/photos/头像.jpg',
+          username: userStore.userInfo.User_Name,
+          content: comment.content,
+          time:comment.comment_Time
+        })
+      }
+    } catch (error) {
+      console.error('获取用户人气数据时出错：', error);
+    }
+};
+
 onMounted(() => {
     getUserInfo();
+    getUserComment();
 });
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {

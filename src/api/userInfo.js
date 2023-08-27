@@ -10,6 +10,14 @@ export default {
             .catch(error => {
                 throw new Error('获取个人信息数据时出错：' + error.message);
             });
+    },
+    userPostCommentAPI(user_id) {
+        return axios
+            .post('/api/userpostcomment',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人信息数据时出错：' + error.message);
+            });
     }
 };
 
