@@ -146,8 +146,13 @@ const editRow = (index: number) => {
 const submitEditedEmployee = () => {
     axios.put(`/api/edit-employee/${editedEmployee.value.id}`, editedEmployee.value)
         .then(() => {
-            // 编辑成功的处理逻辑
-            editDialogVisible.value = false;
+            const editedIndex = tableData.value.findIndex(item => item.id === editedEmployee.value.id);
+            if (editedIndex !== -1) {
+                // 更新表格中对应行的数据
+                tableData.value[editedIndex] = { ...editedEmployee.value };
+                // 关闭编辑对话框
+                editDialogVisible.value = false;
+            }
         })
         .catch(error => {
             console.error('编辑数据时出错:', error);

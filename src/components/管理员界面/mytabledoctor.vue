@@ -138,8 +138,13 @@ const editRow = (index: number) => {
 const submitEditedDoctor = () => {
   axios.put(`/api/edit-doctor/${editedDoctor.value.id}`, editedDoctor.value)
     .then(() => {
-      // 编辑成功的处理逻辑
-      editDialogVisible.value = false;
+      const editedIndex = tableData.value.findIndex(item => item.id === editedDoctor.value.id);
+      if (editedIndex !== -1) {
+        // 更新表格中对应行的数据
+        tableData.value[editedIndex] = { ...editedDoctor.value };
+        // 关闭编辑对话框
+        editDialogVisible.value = false;
+      }
     })
     .catch(error => {
       console.error('编辑数据时出错:', error);
