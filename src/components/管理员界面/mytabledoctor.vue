@@ -26,7 +26,7 @@
       <el-form :model="editedDoctor" label-width="80px">
         <!-- 表单内容 -->
         <el-form-item label="医生ID">
-          <el-input v-model="editedDoctor.id"></el-input>
+          <el-input v-model="editedDoctor.id" :readonly="true"></el-input>
         </el-form-item>
         <el-form-item label="医生姓名">
           <el-input v-model="editedDoctor.name"></el-input>
@@ -51,20 +51,24 @@
     <el-dialog v-model="addDialogVisible" title="添加医生" @close="resetAddDialog">
       <el-form :model="newDoctor" label-width="80px">
         <!-- 表单内容 -->
-        <el-form-item label="医生ID">
-          <el-input v-model="newDoctor.id"></el-input>
-        </el-form-item>
         <el-form-item label="医生姓名">
           <el-input v-model="newDoctor.name"></el-input>
         </el-form-item>
         <el-form-item label="电话">
-          <el-input v-model="newDoctor.phone"></el-input>
+          <el-input v-model="newDoctor.phone" @input="handlePhoneInput"></el-input>
         </el-form-item>
         <el-form-item label="工作时间">
-          <el-input v-model="newDoctor.workingHours"></el-input>
+          <div class="input-with-currency">
+            <!-- <el-input v-model="newDoctor.workingHours"></el-input> -->
+            <el-input-number v-model="newDoctor.workingHours" :step="0.5" />
+            <span class="currency-symbol">小时</span>
+          </div>
         </el-form-item>
         <el-form-item label="工资">
-          <el-input v-model="newDoctor.salary"></el-input>
+          <div class="input-with-currency">
+            <el-input v-model="newDoctor.salary"></el-input>
+            <span class="currency-symbol">￥</span>
+          </div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -102,9 +106,34 @@ const newDoctor = ref<Doctor>({
   id: '',
   name: '',
   phone: '',
-  workingHours: '',
+  workingHours: '8',
   salary: '',
 });
+
+const handlePhoneInput = () => {
+  // 获取输入框的值并移除所有非数字字符
+  const digitsOnly = newDoctor.value.phone.replace(/\D/g, "");
+
+  // 在第4个和第9个位置插入空格
+  const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+
+  newDoctor.value.phone = formattedValue;
+};
+
+const insertSpaces = (str, positions) => {
+  const result = [];
+  let positionIndex = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    if (positionIndex < positions.length && i === positions[positionIndex]) {
+      result.push(" ");
+      positionIndex++;
+    }
+    result.push(str[i]);
+  }
+
+  return result.join("");
+};
 
 onMounted(async () => {
   await fetchData();
@@ -189,3 +218,13 @@ const resetAddDialog = () => {
 };
 
 </script>
+<style>
+.input-with-currency {
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  margin-left: 5px;
+}
+</style>

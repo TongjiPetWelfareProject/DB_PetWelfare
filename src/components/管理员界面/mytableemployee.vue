@@ -58,16 +58,23 @@
                     <el-input v-model="newEmployee.name"></el-input>
                 </el-form-item>
                 <el-form-item label="电话">
-                    <el-input v-model="newEmployee.phone"></el-input>
+                    <el-input v-model="newEmployee.phone" @input="handlePhoneInput"></el-input>
                 </el-form-item>
                 <el-form-item label="职责">
                     <el-input v-model="newEmployee.responsibility"></el-input>
                 </el-form-item>
                 <el-form-item label="工作时间">
-                    <el-input v-model="newEmployee.workingHours"></el-input>
+                    <div class="input-with-currency">
+                        <!-- <el-input v-model="newEmployee.workingHours"></el-input> -->
+                        <el-input-number v-model="newEmployee.workingHours" :step="0.5" />
+                        <span class="currency-symbol">小时</span>
+                    </div>
                 </el-form-item>
                 <el-form-item label="工资">
-                    <el-input v-model="newEmployee.salary"></el-input>
+                    <div class="input-with-currency">
+                        <el-input v-model="newEmployee.salary"></el-input>
+                        <span class="currency-symbol">￥</span>
+                    </div>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -108,9 +115,34 @@ const newEmployee = ref<Employee>({
     name: '',
     phone: '',
     responsibility: '',
-    workingHours: '',
+    workingHours: '8',
     salary: '',
 });
+
+const handlePhoneInput = () => {
+    // 获取输入框的值并移除所有非数字字符
+    const digitsOnly = newEmployee.value.phone.replace(/\D/g, "");
+
+    // 在第4个和第9个位置插入空格
+    const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+
+    newEmployee.value.phone = formattedValue; // 更新 newEmployee.value.phone
+};
+
+const insertSpaces = (str, positions) => {
+    const result = [];
+    let positionIndex = 0;
+
+    for (let i = 0; i < str.length; i++) {
+        if (positionIndex < positions.length && i === positions[positionIndex]) {
+            result.push(" ");
+            positionIndex++;
+        }
+        result.push(str[i]);
+    }
+
+    return result.join("");
+};
 
 onMounted(async () => {
     await fetchData();
@@ -172,6 +204,7 @@ const addRow = () => {
     addDialogVisible.value = true;
 };
 
+
 const submitNewEmployee = () => {
     axios.post('/api/add-employee', newEmployee.value)
         .then(response => {
@@ -197,3 +230,13 @@ const resetAddDialog = () => {
 };
 
 </script>
+<style>
+.input-with-currency {
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    margin-left: 5px;
+}
+</style>
