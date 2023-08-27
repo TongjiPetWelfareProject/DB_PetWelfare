@@ -205,12 +205,12 @@
             <el-tab-pane label="我的评论">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
                 <el-card v-for="postcom in postcomment" class="mypage-card" shadow="always">
-                    <template #header v-if="postcom.content">
+                    <template #header>
                       <div class="mypagecard-header">
                         <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center; margin-left: 5px;margin-top:-10px">{{ postcom.title }}</span>
                       </div>
                     </template>
-                    <div class="mypagecardbody" v-if="postcom.content">
+                    <div class="mypagecardbody">
                       <div style="display: flex; align-items: center; margin-left: 5px;font-size: 15px;">
                         <img src="@/photos/头像.jpg" style="width: 30px; height: 30px; border-radius: 50%;">
                         <span style="margin-left: 5px;">{{ postcom.username }}:</span>
@@ -243,14 +243,14 @@
               </el-card>
             </el-tab-pane>
             <el-tab-pane label="我的捐款">
-              <el-card class="mypagedonate" shadow="always">
+              <el-card v-for="dona in donations" class="mypagedonate" shadow="always">
                 <!-- <template #header>
                   <div class="mypagecard-header">
                     <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">花花</span>
                   </div>
                 </template> -->
-                <div class="mypagefostertext" style="margin-top:2px">捐款金额：7天</div>
-                <div class="mypagefostertext">捐款时间：2023-8-25</div>
+                <div class="mypagefostertext" style="margin-top:2px">捐款金额：{{ dona.amount }}</div>
+                <div class="mypagefostertext">捐款时间：{{ dona.time }}</div>
               </el-card>
             </el-tab-pane>
 
@@ -262,10 +262,6 @@
       </el-main>
     
     </el-container>
-  
-   
-    
-  
   </div>
 </div>
   
@@ -287,13 +283,8 @@ const infoform = ref({
   like_num: 0,
   read_num: 0,
 });
-const postcomment = ref([{
-  title:'',
-  avator:'',
-  username:'',
-  content:'',
-  time:''
-}])
+const postcomment = ref([])
+const donations = ref([])
 
 const getUserInfo = async () => {
     try {
@@ -318,13 +309,28 @@ const getUserComment = async () => {
         })
       }
     } catch (error) {
-      console.error('获取用户人气数据时出错：', error);
+      console.error('获取用户帖子评论时出错：', error);
+    }
+};
+
+const getUserDonation = async () => {
+    try {
+      const response = await userinfo.userDonationAPI(userStore.userInfo.User_ID);
+      for(const donation of response ){
+        donations.value.push({
+          amount: donation.DONATION_AMOUNT,
+          time: donation.DONATION_TIME
+        })
+      }
+    } catch (error) {
+      console.error('获取用户捐款数据时出错：', error);
     }
 };
 
 onMounted(() => {
     getUserInfo();
     getUserComment();
+    getUserDonation();
 });
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
