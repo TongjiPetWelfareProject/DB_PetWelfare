@@ -231,15 +231,15 @@
         <el-tab-pane label="其他" name="third">
           <el-tabs tab-position="left"  class="demo-tabs">
             <el-tab-pane label="我的医疗">
-              <el-card class="mypagefoster" shadow="always">
+              <el-card v-for="medi in medicallist" class="mypagefoster" shadow="always">
                 <template #header>
                   <div class="mypagecard-header">
-                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">花花</span>
+                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">{{ medi.petname }}</span>
                   </div>
                 </template>
-                <div class="mypagefostertext" style="margin-top:2px">治疗科室：皮肤感染</div>
-                <div class="mypagefostertext">治疗医生：白云揉碎</div>
-                <div class="mypagefostertext">治疗时间：2023-8-25</div>
+                <div class="mypagefostertext" style="margin-top:2px">治疗原因：{{ medi.reason }}</div>
+                <div class="mypagefostertext">治疗医生：{{ medi.vetname }}</div>
+                <div class="mypagefostertext">治疗时间：{{ medi.time }}</div>
               </el-card>
             </el-tab-pane>
             <el-tab-pane label="我的捐款">
@@ -285,6 +285,7 @@ const infoform = ref({
 });
 const postcomment = ref([])
 const donations = ref([])
+const medicallist = ref([])
 
 const getUserInfo = async () => {
     try {
@@ -327,10 +328,27 @@ const getUserDonation = async () => {
     }
 };
 
+const getUserMedical = async () => {
+    try {
+      const response = await userinfo.userMedicalAPI(userStore.userInfo.User_ID);
+      for(const medical of response ){
+        medicallist.value.push({
+          vetname: medical.VET_NAME,
+          petname: medical.PET_NAME,
+          time: medical.CUSTOM_TIME,
+          reason: medical.REASON
+        })
+      }
+    } catch (error) {
+      console.error('获取用户捐款数据时出错：', error);
+    }
+};
+
 onMounted(() => {
     getUserInfo();
     getUserComment();
     getUserDonation();
+    getUserMedical();
 });
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
