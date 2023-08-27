@@ -3,9 +3,9 @@ import request from '@/util/http'
 import axios from 'axios';
 
 export default {
-    userInfoAPI() {
+    userInfoAPI(user_id) {
         return axios
-            .get('/api/userinfo')
+            .post('/api/userinfo',{user_id})
             .then((response) => response.data)
             .catch(error => {
                 throw new Error('获取个人信息数据时出错：' + error.message);

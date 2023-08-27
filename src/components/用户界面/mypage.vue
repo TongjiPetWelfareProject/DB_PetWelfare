@@ -289,7 +289,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import userinfo from '@/api/userInfo'
@@ -297,21 +297,24 @@ import { computed } from 'vue'
 import { Iphone, Location, OfficeBuilding, Tickets, User, UserFilled, Star } from '@element-plus/icons-vue'
 const userStore = useUserStore()
 const activeName = ref('first')
-const infoform = ref([]);
+const infoform = ref({
+  like_num: 0,
+  read_num: 0,
+});
 
 const getUserInfo = async () => {
-      try {
-        const response = await userinfo.userInfoAPI();
-        for (const info of response) {
-        infoform.value.push({
-        like_num: info.likenum,
-        read_num: info.readnum
-      });
+    try {
+      const response = await userinfo.userInfoAPI(userStore.userInfo.User_ID);
+      infoform.value.like_num= response.likes,
+      infoform.value.read_num= response.reads
+    } catch (error) {
+      console.error('获取用户人气数据时出错：', error);
     }
-      } catch (error) {
-        console.error('获取公告数据时出错：', error);
-      }
 };
+
+onMounted(() => {
+    getUserInfo();
+});
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
