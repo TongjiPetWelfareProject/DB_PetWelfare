@@ -26,7 +26,7 @@
         <el-dialog v-model="editDialogVisible" title="编辑员工信息" @close="resetEditDialog">
             <el-form :model="editedEmployee" label-width="80px">
                 <el-form-item label="员工ID">
-                    <el-input v-model="editedEmployee.id"></el-input>
+                    <el-input v-model="editedEmployee.id" :readonly="true"></el-input>
                 </el-form-item>
                 <el-form-item label="员工姓名">
                     <el-input v-model="editedEmployee.name"></el-input>
@@ -53,9 +53,7 @@
         <!-- Add Employee Dialog -->
         <el-dialog v-model="addDialogVisible" title="添加员工" @close="resetAddDialog">
             <el-form :model="newEmployee" label-width="80px">
-                <el-form-item label="员工ID">
-                    <el-input v-model="newEmployee.id"></el-input>
-                </el-form-item>
+
                 <el-form-item label="员工姓名">
                     <el-input v-model="newEmployee.name"></el-input>
                 </el-form-item>
