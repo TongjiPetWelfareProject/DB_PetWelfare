@@ -3,9 +3,9 @@
     <el-table :data="tableData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
       <el-table-column prop="date" label="时间" sortable width="120">
       </el-table-column>
-      <el-table-column prop="petId" label="宠物ID" width="170">
+      <el-table-column prop="petName" label="宠物名" width="170">
       </el-table-column>
-      <el-table-column prop="userId" label="用户ID" width="170">
+      <el-table-column prop="userName" label="用户名" width="170">
       </el-table-column>
       <el-table-column prop="days" label="天数" width="170">
       </el-table-column>
@@ -41,7 +41,8 @@ import { fetchFosterRecords, updateFosterRecord } from '@/api/jy_ly_jk.js'
 
 interface FosterRecord {
   date: string
-  id:string
+  petName:string
+  userName:string
   petId: string
   userId: string
   days: number
@@ -66,9 +67,8 @@ const approveApplication = async(index: number) => {
   // 同意申请操作
   const recordToUpdate = tableData.value[index];
 
-  // 将 censor_status 设置为 'aborted'
-  recordToUpdate.censor_status = 'aborted';
-
+  recordToUpdate.censor_status = 'legitimate';
+  fetchData();
   try {
     await updateFosterRecord(recordToUpdate);
   } catch (error) {
@@ -81,8 +81,8 @@ const rejectApplication = async(index: number) => {
   // 拒绝申请操作
   const recordToUpdate = tableData.value[index];
 
-  recordToUpdate.censor_status = 'legitimate';
-
+  recordToUpdate.censor_status = 'aborted';
+  fetchData();
   try {
     await updateFosterRecord(recordToUpdate);
   } catch (error) {
