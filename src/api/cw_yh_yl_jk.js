@@ -25,7 +25,11 @@ export default {
 
     muteUser(UID) {
         console.log(typeof UID);
-        return axios.post('/api/ban', UID)//英文名弄错了，不改了
+        return axios.post('/api/ban',  JSON.stringify(UID), {//英文名弄错了，不改了
+            headers: {
+                'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
+            },
+            })
             .then(response => {
             return response.data;
             })
@@ -35,7 +39,11 @@ export default {
     },
 
     removeMuteUser(UID) {
-        return axios.post('/api/remove-ban', UID)
+        return axios.post('/api/remove-ban',  JSON.stringify(UID), {
+            headers: {
+                'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
+            },
+            })
             .then(response => {
             return response.data;
             })
@@ -45,7 +53,11 @@ export default {
     },
 
     blockUser(UID) {
-        return axios.post('/api/block', UID)
+        return axios.post('/api/block',  JSON.stringify(UID), {
+            headers: {
+                'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
+            },
+            })
             .then(response => {
             return response.data;
             })
@@ -55,7 +67,11 @@ export default {
     },
 
     removeBlockUser(UID) {
-        return axios.post('/api/remove-block', UID)
+        return axios.post('/api/remove-block',  JSON.stringify(UID), {
+            headers: {
+                'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
+            },
+            })
             .then(response => {
             return response.data;
             })
