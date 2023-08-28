@@ -23,8 +23,9 @@ export default {
             });
     },*/
 
-    banUser(UID) {
-        return axios.post('/api/ban', UID)
+    muteUser(UID) {
+        console.log(typeof UID);
+        return axios.post('/api/ban', UID)//英文名弄错了，不改了
             .then(response => {
             return response.data;
             })
@@ -33,7 +34,7 @@ export default {
             });
     },
 
-    removeBanUser(UID) {
+    removeMuteUser(UID) {
         return axios.post('/api/remove-ban', UID)
             .then(response => {
             return response.data;

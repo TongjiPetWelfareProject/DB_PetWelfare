@@ -1,11 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
-
 import { useUserStore } from '@/store/user';
 import { useRoute, useRouter } from 'vue-router'
 import getpetinfo from '@/api/pet_adopt'
-
 const images = [//等后端图片，后期去掉
 './src/components/photos/pet1.jpg',
 './src/components/photos/pet2.jpg',
@@ -13,36 +11,31 @@ const images = [//等后端图片，后期去掉
 './src/components/photos/pet4.jpg',
 './src/components/photos/pet5.jpg',
 ];
-
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
-
 const pet = ref([]); // 单个宠物信息
 const petId = ref('');//应将petId定义在更广阔的作用域内，onMounted之外，访问响应式数据时需要使用.value
-
 // 在组件加载时调用 getPetDetails 方法，传入宠物的 ID
 onMounted(() => {
   petId.value = route.params.id; // 从路由参数中获取宠物的 ID
   console.log(petId.value);//成功
-  getPetDetails();
+  getPetDetails(petId.value);
+  getcomment();
   getiflike();
   getiffavorite();
-  postreadnum();
 });
-
-const getPetDetails = async () => {
+const getPetDetails = async (PID) => {
   try {
-    const response = await getpetinfo.getPetDetails(petId.value); // 假设有一个获取单个宠物信息的 API
+    const response = await getpetinfo.getPetDetails(PID); // 假设有一个获取单个宠物信息的 API
     console.log(response);
-
     let species = '';
+  
     if (response.original_pet.Species === 'cat') {
       species = '猫';
     } else if (response.original_pet.Species === 'dog') {
       species = '狗';
     }
-
     let health_state = '';
     if (response.original_pet.Health_State === 'Vibrant') {
       health_state = '健康';
@@ -53,13 +46,10 @@ const getPetDetails = async () => {
     console.log(response.original_pet.birthdate);
     // 获取当前日期
     const currentDate = new Date();
-
     // 将生日字符串转换为日期对象
     const birthDate = new Date(response.original_pet.birthdate);
-
     // 计算年龄（以当前日期为准）
     const age = currentDate.getFullYear() - birthDate.getFullYear();
-
     // 如果生日还未到，年龄减一
     if (
       currentDate.getMonth() < birthDate.getMonth() ||
@@ -68,7 +58,6 @@ const getPetDetails = async () => {
     ) {
       age--;
     }
-
     pet.value = {
       id: response.original_pet.Pet_ID,
       name: response.original_pet.Pet_Name,
@@ -84,13 +73,10 @@ const getPetDetails = async () => {
       comment_num: response.Comment_Num,
       image: images[0]//等后端图片，后期修改
     };
-    comment_contents.value = response.comments;
   } catch (error) {
     console.error('获取宠物信息时出错：', error);
   }
 };
-
-
 const handleApplyForAdopt = () => {
   if (userStore.userInfo.User_ID) {
     // 用户已登录，跳转到 /pet_adopt_form
@@ -100,16 +86,22 @@ const handleApplyForAdopt = () => {
     router.push('/login');
   }
 }
-
-const newComment = ref({ author: userStore.userInfo.User_Name, text: '', avatar: './src/photos/阿尼亚.jpg' });
+/*const handleApplyForAdopt = () => {
+  
+  router.push('/pet_adopt_form');
+}*/
+pet.read_num++;
+const newComment = ref({ author: '', text: '', avatar: '@/photos/汤姆1.jpg' });//传照片没成功
+newComment.value.author = '某某某';
+const showCommentForm = ref(false);
 const comment_contents=ref([{  
+   id: '', 
    user_id: '',
    author: '', 
    text: '', 
    avatar: '',
    time:''
 }])
-
 /*const addComment = () => {
 if (newComment.value.text) {
     pet.comment_num++;
@@ -122,12 +114,27 @@ if (newComment.value.text) {
     newComment.value.text = '';
 }
 };
-
 const liked = ref(false);
 const likePet = async() => {
   if (!userStore.userInfo.User_ID)
-    router.push('/login');
 
+    
+          
+            
+    
+
+          
+          Expand Down
+          
+            
+    
+
+          
+          Expand Up
+    
+    @@ -187,18 +175,6 @@
+  
+    router.push('/login');
   liked.value = !liked.value;
   if (liked.value) {
     pet.like_num++;
@@ -137,7 +144,6 @@ const likePet = async() => {
     await petadopt.submitLike(userStore.userInfo, pet, pet.like_num);
   }
 };
-
 const favorited = ref(false);
 const favoritePet = async() => {
   if (!userStore.userInfo.User_ID)
@@ -153,7 +159,6 @@ const favoritePet = async() => {
     }
   }
 };*/
-
 const addComment = async () => {
   try {
     const response = await getpetinfo.addcomment(userStore.userInfo.User_ID,petId,newComment.value.text);
@@ -174,7 +179,15 @@ const addComment = async () => {
     });
       }
 };
-
+const isOwnPost = (UID) => {
+    if( UID === userStore.userInfo.User_ID || userStore.userInfo.Role==='Admin')
+      return true
+    else 
+      return false
+}
+const showAddComment = () => {
+    showCommentForm.value = true;
+}
 const getiflike= async () => {
   try {
       const response = await getpetinfo.ifLike(userStore.userInfo.User_ID,petId.value);
@@ -186,7 +199,6 @@ const getiflike= async () => {
       console.error('获取点赞信息失败：', error);
     }
 };
-
 const getiffavorite= async () => {
   try {
       const response = await getpetinfo.ifFavorite(userStore.userInfo.User_ID,petId.value);
@@ -199,6 +211,7 @@ const getiffavorite= async () => {
     }
 };
 
+  
 const liked = ref(false);
 const likePet = async () => {
     console.log("点击点赞了")
@@ -213,7 +226,6 @@ const likePet = async () => {
       console.error('提交点赞信息失败：', error);
     }
 };
-
 const favorited = ref(false);
 const favoritePet = async () => {
     console.log("点击收藏了")
@@ -228,8 +240,7 @@ const favoritePet = async () => {
       console.error('提交收藏信息失败：', error);
     }
 };
-
-/*const getcomment= async () => {
+const getcomment= async () => {
     try {
         const response = await getpetinfo.getComment(petId.value);
         for (const postcomment of response) {
@@ -246,8 +257,7 @@ const favoritePet = async () => {
       } catch (error) {
         console.error('获取评论失败：', error);
       }
-    };*/
-
+    };
 const sortedComments = computed(() => {
   return comment_contents.value.slice().sort((a, b) => {
     const dateA = new Date(a.time);
@@ -255,10 +265,9 @@ const sortedComments = computed(() => {
     return dateB - dateA;
   });
 });
-
 const deleteComment = async (comment) => {
   try {
-    console.log("删除时间为"+comment.time+"的评论")
+    console.log("删除时间为"+comment.time+"的帖子")
     const response = await getpostinfo.deletecomment(comment.user_id,comment.id,comment.time);
       ElMessage.success({
       message: '删除成功',
@@ -277,22 +286,18 @@ const deleteComment = async (comment) => {
     });
   }
 }
-
-
 </script>
-
 <style scoped>
 
+  
   .pet-card {
     display: flex;
     justify-content: center;
   }
-
   .card {
     width: 85%;
     position: relative; /* 添加相对定位 */
   }
-
   .read-count {
   position: absolute;
   top: 20px; /* 调整距离顶部的位置 */
@@ -300,22 +305,18 @@ const deleteComment = async (comment) => {
   font-size: 12px;
   color: #888;
   }
-
   .card-content {
     display: flex;
   }
-
   .pet-image {
     flex: 1;
     padding: 10px;
   }
-
   .pet-image img {
     width: 100%;
     height: auto;
     border-radius: 8px;
   }
-
   .pet-info {
     flex: 2;
     padding: 10px;
@@ -323,44 +324,36 @@ const deleteComment = async (comment) => {
     flex-direction: column;
     justify-content: center;
   }
-
   .pet-info h3 {
     margin: 0;
     font-size: 1.2rem;
   }
-
   .pet-info p {
     margin: 4px 0;
     font-size: 1rem;
     color: #888;
   }
-
   .round-button {
     border-radius: 20%; /* 圆形按钮 */
     border: none; /* 去掉按钮边框 */
     background-color: transparent; /* 设置背景颜色为透明 */
   }
-
   .round-button img {
     vertical-align: middle;
   }
-
   .icon {
     vertical-align: middle;
     width: 50px; /* 调整图片宽度 */
     height: 50px; /* 调整图片高度 */
   }
-
   .interactions {
     display: flex;
     justify-content: center;
     align-items: center;
   }
-
   .demonstration {
     color: var(--el-text-color-secondary);
   }
-
   .el-carousel__item h3 {
     color: #475669;
     opacity: 0.75;
@@ -368,27 +361,22 @@ const deleteComment = async (comment) => {
     margin: 0;
     text-align: center;
   }
-
   .el-carousel__item:nth-child(2n) {
     background-color: #99a9bf;
   }
-
   .el-carousel__item:nth-child(2n + 1) {
     background-color: #d3dce6;
   }
-
   .image-container {
     width: 100%;
     height: 100%;
     overflow: hidden;
   }
-
   .single-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-
   .interactions {
   display: flex;
   justify-content: center;
@@ -396,22 +384,17 @@ const deleteComment = async (comment) => {
   gap: 1rem;
   margin-bottom: 1rem;
   }
-
   .interactions span {
   margin-left: 0.5rem;
   }
-
-
   .comment-part {
     margin-left: auto;
     margin-right: auto;
     width: 85%;
     }
-
     .comment {
     display: flex;
     }
-
     .comment-content {
     margin-left: 10px;
     }
@@ -420,27 +403,22 @@ const deleteComment = async (comment) => {
       display: flex;
       align-items: center; /* 垂直居中对齐 */
     }
-
     .comment-input {
       flex: 1; /* 评论输入框占据剩余空间 */
       margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
     }
-
   h2, h3 {
   font-weight: bold;
   }
-
   .pet-label {
     font-weight: bold; /* 设置标签的字体为粗体 */
     color: #000; /* 设置标签的文字颜色 */
     font-size: 20px;
   }
-
   .pet-value {
     font-weight: normal; /* 设置数值的字体为普通（非粗体） */
     color: #666; /* 设置数值的文字颜色 */
   }
-
   .modern-button {
   font-weight: bold; /* 设置标签的字体为粗体 */
   background-color: #4b6fa5; /* 背景颜色 */
@@ -452,23 +430,19 @@ const deleteComment = async (comment) => {
   cursor: pointer; /* 鼠标悬停时显示手型光标 */
   transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
 }
-
   .modern-button:hover {
     background-color: #396097; /* 鼠标悬停时的背景颜色 */
     color: white; /* 鼠标悬停时的字体颜色 */
   }
-
   .post-label {
     font-weight: bold; /* 设置标签的字体为粗体 */
     color: #000; /* 设置标签的文字颜色 */
     font-size: 15px;
   }
-
   .post-value {
       font-weight: normal; /* 设置数值的字体为普通（非粗体） */
       color: #666; /* 设置数值的文字颜色 */
   }
-
   .custom-comment-time {
     font-size: 12px; /* Adjust the font size */
     color: #999; /* Adjust the text color to a lighter gray */
@@ -479,8 +453,6 @@ const deleteComment = async (comment) => {
     gap: 10px; /* 调整日期和链接之间的间距 */
   }
   </style>
-
-
 <template>
       <div>
         <div style="display: flex;align-items: center;">
@@ -568,7 +540,6 @@ const deleteComment = async (comment) => {
         <span>{{ pet.favorite_num }}</span>
       </div>
     </div>
-
     <div class="comment-part">
       <div class="comment-form">
         <div class="comment-input">

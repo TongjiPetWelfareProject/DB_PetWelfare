@@ -14,6 +14,8 @@ const pets = ref([])
 const getpetlist = async () => {
   try {
     const response = await petadopt.getPetList();
+    console.log("success")
+    console.log(response);
     for (const adoptpet of response) {
       let gender = '';
       if (adoptpet.SEX === 'M') {
