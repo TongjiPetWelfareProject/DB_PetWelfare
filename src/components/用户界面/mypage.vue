@@ -20,7 +20,40 @@
     border
   >
     <template #extra>
-      <el-button type="primary" @click="onEdit">编辑</el-button>
+      <el-button type="primary" @click="dialogFormVisible = true">编辑</el-button>
+
+      <el-dialog v-model="dialogFormVisible" title="修改个人信息">
+        <el-form :model="editedform">
+          <el-form-item label="用户名" :label-width="formLabelWidth">
+            <el-input v-model="editedform.name" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="电话" :label-width="formLabelWidth">
+            <el-input v-model="editedform.phone" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="地址" :label-width="formLabelWidth">
+            <div class="form-group">
+              <select v-model="selectedProvince" class="province-select">
+                <option v-for="(key,value) in provinces" :value="key" :key="key">{{ value }}</option>
+              </select>
+              <select v-model="selectedCity" name="cities" class="city-select">
+                  <option v-for="city in cities" :value="city.value" :key="city.key">{{ city.key }}</option>
+              </select>
+            </div>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+            <el-button type="primary" @click="dialogFormVisible = false">
+              确认
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+
+
+
+
     </template>
     <el-descriptions-item>
       <template #label>
@@ -190,7 +223,7 @@
           <el-tabs tab-position="left"  class="demo-tabs">
             <el-tab-pane label="我的点赞">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
-                <el-card class="post-card" shadow="always" >
+                <el-card class="post-card" shadow="always" style="margin-top:10px">
                   <div class="post-title">这是一个帖子标题</div>
                   <div class="post-info">
                     <div>发表时间：2023-8-25</div>
@@ -231,19 +264,22 @@
         <el-tab-pane label="其他" name="third">
           <el-tabs tab-position="left"  class="demo-tabs">
             <el-tab-pane label="我的医疗">
-              <el-card v-for="medi in medicallist" class="mypagefoster" shadow="always">
-                <template #header>
-                  <div class="mypagecard-header">
-                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">{{ medi.petname }}</span>
-                  </div>
-                </template>
-                <div class="mypagefostertext" style="margin-top:2px">治疗原因：{{ medi.reason }}</div>
-                <div class="mypagefostertext">治疗医生：{{ medi.vetname }}</div>
-                <div class="mypagefostertext">治疗时间：{{ medi.time }}</div>
-              </el-card>
+              <div class="donatecardcontainer">
+                <el-card v-for="medi in medicallist" class="mypagefoster" shadow="always">
+                  <template #header>
+                    <div class="mypagecard-header">
+                      <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">{{ medi.petname }}</span>
+                    </div>
+                  </template>
+                  <div class="mypagefostertext" style="margin-top:2px">治疗原因：{{ medi.reason }}</div>
+                  <div class="mypagefostertext">治疗医生：{{ medi.vetname }}</div>
+                  <div class="mypagefostertext">治疗时间：{{ medi.time }}</div>
+                </el-card>
+              </div>        
             </el-tab-pane>
             <el-tab-pane label="我的捐款">
-              <el-card v-for="dona in donations" class="mypagedonate" shadow="always">
+              <div class="donatecardcontainer">
+                <el-card v-for="dona in donations" class="mypagedonate" shadow="always">
                 <!-- <template #header>
                   <div class="mypagecard-header">
                     <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">花花</span>
@@ -252,6 +288,8 @@
                 <div class="mypagefostertext" style="margin-top:2px">捐款金额：{{ dona.amount }}</div>
                 <div class="mypagefostertext">捐款时间：{{ dona.time }}</div>
               </el-card>
+              </div>
+           
             </el-tab-pane>
 
           </el-tabs>
@@ -271,12 +309,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,reactive,watch } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import userinfo from '@/api/userInfo'
 import { computed } from 'vue'
 import { Iphone, Location, OfficeBuilding, Tickets, User, UserFilled, Star } from '@element-plus/icons-vue'
+import jsonData from '../登录注册/values.json';
+
+const provinces = ref(jsonData.provinces);
+const selectedProvince = ref('');
+const cities = ref([]);
+const selectedCity = ref('');
+
 const userStore = useUserStore()
 const activeName = ref('first')
 const infoform = ref({
@@ -286,6 +331,26 @@ const infoform = ref({
 const postcomment = ref([])
 const donations = ref([])
 const medicallist = ref([])
+const dialogFormVisible = ref(false)
+const formLabelWidth = '140px'
+const editedform = reactive({
+  name: '',
+  region: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+  phone:''
+})
+
+watch(selectedProvince, (newSelectedProvince) => {
+  cities.value = Object.entries(jsonData[newSelectedProvince] || {}).map(([key, value]) => ({
+    key,
+    value
+  }));
+});
 
 const getUserInfo = async () => {
     try {
@@ -441,6 +506,10 @@ const start_day = ref(19)
   width:100%
 }
 
+.mypage-card{
+  margin-top: 10px;
+}
+
 .mypagecard-header{
   padding-left: 1%;
   height:0px;
@@ -470,11 +539,61 @@ const start_day = ref(19)
 .mypagefoster{
   width:300px;
   height:150px;
+  flex: 0 0 calc(33.33% - 20px); 
+}
+
+
+.donatecardcontainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* 控制卡片之间的间隔 */
 }
 
 .mypagedonate{
   width:300px;
   height:100px;
+  flex: 0 0 calc(33.33% - 20px); /* 每行三张，卡片宽度占比 */
+}
+
+
+
+.province-select {
+  /* 调整下拉选项的宽度 */
+  width: 40%;
+  /* 调整下拉选项的高度 */
+  height: 50%;
+  /* 调整下拉选项的字体大小 */
+  font-size: 16px;
+  /* 调整下拉选项的背景颜色 */
+  background-color: #ffffff;
+  /* 调整下拉选项的边框样式 */
+  border: 1px solid #cccccc;
+  /* 调整下拉选项的边框圆角 */
+  border-radius: 4px;
+  /* 调整下拉选项的内边距 */
+  padding: 6px;
+  /* 调整下拉选项的颜色 */
+  color: #333333;
+}
+   
+.city-select {
+  /* 调整下拉选项的宽度 */
+  width: 40%;
+  /* 调整下拉选项的高度 */
+  height: 50%;
+  /* 调整下拉选项的字体大小 */
+  font-size: 16px;
+  /* 调整下拉选项的背景颜色 */
+  background-color: #ffffff;
+  /* 调整下拉选项的边框样式 */
+  border: 1px solid #cccccc;
+  /* 调整下拉选项的边框圆角 */
+  border-radius: 4px;
+  /* 调整下拉选项的内边距 */
+  padding: 6px;
+  /* 调整下拉选项的颜色 */
+  color: #333333;
+  margin-left: 5%;
 }
 
 .el-descriptions {
@@ -581,5 +700,6 @@ const start_day = ref(19)
   height:200px;
   width:300px;
 }
+
 
 </style>
