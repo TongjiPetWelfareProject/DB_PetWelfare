@@ -27,8 +27,8 @@ interface User {
   phone: string;
   address: string;
   account_status: string;
-  unmuted: bool;
-  unbanned: bool;
+  unmuted: boolean;
+  unbanned: boolean;
 }
 const tableData = ref<User[]>([]);
 const fetchUserRecords = async () => {

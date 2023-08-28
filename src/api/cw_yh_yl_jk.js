@@ -25,7 +25,11 @@ export default {
 
     muteUser(UID) {
         console.log(typeof UID);
+<<<<<<< Updated upstream
         return axios.post('/api/ban',  JSON.stringify(UID), {//英文名弄错了，不改了
+=======
+        return axios.post('/api/ban', UID, {//英文名弄错了，不改了
+>>>>>>> Stashed changes
             headers: {
                 'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
             },
@@ -39,7 +43,11 @@ export default {
     },
 
     removeMuteUser(UID) {
+<<<<<<< Updated upstream
         return axios.post('/api/remove-ban',  JSON.stringify(UID), {
+=======
+        return axios.post('/api/remove-ban', UID, {
+>>>>>>> Stashed changes
             headers: {
                 'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
             },
@@ -53,7 +61,11 @@ export default {
     },
 
     blockUser(UID) {
+<<<<<<< Updated upstream
         return axios.post('/api/block',  JSON.stringify(UID), {
+=======
+        return axios.post('/api/block', UID, {
+>>>>>>> Stashed changes
             headers: {
                 'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
             },
@@ -67,7 +79,11 @@ export default {
     },
 
     removeBlockUser(UID) {
+<<<<<<< Updated upstream
         return axios.post('/api/remove-block',  JSON.stringify(UID), {
+=======
+        return axios.post('/api/remove-block', UID, {
+>>>>>>> Stashed changes
             headers: {
                 'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
             },
