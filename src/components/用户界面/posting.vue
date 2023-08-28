@@ -2,7 +2,10 @@
  <div class="postcontainer">
 
   <div class="post-form">
-    <br>
+    <div style="display: flex;align-items: center;margin-top:10px">
+              <img src=" ../../../public/返回2.png" class="textreturn" style="width:24px;height: 24px;">
+              &nbsp;<a href="\forum" style="text-decoration: none;color:#fbfcfc;">返回论坛</a>
+        </div>
     <div style="display: flex;align-items: center;">
       <img src="../../../public/heading.png" style="height:18px;width:18px"><span class="textpost" style="display: flex;align-items: center;justify-content: center;  ">&nbsp;标题</span>
     </div>
