@@ -72,6 +72,7 @@ const approveApplication = async (index: number) => {
     // const { date, petId, userId } = recordToUpdate;
     // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'abored' });
     await updateAdoptionRecord(recordToUpdate);
+    fetchData();
   } catch (error) {
     console.error('更新数据时出错：', error);
     recordToUpdate.censor_status = 'to be censored';
@@ -88,6 +89,7 @@ const rejectApplication = async(index: number) => {
     // const { date, petId, userId } = recordToUpdate;
     // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'legitimate' });
     await updateAdoptionRecord(recordToUpdate);
+    fetchData();
   } catch (error) {
     console.error('更新数据时出错：', error);
     recordToUpdate.censor_status = 'to be censored';
