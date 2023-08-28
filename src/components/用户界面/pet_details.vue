@@ -25,15 +25,15 @@ const petId = ref('');//应将petId定义在更广阔的作用域内，onMounted
 onMounted(() => {
   petId.value = route.params.id; // 从路由参数中获取宠物的 ID
   console.log(petId.value);//成功
-  getPetDetails(petId.value);
-  getcomment();
+  getPetDetails();
   getiflike();
   getiffavorite();
+  postreadnum();
 });
 
-const getPetDetails = async (PID) => {
+const getPetDetails = async () => {
   try {
-    const response = await getpetinfo.getPetDetails(PID); // 假设有一个获取单个宠物信息的 API
+    const response = await getpetinfo.getPetDetails(petId.value); // 假设有一个获取单个宠物信息的 API
     console.log(response);
 
     let species = '';
@@ -84,6 +84,7 @@ const getPetDetails = async (PID) => {
       comment_num: response.Comment_Num,
       image: images[0]//等后端图片，后期修改
     };
+    comment_contents.value = response.comments;
   } catch (error) {
     console.error('获取宠物信息时出错：', error);
   }
@@ -100,21 +101,8 @@ const handleApplyForAdopt = () => {
   }
 }
 
-/*const handleApplyForAdopt = () => {
-  
-  router.push('/pet_adopt_form');
-}*/
-
-pet.read_num++;
-
-
-
-const newComment = ref({ author: '', text: '', avatar: '@/photos/汤姆1.jpg' });//传照片没成功
-newComment.value.author = '某某某';
-const showCommentForm = ref(false);
-
+const newComment = ref({ author: userStore.userInfo.User_Name, text: '', avatar: './src/photos/阿尼亚.jpg' });
 const comment_contents=ref([{  
-   id: '', 
    user_id: '',
    author: '', 
    text: '', 
@@ -187,18 +175,6 @@ const addComment = async () => {
       }
 };
 
-const isOwnPost = (UID) => {
-    if( UID === userStore.userInfo.User_ID || userStore.userInfo.Role==='Admin')
-      return true
-    else 
-      return false
-}
-
-const showAddComment = () => {
-    showCommentForm.value = true;
-}
-
-
 const getiflike= async () => {
   try {
       const response = await getpetinfo.ifLike(userStore.userInfo.User_ID,petId.value);
@@ -253,7 +229,7 @@ const favoritePet = async () => {
     }
 };
 
-const getcomment= async () => {
+/*const getcomment= async () => {
     try {
         const response = await getpetinfo.getComment(petId.value);
         for (const postcomment of response) {
@@ -270,7 +246,7 @@ const getcomment= async () => {
       } catch (error) {
         console.error('获取评论失败：', error);
       }
-    };
+    };*/
 
 const sortedComments = computed(() => {
   return comment_contents.value.slice().sort((a, b) => {
@@ -282,7 +258,7 @@ const sortedComments = computed(() => {
 
 const deleteComment = async (comment) => {
   try {
-    console.log("删除时间为"+comment.time+"的帖子")
+    console.log("删除时间为"+comment.time+"的评论")
     const response = await getpostinfo.deletecomment(comment.user_id,comment.id,comment.time);
       ElMessage.success({
       message: '删除成功',

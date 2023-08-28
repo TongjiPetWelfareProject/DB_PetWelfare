@@ -137,17 +137,6 @@ export default{
       });
   },
 
-  getComment(PID) {
-    return axios.get(`/api/comment-list/${PID}`)
-    .then(response => {
-      return response.data;
-    })
-    .catch(error => {
-      throw error;
-    });
-  },
-
-
   submitComment(UID, PID, commentText) {
     const submitCommentData = {
       user: UID,
