@@ -94,8 +94,22 @@ export default {
 
     addPet(newPet) {
         console.log('新宠物')
+        if (newPet.size == "小型") {
+            newPet.size = "small";
+        }
+        else if (newPet.size == "中型") {
+            newPet.size = "medium";
+        }
+        else {
+            newPet.size = "large";
+        }
+        console.log("宠物列表")
         console.log(newPet);
-        return axios.post('/api/add-pet', newPet)
+        return axios.post('/api/add-pet', JSON.stringify(newPet), {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
             .then(response => {
             return response.data;
             })
@@ -105,7 +119,13 @@ export default {
     },
 
     deletePet(PID) {
-        return axios.post('/api/delete-pet', PID)
+        console.log("删除宠物ID");
+        console.log(PID);
+        return axios.post('/api/delete-pet', JSON.stringify(PID), {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
             .then(response => {
             return response.data;
             })
@@ -117,7 +137,11 @@ export default {
     editPet(editedPet) {
         console.log('编辑宠物')
         console.log(editedPet);
-        return axios.post('/api/edited-pet', editedPet)//需要后端自己找出宠物ID
+        return axios.post('/api/edited-pet', JSON.stringify(editedPet), {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })//需要后端自己找出宠物ID
             .then(response => {
             return response.data;
             })

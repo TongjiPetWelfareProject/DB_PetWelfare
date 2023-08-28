@@ -26,7 +26,7 @@
     <el-button type="primary" @click="addRow">添加宠物</el-button>
 
     <!-- Edit Doctor Dialog -->
-    <el-dialog v-model="editDialogVisible" title="编辑宠物信息" @close="resetEditDialog">
+    <el-dialog v-model="editDialogVisible" title="编辑宠物信息" >
       <el-form :model="editedPet" label-width="80px">
         <!-- 表单内容 -->
         <el-form-item label="宠物名">
@@ -181,7 +181,13 @@ const addRow = () => {
 };
 
 const editRow = (index: number) => {
-  editedPet.value = { ...tableData.value[index] };
+  //editedPet.value = { ...tableData.value[index] };
+  editedPet.value = {
+  id: tableData.value[index].id,
+  petname: tableData.value[index].petname,
+  health: tableData.value[index].health,
+  vaccine: tableData.value[index].vaccine,
+};
   editDialogVisible.value = true;//和接口的连接在dialog里
 };
 
@@ -208,7 +214,7 @@ const submitNewPet = async() => {
 
 const submitEditedPet = async() => {
   try {
-      const response = await petcard.editPet(editedPet.value.id, editedPet.value);//注意：需保证id不能被修改
+      const response = await petcard.editPet(editedPet.value);//注意：需保证id不能被修改
       const editedIndex = tableData.value.findIndex(item => item.id === editedPet.value.id);
       if (editedIndex !== -1) {
         // 更新表格中对应行的数据
