@@ -35,10 +35,18 @@
           <el-input v-model="editedDoctor.phone"></el-input>
         </el-form-item>
         <el-form-item label="工作时间">
-          <el-input v-model="editedDoctor.workingHours"></el-input>
+          <!-- <el-input v-model="editedDoctor.workingHours"></el-input> -->
+          <div class="input-with-currency">
+            <el-input-number v-model="editedDoctor.workingHours" :step="0.5" />
+            <span class="currency-symbol">小时</span>
+          </div>
         </el-form-item>
         <el-form-item label="工资">
-          <el-input v-model="editedDoctor.salary"></el-input>
+          <!-- <el-input v-model="editedDoctor.salary"></el-input> -->
+          <div class="input-with-currency">
+            <el-input v-model="editedDoctor.salary"></el-input>
+            <span class="currency-symbol">￥</span>
+          </div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

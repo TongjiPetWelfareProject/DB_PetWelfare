@@ -35,13 +35,24 @@
                     <el-input v-model="editedEmployee.phone"></el-input>
                 </el-form-item>
                 <el-form-item label="职责">
-                    <el-input v-model="editedEmployee.responsibility"></el-input>
+                    <!-- <el-input v-model="editedEmployee.responsibility"></el-input> -->
+                    <el-select v-model="editedEmployee.responsibility" class="m-2" placeholder="Select">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="工作时间">
-                    <el-input v-model="editedEmployee.workingHours"></el-input>
+                    <!-- <el-input v-model="editedEmployee.workingHours"></el-input> -->
+                    <div class="input-with-currency">
+                        <el-input-number v-model="editedEmployee.workingHours" :step="0.5" />
+                        <span class="currency-symbol">小时</span>
+                    </div>
                 </el-form-item>
                 <el-form-item label="工资">
-                    <el-input v-model="editedEmployee.salary"></el-input>
+                    <!-- <el-input v-model="editedEmployee.salary"></el-input> -->
+                    <div class="input-with-currency">
+                        <el-input v-model="editedEmployee.salary"></el-input>
+                        <span class="currency-symbol">￥</span>
+                    </div>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -61,7 +72,10 @@
                     <el-input v-model="newEmployee.phone" @input="handlePhoneInput"></el-input>
                 </el-form-item>
                 <el-form-item label="职责">
-                    <el-input v-model="newEmployee.responsibility"></el-input>
+                    <!-- <el-input v-model="newEmployee.responsibility"></el-input> -->
+                    <el-select v-model="newEmployee.responsibility" class="m-2" placeholder="Select">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="工作时间">
                     <div class="input-with-currency">
@@ -118,6 +132,45 @@ const newEmployee = ref<Employee>({
     workingHours: '8',
     salary: '',
 });
+
+const options = [
+    {
+        value: '领养顾问',
+        label: '领养顾问',
+    },
+    {
+        value: '兽医技术员',
+        label: '兽医技术员',
+    },
+    {
+        value: '动物行为学家',
+        label: '动物行为学家',
+    },
+    {
+        value: '志愿者协调员',
+        label: '志愿者协调员',
+    },
+    {
+        value: '寄养协调员',
+        label: '寄养协调员',
+    },
+    {
+        value: '设施经理',
+        label: '设施经理',
+    },
+    {
+        value: '筹款和外展协调员',
+        label: '筹款和外展协调员',
+    },
+    {
+        value: '救援运输员',
+        label: '救援运输员',
+    },
+    {
+        value: '动物护理专家',
+        label: '动物护理专家',
+    },
+]
 
 const handlePhoneInput = () => {
     // 获取输入框的值并移除所有非数字字符
