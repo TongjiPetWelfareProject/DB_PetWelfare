@@ -121,7 +121,7 @@ export default {
     deletePet(PID) {
         console.log("删除宠物ID");
         console.log(PID);
-        return axios.post('/api/delete-pet', JSON.stringify(PID), {
+        return axios.delete('/api/delete-pet', {data:{PID}, 
             headers: {
               'Content-Type': 'application/json'
             }
