@@ -44,7 +44,6 @@
         </template>
       </el-table-column>
     </el-table><br>
-    <el-button type="primary" @click="addRow">添加记录</el-button>
   </div>
 </template>
 
@@ -110,15 +109,6 @@ const approveApplication = (index: number) => {
 
 const rejectApplication = (index: number) => {
   // 拒绝申请操作
-}
-const addRow = () => {
-  tableData.value.push({
-    petId: '',
-    doctorId: '',
-    medicalDate: '',
-    medicalContent: '',
-    tag:'记录',
-  })
 }
 
 </script>

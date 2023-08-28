@@ -42,7 +42,7 @@ try {
       unmuted = true;
       unbanned = true;
     }
-    else if (data.account_status == "禁言") {
+    else if (data.account_status == "审核中") {
       unbanned = true;
     }
     tableData.value.push({
@@ -89,6 +89,7 @@ ElMessageBox.confirm(
                 message: '提交成功',
               });
               tableData.value[index].unmuted = false;
+              location.reload(); // 这里会刷新整个页面
             })
             .catch(error => {
               // 处理错误
@@ -127,6 +128,7 @@ ElMessageBox.confirm(
                 message: '提交成功',
               });
               tableData.value[index].unmuted = true;
+              location.reload(); // 这里会刷新整个页面
             })
             .catch(error => {
               // 处理错误
@@ -164,6 +166,7 @@ ElMessageBox.confirm(
                 message: '提交成功',
               });
               tableData.value[index].unbanned = false;
+              location.reload(); // 这里会刷新整个页面
             })
             .catch(error => {
               // 处理错误
@@ -202,6 +205,7 @@ ElMessageBox.confirm(
               });
               tableData.value[index].unbanned = true;
               tableData.value[index].unmuted = true;//取消封号之后连禁言一起取消
+              location.reload(); // 这里会刷新整个页面
             })
             .catch(error => {
               // 处理错误
