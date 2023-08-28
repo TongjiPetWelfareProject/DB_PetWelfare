@@ -63,15 +63,18 @@ const treatments = ref([])
 const getTreatList = async () => {
   try {
     const response = await tableData.getTreatList();
+    
     for (const treatment of response) {
+      
       treatments.value.push({
-        pid: treatment.PET_ID,
-        vid: treatment.VET_ID,
+        petId: treatment.PET_ID,
+        doctorId: treatment.VET_ID,
         reserveTime: treatment.RESERVE_TIME,
         treatTime: treatment.TREAT_TIME,
         category: treatment.CATEGORY,
       });
     }
+    console.log(treatments)
   } catch (error) {
     console.error('获取医疗列表时出错：', error);
   }
@@ -85,9 +88,9 @@ const selectedTag = ref('全部')
 
 const filteredData = computed(() => {
   if (selectedTag.value === '全部') {
-    return tableData.value
+    return treatments.value
   } else {
-    return tableData.value.filter((record) => record.tag === selectedTag.value)
+    return treatments.value
   }
 })
 
