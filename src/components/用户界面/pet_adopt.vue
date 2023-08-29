@@ -14,25 +14,31 @@ const pets = ref([])
 const getpetlist = async () => {
   try {
     const response = await petadopt.getPetList();
-    console.log("success")
+    console.log("success");
     console.log(response);
+
+    const uniquePets = {}; // 用于存储已经遍历过的 pet_id
+
     for (const adoptpet of response) {
-      let gender = '';
-      if (adoptpet.SEX === 'M') {
-        gender = '弟弟';
-      } else if (adoptpet.SEX === 'F') {
-        gender = '妹妹';
-      }
-      console.log(adoptpet.PET_NAME)
-      pets.value.push({
-        id: adoptpet.PET_ID,
-        name: adoptpet.PET_NAME,
-        breed: adoptpet.SPECIES,
-        gender: gender,
-        age: adoptpet.AGE,
-        image: images[0]
-      });
+      if (!uniquePets[adoptpet.PET_ID]) { // 检查是否已经遍历过该 pet_id
+        uniquePets[adoptpet.PET_ID] = true; // 将 pet_id 记录为已遍历
+        let gender = '';
+    if (adoptpet.SEX === 'M') {
+      gender = '弟弟';
+    } else if (adoptpet.SEX === 'F') {
+      gender = '妹妹';
     }
+    console.log(adoptpet.PET_NAME);
+    pets.value.push({
+      id: adoptpet.PET_ID,
+      name: adoptpet.PET_NAME,
+      breed: adoptpet.SPECIES,
+      gender: gender,
+      age: adoptpet.AGE,
+      image: images[0]
+    });
+  }
+}
   } catch (error) {
     console.error('获取可领养宠物数据时出错：', error);
   }
