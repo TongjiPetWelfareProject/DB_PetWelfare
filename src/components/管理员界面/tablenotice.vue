@@ -30,9 +30,7 @@
       </el-table-column>
     </el-table>
     
-    <el-config-provider :locale="zhCn">
-      <el-pagination layout="sizes, prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize" :page-sizes="[1,2,5,10]" @update:current-page="handlePageChange" @update:page-size="handlePageSizeChange" /><br>
-    </el-config-provider>
+    <el-pagination layout="sizes, prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize" :page-sizes="[10,5,2,1]" @update:current-page="handlePageChange" @update:page-size="handlePageSizeChange" /><br>
     <el-button type="primary" @click="showAddNoticeDialog">添加</el-button>
     <el-dialog title="发布新公告" v-model="addNoticeDialogVisible">
       <el-form>
@@ -56,15 +54,12 @@
 <script>
 import { ref,onMounted,nextTick } from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
-import { ElConfigProvider } from 'element-plus'
-import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import gg_rqb_jk from '@/api/gg_rqb_jk'
 
 export default {
   components: {
     ElButton,
     ElTable,
-    ElConfigProvider,
   },
   setup() {
     const tableRef = ref(null)
@@ -192,7 +187,6 @@ export default {
       pageSize,
       handlePageChange,
       handlePageSizeChange,
-      zhCn,
     }
   },
 }
