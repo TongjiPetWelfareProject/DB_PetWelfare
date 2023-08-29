@@ -13,16 +13,6 @@ export default {
             });
     },
 
-    /*fetchPetRecords() {
-        return axios.get('/api/petlist')
-            .then(response => {
-            return response.data;
-            })
-            .catch(error => {
-            throw error;
-            });
-    },*/
-
     muteUser(UID) {
         console.log(typeof UID);
         return axios.post('/api/ban',  JSON.stringify(UID), {//英文名弄错了，不改了
