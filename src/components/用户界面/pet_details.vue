@@ -74,7 +74,15 @@ const getPetDetails = async (PID) => {
       comment_num: response.Comment_Num,
       image: images[0]//等后端图片，后期修改
     };
-    comments.value = response.comments;
+    for (const comment of response.comments) {
+      comments.value.push({
+        commenter_id: comment.commenter_id,
+        commenter: comment.commenter,
+        comment_time: comment.comment_time,
+        comment_content: comment.comment_contents,
+        avatar:'./src/photos/阿尼亚.jpg'
+      });
+    }
   } catch (error) {
     console.error('获取宠物信息时出错：', error);
   }
@@ -90,17 +98,15 @@ const handleApplyForAdopt = () => {
 }
 
 pet.read_num++;
-const newComment = ref({ author: '', text: '', avatar: '@/photos/汤姆1.jpg' });//传照片没成功
-newComment.value.author = '某某某';
+const newComment = ref({ 
+  commenter_id: '',
+  commenter: '',
+  comment_time: '',
+  comment_content: '',
+  avatar:'./src/photos/阿尼亚.jpg'
+});//传照片没成功
+newComment.value.commenter = '某某某';
 const showCommentForm = ref(false);
-const comment_contents=ref([{  
-   id: '', 
-   user_id: '',
-   author: '', 
-   text: '', 
-   avatar: '',
-   time:''
-}])
 
 
 const getifinteract= async (PID) => {
@@ -148,7 +154,7 @@ const favoritePet = async () => {
 
 
 
-const getcomment= async () => {
+/*const getcomment= async () => {
     try {
         const response = await getpetinfo.getComment(petId.value);
         for (const postcomment of response) {
@@ -165,7 +171,7 @@ const getcomment= async () => {
       } catch (error) {
         console.error('获取评论失败：', error);
       }
-    };
+    };*/
 const sortedComments = computed(() => {
   return comment_contents.value.slice().sort((a, b) => {
     const dateA = new Date(a.time);
@@ -483,7 +489,7 @@ const showAddComment = () => {
     <div class="comment-part">
       <div class="comment-form">
         <div class="comment-input">
-          <el-input v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
+          <el-input v-model="newComment.comment_content" type="textarea" placeholder="在这里评论"></el-input>
         </div>
         <div class="comment-button">
           <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
@@ -491,15 +497,15 @@ const showAddComment = () => {
       </div>
       <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
       <p></p>
-      <div v-for="comment in sortedComments" :key="comment.id" class="comment">
+      <div v-for="comment in comments" :key="comment.commenter_id" class="comment">
         <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
         <div class="comment-content">
-          <p class="post-label">{{ comment.author }}</p>
-          <p class="post-value">{{ comment.text }}</p>
-          <div class="comment-actions">
-            <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.time) }}</p>
-            <a v-if="comment.avatar && isOwnPost(comment.user_id)" href="#" @click="deleteComment(comment)">删除</a>
-          </div>
+          <p class="post-label">{{ comment.commenter }}</p>
+          <p class="post-value">{{ comment.comment_content }}</p>
+          <!--<div class="comment-actions">
+            <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.comment_time) }}</p>
+            <a v-if="comment.avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)">删除</a>
+          </div>-->
         </div>
       </div>
     </div>

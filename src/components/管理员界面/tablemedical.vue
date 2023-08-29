@@ -6,21 +6,25 @@
       <el-button @click="filterTag('申请')">申请</el-button>
     </el-button-group>
     <el-table :data="filteredData" :default-sort="{ prop: 'medicalDate', order: 'descending' }"
-      style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
+      style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" max-height="500">
       <el-table-column prop="petId" label="宠物ID" width="100">
       </el-table-column>
-      <el-table-column prop="doctorId" label="医生ID" width="100">
+      <el-table-column prop="petName" label="宠物名" width="100">
       </el-table-column>
-      <el-table-column prop="reserveTime" label="预约时间" sortable width="120">
+      <el-table-column prop="vetId" label="医生ID" width="100">
       </el-table-column>
-      <el-table-column prop="treatTime" label="看病时间" sortable width="120">
+      <el-table-column prop="vetName" label="医生姓名" width="100">
       </el-table-column>
-      <el-table-column prop="category" label="医疗内容" width="250">
+      <el-table-column prop="reserveTime" label="预约时间" sortable width="100">
       </el-table-column>
-      <el-table-column label="操作" width="200">
+      <el-table-column prop="treatTime" label="看病时间" sortable width="100">
+      </el-table-column>
+      <el-table-column prop="category" label="医疗内容" width="200">
+      </el-table-column>
+      <el-table-column label="操作" width="120">
         <template #default="scope">
           <el-button v-if="scope.row.tag === '记录'" link type="primary" size="small"
-            @click.prevent="editMedicalRecord(scope.$index)">
+            @click.prevent="editRow(scope.$index)">
             编辑
           </el-button>
           <el-button v-if="scope.row.tag === '记录'" link type="danger" size="small"
@@ -45,39 +49,70 @@
       </el-table-column>
     </el-table><br>
   </div>
+    <!-- Edit Medical Dialog -->
+    <el-dialog v-model="editDialogVisible" title="编辑医疗信息" >
+      <el-form :model="editedPet" label-width="80px">
+        <!-- 表单内容 -->
+        <el-form-item label="医疗时间">
+          <el-date-picker v-model="editedPet.treatTime" type="datetime" placeholder="选择医疗时间"></el-date-picker>
+        </el-form-item>
+        <el-form-item label="医疗内容">
+          <el-input v-model="editedPet.category"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="editMedicalRecord">保存</el-button>
+      </div>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElTag } from 'element-plus'
-import tableData from '@/api/cw_yh_yl_jk'
+import medical from '@/api/cw_yh_yl_jk'
 
 interface MedicalRecord {
-  petId: string
-  doctorId: string
-  medicalDate: string
-  customDate:string
-  medicalContent: string
-  tag: string
+  petId: string;
+  petName: string;
+  vetId: string;
+  vetName: string;
+  reserveTime: string;
+  treatTime:string;
+  category: string;
+  tag: string;
 }
-const treatments = ref([])
+
+const tableData = ref<MedicalRecord[]>([]);
+const editDialogVisible = ref(false);
+const editedMedicalRecord = ref<Pet>({
+  petId: '',
+  vetId: '',
+  reserveTime: '',
+  treatTime: '',
+  category: '',
+});
+
 const getTreatList = async () => {
   try {
-    const response = await tableData.getTreatList();
-    
-    for (const treatment of response) {
+    const response = await medical.getTreatList();
+    console.log('打印宠物列表')
+    console.log(response);
+    for (const data of response) {
       
-      treatments.value.push({
-        petId: treatment.PET_ID,
-        doctorId: treatment.VET_ID,
-        reserveTime: treatment.RESERVE_TIME,
-        treatTime: treatment.TREAT_TIME,
-        category: treatment.CATEGORY,
-        tag:treatment.TAG
+      tableData.value.push({
+        petId: data.PET_ID,
+        petName: data.PET_NAME,
+        vetId: data.VET_ID,
+        vetName: data.VET_NAME,
+        reserveTime: data.RESERVE_TIME,
+        treatTime: data.TREAT_TIME,
+        category: data.CATEGORY,
+        tag: data.TAG
       });
-      console.log(treatment.RESERVE_TIME.length)
+      console.log(data.RESERVE_TIME.length)
     }
-    console.log(treatments)
+    console.log(tableData)
   } catch (error) {
     console.error('获取医疗列表时出错：', error);
   }
@@ -91,9 +126,9 @@ const selectedTag = ref('全部')
 
 const filteredData = computed(() => {
   if (selectedTag.value === '全部') {
-    return treatments.value
+    return tableData.value
   } else {
-    return treatments.value.filter((record) => record.tag === selectedTag.value)
+    return tableData.value.filter((record) => record.tag === selectedTag.value)
   }
 })
 
@@ -101,12 +136,36 @@ const filterTag = (tag: string) => {
   selectedTag.value = tag
 }
 
-const deleteMedicalRecord = (index: number) => {
-  tableData.value.splice(index, 1)
+const editRow = (index: number) => {
+  //editedPet.value = { ...tableData.value[index] };
+  editedMedicalRecord.value = {
+  petId: tableData.value[index].petId,
+  doctorId: tableData.value[index].doctorId,
+  reserveTime: tableData.value[index].reserveTime,
+  treatTime: tableData.value[index].treatTime,
+  category: tableData.value[index].category,
+};
+  editDialogVisible.value = true;//和接口的连接在dialog里
+};
+
+const editMedicalRecord = async() => {
+  // 编辑医疗记录操作
+  try {
+      const response = await medical.editMedicalRecord(editedMedicalRecord.value);//注意：需保证id不能被修改
+      const editedIndex = tableData.value.findIndex(item => item.id === editedMedicalRecord.value.id);
+      if (editedIndex !== -1) {
+        // 更新表格中对应行的数据
+        tableData.value[editedIndex] = { ...editedMedicalRecord.value };
+        // 关闭编辑对话框
+        editDialogVisible.value = false;
+      }
+    } catch (error) {
+      console.error('编辑数据失败：', error);
+    }
 }
 
-const editMedicalRecord = (index: number) => {
-  // 编辑医疗记录操作
+const deleteMedicalRecord = (index: number) => {
+  tableData.value.splice(index, 1)
 }
 
 const approveApplication = (index: number) => {
