@@ -165,4 +165,23 @@ export default {
             throw error;
             });
     },
+
+    deleteMedicalRecord(PID, VID, reserveTime) {
+        const deletedMedicalRecord = {
+            pet: PID,
+            vet: VID,
+            reserveTime: reserveTime,
+          };
+        return axios.post('/api/delete-medical-record', JSON.stringify(deletedMedicalRecord), {
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+            return response.data;
+            })
+            .catch(error => {
+            throw error;
+            });
+    },
 }

@@ -1,86 +1,77 @@
-<script>
+<script setup>
 import { ref, computed, onMounted } from 'vue';
-import { Delete, EditPen, Search, Share, Upload,SortDown} from '@element-plus/icons-vue'
-import notice_forum from '@/api/notice_forum'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { Delete, EditPen, Search, Share, Upload, SortDown } from '@element-plus/icons-vue';
+import notice_forum from '@/api/notice_forum';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
-export default {
-  setup() {
-    const notices = ref([]);
-    
-    const searchText = ref("");
-    const sortOrder = ref("desc");
+const notices = ref([]);
+const searchText = ref("");
+const sortOrder = ref("desc");
 
-    function formatBackendTime(backendTime) {
-      const date = new Date(backendTime);
+function formatBackendTime(backendTime) {
+  const date = new Date(backendTime);
 
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
 
-      const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      return formattedTime;
-    }
+  const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return formattedTime;
+}
 
-    const getNotices = async () => {
-      try {
-        const response = await notice_forum.bulletinAPI();
-        for (const notice of response) {
-        const formattedDate = formatBackendTime(notice.published_date);
-        notices.value.push({
+const getNotices = async () => {
+  try {
+    const response = await notice_forum.bulletinAPI();
+    for (const notice of response) {
+      const formattedDate = formatBackendTime(notice.published_date);
+      notices.value.push({
         id: notice.id,
         title: notice.heading,
         date: formattedDate,
-        content: notice.content
+        content: notice.content,
       });
     }
-      } catch (error) {
-        console.error('获取公告数据时出错：', error);
-      }
-    };
-
-    onMounted(() => {
-      getNotices();
-    });
-
-    const sortedNotices = computed(() => {
-      return notices.value.slice().sort((a, b) => {
-        if (sortOrder.value === "asc") {
-          return new Date(a.date) - new Date(b.date);
-        } else {
-          return new Date(b.date) - new Date(a.date);
-        }
-      });
-    });
-
-    const filteredNotices = computed(() => {
-      return sortedNotices.value.filter(notice => {
-        return notice.title.toLowerCase().includes(searchText.value.toLowerCase());
-      });
-    });
-
-    const goToNotice = (notice) => {
-      console.log("跳转到公告详情页：" + notice.title);
-      ElMessageBox.alert(notice.content,notice.title);
-    };
-
-    const toggleSortOrder = () => {
-      sortOrder.value = sortOrder.value === "asc" ? "desc" : "asc";
-    };
-
-    return {
-      searchText,
-      filteredNotices,
-      goToNotice,
-      toggleSortOrder,
-      Search,
-      SortDown
-    };
+  } catch (error) {
+    console.error('获取公告数据时出错：', error);
   }
-}
+};
+
+onMounted(() => {
+  getNotices();
+});
+
+const sortedNotices = computed(() => {
+  return notices.value.slice().sort((a, b) => {
+    if (sortOrder.value === "asc") {
+      return new Date(a.date) - new Date(b.date);
+    } else {
+      return new Date(b.date) - new Date(a.date);
+    }
+  });
+});
+
+const filteredNotices = computed(() => {
+  return sortedNotices.value.filter(notice => {
+    return notice.title.toLowerCase().includes(searchText.value.toLowerCase());
+  });
+});
+
+const showCustomMessageBox = ref(false);
+const currentNotice = ref(null);
+
+const goToNotice = (notice) => {
+  console.log("跳转到公告详情页：" + notice.title);
+  ElMessageBox.alert(notice.content,notice.title);
+  //currentNotice.value = notice;
+  //showCustomMessageBox.value = true;
+};
+
+const toggleSortOrder = () => {
+  sortOrder.value = sortOrder.value === "asc" ? "desc" : "asc";
+};
 </script>
 
 <template>
@@ -134,28 +125,30 @@ export default {
       <div class="content">
     <div class="notices">
       <ul>
-        <li v-for="notice in filteredNotices" :key="notice.id" >
+        <li v-for="notice in filteredNotices" :key="notice.id" @click="goToNotice(notice)">
           <el-card class="notice-card" >
             <span class="notice-title">{{ notice.title }}</span>
             <div class="noticebody">
               <div class="notice-date">{{ notice.date }}</div>
-              <el-button class="noticebutton" type="plain" text @click="goToNotice(notice)">查看详情</el-button>
             </div>
           </el-card>
         </li>
       </ul>
     </div>
     </div>
+    <teleport to="body">
+      <custom-message-box
+        v-if="showCustomMessageBox"
+        :notice="currentNotice"
+        @close="showCustomMessageBox = false"
+      ></custom-message-box>
+    </teleport>
   <!-- </div> -->
 </template>
 
 
 
-<style >
-
-
-
-
+<style scoped>
 .main_page{
   display: flex;
   align-items: center;
@@ -303,6 +296,31 @@ li:hover {
 .line1{
   color: rgb(255, 255, 255);
   font-size: 16px;
+}
+
+.custom-message-box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.custom-message-box-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.custom-message-box-button {
+  margin-top: 10px;
 }
 
 </style>

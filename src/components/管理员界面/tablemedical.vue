@@ -7,17 +7,23 @@
     </el-button-group>
     <el-table :data="filteredData" :default-sort="{ prop: 'medicalDate', order: 'descending' }"
       style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" max-height="500">
-      <el-table-column prop="petId" label="宠物ID" width="100">
+      <el-table-column prop="tag" label="tag" sortable width="100">
+        <template #default="scope">
+          <el-tag v-if="scope.row.tag === '记录'" type="success">{{ scope.row.tag }}</el-tag>
+          <el-tag v-if="scope.row.tag === '申请'" type="warning">{{ scope.row.tag }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="petId" label="宠物ID" width="80">
       </el-table-column>
       <el-table-column prop="petName" label="宠物名" width="100">
       </el-table-column>
-      <el-table-column prop="vetId" label="医生ID" width="100">
+      <el-table-column prop="vetId" label="医生ID" width="80">
       </el-table-column>
       <el-table-column prop="vetName" label="医生姓名" width="100">
       </el-table-column>
-      <el-table-column prop="reserveTime" label="预约时间" sortable width="100">
+      <el-table-column prop="reserveTime" label="预计看病时间" sortable width="110">
       </el-table-column>
-      <el-table-column prop="treatTime" label="看病时间" sortable width="100">
+      <el-table-column prop="treatTime" label="实际看病时间" sortable width="110">
       </el-table-column>
       <el-table-column prop="category" label="医疗内容" width="200">
       </el-table-column>
@@ -37,27 +43,21 @@
           </el-button>
           <el-button v-if="scope.row.tag === '申请'" link type="danger" size="small"
             @click.prevent="rejectApplication(scope.$index)">
-            拒绝
+            延期
           </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column prop="tag" label="tag" sortable width="100">
-        <template #default="scope">
-          <el-tag v-if="scope.row.tag === '记录'" type="success">{{ scope.row.tag }}</el-tag>
-          <el-tag v-if="scope.row.tag === '申请'" type="warning">{{ scope.row.tag }}</el-tag>
         </template>
       </el-table-column>
     </el-table><br>
   </div>
     <!-- Edit Medical Dialog -->
     <el-dialog v-model="editDialogVisible" title="编辑医疗信息" >
-      <el-form :model="editedPet" label-width="80px">
+      <el-form :model="editedMedicalRecord" label-width="80px">
         <!-- 表单内容 -->
         <el-form-item label="医疗时间">
-          <el-date-picker v-model="editedPet.treatTime" type="datetime" placeholder="选择医疗时间"></el-date-picker>
+          <el-date-picker v-model="editedMedicalRecord.treatTime" type="datetime" placeholder="选择医疗时间"></el-date-picker>
         </el-form-item>
         <el-form-item label="医疗内容">
-          <el-input v-model="editedPet.category"></el-input>
+          <el-input v-model="editedMedicalRecord.category"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -140,11 +140,12 @@ const editRow = (index: number) => {
   //editedPet.value = { ...tableData.value[index] };
   editedMedicalRecord.value = {
   petId: tableData.value[index].petId,
-  doctorId: tableData.value[index].doctorId,
+  vetId: tableData.value[index].vetId,
   reserveTime: tableData.value[index].reserveTime,
   treatTime: tableData.value[index].treatTime,
   category: tableData.value[index].category,
 };
+  console.log('editRow成功');
   editDialogVisible.value = true;//和接口的连接在dialog里
 };
 
@@ -164,15 +165,26 @@ const editMedicalRecord = async() => {
     }
 }
 
-const deleteMedicalRecord = (index: number) => {
-  tableData.value.splice(index, 1)
-}
+const deleteRow = async (index: number) => {
+  try {
+      const response = await medical.deleteMedicalRecord(tableData.value[index].petId, tableData.value[index].vetId, tableData.value[index].reserveTime);
+      tableData.value.splice(index, 1);
+    } catch (error) {
+      console.error('删除数据失败：', error);
+    }
+};
 
-const approveApplication = (index: number) => {
+const approveMedicalApplication = async(index: number) => {
   // 同意申请操作
+  try {
+      const response = await medical.deleteMedicalRecord(tableData.value[index].petId, tableData.value[index].vetId, tableData.value[index].reserveTime);
+      tableData.value.splice(index, 1);
+    } catch (error) {
+      console.error('删除数据失败：', error);
+    }
 }
 
-const rejectApplication = (index: number) => {
+const rejectMedicalApplication = (index: number) => {
   // 拒绝申请操作
 }
 
