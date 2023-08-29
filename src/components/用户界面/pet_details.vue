@@ -1,8 +1,122 @@
+<template>
+  <div>
+    <div style="display: flex;align-items: center;">
+           <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
+           &nbsp;<a href="\pet_adopt" style="text-decoration: none;color:#538adc;">返回领养主页</a>
+     </div>
+    
+  </div>
+  <p></p>
+<div class="pet-card">
+<el-card class="card" >
+  <div class="card-content">
+    <div>
+    <div class="pet-image">
+      <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" alt="Pet Image" />
+    </div>
+    <!--<el-row>
+        <el-col :span="24">
+          <p class="pet-value">{{ pet.description }}</p>
+        </el-col>
+      </el-row>-->
+  </div>
+    <div class="pet-info">
+      <p class="read-count">阅读{{ pet.read_num }}</p>
+      <span style="font-size: 30px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
+      <span style="font-size: 60px; color:#edb055;font-weight: bold;">{{ pet.name }}</span>
+      <p>  </p>
+      <el-row>
+        <el-col :span="8">
+          <span class="pet-label">种类</span>
+          <p class="pet-value">{{ pet.species }}</p>
+        </el-col>
+        <el-col :span="8">
+          <span class="pet-label">年龄</span>
+          <p class="pet-value">{{ pet.age }}</p>
+        </el-col>
+        <el-col :span="8">
+          <span class="pet-label">性别</span>
+          <p class="pet-value">{{ pet.gender ? '弟弟' : '妹妹'}}</p>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <span class="pet-label">人气</span>
+          <p class="pet-value">{{ pet.popularity }}</p>
+        </el-col>
+        <el-col :span="12">
+          <span class="pet-label">宠物ID</span>
+          <p class="pet-value">{{ pet.id }}</p>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <span class="pet-label">健康状况</span>
+          <p class="pet-value">{{ pet.health_state }}</p>
+        </el-col>
+        <el-col :span="12">
+          <span class="pet-label">疫苗接种状况</span>
+          <p class="pet-value">{{ pet.vaccine ? '已' : '未' }}接种疫苗</p>
+        </el-col>
+      </el-row>
+      <p>  </p>
+      <div style="text-align: center;">
+        <button class="modern-button" @click="handleApplyForAdopt">领养Ta</button>
+      </div>
+    </div>
+  </div>
+</el-card>
+</div>
+<p>  </p>
+<div class="common-layout">
+<div class="interactions">
+  <div>
+    <button class="round-button" @click="likePet">
+      <img v-if="liked" src="@/photos/like_blue.png" alt="点赞" class="icon">
+      <img v-else src="@/photos/like_grey.png" alt="未点赞" class="icon">
+    </button>
+    <span>{{ pet.like_num }}</span>
+  </div>
+  <div>
+    <button class="round-button" @click="favoritePet">
+      <img v-if="favorited" src="@/photos/favorite_blue.png" alt="收藏" class="icon">
+      <img v-else src="@/photos/favorite_grey.png" alt="未收藏" class="icon">
+    </button>
+    <span>{{ pet.favorite_num }}</span>
+  </div>
+</div>
+<div class="comment-part">
+  <div class="comment-form">
+    <div class="comment-input">
+      <el-input v-model="newComment.comment_content" type="textarea" placeholder="在这里评论"></el-input>
+    </div>
+    <div class="comment-button">
+      <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
+    </div>
+  </div>
+  <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
+  <p></p>
+  <div v-for="comment in comments" :key="comment.commenter_id" class="comment">
+    <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
+    <div class="comment-content">
+      <p class="post-label">{{ comment.commenter }}</p>
+      <p class="post-value">{{ comment.comment_content }}</p>
+      <div class="comment-actions">
+        <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.comment_time) }}</p>
+        <a v-if="comment.avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)">删除</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
 import { useUserStore } from '@/store/user';
 import { useRoute, useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import getpetinfo from '@/api/pet_adopt'
 
 const images = [//等后端图片，后期去掉
@@ -50,7 +164,7 @@ const getPetDetails = async (PID) => {
     // 将生日字符串转换为日期对象
     const birthDate = new Date(response.original_pet.birthdate);
     // 计算年龄（以当前日期为准）
-    const age = currentDate.getFullYear() - birthDate.getFullYear();
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
     // 如果生日还未到，年龄减一
     if (
       currentDate.getMonth() < birthDate.getMonth() ||
@@ -87,6 +201,7 @@ const getPetDetails = async (PID) => {
     console.error('获取宠物信息时出错：', error);
   }
 };
+
 const handleApplyForAdopt = () => {
   if (userStore.userInfo.User_ID) {
     // 用户已登录，跳转到 /pet_adopt_form
@@ -152,26 +267,6 @@ const favoritePet = async () => {
     }
 };
 
-
-
-/*const getcomment= async () => {
-    try {
-        const response = await getpetinfo.getComment(petId.value);
-        for (const postcomment of response) {
-            // const formattedDate = formatBackendTime(postinfo.published_date);
-            comment_contents.value.push({
-            id: postcomment.pid,
-            user_id: postcomment.uid,
-            author: postcomment.user_Name,
-            text: postcomment.content,
-            time: postcomment.comment_Time,
-            avatar:'./src/photos/阿尼亚.jpg'
-          });
-        }
-      } catch (error) {
-        console.error('获取评论失败：', error);
-      }
-    };*/
 const sortedComments = computed(() => {
   return comment_contents.value.slice().sort((a, b) => {
     const dateA = new Date(a.time);
@@ -179,10 +274,11 @@ const sortedComments = computed(() => {
     return dateB - dateA;
   });
 });
+
 const deleteComment = async (comment) => {
   try {
-    console.log("删除时间为"+comment.time+"的帖子")
-    const response = await getpostinfo.deletecomment(comment.user_id,comment.id,comment.time);
+    console.log("删除时间为"+comment.comment_time+"的评论")
+    const response = await getpetinfo.deleteComment(comment.commenter_id, petId.value, comment.comment_time);
       ElMessage.success({
       message: '删除成功',
       duration: 1000 // 持续显示时间（毫秒）
@@ -203,7 +299,7 @@ const deleteComment = async (comment) => {
 
 const addComment = async () => {
   try {
-    const response = await getpetinfo.addcomment(userStore.userInfo.User_ID,petId,newComment.value.text);
+    const response = await getpetinfo.addComment(userStore.userInfo.User_ID, petId.value, newComment.value.comment_content);
       ElMessage.success({
       message: '评论成功',
       duration: 1000 // 持续显示时间（毫秒）
@@ -223,7 +319,7 @@ const addComment = async () => {
 };
 
 const isOwnPost = (UID) => {
-    if( UID === userStore.userInfo.User_ID || userStore.userInfo.Role==='Admin')
+    if( UID === userStore.userInfo.User_ID || userStore.userInfo.Role ==='Admin')
       return true
     else 
       return false
@@ -231,6 +327,19 @@ const isOwnPost = (UID) => {
 
 const showAddComment = () => {
     showCommentForm.value = true;
+}
+
+function formatBackendTime(backendTime) {
+  const date = new Date(backendTime);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return formattedTime;
 }
 </script>
 <style scoped>
@@ -399,115 +508,3 @@ const showAddComment = () => {
     gap: 10px; /* 调整日期和链接之间的间距 */
   }
   </style>
-<template>
-      <div>
-        <div style="display: flex;align-items: center;">
-               <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
-               &nbsp;<a href="\pet_adopt" style="text-decoration: none;color:#538adc;">返回领养主页</a>
-         </div>
-        
-      </div>
-      <p></p>
-  <div class="pet-card">
-    <el-card class="card" >
-      <div class="card-content">
-        <div>
-        <div class="pet-image">
-          <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" alt="Pet Image" />
-        </div>
-        <!--<el-row>
-            <el-col :span="24">
-              <p class="pet-value">{{ pet.description }}</p>
-            </el-col>
-          </el-row>-->
-      </div>
-        <div class="pet-info">
-          <p class="read-count">阅读{{ pet.read_num }}</p>
-          <span style="font-size: 30px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
-          <span style="font-size: 60px; color:#edb055;font-weight: bold;">{{ pet.name }}</span>
-          <p>  </p>
-          <el-row>
-            <el-col :span="8">
-              <span class="pet-label">种类</span>
-              <p class="pet-value">{{ pet.species }}</p>
-            </el-col>
-            <el-col :span="8">
-              <span class="pet-label">年龄</span>
-              <p class="pet-value">{{ pet.age }}</p>
-            </el-col>
-            <el-col :span="8">
-              <span class="pet-label">性别</span>
-              <p class="pet-value">{{ pet.gender ? '弟弟' : '妹妹'}}</p>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <span class="pet-label">人气</span>
-              <p class="pet-value">{{ pet.popularity }}</p>
-            </el-col>
-            <el-col :span="12">
-              <span class="pet-label">宠物ID</span>
-              <p class="pet-value">{{ pet.id }}</p>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <span class="pet-label">健康状况</span>
-              <p class="pet-value">{{ pet.health_state }}</p>
-            </el-col>
-            <el-col :span="12">
-              <span class="pet-label">疫苗接种状况</span>
-              <p class="pet-value">{{ pet.vaccine ? '已' : '未' }}接种疫苗</p>
-            </el-col>
-          </el-row>
-          <p>  </p>
-          <div style="text-align: center;">
-            <button class="modern-button" @click="handleApplyForAdopt">领养Ta</button>
-          </div>
-        </div>
-      </div>
-    </el-card>
-  </div>
-  <p>  </p>
-  <div class="common-layout">
-    <div class="interactions">
-      <div>
-        <button class="round-button" @click="likePet">
-          <img v-if="liked" src="@/photos/like_blue.png" alt="点赞" class="icon">
-          <img v-else src="@/photos/like_grey.png" alt="未点赞" class="icon">
-        </button>
-        <span>{{ pet.like_num }}</span>
-      </div>
-      <div>
-        <button class="round-button" @click="favoritePet">
-          <img v-if="favorited" src="@/photos/favorite_blue.png" alt="收藏" class="icon">
-          <img v-else src="@/photos/favorite_grey.png" alt="未收藏" class="icon">
-        </button>
-        <span>{{ pet.favorite_num }}</span>
-      </div>
-    </div>
-    <div class="comment-part">
-      <div class="comment-form">
-        <div class="comment-input">
-          <el-input v-model="newComment.comment_content" type="textarea" placeholder="在这里评论"></el-input>
-        </div>
-        <div class="comment-button">
-          <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
-        </div>
-      </div>
-      <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
-      <p></p>
-      <div v-for="comment in comments" :key="comment.commenter_id" class="comment">
-        <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
-        <div class="comment-content">
-          <p class="post-label">{{ comment.commenter }}</p>
-          <p class="post-value">{{ comment.comment_content }}</p>
-          <!--<div class="comment-actions">
-            <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.comment_time) }}</p>
-            <a v-if="comment.avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)">删除</a>
-          </div>-->
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
