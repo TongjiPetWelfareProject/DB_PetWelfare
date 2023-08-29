@@ -56,6 +56,7 @@ interface MedicalRecord {
   petId: string
   doctorId: string
   medicalDate: string
+  customDate:string
   medicalContent: string
   tag: string
 }
@@ -72,7 +73,9 @@ const getTreatList = async () => {
         reserveTime: treatment.RESERVE_TIME,
         treatTime: treatment.TREAT_TIME,
         category: treatment.CATEGORY,
+        tag:treatment.TAG
       });
+      console.log(treatment.RESERVE_TIME.length)
     }
     console.log(treatments)
   } catch (error) {
@@ -90,7 +93,7 @@ const filteredData = computed(() => {
   if (selectedTag.value === '全部') {
     return treatments.value
   } else {
-    return treatments.value
+    return treatments.value.filter((record) => record.tag === selectedTag.value)
   }
 })
 
