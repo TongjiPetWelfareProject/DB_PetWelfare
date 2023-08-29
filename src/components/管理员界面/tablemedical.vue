@@ -169,10 +169,9 @@ const editMedicalRecord = async() => {
       const response = await medical.editMedicalRecord(editedMedicalRecord.value);//注意：需保证id不能被修改
       const editedIndex = tableData.value.findIndex(item => item.id === editedMedicalRecord.value.id);
       if (editedIndex !== -1) {
-        // 更新表格中对应行的数据
-        tableData.value[editedIndex] = { ...editedMedicalRecord.value };
         // 关闭编辑对话框
         editDialogVisible.value = false;
+        location.reload(); // 这里会刷新整个页面
       }
     } catch (error) {
       console.error('编辑数据失败：', error);
@@ -183,7 +182,7 @@ const editMedicalRecord = async() => {
 const deleteRow = async (index: number) => {
   try {
       const response = await medical.deleteMedicalRecord(tableData.value[index].petId, tableData.value[index].vetId, tableData.value[index].reserveTime);
-      tableData.value.splice(index, 1);
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('删除数据失败：', error);
     }
@@ -193,7 +192,7 @@ const deleteRow = async (index: number) => {
 const approveRow = async (index: number) => {
   try {
       const response = await medical.approveMedicalApplication(tableData.value[index].petId, tableData.value[index].vetId, tableData.value[index].reserveTime);
-      tableData.value.splice(index, 1);
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('同意（完成）数据失败：', error);
     }
@@ -211,7 +210,7 @@ const postponeRow = async (index: number) => {
 const postponeMedicalApplication = async() => {
   try {
       const response = await medical.postponeMedicalApplication(postponeMedicalApplication.value.petId, postponeMedicalApplication.value.vetId, postponeMedicalApplication.value.reserveTime);
-      tableData.value.splice(index, 1);
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('延期数据失败：', error);
     }
