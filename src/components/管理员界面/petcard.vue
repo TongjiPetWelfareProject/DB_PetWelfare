@@ -152,7 +152,10 @@ const getPetList = async () => {
   try {
     const response = await petcard.getPetList();
     console.log(response);
+    const uniquePets = {};
     for (const adoptpet of response) {
+      if (!uniquePets[adoptpet.PET_ID]) { // 检查是否已经遍历过该 pet_id
+        uniquePets[adoptpet.PET_ID] = true;
       console.log(adoptpet.PET_NAME)
       tableData.value.push({
         id: adoptpet.PET_ID,
@@ -167,6 +170,7 @@ const getPetList = async () => {
         from:adoptpet.SOURCE,
       });
     }
+  }
   } catch (error) {
     console.error('获取所有宠物数据时出错：', error);
   }
