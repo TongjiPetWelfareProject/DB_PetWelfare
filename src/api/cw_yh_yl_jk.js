@@ -191,7 +191,7 @@ export default {
             vet: VID,
             reserveTime: reserveTime,
           };
-        return axios.post('/api/delete-medical-record', JSON.stringify(approvedMedicalApplication), {
+        return axios.post('/api/approve-medical-application', JSON.stringify(approvedMedicalApplication), {
                 headers: {
                 'Content-Type': 'application/json'
                 }
@@ -204,11 +204,12 @@ export default {
             });
     },
 
-    postponeMedicalApplication(PID, VID, reserveTime) {
+    postponeMedicalApplication(PID, VID, reserveTime, newReserveTime) {
         const postponedMedicalApplication = {
             pet: PID,
             vet: VID,
             reserveTime: reserveTime,
+            newReserveTime: newReserveTime,
           };
         return axios.post('/api/postpone-medical-application', JSON.stringify(postponedMedicalApplication), {
                 headers: {

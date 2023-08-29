@@ -23,14 +23,14 @@
       </el-table-column>
       <el-table-column label="操作" width="120">
         <template #default="scope">
-          <el-button v-if="scope.row.tag === '记录'" link type="primary" size="small"
+          <!--<el-button v-if="scope.row.tag === '记录'" link type="primary" size="small"
             @click.prevent="editRow(scope.$index)">
             编辑
           </el-button>
           <el-button v-if="scope.row.tag === '记录'" link type="danger" size="small"
             @click.prevent="deleteRow(scope.$index)">
             删除
-          </el-button>
+          </el-button>-->
           <el-button v-if="scope.row.tag === '申请'" link type="success" size="small"
             @click.prevent="approveRow(scope.$index)">
             完成
@@ -65,12 +65,12 @@
       <el-form :model="postponedMedicalApplication" label-width="80px">
         <!-- 表单内容 -->
         <el-form-item label="医疗时间">
-          <el-date-picker v-model="postponedMedicalApplication.treatTime" type="datetime" placeholder="选择医疗时间"></el-date-picker>
+          <el-date-picker v-model="newReserveTime" type="datetime" placeholder="选择医疗时间"></el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="postponeDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="postponeMedicalApplication">保存</el-button>
+        <el-button type="primary" @click="postponeMedicalApplication(newReserveTime)">保存</el-button>
       </div>
     </el-dialog>
 </template>
@@ -94,6 +94,7 @@ interface MedicalRecord {
 const tableData = ref<MedicalRecord[]>([]);
 const editDialogVisible = ref(false);
 const postponeDialogVisible = ref(false);
+const newReserveTime = ref('');
 const editedMedicalRecord = ref<Pet>({
   petId: '',
   vetId: '',
@@ -151,7 +152,7 @@ const filterTag = (tag: string) => {
   selectedTag.value = tag
 }
 
-const editRow = (index: number) => {
+/*const editRow = (index: number) => {
   //editedPet.value = { ...tableData.value[index] };
   editedMedicalRecord.value = {
   petId: tableData.value[index].petId,
@@ -186,7 +187,7 @@ const deleteRow = async (index: number) => {
     } catch (error) {
       console.error('删除数据失败：', error);
     }
-};
+};*/
 
 
 const approveRow = async (index: number) => {
@@ -207,9 +208,9 @@ const postponeRow = async (index: number) => {
   postponeDialogVisible.value = true;//和接口的连接在dialog里
 };
 
-const postponeMedicalApplication = async() => {
+const postponeMedicalApplication = async(newReserveTime) => {
   try {
-      const response = await medical.postponeMedicalApplication(postponeMedicalApplication.value.petId, postponeMedicalApplication.value.vetId, postponeMedicalApplication.value.reserveTime);
+      const response = await medical.postponeMedicalApplication(postponeMedicalApplication.value.petId, postponeMedicalApplication.value.vetId, postponeMedicalApplication.value.reserveTime, newReserveTime);
       location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('延期数据失败：', error);
