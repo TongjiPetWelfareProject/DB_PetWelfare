@@ -150,9 +150,24 @@ export default {
             });
     },
     
+
     //管理员页面医疗列表接口    
     getTreatList() {
         return axios.get('/api/treatlist')
+            .then(response => {
+            return response.data;
+            })
+            .catch(error => {
+            throw error;
+            });
+    },
+
+    editMedicalRecord(editedMedicalRecord) {
+        return axios.post('/api/edited-medical-record', JSON.stringify(editedMedicalRecord), {
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
             .then(response => {
             return response.data;
             })
