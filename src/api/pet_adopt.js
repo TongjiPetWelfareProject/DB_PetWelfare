@@ -14,6 +14,8 @@ export default{
 
   getPetDetails(PID) {
     return axios.get(`/api/pet-details/${PID}`)
+      //return axios.get(`/api/pet-details/${data}`)
+    //return axios.get('/api/pet-details', PID)
       .then(response => {
         return response.data; // Adjust this according to your backend response structure
       })
@@ -22,11 +24,15 @@ export default{
       });
   },
 
-  ifFavorite(UID, PID) {
-    return axios.post('/api/iffavoritepet',{UID, PID})
+  ifInteract(UID, PID) {
+    const ifInteractData = {
+      user: UID,
+      pet: PID,
+    };
+    return axios.get('/api/ifinteractpet', ifInteractData)
       .then((response) => response.data)
       .catch(error => {
-          throw new Error('获取用户对宠物点赞数据时出错：' + error.message);
+          throw error;
       });
   },
 
@@ -76,7 +82,7 @@ export default{
   },
 
   ifLike(UID, PID) {
-    return axios.post('/api/iflikepet',{UID, PID})
+    return axios.get(`/api/iflikepet/${PID}?userId=${UID}`)
       .then((response) => response.data)
       .catch(error => {
           throw error;

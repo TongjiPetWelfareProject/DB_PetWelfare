@@ -4,6 +4,7 @@ import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
 import { useUserStore } from '@/store/user';
 import { useRoute, useRouter } from 'vue-router'
 import getpetinfo from '@/api/pet_adopt'
+
 const images = [//等后端图片，后期去掉
 './src/components/photos/pet1.jpg',
 './src/components/photos/pet2.jpg',
@@ -12,18 +13,18 @@ const images = [//等后端图片，后期去掉
 './src/components/photos/pet5.jpg',
 ];
 const userStore = useUserStore();
+console.log(userStore);
 const router = useRouter();
 const route = useRoute();
 const pet = ref([]); // 单个宠物信息
+const comments = ref([]);
 const petId = ref('');//应将petId定义在更广阔的作用域内，onMounted之外，访问响应式数据时需要使用.value
 // 在组件加载时调用 getPetDetails 方法，传入宠物的 ID
 onMounted(() => {
   petId.value = route.params.id; // 从路由参数中获取宠物的 ID
   console.log(petId.value);//成功
   getPetDetails(petId.value);
-  getcomment();
-  getiflike();
-  getiffavorite();
+  getifinteract(petId.value);
 });
 const getPetDetails = async (PID) => {
   try {
@@ -73,6 +74,7 @@ const getPetDetails = async (PID) => {
       comment_num: response.Comment_Num,
       image: images[0]//等后端图片，后期修改
     };
+    comments.value = response.comments;
   } catch (error) {
     console.error('获取宠物信息时出错：', error);
   }
@@ -86,10 +88,7 @@ const handleApplyForAdopt = () => {
     router.push('/login');
   }
 }
-/*const handleApplyForAdopt = () => {
-  
-  router.push('/pet_adopt_form');
-}*/
+
 pet.read_num++;
 const newComment = ref({ author: '', text: '', avatar: '@/photos/汤姆1.jpg' });//传照片没成功
 newComment.value.author = '某某某';
@@ -102,115 +101,20 @@ const comment_contents=ref([{
    avatar: '',
    time:''
 }])
-/*const addComment = () => {
-if (newComment.value.text) {
-    pet.comment_num++;
-    pet.comment.push({
-        id: pet.comment.length + 1,
-        author: newComment.value.author,
-        text: newComment.value.text,
-        avatar: newComment.value.avatar
-    });
-    newComment.value.text = '';
-}
-};
-const liked = ref(false);
-const likePet = async() => {
-  if (!userStore.userInfo.User_ID)
 
-    
-          
-            
-    
 
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -187,18 +175,6 @@
-  
-    router.push('/login');
-  liked.value = !liked.value;
-  if (liked.value) {
-    pet.like_num++;
-    await petadopt.submitLike(userStore.userInfo, pet, pet.like_num);
-  } else {
-    pet.like_num--;
-    await petadopt.submitLike(userStore.userInfo, pet, pet.like_num);
-  }
-};
-const favorited = ref(false);
-const favoritePet = async() => {
-  if (!userStore.userInfo.User_ID)
-    router.push('/login');
-  else {  
-    favorited.value = !favorited.value;
-    if (favorited.value) {
-      pet.collect_num++;
-      await petadopt.submitFavorite(userStore.userInfo, pet, pet.collect_num);
-    } else {
-      pet.collect_num--;
-      await petadopt.submitFavorite(userStore.userInfo, pet, pet.collect_num);
-    }
-  }
-};*/
-const addComment = async () => {
+const getifinteract= async (PID) => {
   try {
-    const response = await getpetinfo.addcomment(userStore.userInfo.User_ID,petId,newComment.value.text);
-      ElMessage.success({
-      message: '评论成功',
-      duration: 1000 // 持续显示时间（毫秒）
-    });
-    // 停顿3秒后刷新
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
-      } catch (error) {
-        console.error('评论失败：', error);
-      // 显示失败提示
-      ElMessage.error({
-      message: '评论失败，错误信息：' + error.message,
-      duration: 1000 // 持续显示时间（毫秒）
-    });
-      }
-};
-const isOwnPost = (UID) => {
-    if( UID === userStore.userInfo.User_ID || userStore.userInfo.Role==='Admin')
-      return true
-    else 
-      return false
-}
-const showAddComment = () => {
-    showCommentForm.value = true;
-}
-const getiflike= async () => {
-  try {
-      const response = await getpetinfo.ifLike(userStore.userInfo.User_ID,petId.value);
-      if(response === -1)
+      const response = await getpetinfo.ifInteract(userStore.userInfo.User_ID, PID);
+      console.log(response);
+      /*if(response.like === -1)
         liked.value = false
       else
-        liked.value = true
+        liked.value = true*/
     } catch (error) {
-      console.error('获取点赞信息失败：', error);
+      console.error('获取点赞和收藏信息失败：', error);
     }
 };
-const getiffavorite= async () => {
-  try {
-      const response = await getpetinfo.ifFavorite(userStore.userInfo.User_ID,petId.value);
-      if(response === -1)
-        favorited.value = false
-      else
-        favorited.value = true
-    } catch (error) {
-      console.error('获取收藏信息失败：', error);
-    }
-};
-
   
 const liked = ref(false);
 const likePet = async () => {
@@ -226,6 +130,7 @@ const likePet = async () => {
       console.error('提交点赞信息失败：', error);
     }
 };
+
 const favorited = ref(false);
 const favoritePet = async () => {
     console.log("点击收藏了")
@@ -240,6 +145,9 @@ const favoritePet = async () => {
       console.error('提交收藏信息失败：', error);
     }
 };
+
+
+
 const getcomment= async () => {
     try {
         const response = await getpetinfo.getComment(petId.value);
@@ -285,6 +193,38 @@ const deleteComment = async (comment) => {
       duration: 1000 // 持续显示时间（毫秒）
     });
   }
+}
+
+const addComment = async () => {
+  try {
+    const response = await getpetinfo.addcomment(userStore.userInfo.User_ID,petId,newComment.value.text);
+      ElMessage.success({
+      message: '评论成功',
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    // 停顿3秒后刷新
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+      } catch (error) {
+        console.error('评论失败：', error);
+      // 显示失败提示
+      ElMessage.error({
+      message: '评论失败，错误信息：' + error.message,
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+      }
+};
+
+const isOwnPost = (UID) => {
+    if( UID === userStore.userInfo.User_ID || userStore.userInfo.Role==='Admin')
+      return true
+    else 
+      return false
+}
+
+const showAddComment = () => {
+    showCommentForm.value = true;
 }
 </script>
 <style scoped>
