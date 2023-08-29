@@ -29,7 +29,10 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination layout="prev, pager, next" :total="1000" /><br>
+    
+    <el-config-provider :locale="zhCn">
+      <el-pagination layout="sizes, prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize" :page-sizes="[1,2,5,10]" @update:current-page="handlePageChange" @update:page-size="handlePageSizeChange" /><br>
+    </el-config-provider>
     <el-button type="primary" @click="showAddNoticeDialog">添加</el-button>
     <el-dialog title="发布新公告" v-model="addNoticeDialogVisible">
       <el-form>
@@ -53,12 +56,15 @@
 <script>
 import { ref,onMounted,nextTick } from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
+import { ElConfigProvider } from 'element-plus'
+import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import gg_rqb_jk from '@/api/gg_rqb_jk'
 
 export default {
   components: {
     ElButton,
     ElTable,
+    ElConfigProvider,
   },
   setup() {
     const tableRef = ref(null)
@@ -69,6 +75,10 @@ export default {
     const editedNoticeContent = ref(''); // 存储编辑后的公告内容
     const newNoticeTitle = ref('');
     const editedNoticeTitle = ref('');
+    // newly added to implement pagination
+    const currentPage = ref(1);
+    const pageSize = ref(1);
+    const totalItems = ref(0);
 
     function showAddNoticeDialog() {// 打开添加公告对话框
       console.log("hhh");   
@@ -133,15 +143,33 @@ export default {
         console.error('删除公告失败', error);
       })
     }
+
+    async function fetchNoticeData() {
+      try {
+        const response = await gg_rqb_jk.getNoticeAPI(currentPage.value, pageSize.value);
+        tableData.value = response.data; // 假设 response.data 包含从后端获取的数据
+        totalItems.value = response.total; // 假设 response.total 包含总数据条目数
+        //console.log("totalItems:"+totalItems.value);
+      } catch (error) {
+        console.error('获取公告数据时出错：', error);
+      }
+    }
+
+    function handlePageChange(newPage) {
+      currentPage.value = newPage;
+      fetchNoticeData(); // 页面变化时重新获取数据
+    }
+
+    function handlePageSizeChange(newPageSize) {
+      pageSize.value = newPageSize;
+      currentPage.value = 1; // 当分页大小变化时，重置到第一页
+      fetchNoticeData(); // 重新获取数据
+    }
+
     
-    // onMounted(async () => {
-    //   try {
-    //     const records = await gg_rqb_jk.getNoticeAPI();
-    //     tableData.value = records;
-    //   } catch (error) {
-    //     console.error('获取公告数据时出错：', error);
-    //   }
-    // });
+    onMounted(async () => {
+      fetchNoticeData();
+    });
 
     return {
       tableRef,
@@ -158,6 +186,13 @@ export default {
       submitEdidtedNotice,
       newNoticeTitle,
       editedNoticeTitle,
+      // newly added to implement pagination
+      currentPage,
+      totalItems,
+      pageSize,
+      handlePageChange,
+      handlePageSizeChange,
+      zhCn,
     }
   },
 }

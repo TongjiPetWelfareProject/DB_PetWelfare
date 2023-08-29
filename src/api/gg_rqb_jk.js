@@ -2,9 +2,9 @@ import axios from 'axios';
 
 export default {
 //获取全部公告
-  getNoticeAPI() {
+  getNoticeAPI(page, pageSize) {
     return axios
-      .get('/api/notice')
+      .get(`/api/notice?page=${page}&pageSize=${pageSize}`)
       .then(response => response.data)
       .catch(error => {
         throw new Error('获取公告数据时出错：' + error.message);
