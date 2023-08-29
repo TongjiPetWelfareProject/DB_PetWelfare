@@ -29,7 +29,7 @@ export default{
       user: UID,
       pet: PID,
     };
-    return axios.get('/api/ifinteractpet', ifInteractData)
+    return axios.post('/api/ifinteractpet', ifInteractData)
       .then((response) => response.data)
       .catch(error => {
           throw error;

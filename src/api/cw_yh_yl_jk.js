@@ -184,4 +184,42 @@ export default {
             throw error;
             });
     },
+
+    approveMedicalApplication(PID, VID, reserveTime) {
+        const deletedMedicalRecord = {
+            pet: PID,
+            vet: VID,
+            reserveTime: reserveTime,
+          };
+        return axios.post('/api/delete-medical-record', JSON.stringify(deletedMedicalRecord), {
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+            return response.data;
+            })
+            .catch(error => {
+            throw error;
+            });
+    },
+
+    rejectMedicalApplication(PID, VID, reserveTime) {
+        const deletedMedicalRecord = {
+            pet: PID,
+            vet: VID,
+            reserveTime: reserveTime,
+          };
+        return axios.post('/api/delete-medical-record', JSON.stringify(deletedMedicalRecord), {
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+            return response.data;
+            })
+            .catch(error => {
+            throw error;
+            });
+    },
 }
