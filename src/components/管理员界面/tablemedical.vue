@@ -37,14 +37,8 @@
           </el-button>
           <el-button v-if="scope.row.tag === '申请'" link type="danger" size="small"
             @click.prevent="rejectApplication(scope.$index)">
-            拒绝
+            延期
           </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column prop="tag" label="tag" sortable width="100">
-        <template #default="scope">
-          <el-tag v-if="scope.row.tag === '记录'" type="success">{{ scope.row.tag }}</el-tag>
-          <el-tag v-if="scope.row.tag === '申请'" type="warning">{{ scope.row.tag }}</el-tag>
         </template>
       </el-table-column>
     </el-table><br>
@@ -168,12 +162,20 @@ const deleteMedicalRecord = (index: number) => {
   tableData.value.splice(index, 1)
 }
 
-const approveApplication = (index: number) => {
+const deleteRow = async (index: number) => {
+  try {
+      const response = await medical.deleteMedicalRecord(tableData.value[index].petId, tableData.value[index].vetId, tableData.value[index].reserveTime);
+      tableData.value.splice(index, 1);
+    } catch (error) {
+      console.error('删除数据失败：', error);
+    }
+};
+
+const approveMedicalApplication = async(index: number) => {
   // 同意申请操作
-  
 }
 
-const rejectApplication = (index: number) => {
+const rejectMedicalApplication = (index: number) => {
   // 拒绝申请操作
 }
 
