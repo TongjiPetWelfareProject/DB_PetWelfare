@@ -99,12 +99,12 @@ const recoveryStories = ref([
   
   <style>
   .el-collapse{
-    max-width:95%;
+    max-width:98%;
   }
 
   .demo-collapse{
     border-top: 1px solid #dad9d9;
-    margin-left:6vw;
+    margin-left:2vw;
   }
 
   .el-collapse-item__header {

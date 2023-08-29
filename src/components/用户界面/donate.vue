@@ -46,6 +46,40 @@
     </el-tab-pane>
   </el-tabs>
   <br>
+  <el-divider />
+  <div class="sponsor">
+    <!-- <el-text class="sponsor" style="margin-left: 0.5%;color: #85a7d5;font-size: 17px;" >爱心大使</el-text> -->
+    <!-- <el-tag class="mx-3" size="large">爱心大使</el-tag> -->
+    <!-- <el-divider content-position="left">爱心大使</el-divider> -->
+    <div class="section-title-big">
+      <img src="  ../../../public/爱心.png" style="margin-right:15px;height:40px">
+      <span>爱心大使</span>
+      <!-- <img src="  ../../../public/crown.png" style="margin-left:20px"> -->
+    </div>
+    <div class="sponsorcards" style="display: flex;justify-content: space-between;">
+      <el-card v-for="(sponsor, index) in sponsors" :key="index" class="sponsorcard" shadow="always">
+        <template #header>
+          <div class="donatecardsheader" style="display: flex;text-align: center;">
+            <el-tag 
+            :type="types[index]"
+            class="mx-1"
+            effect="light"
+            size="small"
+            round
+            >{{index+1}}</el-tag>&nbsp;&nbsp;
+            <div class="donatesponsorcards">
+              <span class="donatesponsorcards" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px;color:#5d6166;">{{ sponsor.name }}</span>
+            </div>
+          </div>
+        </template>
+        <div class="donatesponsorcards" style="margin-top:-10px;color:#707377;font-size: 14px;font-weight: lighter;">捐款金额：{{ sponsor.amount }}</div>
+        <!-- <div class="mypagefostertext">联系方式：{{ sponsor.phone }}</div> -->
+
+      </el-card>
+    </div>
+  </div>
+  <br>
+  <el-divider />
   <div style="display:flex;align-items: center;justify-content: center">
     <div style="display:block">
       <div>
@@ -113,6 +147,18 @@
   margin-bottom: 0;
 }
 
+.section-title-big {
+  font-size: 22px;
+  line-height: 32px;
+  font-weight: 700;
+  padding-bottom: 16px;
+  color: #9a89bb;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 </style>
 
 <script setup>
@@ -136,6 +182,8 @@ const donationTime = new Date().toISOString(); // 当前时间转换为字符串
 const tableData = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
+const sponsors = ref([]);
+const types = ['danger', 'warning', 'success', 'primary', 'info'];
 
 const open = async () => {
       if (userStore.userInfo.User_ID) {
@@ -209,19 +257,48 @@ const open = async () => {
     };
 
 
+function calculateTotalAmount(data) {
+  const userAmountMap = new Map();
+
+  for (const donation of data) {
+    const username = donation.name;
+    const amount = donation.amount;
+
+    if (userAmountMap.has(username)) {
+      userAmountMap.set(username, userAmountMap.get(username) + amount);
+    } else {
+      userAmountMap.set(username, amount);
+    }
+  }
+
+  return userAmountMap;
+}
+
 
 onMounted(async () => {
   try {
     const response = await medical_donate.donationRecordsAPI();
     for (const donation of response) {
+      const amount = parseFloat(donation.DONATION_AMOUNT);
             tableData.value.push({
             time: donation.DONATED_DATE,
             name: donation.USER_NAME,
-            amount: donation.DONATION_AMOUNT
+            amount: amount
            });
         }
     // 在获取数据后按捐款日期排序
     tableData.value.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+    const userAmountMap = calculateTotalAmount(tableData.value);
+    const sortedUsers = [...userAmountMap.entries()].sort((a, b) => b[1] - a[1]);
+
+    const maxSponsorsToShow = 5;
+    const selectedSponsors = sortedUsers.slice(0, maxSponsorsToShow).map(([name, amount]) => ({
+      name,
+      amount
+    }));
+
+    sponsors.value = selectedSponsors;
   } 
   catch (error) {
     console.error('获取捐助记录数据出错：', error);

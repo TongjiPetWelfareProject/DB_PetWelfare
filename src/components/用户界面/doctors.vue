@@ -35,11 +35,11 @@
   
   <style scoped>
 .el-carousel{
-  max-width:95%
+  max-width:100%
 }
 
 .doctors{
-  margin-left:6vw;
+  margin-left:2vw;
 }
   
   .el-carousel__item:nth-child(2n) {
