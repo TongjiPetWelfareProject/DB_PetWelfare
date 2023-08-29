@@ -223,21 +223,30 @@ const newComment = ref({
 newComment.value.commenter = '某某某';
 const showCommentForm = ref(false);
 
+const liked = ref(false);
+const favorited = ref(false);
 
 const getifinteract= async (PID) => {
   try {
       const response = await getpetinfo.ifInteract(userStore.userInfo.User_ID, PID);
       console.log(response);
-      /*if(response.like === -1)
-        liked.value = false
-      else
-        liked.value = true*/
+      if(response.is_liked == false) {
+        liked.value = false;
+      }
+      else {
+        liked.value = true;
+      }
+      if(response.is_collected == false) {
+        favorited.value = false;
+      }
+      else {
+        favorited.value = true;
+      }
     } catch (error) {
       console.error('获取点赞和收藏信息失败：', error);
     }
 };
   
-const liked = ref(false);
 const likePet = async () => {
     console.log("点击点赞了")
     liked.value = liked.value === true ? false : true;
@@ -252,7 +261,7 @@ const likePet = async () => {
     }
 };
 
-const favorited = ref(false);
+
 const favoritePet = async () => {
     console.log("点击收藏了")
     favorited.value = favorited.value === true ? false : true;

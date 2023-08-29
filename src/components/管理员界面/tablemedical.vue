@@ -170,6 +170,7 @@ const deleteMedicalRecord = (index: number) => {
 
 const approveApplication = (index: number) => {
   // 同意申请操作
+  
 }
 
 const rejectApplication = (index: number) => {
