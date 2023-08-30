@@ -8,17 +8,15 @@
   <div class="common-layout">
     <el-container>
       <el-header style="height: 200px;">
-        <div style="display: flex;align-items: flex-end;">
-          <img src="@/photos/头像.jpg" style="width:70px;border-radius: 50%;margin-bottom: -60px;">
-          <img src="@/photos/mypagepet.jpg" style="width:400px;margin-bottom: -60px;margin-left:24vw">
+        <div class="avatar-container">
+          <label for="avatar-upload">
+            <img id="avatar-img" class="avatar" src="@/photos/头像.jpg">
+            <input type="file" id="avatar-upload" accept="image/*" @change="handleFileChange" ref="fileInput">
+          </label>
+          <img class="background-image" src="@/photos/mypagepet.jpg">
         </div>
        
-        <el-descriptions
-    class="margin-top"
-    :column="3"
-    :size="size"
-    border
-  >
+        <el-descriptions class="margin-top" :column="3" :size="size" border>
     <template #extra>
       <el-button type="primary" @click="dialogFormVisible = true">编辑</el-button>
 
@@ -317,6 +315,23 @@ import { Iphone, OfficeBuilding, Tickets, User, Star } from '@element-plus/icons
 import jsonData from '@/components/登录注册/values.json'
 import { ElMessage } from 'element-plus'
 
+const avatarUrl = ref('@/photos/头像.jpg');
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    avatarUrl.value = URL.createObjectURL(file);
+    const formData = new FormData();
+    formData.append('avatar', file);
+    console.log(file)
+    try {
+      const response = userinfo.avatarAPI(userStore.userInfo.User_ID,formData)
+    } catch (error) {
+      console.error('发送头像数据时出错：', error);
+    }
+  }
+}
+
 const provinces = ref(jsonData.provinces);
 const selectedProvince = ref('');
 const cities = ref([]);
@@ -551,30 +566,6 @@ onMounted(() => {
     getUseRFosterPets();
 });
 
-
-const tabPosition = ref('left')
-
-const load = () => {
-  count1.value += 2
-  count2.value += 2
-  count3.value += 2
-  count4.value += 2
-  count5.value += 2
-  count6.value += 2
-  count7.value += 2
-  count8.value += 2
-
-}
-const count1 = ref(0)
-const count2 = ref(0)
-const count3 = ref(0)
-const count4 = ref(0)
-const count5 = ref(0)
-const count6 = ref(0)
-const count7 = ref(0)
-const count8 = ref(0)
-
-
 const size = ref('')
 const iconStyle = computed(() => {
   const marginMap = {
@@ -585,53 +576,31 @@ const iconStyle = computed(() => {
   
   return {
     marginRight: marginMap[size.value] || marginMap.default,
-    
   }
 })
-
-
-const blockMargin = computed(() => {
-  const marginMap = {
-    large: '32px',
-    default: '28px',
-    small: '24px',
-  }
-  return {
-    marginTop: marginMap[size.value] || marginMap.default,
-  }
-})
-
-
-
-const pet_name1 = ref('乐乐')
-const pet_name2 = ref('乐乐')
-const pet_name3 = ref('乐乐')
-const pet_name4 = ref('乐乐')
-const pet_name5 = ref('乐乐')
-const pet_name6 = ref('乐乐')
-const pet_name7 = ref('乐乐')
-const pet_name8 = ref('乐乐')
-const pet_name9 = ref('乐乐')//领养
-const pet_name10 = ref('乐乐')//领养
-const pet_name11 = ref('乐乐')//医疗
-const pet_id1 = ref('111222')//领养
-const pet_id2 = ref('111222')//领养
-const pet_id3 = ref('111222')//医疗
-const donor_id = ref('111000')
-const donation_time = ref(2023-5-1)
-const donation_amount = ref(2023)
-const doctor_id = ref('111001')
-const vet_id = ref('111001')
-const adoption_time = ref(2023-5-2)
-const start_year = ref(2022)
-const start_month = ref(12)
-const start_day = ref(19)
-
-
 </script>
 
 <style scoped>
 
+.avatar-container {
+  display: flex;
+  align-items: flex-end;
+}
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: -60px;
+  cursor: pointer;
+}
+.background-image {
+  width: 400px;
+  margin-bottom: -60px;
+  margin-left: 24vw;
+}
+input[type="file"] {
+  display: none;
+}
 
 .bigcontainer{
   /* justify-content: center; */
