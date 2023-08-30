@@ -16,7 +16,7 @@
       <el-table-column prop="employeeName" label="员工姓名" width="80" align="center"/>
       <el-table-column label="操作" width="180" align="center">
         <template v-slot="{row}">
-          <el-button size="mini" type="primary" @click="showEditNoticeDialog(row.content,row.title)">编辑</el-button>
+          <el-button size="mini" type="primary" @click="showEditNoticeDialog(row)">编辑</el-button>
           <el-dialog title="编辑公告" v-model="editNoticeDialogVisible">
             <el-form>
               <el-form-item label="公告标题">
@@ -52,7 +52,7 @@
       <br>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addNoticeDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitNotice">发布</el-button>
+        <el-button type="primary" @click="submitNewNotice">发布</el-button>
       </span>
     </el-dialog>
    
@@ -85,12 +85,11 @@ export default {
     const currentPage = ref(1);
     const pageSize = ref(10);
     const totalItems = ref(0);
+    const editedNoticeId=ref('');
 
     
 
-    function showAddNoticeDialog() {// 打开添加公告对话框
-      console.log("hhh");   
-      console.log(addNoticeDialogVisible.value);  
+    function showAddNoticeDialog() {// 打开添加公告对话框   
       addNoticeDialogVisible.value = true;
       nextTick(() => {
     // 对话框重新渲染后可能会显示
@@ -128,16 +127,18 @@ export default {
     
     }
 
-    function showEditNoticeDialog(content,title) { // 打开编辑公告对话框，并将当前公告的内容作为默认值
-      editedNoticeContent.value = content;
-      editedNoticeTitle.value = title;
+    function showEditNoticeDialog(row) { // 打开编辑公告对话框，并将当前公告的内容作为默认值
+      editedNoticeContent.value = row.content;
+      editedNoticeTitle.value = row.title;
+      editedNoticeId.value = row.id;
       editNoticeDialogVisible.value = true;
       console.log("hhhh")
     }
 
     function submitNewNotice() {
+      console.log(newNoticeTitle.value)
       const currentTime=getCurrentTime();
-      gg_rqb_jk.sendNewNoticeAPI(employeeId, newNoticeTitle, newNoticeContent, currentTime)
+      gg_rqb_jk.sendNewNoticeAPI(employeeId, newNoticeTitle.value, newNoticeContent.value, currentTime.value)
       .then(response => {
         console.log('公告内容发布成功', response);
         addNoticeDialogVisible.value = false;
@@ -149,9 +150,9 @@ export default {
     }
     
     function submitEditedNotice() {
-      console.log("hhhhh")
+      console.log(editedNoticeId.value)
       const currentTime=getCurrentTime();
-      gg_rqb_jk.sendEditedNoticeAPI(employeeId, editedNoticeTitle, editedNoticeContent, currentTime)
+      gg_rqb_jk.sendEditedNoticeAPI(editedNoticeId,employeeId, editedNoticeTitle.value, editedNoticeContent.value, currentTime.value)
       .then(response => {
         console.log('公告内容更新成功', response);
         editNoticeDialogVisible.value = false;
