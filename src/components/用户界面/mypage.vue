@@ -123,15 +123,15 @@
           <el-tabs tab-position="left"  class="demo-tabs">
             <el-tab-pane label="我的点赞">
               <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
-                  <el-card :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                  <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
-                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">花花</span>
+                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">{{ lplist.PET_NAME }}</span>
                         <br>
-                        <span style="font-size: 18px">妹妹</span>
-                        <span style="font-size: 16px; color:#6b6a68">10岁</span>
+                        <span style="font-size: 18px">{{ lplist.SEX }}</span>
+                        <span style="font-size: 16px; color:#6b6a68">{{ lplist.AGE }}</span>
                         <br>
                       </div>
                       <!-- <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none;
@@ -143,15 +143,15 @@
             </el-tab-pane>
             <el-tab-pane label="我的收藏">
                <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
-                <el-card :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
-                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">花花</span>
+                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">{{cplist.PET_NAME}}</span>
                         <br>
-                        <span style="font-size: 18px">妹妹</span>
-                        <span style="font-size: 16px; color:#6b6a68">10岁</span>
+                        <span style="font-size: 18px">{{cplist.SEX}}</span>
+                        <span style="font-size: 16px; color:#6b6a68">{{cplist.AGE}}</span>
                         <br>
                       </div>
                       <!-- <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none;
@@ -163,19 +163,19 @@
             </el-tab-pane>
             <el-tab-pane label="我的评论">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
-                  <el-card class="mypage-card" shadow="always" >
+                  <el-card v-for="cmplist in commentedpetlist" class="mypage-card" shadow="always" >
                     <template #header>
                       <div class="mypagecard-header">
-                        <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center; margin-left: 5px;margin-top:-10px">花花</span>
+                        <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center; margin-left: 5px;margin-top:-10px">{{cmplist.PET_NAME}}</span>
                       </div>
                     </template>
                     <div class="mypagecardbody">
                       <div style="display: flex; align-items: center; margin-left: 5px;font-size: 15px;">
                         <img src="@/photos/头像.jpg" style="width: 30px; height: 30px; border-radius: 50%;">
-                        <span style="margin-left: 5px;">Kristian:</span>
-                        <span>花花头上有三种颜色欸！</span>
+                        <span style="margin-left: 5px;">{{cmplist.USER_NAME}}:</span>
+                        <span>{{cmplist.CONTENTS}}</span>
                       </div>            
-                      <div class="mypagecardtime">2023-8-25</div>
+                      <div class="mypagecardtime">{{cmplist.TIME}}</div>
                       <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
                     </div>
                   </el-card>
@@ -184,15 +184,15 @@
             </el-tab-pane>
             <el-tab-pane label="我的领养">
                <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
-                <el-card :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
-                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">花花</span>
+                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">{{adlist.PET_NAME}}{{ adlist.STATE }}</span>
                         <br>
-                        <span style="font-size: 18px">妹妹</span>
-                        <span style="font-size: 16px; color:#6b6a68">10岁</span>
+                        <span style="font-size: 18px">{{adlist.SEX}}</span>
+                        <span style="font-size: 16px; color:#6b6a68">{{adlist.AGE}}</span>
                         <br>
                       </div>
                       <!-- <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none;
@@ -203,15 +203,15 @@
                 <!-- </div> -->
             </el-tab-pane>
             <el-tab-pane label="我的寄养">
-              <el-card class="mypagefoster" shadow="always">
+              <el-card v-for="flist in fosteredpetlist" class="mypagefoster" shadow="always">
                 <template #header>
                   <div class="mypagecard-header">
-                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">花花</span>
+                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">{{flist.PET_NAME}}</span>
                   </div>
                 </template>
-                <div class="mypagefostertext" style="margin-top:2px">寄养时长：7天</div>
-                <div class="mypagefostertext">寄养起始时间：</div>
-                <div class="mypagefostertext">寄养费用：</div>
+                <div class="mypagefostertext" style="margin-top:2px">寄养时长：{{flist.DURATION}}天</div>
+                <div class="mypagefostertext">寄养起始时间：{{ flist.STARTDATE }}</div>
+                <div class="mypagefostertext">寄养费用：{{ flist.EXSPENSE }}</div>
               </el-card>
             </el-tab-pane>
           </el-tabs>
@@ -433,7 +433,9 @@ const getUserCollectPets = async () => {
       const response = await userinfo.userCollectPetsAPI(userStore.userInfo.User_ID);
       for(const pet of response ){
         collectedpetlist.value.push({
-
+          PET_NAME: pet.PET_NAME,
+          SEX: pet.SEX=='M'?'弟弟':'妹妹',
+          AGE: pet.AGE+'岁'
         })
       }
     } catch (error) {
@@ -446,7 +448,9 @@ const getUserLikePets = async () => {
       const response = await userinfo.userLikePetsAPI(userStore.userInfo.User_ID);
       for(const pet of response ){
         likedpetlist.value.push({
-
+          PET_NAME: pet.PET_NAME,
+          SEX: pet.SEX=='M'?'弟弟':'妹妹',
+          AGE: pet.AGE+'岁'
         })
       }
     } catch (error) {
@@ -458,8 +462,12 @@ const getUserCommentPets = async () => {
     try {
       const response = await userinfo.userCommentPetsAPI(userStore.userInfo.User_ID);
       for(const pet of response ){
+        console.log(pet)
         commentedpetlist.value.push({
-
+          USER_NAME:pet.USER_NAME,
+          PET_NAME: pet.PET_NAME,
+          TIME: pet.COMMENT_TIME,
+          CONTENTS: pet.COMMENT_CONTENTS
         })
       }
     } catch (error) {
@@ -472,7 +480,10 @@ const getUserAdoptPets = async () => {
       const response = await userinfo.userAdoptPetsAPI(userStore.userInfo.User_ID);
       for(const pet of response ){
         adoptedpetlist.value.push({
-
+          PET_NAME: pet.PET_NAME,
+          SEX: pet.SEX=='M'?'弟弟':'妹妹',
+          AGE: pet.AGE+'岁',
+          STATE:pet.CENSOR_STATE
         })
       }
     } catch (error) {
@@ -485,7 +496,10 @@ const getUseRFosterPets = async () => {
       const response = await userinfo.userFosterPetsAPI(userStore.userInfo.User_ID);
       for(const pet of response ){
         fosteredpetlist.value.push({
-
+          PET_NAME: pet.PET_NAME,
+          DURATION: pet.DURATION,
+          STARTDATE: pet.START_DATE,
+          EXSPENSE:pet.EXPENSE+'.00￥'
         })
       }
     } catch (error) {
