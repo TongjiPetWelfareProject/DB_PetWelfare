@@ -4,6 +4,7 @@ import axios from 'axios';
 
 export default {
     editInfoAPI(user_id,user_name,phone,province,city) {
+        console.log({user_id,user_name,phone,province,city})
         return axios
             .post('/api/editinfo',{user_id,user_name,phone,province,city})
             .then((response) => response.data)
