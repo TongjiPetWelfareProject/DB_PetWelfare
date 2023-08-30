@@ -223,13 +223,13 @@
           <el-tabs tab-position="left"  class="demo-tabs">
             <el-tab-pane label="我的点赞">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
-                <el-card class="post-card" shadow="always" style="margin-top:10px">
-                  <div class="post-title">这是一个帖子标题</div>
+                <el-card v-for="lpo in postlike"  class="post-card" shadow="always" style="margin-top:10px">
+                  <div class="post-title">{{lpo.heading}}</div>
                   <div class="post-info">
-                    <div>发表时间：2023-8-25</div>
-                    <div>阅读量：100</div>
-                    <div>喜爱数量：10</div>
-                    <div>评论数量：10</div>
+                    <div>发表时间：{{lpo.time}}</div>
+                    <div>阅读量：{{lpo.click}}</div>
+                    <div>喜爱数量：{{lpo.likenum}}</div>
+                    <div>评论数量：{{lpo.commentnum}}</div>
                     <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
                   </div>
                 </el-card>
@@ -389,8 +389,13 @@ const getUserLike = async () => {
     try {
       const response = await userinfo.userPostLikeAPI(userStore.userInfo.User_ID);
       for(const like of response ){
+        console.log('帖子点赞'+like.HEADING+like.COMMENT_NUM)
         postlike.value.push({
-
+          heading: like.HEADING,
+          click: like.READ_COUNT,
+          likenum: like.LIKE_NUM,
+          commentnum: like.COMMENT_NUM,
+          time:like.POST_TIME
         })
       }
     } catch (error) {
