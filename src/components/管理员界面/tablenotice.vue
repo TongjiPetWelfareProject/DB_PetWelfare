@@ -15,15 +15,15 @@
       <el-table-column prop="time" label="发布时间" width="200" sortable :sort-method="sortTime" align="center"/>
       <el-table-column prop="employeeName" label="员工姓名" width="80" align="center"/>
       <el-table-column label="操作" width="180" align="center">
-        <template v-slot="scope">
-          <el-button size="mini" type="primary" @click="showEditNoticeDialog(scope.row)">编辑</el-button>
+        <template v-slot="{row}">
+          <el-button size="mini" type="primary" @click="showEditNoticeDialog(row.content)">编辑</el-button>
           <el-dialog title="编辑公告" v-model="editNoticeDialogVisible">
             <el-form>
               <el-form-item label="公告标题">
                 <el-input v-model="editedNoticeTitle" placeholder="输入公告标题" type="textarea"></el-input>
               </el-form-item>
               <el-form-item label="公告内容">
-               <el-input v-model="editedNoticeContent" placeholder="输入公告内容" type="textarea" :rows="6"></el-input>
+               <el-input v-model="editedNoticeContent" placeholder="输入公告内容" type="textarea" :rows="8"></el-input>
               </el-form-item>
             </el-form>
             
@@ -63,6 +63,7 @@
 import { ref,onMounted,nextTick } from 'vue'
 import { ElTable, ElMessageBox, ElButton } from 'element-plus'
 import gg_rqb_jk from '@/api/gg_rqb_jk'
+import { useUserStore } from '@/store/user'; 
 
 export default {
   components: {
@@ -70,6 +71,8 @@ export default {
     ElTable,
   },
   setup() {
+    const userStore = useUserStore();
+    const employeeId=userStore.userInfo.User_ID
     const tableRef = ref(null)
     const tableData = ref([])//表格数据
     const addNoticeDialogVisible = ref(false); // 控制对话框的显示
@@ -82,6 +85,8 @@ export default {
     const currentPage = ref(1);
     const pageSize = ref(10);
     const totalItems = ref(0);
+
+    
 
     function showAddNoticeDialog() {// 打开添加公告对话框
       console.log("hhh");   
@@ -109,13 +114,29 @@ export default {
       return content;
     }
 
-    function showEditNoticeDialog(index) { // 打开编辑公告对话框，并将当前公告的内容作为默认值
-      editedNoticeContent.value = notices.value[index].content;
+    function getCurrentTime(){
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // 注意：月份从0开始，需要加1
+      const currentDay = now.getDate();
+      const currentHours = now.getHours();
+      const currentMinutes = now.getMinutes();
+      const currentSeconds = now.getSeconds();
+    
+      const currentTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
+      return currentTime;
+    
+    }
+
+    function showEditNoticeDialog(content) { // 打开编辑公告对话框，并将当前公告的内容作为默认值
+      editedNoticeContent.value = content;
       editNoticeDialogVisible.value = true;
+      console.log("hhhh")
     }
 
     function submitNewNotice() {
-      gg_rqb_jk.sendNewNoticeAPI(employeeId, title, content, time)
+      const currentTime=getCurrentTime();
+      gg_rqb_jk.sendNewNoticeAPI(employeeId, newNoticeTitle, newNoticeContent, currentTime)
       .then(response => {
         console.log('公告内容发布成功', response);
         newNoticeDialogVisible.value = false;
@@ -127,7 +148,8 @@ export default {
     }
     
     function submitEdidtedNotice() {
-      gg_rqb_jk.sendEditedNoticeAPI(employeeId, title, content, time)
+      const currentTime=getCurrentTime();
+      gg_rqb_jk.sendEditedNoticeAPI(employeeId, editedNoticeTitle, editedNoticeContent, currentTime)
       .then(response => {
         console.log('公告内容更新成功', response);
         editNoticeDialogVisible.value = false;
@@ -213,7 +235,9 @@ export default {
       handlePageChange,
       handlePageSizeChange,
       showAnnouncement,
-      getShortenedContent
+      getShortenedContent,
+      userStore,
+      employeeId
     }
   },
 }
