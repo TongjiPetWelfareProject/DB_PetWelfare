@@ -148,7 +148,8 @@ export default {
       addNoticeDialogVisible.value = false;
     }
     
-    function submitEdidtedNotice() {
+    function submitEditedNotice() {
+      console.log("hhhhh")
       const currentTime=getCurrentTime();
       gg_rqb_jk.sendEditedNoticeAPI(employeeId, editedNoticeTitle, editedNoticeContent, currentTime)
       .then(response => {
@@ -226,7 +227,7 @@ export default {
       editNoticeDialogVisible,
       editedNoticeContent,
       showEditNoticeDialog,
-      submitEdidtedNotice,
+      submitEditedNotice,
       newNoticeTitle,
       editedNoticeTitle,
       // newly added to implement pagination
