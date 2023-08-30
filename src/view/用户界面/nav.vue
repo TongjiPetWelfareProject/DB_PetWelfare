@@ -2,10 +2,6 @@
 import { useUserStore } from '@/store/user';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import {
-  Document,Phone,School,
-  Message,Coin,Location,House,Postcard,DocumentChecked,Collection,Memo,ChatLineRound
-} from '@element-plus/icons-vue'
 const userStore = useUserStore();
 const drawerOn = ref(false)
 const router = useRouter();
@@ -159,6 +155,7 @@ const mainpage = () => {
     justify-content: center; 
     margin-left: 10px;
     letter-spacing: 0.8px;
+    cursor: pointer; /* 将鼠标指针设置为手指指向键 */
 }
 .titleall{
   overflow: hidden;
