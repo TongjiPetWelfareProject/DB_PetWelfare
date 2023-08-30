@@ -8,7 +8,8 @@
         :sort-method="sortTime"></el-table-column>
       <el-table-column label="操作" width="180">
         <template v-slot="scope">
-          <el-button size="mini" type="primary" @click="showEditRoomDialog(scope.row)">编辑</el-button>
+          <el-button size="mini" type="primary" @click="showEditRoomDialog(scope.row)">完成打扫</el-button>
+          <!--
           <el-dialog title="编辑房间信息" v-model="editRoomDialogVisible">
             <el-form>
               <el-form-item label="房间情况">
@@ -24,7 +25,7 @@
               <el-button @click="editRoomDialogVisible = false">取消</el-button>
               <el-button type="primary" @click="submitEditedRoom">保存</el-button>
             </span>
-          </el-dialog>
+          </el-dialog>-->
           <!-- <el-button size="mini" type="danger" @click="deleteRow(scope.row)">删除</el-button> -->
         </template>
       </el-table-column>
@@ -36,7 +37,7 @@
 
 <script>
 import {  ref, onMounted } from 'vue'
-import { ElTable, ElMessageBox, ElButton } from 'element-plus'
+import { ElTable, ElMessageBox, ElButton, ElMessage} from 'element-plus'
 import sh_fj_jk from '@/api/sh_fj_jk'
 
 export default {
@@ -60,8 +61,47 @@ export default {
       return new Date(a.cleaningTime) - new Date(b.cleaningTime)
     }
 
-    function showEditRoomDialog(index) { // 打开编辑对话框
-      editRoomDialogVisible.value = true;
+    function getCurrentTime(){
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // 注意：月份从0开始，需要加1
+      const currentDay = now.getDate();
+      const currentHours = now.getHours();
+      const currentMinutes = now.getMinutes();
+      const currentSeconds = now.getSeconds();
+    
+      const currentTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
+      return currentTime;
+    
+    }
+
+    function showEditRoomDialog(row) { // 打开编辑对话框
+      //editRoomDialogVisible.value = true;
+      const indx = tableData.value.indexOf(row)
+      if(indx !== -1){
+        const roomId = row.roomId;
+        ElMessageBox.confirm(`确认完成打扫${roomId}房间吗`, '提示', {
+        type: 'info',
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        }).then(() => {
+          sh_fj_jk.sendEditedRoomAPI(roomId) // 调用 API 请求函数更新打扫时间
+            .then(response => {
+              console.log('信息更新成功', response);
+              row.lastCleaningTime = getCurrentTime();
+              ElMessage({
+                message:'信息更新成功',
+                type:'success',
+              })
+            })
+            .catch(error => {
+              console.error('信息更新失败', error);
+            });
+        }).catch(error => {
+          console.error('操作已取消', error);
+        })
+      }
+      
     }
 
     function submitEditedRoom() {

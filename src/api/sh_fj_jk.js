@@ -12,12 +12,9 @@ export default {
   },
   
   //发送编辑过的房间信息
-  sendEditedRoomAPI(compartment, storey, room_status, cleaning_time) {
+  sendEditedRoomAPI(roomId) {
     const data = {
-      compartment: compartment,
-      storey: storey,
-      room_status: room_status,
-      cleaning_time: cleaning_time
+      roomId: roomId
     };
   
     return axios
