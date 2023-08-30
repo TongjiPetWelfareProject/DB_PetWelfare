@@ -193,7 +193,7 @@ const addComment = async () => {
       message: '评论成功',
       duration: 1000 // 持续显示时间（毫秒）
     });
-    // 停顿3秒后刷新
+    // 停顿1秒后刷新
     setTimeout(() => {
       location.reload();
     }, 1000);

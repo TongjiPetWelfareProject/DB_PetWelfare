@@ -44,7 +44,7 @@
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">
+            <el-button type="primary" @click="editInfo">
               确认
             </el-button>
           </span>
@@ -315,7 +315,8 @@ import { useUserStore } from '@/store/user'
 import userinfo from '@/api/userInfo'
 import { computed } from 'vue'
 import { Iphone, Location, OfficeBuilding, Tickets, User, UserFilled, Star } from '@element-plus/icons-vue'
-import jsonData from '../登录注册/values.json';
+import jsonData from '../登录注册/values.json'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const provinces = ref(jsonData.provinces);
 const selectedProvince = ref('');
@@ -357,6 +358,28 @@ watch(selectedProvince, (newSelectedProvince) => {
     value
   }));
 });
+
+const editInfo = async () => {
+    dialogFormVisible.value = false
+    try {
+      const response = await userinfo.editInfoAPI(editedform.name,editedform.phone,selectedProvince,selectedCity);
+      ElMessage.success({
+      message: '修改成功',
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    // 停顿1秒后刷新
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+    } catch (error) {
+      console.error('获取用户帖子评论时出错：', error);
+      // 显示失败提示
+      ElMessage.error({
+      message: '修改失败，错误信息：' + error.message,
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    }
+};
 
 const getUserInfo = async () => {
     try {
