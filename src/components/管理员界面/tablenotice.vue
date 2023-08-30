@@ -16,7 +16,7 @@
       <el-table-column prop="employeeName" label="员工姓名" width="80" align="center"/>
       <el-table-column label="操作" width="180" align="center">
         <template v-slot="{row}">
-          <el-button size="mini" type="primary" @click="showEditNoticeDialog(row.content)">编辑</el-button>
+          <el-button size="mini" type="primary" @click="showEditNoticeDialog(row.content,row.title)">编辑</el-button>
           <el-dialog title="编辑公告" v-model="editNoticeDialogVisible">
             <el-form>
               <el-form-item label="公告标题">
@@ -128,8 +128,9 @@ export default {
     
     }
 
-    function showEditNoticeDialog(content) { // 打开编辑公告对话框，并将当前公告的内容作为默认值
+    function showEditNoticeDialog(content,title) { // 打开编辑公告对话框，并将当前公告的内容作为默认值
       editedNoticeContent.value = content;
+      editedNoticeTitle.value = title;
       editNoticeDialogVisible.value = true;
       console.log("hhhh")
     }
