@@ -44,12 +44,13 @@ export default {
       });
   },
   //发送编辑过的公告
-  sendEditedNoticeAPI(employeeId, title, content, time) {
+  sendEditedNoticeAPI(noticeId,employeeId, title, content, time) {
     const data = {
       employeeId: employeeId,
       title: title,
       content: content,
-      time: time
+      time: time,
+      noticeId:noticeId
     };
 
     return axios
