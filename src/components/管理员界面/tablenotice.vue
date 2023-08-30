@@ -152,7 +152,7 @@ export default {
     function submitEditedNotice() {
       console.log(editedNoticeId.value)
       const currentTime=getCurrentTime();
-      gg_rqb_jk.sendEditedNoticeAPI(editedNoticeId,employeeId, editedNoticeTitle.value, editedNoticeContent.value, currentTime.value)
+      gg_rqb_jk.sendEditedNoticeAPI(editedNoticeId.value,employeeId, editedNoticeTitle.value, editedNoticeContent.value, currentTime.value)
       .then(response => {
         console.log('公告内容更新成功', response);
         editNoticeDialogVisible.value = false;

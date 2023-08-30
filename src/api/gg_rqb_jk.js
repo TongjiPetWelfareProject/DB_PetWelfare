@@ -52,9 +52,9 @@ export default {
       time: time,
       noticeId:noticeId
     };
-
+    console.log(data)
     return axios
-      .post('/api/send-notice', data)
+      .post('/api/send-edited-notice', data)
       .then(response => response.data)
       .catch(error => {
         throw new Error('发送公告数据时出错：' + error.message);
