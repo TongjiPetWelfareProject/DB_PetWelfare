@@ -52,7 +52,7 @@ export default {
       time: time,
       noticeId:noticeId
     };
-    console.log(data)
+    console.log
     return axios
       .post('/api/send-edited-notice', data)
       .then(response => response.data)

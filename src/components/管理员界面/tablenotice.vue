@@ -33,7 +33,7 @@
               <el-button type="primary" @click="submitEditedNotice">保存</el-button>
             </span>
           </el-dialog>
-          <el-button size="mini" type="danger" @click="deleteRow(scope.row)">删除</el-button>
+          <el-button size="mini" type="danger" @click="deleteRow(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -175,7 +175,8 @@ export default {
         const index = tableData.value.indexOf(row)
         if (index !== -1) {
           const noticeId = row.id; // 获取要删除的公告 ID
-          deleteNoticeAPI(noticeId) // 调用 API 请求函数删除公告
+          console.log(noticeId)
+          gg_rqb_jk.deleteNoticeAPI(noticeId) // 调用 API 请求函数删除公告
             .then(response => {
               console.log('公告删除成功', response);
               tableData.value.splice(index, 1); // 从表格数据中移除对应行数据
@@ -184,7 +185,7 @@ export default {
               console.error('删除公告失败', error);
             });
         }
-      }).catch(() => {
+      }).catch(error => {
         console.error('删除公告失败', error);
       })
     }
