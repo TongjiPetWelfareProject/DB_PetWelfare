@@ -329,8 +329,14 @@ const infoform = ref({
   read_num: 0,
 });
 const postcomment = ref([])
+const postlike = ref([])
 const donations = ref([])
 const medicallist = ref([])
+const collectedpetlist = ref([])
+const likedpetlist = ref([])
+const commentedpetlist = ref([])
+const adoptedpetlist = ref([])
+const fosteredpetlist = ref([])
 const dialogFormVisible = ref(false)
 const formLabelWidth = '140px'
 const editedform = reactive({
@@ -379,6 +385,19 @@ const getUserComment = async () => {
     }
 };
 
+const getUserLike = async () => {
+    try {
+      const response = await userinfo.userPostLikeAPI(userStore.userInfo.User_ID);
+      for(const like of response ){
+        postlike.value.push({
+
+        })
+      }
+    } catch (error) {
+      console.error('获取用户帖子点赞时出错：', error);
+    }
+};
+
 const getUserDonation = async () => {
     try {
       const response = await userinfo.userDonationAPI(userStore.userInfo.User_ID);
@@ -409,11 +428,82 @@ const getUserMedical = async () => {
     }
 };
 
+const getUserCollectPets = async () => {
+    try {
+      const response = await userinfo.userCollectPetsAPI(userStore.userInfo.User_ID);
+      for(const pet of response ){
+        collectedpetlist.value.push({
+
+        })
+      }
+    } catch (error) {
+      console.error('获取用户收藏数据时出错：', error);
+    }
+};
+
+const getUserLikePets = async () => {
+    try {
+      const response = await userinfo.userLikePetsAPI(userStore.userInfo.User_ID);
+      for(const pet of response ){
+        likedpetlist.value.push({
+
+        })
+      }
+    } catch (error) {
+      console.error('获取用户收藏数据时出错：', error);
+    }
+};
+
+const getUserCommentPets = async () => {
+    try {
+      const response = await userinfo.userCommentPetsAPI(userStore.userInfo.User_ID);
+      for(const pet of response ){
+        commentedpetlist.value.push({
+
+        })
+      }
+    } catch (error) {
+      console.error('获取用户收藏数据时出错：', error);
+    }
+};
+
+const getUserAdoptPets = async () => {
+    try {
+      const response = await userinfo.userAdoptPetsAPI(userStore.userInfo.User_ID);
+      for(const pet of response ){
+        adoptedpetlist.value.push({
+
+        })
+      }
+    } catch (error) {
+      console.error('获取用户领养数据时出错：', error);
+    }
+};
+
+const getUseRFosterPets = async () => {
+    try {
+      const response = await userinfo.userFosterPetsAPI(userStore.userInfo.User_ID);
+      for(const pet of response ){
+        fosteredpetlist.value.push({
+
+        })
+      }
+    } catch (error) {
+      console.error('获取用户寄养数据时出错：', error);
+    }
+};
+
 onMounted(() => {
     getUserInfo();
     getUserComment();
+    getUserLike();
     getUserDonation();
     getUserMedical();
+    getUserCollectPets();
+    getUserLikePets();
+    getUserCommentPets();
+    getUserAdoptPets();
+    getUseRFosterPets();
 });
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {

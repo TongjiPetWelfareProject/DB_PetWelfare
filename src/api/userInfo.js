@@ -16,7 +16,15 @@ export default {
             .post('/api/userpostcomment',{user_id})
             .then((response) => response.data)
             .catch(error => {
-                throw new Error('获取个人信息数据时出错：' + error.message);
+                throw new Error('获取个人评论信息数据时出错：' + error.message);
+            });
+    },
+    userPostLikeAPI(user_id) {
+        return axios
+            .post('/api/userpostlike',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人点赞信息数据时出错：' + error.message);
             });
     },
     userDonationAPI(user_id) {
@@ -34,7 +42,47 @@ export default {
             .catch(error => {
                 throw new Error('获取个人宠物医疗信息数据时出错：' + error.message);
             });
-    }
+    },
+    userCollectPetsAPI(user_id) {
+        return axios
+            .post('/api/usercollectpet',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人收藏宠物数据时出错：' + error.message);
+            });
+    },
+    userLikePetsAPI(user_id) {
+        return axios
+            .post('/api/userlikepet',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人点赞宠物数据时出错：' + error.message);
+            });
+    },
+    userCommentPetsAPI(user_id) {
+        return axios
+            .post('/api/usercommentpet',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人评论宠物数据时出错：' + error.message);
+            });
+    },
+    userAdoptPetsAPI(user_id) {
+        return axios
+            .post('/api/useradoptpet',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人领养宠物数据时出错：' + error.message);
+            });
+    },
+    userFosterPetsAPI(user_id) {
+        return axios
+            .post('/api/userfosterpet',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人寄养宠物数据时出错：' + error.message);
+            });
+    },
 };
 
 export const userTotalLikeAPI = ({like_num}) => {
