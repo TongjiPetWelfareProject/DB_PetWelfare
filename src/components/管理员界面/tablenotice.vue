@@ -140,7 +140,7 @@ export default {
       gg_rqb_jk.sendNewNoticeAPI(employeeId, newNoticeTitle, newNoticeContent, currentTime)
       .then(response => {
         console.log('公告内容发布成功', response);
-        newNoticeDialogVisible.value = false;
+        addNoticeDialogVisible.value = false;
       })
       .catch(error => {
         console.error('发布公告内容失败', error);
