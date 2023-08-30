@@ -20,9 +20,15 @@
       placeholder="请输入内容"
       style="margin-top:-8px"
     />
-    <el-upload action="#" list-type="picture-card" :auto-upload="false" :file-list="fileListRef">
+    <el-upload
+      class="upload-demo"
+      action="#"
+      :auto-upload="false"
+      :headers="headers"
+      :on-change="handleChange"
+      list-type="picture-card"
+    >
       <el-icon><Plus /></el-icon>
-
       <template #file="{ file }">
         <div>
           <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
@@ -54,18 +60,34 @@ import { ref } from 'vue'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import type { UploadFile } from 'element-plus'
 import posttocontent from '@/api/notice_forum'
-import { useUserStore } from '@/store/user';
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'; // 请确保导入 useRouter
+import { useUserStore } from '@/store/user'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
 
 const input = ref('')
 const textarea = ref('')
-const fileListRef = ref<Array<UploadFile>>([]) // 创建fileList文件列表用于存储上传的照片
+// const fileListRef = ref<Array<UploadFile>>([]) // 创建fileList文件列表用于存储上传的照片
 const userStore = useUserStore();
 const router = useRouter();
+
+let fileUpload = ref()
+// 设置请求头
+const headers = {
+  'Content-Type': 'multipart/form-data'
+}
+
+// 选择文件时被调用，将他赋值给fileUpload
+const handleChange = (file: any) => {
+  fileUpload.value = file
+}
+
 const submitPost = async () => {
   try {
-    const response = await posttocontent.postcontent(userStore.userInfo.User_ID, input.value, textarea.value);
+    let param = new FormData()
+    param.append("file", fileUpload.value.raw)
+    console.log(fileUpload.value)
+    console.log(param)
+    const response = await posttocontent.postcontent(userStore.userInfo.User_ID, input.value, textarea.value,param);
     console.log('发帖成功', response);
 
     // 显示成功提示
@@ -100,7 +122,7 @@ const disabled = ref(false)
 const handleRemove = (file: UploadFile) => {
   console.log('删除文件:', file)
   // 更新文件列表
-  fileListRef.value = fileListRef.value.filter((item) => item.uid !== file.uid)
+  fileUpload.value = fileUpload.value.filter((item) => item.uid !== file.uid)
 }
 
 </script>

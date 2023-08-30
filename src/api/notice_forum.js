@@ -83,9 +83,9 @@ export default {
             })
     },
 
-    postcontent(user_id,post_title,post_content) {
+    postcontent(user_id,post_title,post_content,param) {
         return axios
-            .post('/api/postcontent',{user_id,post_title,post_content})
+            .post('/api/postcontent',{user_id,post_title,post_content,param})
             .then((response) => response.data)
             .catch(error => {
                 throw new Error('发帖出错：' + error.message);
