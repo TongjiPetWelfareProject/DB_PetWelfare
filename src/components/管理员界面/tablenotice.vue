@@ -1,12 +1,20 @@
 <template>
   <div>
     <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
-      <el-table-column prop="id" label="公告ID" width="80"></el-table-column>
-      <el-table-column prop="title" label="公告标题" width="120"></el-table-column>
-      <el-table-column prop="content" label="公告内容" width="200"></el-table-column>
-      <el-table-column prop="time" label="发布时间" width="200" sortable :sort-method="sortTime"></el-table-column>
-      <el-table-column prop="employeeId" label="员工ID" width="100"></el-table-column>
-      <el-table-column label="操作" width="180">
+      <el-table-column prop="id" label="公告ID" width="70" align="center"/>
+      <el-table-column prop="title" label="公告标题" width="120" align="center"/>   
+      <el-table-column label="公告内容" width="480" align="center">
+        <template v-slot="{ row }">
+          <div class="announcement-cell">
+            <el-button type="text" @click="showAnnouncement(row)">
+              {{ getShortenedContent(row.content) }}
+            </el-button>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="time" label="发布时间" width="200" sortable :sort-method="sortTime" align="center"/>
+      <el-table-column prop="employeeName" label="员工姓名" width="80" align="center"/>
+      <el-table-column label="操作" width="180" align="center">
         <template v-slot="scope">
           <el-button size="mini" type="primary" @click="showEditNoticeDialog(scope.row)">编辑</el-button>
           <el-dialog title="编辑公告" v-model="editNoticeDialogVisible">
@@ -29,8 +37,8 @@
         </template>
       </el-table-column>
     </el-table>
-    
-    <el-pagination layout="sizes, prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize" :page-sizes="[10,5,2,1]" @update:current-page="handlePageChange" @update:page-size="handlePageSizeChange" /><br>
+    <br>
+    <el-pagination layout="sizes, prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize"  @update:current-page="handlePageChange"  /><br>
     <el-button type="primary" @click="showAddNoticeDialog">添加</el-button>
     <el-dialog title="发布新公告" v-model="addNoticeDialogVisible">
       <el-form>
@@ -72,7 +80,7 @@ export default {
     const editedNoticeTitle = ref('');
     // newly added to implement pagination
     const currentPage = ref(1);
-    const pageSize = ref(1);
+    const pageSize = ref(10);
     const totalItems = ref(0);
 
     function showAddNoticeDialog() {// 打开添加公告对话框
@@ -82,6 +90,23 @@ export default {
       nextTick(() => {
     // 对话框重新渲染后可能会显示
       });
+    }
+
+    function showAnnouncement(row) {
+      ElMessageBox.alert(row.content, '公告内容', {
+        confirmButtonText: '关闭',
+      });
+    }
+
+    function getShortenedContent(content) {
+      const lines = content.split('\n');
+      const maxLines = 1;
+      
+      if (lines.length > maxLines) {
+        return lines.slice(0, maxLines).join('\n');
+      }
+      
+      return content;
     }
 
     function showEditNoticeDialog(index) { // 打开编辑公告对话框，并将当前公告的内容作为默认值
@@ -187,6 +212,8 @@ export default {
       pageSize,
       handlePageChange,
       handlePageSizeChange,
+      showAnnouncement,
+      getShortenedContent
     }
   },
 }
