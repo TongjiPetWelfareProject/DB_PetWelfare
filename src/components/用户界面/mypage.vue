@@ -367,6 +367,9 @@ const editInfo = async () => {
       message: '修改成功',
       duration: 1000 // 持续显示时间（毫秒）
     });
+    userStore.userInfo.User_Name=editedform.name
+    userStore.userInfo.Phone_Number=editedform.phone
+    userStore.userInfo.Address=selectedProvince.value+selectedCity.value
     // 停顿1秒后刷新
     setTimeout(() => {
       location.reload();
