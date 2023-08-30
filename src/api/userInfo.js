@@ -3,9 +3,9 @@ import request from '@/util/http'
 import axios from 'axios';
 
 export default {
-    editInfoAPI(user_name,phone,province,city) {
+    editInfoAPI(user_id,user_name,phone,province,city) {
         return axios
-            .post('/api/editinfo',{user_name,phone,province,city})
+            .post('/api/editinfo',{user_id,user_name,phone,province,city})
             .then((response) => response.data)
             .catch(error => {
                 throw new Error('编辑个人信息数据时出错：' + error.message);

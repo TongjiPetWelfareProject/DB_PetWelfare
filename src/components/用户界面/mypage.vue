@@ -362,7 +362,7 @@ watch(selectedProvince, (newSelectedProvince) => {
 const editInfo = async () => {
     dialogFormVisible.value = false
     try {
-      const response = await userinfo.editInfoAPI(editedform.name,editedform.phone,selectedProvince,selectedCity);
+      const response = await userinfo.editInfoAPI(userStore.userInfo.User_ID,editedform.name,editedform.phone,selectedProvince,selectedCity);
       ElMessage.success({
       message: '修改成功',
       duration: 1000 // 持续显示时间（毫秒）
