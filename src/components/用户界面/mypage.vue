@@ -308,15 +308,14 @@
 
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted,reactive,watch } from 'vue'
-import type { TabsPaneContext } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import userinfo from '@/api/userInfo'
 import { computed } from 'vue'
-import { Iphone, Location, OfficeBuilding, Tickets, User, UserFilled, Star } from '@element-plus/icons-vue'
-import jsonData from '../登录注册/values.json'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { Iphone, OfficeBuilding, Tickets, User, Star } from '@element-plus/icons-vue'
+import jsonData from '@/components/登录注册/values.json'
+import { ElMessage } from 'element-plus'
 
 const provinces = ref(jsonData.provinces);
 const selectedProvince = ref('');
@@ -361,8 +360,9 @@ watch(selectedProvince, (newSelectedProvince) => {
 
 const editInfo = async () => {
     dialogFormVisible.value = false
+    console.log(selectedCity)
     try {
-      const response = await userinfo.editInfoAPI(userStore.userInfo.User_ID,editedform.name,editedform.phone,selectedProvince,selectedCity);
+      const response = await userinfo.editInfoAPI(userStore.userInfo.User_ID,editedform.name,editedform.phone,selectedProvince.value,selectedCity.value);
       ElMessage.success({
       message: '修改成功',
       duration: 1000 // 持续显示时间（毫秒）
@@ -548,9 +548,6 @@ onMounted(() => {
     getUseRFosterPets();
 });
 
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
-}
 
 const tabPosition = ref('left')
 
