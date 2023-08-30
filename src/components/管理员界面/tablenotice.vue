@@ -38,7 +38,7 @@
       </el-table-column>
     </el-table>
     <br>
-    <el-pagination layout="sizes, prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize"  @update:current-page="handlePageChange"  /><br>
+    <el-pagination layout="prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize"  @update:current-page="handlePageChange"  /><br>
     <el-button type="primary" @click="showAddNoticeDialog">添加</el-button>
     <el-dialog title="发布新公告" v-model="addNoticeDialogVisible">
       <el-form>
