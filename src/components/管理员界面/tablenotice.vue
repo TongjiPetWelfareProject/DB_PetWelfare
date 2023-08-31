@@ -34,6 +34,11 @@
             </span>
           </el-dialog>
           <el-button size="mini" type="danger" @click="deleteRow(row)">删除</el-button>
+          <!-- <el-popconfirm title="Are you sure to delete this?">
+            <template #reference>
+              <el-button size="mini" type="danger" @click="deleteRow(row)">删除</el-button>
+            </template>
+          </el-popconfirm> -->
         </template>
       </el-table-column>
     </el-table>
@@ -61,7 +66,7 @@
 
 <script>
 import { ref,onMounted,nextTick } from 'vue'
-import { ElTable, ElMessageBox, ElButton } from 'element-plus'
+import { ElTable, ElMessageBox, ElButton,ElMessage } from 'element-plus'
 import gg_rqb_jk from '@/api/gg_rqb_jk'
 import { useUserStore } from '@/store/user'; 
 
@@ -122,7 +127,7 @@ export default {
       const currentMinutes = now.getMinutes();
       const currentSeconds = now.getSeconds();
     
-      const currentTime = `${currentYear}-${currentMonth}-${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
+      const currentTime = `${currentYear}/${currentMonth}/${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
       return currentTime;
     
     }
@@ -136,30 +141,55 @@ export default {
     }
 
     function submitNewNotice() {
-      console.log(newNoticeTitle.value)
+      //console.log(newNoticeTitle.value)
       const currentTime=getCurrentTime();
       gg_rqb_jk.sendNewNoticeAPI(employeeId, newNoticeTitle.value, newNoticeContent.value, currentTime.value)
       .then(response => {
+        ElMessage({
+          message: '公告发布成功',
+          type: 'success',
+        })
         console.log('公告内容发布成功', response);
         addNoticeDialogVisible.value = false;
       })
       .catch(error => {
         console.error('发布公告内容失败', error);
       });
+      newNoticeTitle.value = '';
+      newNoticeContent.value = '';
       addNoticeDialogVisible.value = false;
     }
     
     function submitEditedNotice() {
-      console.log(editedNoticeId.value)
+      // console.log(editedNoticeId.value)
       const currentTime=getCurrentTime();
+
+      const editedNoticeIndex = tableData.value.findIndex(notice => {
+        // console.log("notice.id:", notice.id);
+        return notice.id === editedNoticeId.value;
+      });
+      console.log(editedNoticeIndex)
+      if (editedNoticeIndex !== -1) {
+        tableData.value[editedNoticeIndex].title = editedNoticeTitle.value;
+        tableData.value[editedNoticeIndex].content = editedNoticeContent.value;
+        tableData.value[editedNoticeIndex].time = currentTime;
+      }
+
       gg_rqb_jk.sendEditedNoticeAPI(editedNoticeId.value,employeeId, editedNoticeTitle.value, editedNoticeContent.value, currentTime.value)
       .then(response => {
+        ElMessage({
+          message: '公告成功更新',
+          type: 'success',
+        })
         console.log('公告内容更新成功', response);
         editNoticeDialogVisible.value = false;
       })
       .catch(error => {
         console.error('更新公告内容失败', error);
       });
+
+      editedNoticeTitle.value = '';
+      editedNoticeContent.value = '';
       editNoticeDialogVisible.value = false;
     }
 
@@ -178,6 +208,10 @@ export default {
           console.log(noticeId)
           gg_rqb_jk.deleteNoticeAPI(noticeId) // 调用 API 请求函数删除公告
             .then(response => {
+              ElMessage({
+                message: '公告删除成功',
+                type: 'success',
+              })
               console.log('公告删除成功', response);
               tableData.value.splice(index, 1); // 从表格数据中移除对应行数据
             })
