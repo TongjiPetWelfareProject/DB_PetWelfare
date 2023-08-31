@@ -120,7 +120,7 @@
         <el-tab-pane label="我的宠物" name="first">
           <el-tabs tab-position="left"  class="demo-tabs">
             <el-tab-pane label="我的点赞">
-              <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
+              <div class="donatecardcontainer" style="gap:40px">
                   <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
@@ -137,10 +137,10 @@
                         查看详情  —>
                       </router-link> -->
                     </el-card>
-                <!-- </div> -->
+                </div>
             </el-tab-pane>
             <el-tab-pane label="我的收藏">
-               <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
+              <div class="donatecardcontainer" style="gap:40px">
                 <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
@@ -157,7 +157,7 @@
                         查看详情  —>
                       </router-link> -->
                     </el-card>
-                <!-- </div> -->
+                </div>
             </el-tab-pane>
             <el-tab-pane label="我的评论">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
@@ -181,7 +181,7 @@
               
             </el-tab-pane>
             <el-tab-pane label="我的领养">
-               <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card"> -->
+              <div class="donatecardcontainer" style="gap:40px">
                 <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
@@ -198,19 +198,21 @@
                         查看详情  —>
                       </router-link> -->
                     </el-card>
-                <!-- </div> -->
+                </div>
             </el-tab-pane>
             <el-tab-pane label="我的寄养">
-              <el-card v-for="flist in fosteredpetlist" class="mypagefoster" shadow="always">
-                <template #header>
-                  <div class="mypagecard-header">
-                    <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">{{flist.PET_NAME}}</span>
-                  </div>
-                </template>
-                <div class="mypagefostertext" style="margin-top:2px">寄养时长：{{flist.DURATION}}天</div>
-                <div class="mypagefostertext">寄养起始时间：{{ flist.STARTDATE }}</div>
-                <div class="mypagefostertext">寄养费用：{{ flist.EXSPENSE }}</div>
-              </el-card>
+              <div class="donatecardcontainer">
+                <el-card v-for="flist in fosteredpetlist" class="mypagefoster" shadow="always">
+                  <template #header>
+                    <div class="mypagecard-header">
+                      <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">{{flist.PET_NAME}}</span>
+                    </div>
+                  </template>
+                  <div class="mypagefostertext" style="margin-top:2px">寄养时长：{{flist.DURATION}}天</div>
+                  <div class="mypagefostertext">寄养起始时间：{{ flist.STARTDATE }}</div>
+                  <div class="mypagefostertext">寄养费用：{{ flist.EXSPENSE }}</div>
+                </el-card>
+              </div>
             </el-tab-pane>
           </el-tabs>
         </el-tab-pane>
@@ -622,7 +624,7 @@ input[type="file"] {
   display: flex;
   justify-content: space-between;
   text-align: center;
-  height:10px
+  min-height:10px
 }
 
 .mypagecardtime{
@@ -740,7 +742,7 @@ input[type="file"] {
 
 .box-card {
   width: 390px;
-  height:350px;
+  min-height:350px;
 }
 
 .common-layout {
@@ -798,7 +800,7 @@ input[type="file"] {
 }
 
 .mypagepetimage{
-  height:200px;
+  min-height:200px;
   width:300px;
 }
 
