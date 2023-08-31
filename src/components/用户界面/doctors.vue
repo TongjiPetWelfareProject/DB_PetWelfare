@@ -70,9 +70,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 export default defineComponent({
   setup() {
     const doctors = [
-    '../../../public/tl.png',
-    '../../../public/tl2.png',
-    '../../../public/tl3.png', 
+    'tl.png',
+    'tl2.png',
+    'tl3.png', 
   ];
 
     // 在组件挂载后获取医生数据
