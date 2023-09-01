@@ -7,6 +7,9 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 const notices = ref([]);
 const searchText = ref("");
 const sortOrder = ref("desc");
+const noticeContent=ref('')
+const noticeTitle=ref('')
+const dialogVisible=ref(false)
 
 function formatBackendTime(backendTime) {
   const date = new Date(backendTime);
@@ -64,7 +67,10 @@ const currentNotice = ref(null);
 
 const goToNotice = (notice) => {
   console.log("跳转到公告详情页：" + notice.title);
-  ElMessageBox.alert(notice.content,notice.title);
+ // ElMessageBox.alert(notice.content,notice.title);
+   noticeContent.value=notice.content
+   noticeTitle.value=notice.title
+   dialogVisible.value=true
   //currentNotice.value = notice;
   //showCustomMessageBox.value = true;
 };
@@ -112,7 +118,7 @@ const toggleSortOrder = () => {
     <el-row >
         <div style="width:100px"></div>
          <div class="search-bar">
-        <el-input v-model="searchText" placeholder="搜索帖子标题"></el-input>
+        <el-input v-model="searchText" placeholder="搜索公告标题"></el-input>
         <el-button type="primary" :icon="Search" @click="search">搜索</el-button>
         </div>
       <div >
@@ -132,8 +138,26 @@ const toggleSortOrder = () => {
               <div class="notice-date">{{ notice.date }}</div>
             </div>
           </el-card>
+          
         </li>
       </ul>
+      <el-dialog
+            v-model="dialogVisible"
+            :title="noticeTitle"
+            width="30%"
+            :before-close="handleClose"
+          >
+          <div class="dialog-content">
+            {{ noticeContent }}
+          </div>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button type="primary" @click="dialogVisible = false">
+                  确认
+                </el-button>
+              </span>
+            </template>
+          </el-dialog>
     </div>
     </div>
     <teleport to="body">
@@ -149,6 +173,11 @@ const toggleSortOrder = () => {
 
 
 <style scoped>
+
+.dialog-content{
+  max-width: 100%; /* 限制最大宽度以适应 dialog */
+  white-space: pre-wrap;
+}
 .main_page{
   display: flex;
   align-items: center;
