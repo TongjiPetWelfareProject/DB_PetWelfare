@@ -108,7 +108,7 @@ const submitForm = async() => {
           <div class="custom-input-container">
             <el-tooltip 
             placement="right" 
-            content="密码长度在8~16之间，必须包含数字、大小写字母、特殊字符" 
+            content="密码长度在8~14之间，必须包含数字、大小写字母、特殊字符" 
             open-delay="500"
             effect="light">
               <div class="input-with-tooltip">
