@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
+    <el-table ref="tableRef" :data="currentPageData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
       <el-table-column prop="roomId" label="房间号" width="180%"></el-table-column>
       <el-table-column prop="roomStatus" label="房间情况" width="180%"></el-table-column>
       <el-table-column prop="storey" label="楼层" width="180%"></el-table-column>
@@ -33,6 +33,17 @@
     <br>
     <!--<el-button type="primary" @click="addEmptyRow">添加</el-button>-->
   </div>
+  <el-pagination
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :small="small"
+      :disabled="disabled"
+      :background="background"
+      layout="prev, pager, next, jumper"
+      :total="tableData.length"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
 </template>
 
 <script>
@@ -48,6 +59,8 @@ export default {
   setup() {
     const tableRef = ref(null)
     const tableData = ref([]);
+    const currentPage = ref(1);
+    const pageSize = ref(15);
     const editRoomDialogVisible = ref(false); // 控制编辑对话框的显示
     const editedRoomStatus = ref(''); // 存储修改后的房间信息
     const editedRoomTime = ref('');
@@ -116,6 +129,22 @@ export default {
       editRoomDialogVisible.value = false;
     }
 
+    const currentPageData = computed(() => {
+      const startIndex = (currentPage.value - 1) * pageSize.value;
+      const endIndex = startIndex + pageSize.value;
+      return tableData.value.slice(startIndex, endIndex);
+    })
+
+    const handleSizeChange = newPageSize => {
+      pageSize.value = newPageSize;
+      currentPage.value = 1;
+    }
+    
+    const handleCurrentChange = newCurrentPage => {
+      currentPage.value = newCurrentPage;
+    }
+
+
 
     onMounted(async () => {
       try {
@@ -134,6 +163,9 @@ export default {
       sortTime,
       showEditRoomDialog,
       submitEditedRoom,
+      currentPageData,
+      handleSizeChange,
+      handleCurrentChange,
     }
   },
 }
