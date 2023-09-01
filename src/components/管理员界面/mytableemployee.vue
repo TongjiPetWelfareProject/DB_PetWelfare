@@ -4,10 +4,10 @@
             max-height="600">
             <el-table-column prop="id" label="员工ID" width="120" />
             <el-table-column prop="name" label="员工姓名" width="120" />
-            <el-table-column prop="phone" label="电话" width="120" />
-            <el-table-column prop="responsibility" label="职责" width="120" />
+            <el-table-column prop="phone" label="电话" width="150" />
+            <el-table-column prop="responsibility" label="职责" width="150" />
             <el-table-column prop="workingHours" label="工作时间" width="120" />
-            <el-table-column prop="salary" label="工资" width="170" />
+            <el-table-column prop="salary" label="工资" width="120" />
             <el-table-column label="操作" width="360">
                 <template #default="scope">
                     <el-button link type="primary" size="small" @click.prevent="editRow(scope.$index)">
