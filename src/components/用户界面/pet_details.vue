@@ -87,8 +87,11 @@
 </div>
 <div class="comment-part">
   <div class="comment-form">
-    <div class="comment-input">
+    <div class="comment-input" v-if="userStore.userInfo.User_ID">
       <el-input v-model="newComment.comment_content" type="textarea" placeholder="在这里评论"></el-input>
+    </div>
+    <div class="comment-input" v-else>
+      <el-input v-model="newComment.comment_content" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
     </div>
     <div class="comment-button">
       <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
@@ -249,30 +252,46 @@ const getifinteract= async (PID) => {
   
 const likePet = async () => {
     console.log("点击点赞了")
-    liked.value = liked.value === true ? false : true;
-    if(liked.value === false)
-      pet.value.like_num--
-    else
-      pet.value.like_num++
-    try {
-      const response = await getpetinfo.submitLike(userStore.userInfo.User_ID,petId.value);
-    } catch (error) {
-      console.error('提交点赞信息失败：', error);
+    if (!userStore.userInfo.User_ID) {
+      ElMessage({
+          type: 'warning',
+          message: '请先登录',
+        })
+    }
+    else {
+        liked.value = liked.value === true ? false : true;
+      if(liked.value === false)
+        pet.value.like_num--
+      else
+        pet.value.like_num++
+      try {
+        const response = await getpetinfo.submitLike(userStore.userInfo.User_ID,petId.value);
+      } catch (error) {
+        console.error('提交点赞信息失败：', error);
+      }
     }
 };
 
 
 const favoritePet = async () => {
     console.log("点击收藏了")
-    favorited.value = favorited.value === true ? false : true;
-    if(favorited.value === false)
-      pet.value.favorite_num--
-    else
-      pet.value.favorite_num++
-    try {
-      const response = await getpetinfo.submitFavorite(userStore.userInfo.User_ID,petId.value);
-    } catch (error) {
-      console.error('提交收藏信息失败：', error);
+    if (!userStore.userInfo.User_ID) {
+      ElMessage({
+          type: 'warning',
+          message: '请先登录',
+        })
+    }
+      else {
+      favorited.value = favorited.value === true ? false : true;
+      if(favorited.value === false)
+        pet.value.favorite_num--
+      else
+        pet.value.favorite_num++
+      try {
+        const response = await getpetinfo.submitFavorite(userStore.userInfo.User_ID,petId.value);
+      } catch (error) {
+        console.error('提交收藏信息失败：', error);
+      }
     }
 };
 
@@ -307,24 +326,32 @@ const deleteComment = async (comment) => {
 }
 
 const addComment = async () => {
-  try {
-    const response = await getpetinfo.addComment(userStore.userInfo.User_ID, petId.value, newComment.value.comment_content);
-      ElMessage.success({
-      message: '评论成功',
-      duration: 1000 // 持续显示时间（毫秒）
-    });
-    // 停顿3秒后刷新
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
-      } catch (error) {
-        console.error('评论失败：', error);
-      // 显示失败提示
-      ElMessage.error({
-      message: '评论失败，错误信息：' + error.message,
-      duration: 1000 // 持续显示时间（毫秒）
-    });
-      }
+  if (!userStore.userInfo.User_ID) {
+      ElMessage({
+          type: 'warning',
+          message: '请先登录',
+        })
+    }
+  else {
+    try {
+      const response = await getpetinfo.addComment(userStore.userInfo.User_ID, petId.value, newComment.value.comment_content);
+        ElMessage.success({
+        message: '评论成功',
+        duration: 1000 // 持续显示时间（毫秒）
+      });
+      // 停顿3秒后刷新
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+        } catch (error) {
+          console.error('评论失败：', error);
+        // 显示失败提示
+        ElMessage.error({
+        message: '评论失败，错误信息：' + error.message,
+        duration: 1000 // 持续显示时间（毫秒）
+      });
+    }
+  }
 };
 
 const isOwnPost = (UID) => {

@@ -30,8 +30,11 @@
 
     <div class="comment-part">
       <div class="comment-form">
-        <div class="comment-input">
-          <el-input v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
+        <div class="comment-input" v-if="userStore.userInfo.User_ID">
+          <el-input v-model="newComment.comment_content" type="textarea" placeholder="在这里评论"></el-input>
+        </div>
+        <div class="comment-input" v-else>
+          <el-input v-model="newComment.comment_content" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
         </div>
         <div class="comment-button">
           <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
@@ -187,24 +190,32 @@ const showCommentForm = ref(false);
 //     };
 
 const addComment = async () => {
-  try {
-    const response = await getpostinfo.addcomment(userStore.userInfo.User_ID,postId.value,newComment.value.text);
-      ElMessage.success({
-      message: '评论成功',
-      duration: 1000 // 持续显示时间（毫秒）
-    });
-    // 停顿1秒后刷新
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
-      } catch (error) {
-        console.error('评论失败：', error);
-      // 显示失败提示
-      ElMessage.error({
-      message: '评论失败，错误信息：' + error.message,
-      duration: 1000 // 持续显示时间（毫秒）
-    });
+  if (!userStore.userInfo.User_ID) {
+      ElMessage({
+          type: 'warning',
+          message: '请先登录',
+        })
+    }
+    else {
+      try {
+        const response = await getpostinfo.addcomment(userStore.userInfo.User_ID,postId.value,newComment.value.text);
+          ElMessage.success({
+          message: '评论成功',
+          duration: 1000 // 持续显示时间（毫秒）
+        });
+        // 停顿1秒后刷新
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+          } catch (error) {
+            console.error('评论失败：', error);
+          // 显示失败提示
+          ElMessage.error({
+          message: '评论失败，错误信息：' + error.message,
+          duration: 1000 // 持续显示时间（毫秒）
+        });
       }
+    }
 };
 
 const isOwnPost = (userid) => {
@@ -220,15 +231,23 @@ const showAddComment = () => {
 
 const likePost = async () => {
     console.log("点击点赞了")
-    liked.value = liked.value === true ? false : true;
-    if(liked.value === false)
-      post.value.like_num--
-    else
-      post.value.like_num++
-    try {
-      const response = await getpostinfo.likepost(userStore.userInfo.User_ID,postId.value);
-    } catch (error) {
-      console.error('获取点赞信息失败：', error);
+    if (!userStore.userInfo.User_ID) {
+      ElMessage({
+          type: 'warning',
+          message: '请先登录',
+        })
+    }
+    else {
+      liked.value = liked.value === true ? false : true;
+      if(liked.value === false)
+        post.value.like_num--
+      else
+        post.value.like_num++
+      try {
+        const response = await getpostinfo.likepost(userStore.userInfo.User_ID,postId.value);
+      } catch (error) {
+        console.error('获取点赞信息失败：', error);
+      }
     }
 };
 
