@@ -3,7 +3,7 @@
     <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
       <el-table-column prop="id" label="公告ID" width="70" align="center"/>
       <el-table-column prop="title" label="公告标题" width="120" align="center"/>   
-      <el-table-column label="公告内容" width="480" align="center">
+      <el-table-column label="公告内容" width="460" align="center">
         <template v-slot="{ row }">
           <div class="announcement-cell">
             <el-button type="text" @click="showAnnouncement(row)">
@@ -60,7 +60,23 @@
         <el-button type="primary" @click="submitNewNotice">发布</el-button>
       </span>
     </el-dialog>
-   
+    <el-dialog
+            v-model="dialogVisible"
+            :title="noticeTitle"
+            width="30%"
+            :before-close="handleClose"
+          >
+          <div class="dialog-content">
+            {{ noticeContent }}
+          </div>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button type="primary" @click="dialogVisible = false">
+                  确认
+                </el-button>
+              </span>
+            </template>
+          </el-dialog>
   </div>
 </template>
 
@@ -92,6 +108,9 @@ export default {
     const totalItems = ref(0);
     const editedNoticeId=ref('');
 
+    const noticeContent=ref('')
+    const noticeTitle=ref('')
+    const dialogVisible=ref(false)
     
 
     function showAddNoticeDialog() {// 打开添加公告对话框   
@@ -102,9 +121,9 @@ export default {
     }
 
     function showAnnouncement(row) {
-      ElMessageBox.alert(row.content, '公告内容', {
-        confirmButtonText: '关闭',
-      });
+      noticeContent.value=row.content
+      noticeTitle.value=row.title
+      dialogVisible.value=true
     }
 
     function getShortenedContent(content) {
@@ -275,8 +294,22 @@ export default {
       showAnnouncement,
       getShortenedContent,
       userStore,
-      employeeId
+      employeeId,
+      noticeContent,
+      noticeTitle,
+      dialogVisible
     }
   },
 }
 </script>
+
+<style>
+.dialog-content{
+  max-width: 100%; /* 限制最大宽度以适应 dialog */
+  white-space: pre-wrap;
+}
+
+.el-dialog__wrapper {
+  background-color: rgba(0, 0, 0, 0.6); /* 调整遮罩层背景色，半透明黑色 */
+}
+</style>

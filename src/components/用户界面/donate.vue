@@ -172,9 +172,9 @@ const userStore = useUserStore()
 const router = useRouter()
 const tabPosition = ref('left')
 const urls = [
-  '../../../public/home8.jpg',
-  '../../../public/home2.png',
-  '../../../public/home7.jpg', 
+  'home8.jpg',
+  'home2.png',
+  'home7.jpg', 
 ]
 
 const donationTime = new Date().toISOString(); // 当前时间转换为字符串格式
