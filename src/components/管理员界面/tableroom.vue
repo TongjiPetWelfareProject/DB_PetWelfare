@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="tablecontainer">
     <el-table ref="tableRef" :data="currentPageData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
       <el-table-column prop="roomId" label="房间号" width="180%"></el-table-column>
       <el-table-column prop="roomStatus" label="房间情况" width="180%"></el-table-column>
@@ -45,7 +44,6 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-  </div>
 </template>
 
 <script>
@@ -141,7 +139,7 @@ export default {
       pageSize.value = newPageSize;
       currentPage.value = 1;
     }
-
+    
     const handleCurrentChange = newCurrentPage => {
       currentPage.value = newCurrentPage;
     }
@@ -172,11 +170,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.tablecontainer{
-  display: flex;
-  justify-content: space-between;
-}
-
-</style>
