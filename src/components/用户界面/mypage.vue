@@ -26,7 +26,7 @@
             <el-input v-model="editedform.name" autocomplete="off" />
           </el-form-item>
           <el-form-item label="电话" :label-width="formLabelWidth">
-            <el-input v-model="editedform.phone" autocomplete="off" />
+            <el-input v-model="editedform.phone" autocomplete="off" @input="handlePhoneInput"/>
           </el-form-item>
           <el-form-item label="地址" :label-width="formLabelWidth">
             <div class="form-group">
@@ -62,7 +62,7 @@
          用户名
         </div>
       </template>
-     {{ userStore.userInfo.User_Name }}
+     {{ infoform.user_name }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -73,7 +73,7 @@
           Telephone
         </div>
       </template>
-      {{ userStore.userInfo.Phone_Number }}
+      {{ infoform.phone }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -106,7 +106,7 @@
          地址
         </div>
       </template>
-      {{ userStore.userInfo.Address }}
+      {{ infoform.address }}
       <!-- 上海市嘉定区曹安公路4800号 -->
     </el-descriptions-item>
   </el-descriptions>
@@ -208,7 +208,7 @@
                       <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center;margin-top:-10px">{{flist.PET_NAME}}</span>
                     </div>
                   </template>
-                  <div class="mypagefostertext" style="margin-top:2px">寄养时长：{{flist.DURATION}}天</div>
+                  <div class="mypagefostertext" style="margin-top:2px">寄养时长：{{ flist.DURATION }}天</div>
                   <div class="mypagefostertext">寄养起始时间：{{ flist.STARTDATE }}</div>
                   <div class="mypagefostertext">寄养费用：{{ flist.EXSPENSE }}</div>
                 </el-card>
@@ -334,6 +334,17 @@ const handleFileChange = (event) => {
   }
 }
 
+const handlePhoneInput = () => {
+    // 获取输入框的值并移除所有非数字字符
+    const digitsOnly = editedform.value.phone.replace(/\D/g, "");
+
+    // 在第4个和第9个位置插入空格
+    const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+
+    editedform.value.phone = formattedValue; // 更新 newEmployee.value.phone
+};
+
+
 const provinces = ref(jsonData.provinces);
 const selectedProvince = ref('');
 const cities = ref([]);
@@ -342,6 +353,9 @@ const selectedCity = ref('');
 const userStore = useUserStore()
 const activeName = ref('first')
 const infoform = ref({
+  username:'',
+  phone:'',
+  address:'',
   like_num: 0,
   read_num: 0,
 });
@@ -404,8 +418,14 @@ const editInfo = async () => {
 const getUserInfo = async () => {
     try {
       const response = await userinfo.userInfoAPI(userStore.userInfo.User_ID);
+      infoform.value.user_name= response.user_name,
+      infoform.value.address= response.address,
+      infoform.value.phone= response.phone,
       infoform.value.like_num= response.likes,
-      infoform.value.read_num= response.reads
+      infoform.value.read_num= response.reads,
+      userStore.userInfo.User_Name= response.user_name,
+      userStore.userInfo.Phone_Number= response.phone,
+      userStore.userInfo.Address= response.address
     } catch (error) {
       console.error('获取用户人气数据时出错：', error);
     }
