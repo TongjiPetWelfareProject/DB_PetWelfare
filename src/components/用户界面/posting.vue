@@ -20,7 +20,7 @@
       placeholder="请输入内容"
       style="margin-top:-8px"
     />
-    <el-upload
+    <!-- <el-upload
       class="upload-demo"
       action="#"
       :auto-upload="false"
@@ -47,7 +47,16 @@
 
     <el-dialog v-model="dialogVisible">
       <img w-full :src="dialogImageUrl" alt="Preview Image" />
-    </el-dialog>
+    </el-dialog> -->
+
+    <el-upload
+            :http-request="httpRequest"
+            multiple
+            :show-file-list="true"
+            list-type="picture-card"
+    ><el-icon><Plus /></el-icon>
+    </el-upload>
+
     <el-button type="primary" plain @click="submitPost">提交</el-button>
     <br>
   </div>
@@ -55,40 +64,70 @@
  
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { ref } from 'vue'
 import { Delete, Plus } from '@element-plus/icons-vue'
-import type { UploadFile } from 'element-plus'
+// import type { UploadFile } from 'element-plus'
 import posttocontent from '@/api/notice_forum'
 import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import axios from "axios";
+
 
 const input = ref('')
 const textarea = ref('')
-// const fileListRef = ref<Array<UploadFile>>([]) // 创建fileList文件列表用于存储上传的照片
+
+// const fileList = ref<Array<UploadFile>>([]) // 创建fileList文件列表用于存储上传的照片
+
+const fileList = ref([])
+
 const userStore = useUserStore();
 const router = useRouter();
 
-let fileUpload = ref()
+const fileUpload = ref(null)
+
 // 设置请求头
 const headers = {
   'Content-Type': 'multipart/form-data'
 }
 
-// 选择文件时被调用，将他赋值给fileUpload
-const handleChange = (file: any) => {
-  fileUpload.value = file
-}
+
 
 const submitPost = async () => {
   try {
     let param = new FormData()
-    param.append("file", fileUpload.value.raw)
-    console.log(fileUpload.value)
+
+    param.append('user_id', userStore.userInfo.User_ID)
+    param.append('post_title', input.value)
+    param.append('post_content', textarea.value)
+    // for (const file of fileList.value) {
+    //   param.append("files[]", file.raw)
+    // }
+
+    fileList.value.forEach((it,index)=>{
+        param.append('filename',it.file)
+    })
+
+    //console.log(fileUpload.value)
     console.log(param)
-    const response = await posttocontent.postcontent(userStore.userInfo.User_ID, input.value, textarea.value,param);
-    console.log('发帖成功', response);
+    //const response = await posttocontent.postcontent(userStore.userInfo.User_ID, input.value, textarea.value,param);
+    //const response = await posttocontent.postcontent(param);
+    //console.log('发帖成功', response);
+
+
+
+    await axios({
+        method: 'POST',
+        url: '/api/postcontent',
+        data: param,
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    }).then(response => {
+        console.log(response.data)
+    })
+
 
     // 显示成功提示
     ElMessage.success({
@@ -115,15 +154,26 @@ const submitPost = async () => {
   textarea.value = '';
 }
 
+
+function httpRequest(option) {
+    fileList.value.push(option)
+}
+
+
+
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
 const disabled = ref(false)
 
-const handleRemove = (file: UploadFile) => {
-  console.log('删除文件:', file)
-  // 更新文件列表
-  fileUpload.value = fileUpload.value.filter((item) => item.uid !== file.uid)
-}
+// 选择文件时被调用，将他赋值给fileUpload
+// const handleChange = (file: any) => {
+//   fileList.value.push(file)
+// }
+
+// const handleRemove = (file: UploadFile) => {
+//   console.log('删除文件:', file)
+//   fileUpload.value = fileUpload.value.filter((item) => item.uid !== file.uid)
+// }
 
 </script>
 

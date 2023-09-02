@@ -8,6 +8,11 @@
       <h2>{{ post.title }}</h2>
       <p>{{ post.author }}</p>
       <pre>{{ post.content }}</pre>
+      <div v-if="post.urls.length > 0">
+        <div v-for="(image,index) in post.urls" :key="index">
+          <img :src="image" :alt="'Image ' + (index + 1)" style="max-width: 100%; height: auto;">
+        </div>
+      </div>
       <a v-if="isOwnPost(post.userid)" href="#" @click="deletePost(post.id,post.userid)">删除</a>
     </div>
     <br>
@@ -75,6 +80,7 @@ const post = ref({
   like_num: 0,
   comment_num: 0,
   collect_num: 0,
+  urls: [],
 });
 
 const comment_contents=ref([{  
@@ -112,7 +118,8 @@ const getpost= async () => {
         post.value.author = postinfo.userName,
         post.value.content = postinfo.content,
         post.value.like_num = postinfo.likeNum,
-        post.value.comment_num = postinfo.commentNum
+        post.value.comment_num = postinfo.commentNum,
+        post.value.urls = postinfo.urls
     }
       } catch (error) {
         console.error('获取帖子失败：', error);
