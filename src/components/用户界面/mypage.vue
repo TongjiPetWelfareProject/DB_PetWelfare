@@ -23,10 +23,10 @@
       <el-dialog v-model="dialogFormVisible" title="修改个人信息">
         <el-form :model="editedform">
           <el-form-item label="用户名" :label-width="formLabelWidth">
-            <el-input v-model="editedform.name" autocomplete="off" />
+            <el-input :placeholder="infoform.username" v-model="editedform.name" autocomplete="off" />
           </el-form-item>
           <el-form-item label="电话" :label-width="formLabelWidth">
-            <el-input v-model="editedform.phone" autocomplete="off" @input="handlePhoneInput"/>
+            <el-input :placeholder="infoform.phone" v-model="editedform.phone" autocomplete="off" @input="handlePhoneInput"/>
           </el-form-item>
           <el-form-item label="地址" :label-width="formLabelWidth">
             <div class="form-group">
@@ -48,10 +48,6 @@
           </span>
         </template>
       </el-dialog>
-
-
-
-
     </template>
     <el-descriptions-item>
       <template #label>
@@ -62,7 +58,7 @@
          用户名
         </div>
       </template>
-     {{ infoform.user_name }}
+     {{ infoform.username }}
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label>
@@ -107,14 +103,9 @@
         </div>
       </template>
       {{ infoform.address }}
-      <!-- 上海市嘉定区曹安公路4800号 -->
     </el-descriptions-item>
   </el-descriptions>
-
-
       </el-header>
-
-
       <el-main>
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" type="border-card">
         <el-tab-pane label="我的宠物" name="first">
@@ -288,24 +279,15 @@
                 <div class="mypagefostertext" style="margin-top:2px">捐款金额：{{ dona.amount }}</div>
                 <div class="mypagefostertext">捐款时间：{{ dona.time }}</div>
               </el-card>
-              </div>
-           
+              </div> 
             </el-tab-pane>
-
           </el-tabs>
         </el-tab-pane>
-        
-      </el-tabs>
-        
+      </el-tabs>    
       </el-main>
-    
     </el-container>
   </div>
 </div>
-  
-  
-  
-
 </template>
 
 <script setup>
@@ -334,15 +316,7 @@ const handleFileChange = (event) => {
   }
 }
 
-const handlePhoneInput = () => {
-    // 获取输入框的值并移除所有非数字字符
-    const digitsOnly = editedform.value.phone.replace(/\D/g, "");
 
-    // 在第4个和第9个位置插入空格
-    const formattedValue = insertSpaces(digitsOnly, [3, 7]);
-
-    editedform.value.phone = formattedValue; // 更新 newEmployee.value.phone
-};
 
 
 const provinces = ref(jsonData.provinces);
@@ -389,6 +363,31 @@ watch(selectedProvince, (newSelectedProvince) => {
   }));
 });
 
+const handlePhoneInput = () => {
+    // 获取输入框的值并移除所有非数字字符
+    const digitsOnly = editedform.phone.replace(/\D/g, "");
+
+    // 在第4个和第9个位置插入空格
+    const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+    console.log(formattedValue)
+    editedform.phone = formattedValue; // 更新 newEmployee.value.phone
+};
+
+const insertSpaces = (str, positions) => {
+    const result = [];
+    let positionIndex = 0;
+
+    for (let i = 0; i < str.length; i++) {
+        if (positionIndex < positions.length && i === positions[positionIndex]) {
+            result.push(" ");
+            positionIndex++;
+        }
+        result.push(str[i]);
+    }
+
+    return result.join("");
+};
+
 const editInfo = async () => {
     dialogFormVisible.value = false
     console.log(selectedCity)
@@ -418,7 +417,7 @@ const editInfo = async () => {
 const getUserInfo = async () => {
     try {
       const response = await userinfo.userInfoAPI(userStore.userInfo.User_ID);
-      infoform.value.user_name= response.user_name,
+      infoform.value.username= response.user_name,
       infoform.value.address= response.address,
       infoform.value.phone= response.phone,
       infoform.value.like_num= response.likes,
