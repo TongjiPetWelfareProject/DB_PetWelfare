@@ -190,10 +190,9 @@ const options3 = [
         <span style="font-size: 18px">{{ pet.gender }}</span>
         <span style="font-size: 16px; color:#6b6a68">{{ pet.age }}岁</span>
         <br>
-      <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none;
-  color:#edb055 ;">
-    查看详情  —>
-  </router-link>
+      <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none; color:#edb055 ;">
+        查看详情  —>
+      </router-link>
       </div>
     </el-card>
         </div>

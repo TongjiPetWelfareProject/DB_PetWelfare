@@ -112,7 +112,7 @@
           <el-tabs tab-position="left"  class="demo-tabs">
             <el-tab-pane label="我的点赞">
               <div class="donatecardcontainer" style="gap:40px">
-                  <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                  <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(lplist.PET_ID)">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
@@ -132,7 +132,7 @@
             </el-tab-pane>
             <el-tab-pane label="我的收藏">
               <div class="donatecardcontainer" style="gap:40px">
-                <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(cplist.PET_ID)">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
@@ -173,7 +173,7 @@
             </el-tab-pane>
             <el-tab-pane label="我的领养">
               <div class="donatecardcontainer" style="gap:40px">
-                <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px">
+                <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(adlist.PET_ID)">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
@@ -213,8 +213,8 @@
         <el-tab-pane label="我的论坛" name="second">
           <el-tabs tab-position="left"  class="demo-tabs">
             <el-tab-pane label="我的点赞">
-              <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
-                <el-card v-for="lpo in postlike"  class="post-card" shadow="always" style="margin-top:10px">
+              <div v-for="lpo in postlike" :key="lpo.post_id" @click="goToPost(lpo)">
+                <el-card class="post-card" shadow="always" style="margin-top:10px">
                   <div class="post-title">{{lpo.heading}}</div>
                   <div class="post-info">
                     <div>发表时间：{{lpo.time}}</div>
@@ -224,11 +224,12 @@
                     <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
                   </div>
                 </el-card>
-            <!-- </li> -->
+              </div>
             </el-tab-pane>
+
             <el-tab-pane label="我的评论">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
-                <el-card v-for="postcom in postcomment" class="mypage-card" shadow="always">
+                <el-card v-for="postcom in postcomment" class="mypage-card" shadow="always" @click="goToPost(postcom)">
                     <template #header>
                       <div class="mypagecard-header">
                         <span class="mypagecardtime" style="font-weight: bold;font-size: 15px;align-items: center; margin-left: 5px;margin-top:-10px">{{ postcom.title }}</span>
@@ -298,8 +299,9 @@ import { computed } from 'vue'
 import { Iphone, OfficeBuilding, Tickets, User, Star } from '@element-plus/icons-vue'
 import jsonData from '@/components/登录注册/values.json'
 import { ElMessage } from 'element-plus'
-
-const avatarUrl = ref('@/photos/头像.jpg');
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const avatarUrl = ref('@/photos/头像.jpg')
 
 const handleFileChange = (event) => {
   const file = event.target.files[0];
@@ -388,6 +390,17 @@ const insertSpaces = (str, positions) => {
     return result.join("");
 };
 
+const goToPost = (post) => {
+  // 跳转到帖子详情页
+  console.log('跳转到帖子详情页：' + post.heading);
+  router.push({ path: '/post_details', query: { post_id: post.post_id }});
+};
+
+const goToPet = (petId) => {
+    // 使用Vue Router进行路由跳转
+    router.push({ name: 'pet_details', params: { id: petId } });
+};
+
 const editInfo = async () => {
     dialogFormVisible.value = false
     console.log(selectedCity)
@@ -439,7 +452,8 @@ const getUserComment = async () => {
           avator:'@/photos/头像.jpg',
           username: userStore.userInfo.User_Name,
           content: comment.content,
-          time:comment.comment_Time
+          time:comment.comment_Time,
+          post_id:comment.pid
         })
       }
     } catch (error) {
@@ -453,6 +467,7 @@ const getUserLike = async () => {
       for(const like of response ){
         console.log('帖子点赞'+like.HEADING+like.COMMENT_NUM)
         postlike.value.push({
+          post_id: like.POST_ID,
           heading: like.HEADING,
           click: like.READ_COUNT,
           likenum: like.LIKE_NUM,
@@ -500,6 +515,7 @@ const getUserCollectPets = async () => {
       const response = await userinfo.userCollectPetsAPI(userStore.userInfo.User_ID);
       for(const pet of response ){
         collectedpetlist.value.push({
+          PET_ID: pet.PET_ID,
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
           AGE: pet.AGE+'岁'
@@ -515,6 +531,7 @@ const getUserLikePets = async () => {
       const response = await userinfo.userLikePetsAPI(userStore.userInfo.User_ID);
       for(const pet of response ){
         likedpetlist.value.push({
+          PET_ID: pet.PET_ID,
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
           AGE: pet.AGE+'岁'
@@ -547,6 +564,7 @@ const getUserAdoptPets = async () => {
       const response = await userinfo.userAdoptPetsAPI(userStore.userInfo.User_ID);
       for(const pet of response ){
         adoptedpetlist.value.push({
+          PET_ID:pet.PET_ID,
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
           AGE: pet.AGE+'岁',
@@ -602,7 +620,9 @@ const iconStyle = computed(() => {
 </script>
 
 <style scoped>
-
+.post-card{
+  cursor: pointer;
+}
 .avatar-container {
   display: flex;
   align-items: flex-end;
@@ -629,6 +649,7 @@ input[type="file"] {
 }
 
 .mypage-card{
+  cursor: pointer;
   margin-top: 10px;
 }
 
@@ -669,6 +690,7 @@ input[type="file"] {
   display: flex;
   flex-wrap: wrap;
   gap: 20px; /* 控制卡片之间的间隔 */
+  cursor: pointer;
 }
 
 .mypagedonate{

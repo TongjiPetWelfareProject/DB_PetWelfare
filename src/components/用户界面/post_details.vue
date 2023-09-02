@@ -60,12 +60,11 @@
   </template>
   
 <script setup>
-import { ref, watch, onMounted,computed } from 'vue';
-import { ElInput, ElButton, ElAvatar, ElDivider } from 'element-plus';
-import { MagicStick,Star } from '@element-plus/icons-vue'
+import { ref, onMounted,computed } from 'vue';
+import { ElInput, ElAvatar } from 'element-plus';
 import { useRouter } from 'vue-router'
 import getpostinfo from '@/api/notice_forum'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user';
 
 const router = useRouter();
