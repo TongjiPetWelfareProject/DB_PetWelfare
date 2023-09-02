@@ -32,7 +32,7 @@
           <el-input v-model="editedDoctor.name"></el-input>
         </el-form-item>
         <el-form-item label="电话">
-          <el-input v-model="editedDoctor.phone"></el-input>
+          <el-input v-model="editedDoctor.phone" @input="handleeditPhoneInput"></el-input>
         </el-form-item>
         <el-form-item label="工作时间">
           <!-- <el-input v-model="editedDoctor.workingHours"></el-input> -->
@@ -117,6 +117,16 @@ const newDoctor = ref<Doctor>({
   workingHours: '8',
   salary: '',
 });
+
+const handleeditPhoneInput = () => {
+  // 获取输入框的值并移除所有非数字字符
+  const digitsOnly = editedDoctor.value.phone.replace(/\D/g, "");
+
+  // 在第4个和第9个位置插入空格
+  const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+
+  editedDoctor.value.phone = formattedValue;
+};
 
 const handlePhoneInput = () => {
   // 获取输入框的值并移除所有非数字字符

@@ -32,7 +32,7 @@
                     <el-input v-model="editedEmployee.name"></el-input>
                 </el-form-item>
                 <el-form-item label="电话">
-                    <el-input v-model="editedEmployee.phone"></el-input>
+                    <el-input v-model="editedEmployee.phone" @input="handleeditPhoneInput"></el-input>
                 </el-form-item>
                 <el-form-item label="职责">
                     <!-- <el-input v-model="editedEmployee.responsibility"></el-input> -->
@@ -171,6 +171,16 @@ const options = [
         label: '动物护理专家',
     },
 ]
+
+const handleeditPhoneInput = () => {
+    // 获取输入框的值并移除所有非数字字符
+    const digitsOnly = editedEmployee.value.phone.replace(/\D/g, "");
+
+    // 在第4个和第9个位置插入空格
+    const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+
+    editedEmployee.value.phone = formattedValue; // 更新 editedEmployee.value.phone
+};
 
 const handlePhoneInput = () => {
     // 获取输入框的值并移除所有非数字字符
