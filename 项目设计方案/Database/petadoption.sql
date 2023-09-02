@@ -5,7 +5,6 @@ drop table comment_post;
 drop table like_post;
 drop table post_images;
 drop table appointment;
-drop table treatment;
 drop table accommodate;
 drop table foster;
 drop table adopt;
@@ -85,7 +84,6 @@ create table employee(
   employee_id varchar2(20) not null,
   employee_name varchar(20),
   salary numeric(9,2),
-  phone_number varchar2(20),
   duty varchar2(50),
   --the following attributes as an integrity represents the interval of working hours
   working_start_hr numeric(2,0),
@@ -93,6 +91,7 @@ create table employee(
   working_end_hr numeric(2,0),
   working_end_min numeric(2,0),
   primary key(employee_id),
+  foreign key(employee_id) references user2(user_id),
   CONSTRAINT CHK_WorkingHours2 CHECK(
   working_start_hr between 0 and 23 and working_end_hr between working_start_hr and 23 
   and working_end_hr*60+working_end_min>=working_start_hr*60+working_start_min
@@ -186,15 +185,6 @@ create table accommodate(
   primary key(pet_id,storey,compartment),
   foreign key(storey,compartment) references room
 );
---Because treat is ambiguious and treatment is usually referred in medication/surgery
-create table treatment(
-  category varchar2(20),
-  pet_id varchar2(20) references pet(pet_id),
-  vet_id varchar2(20) references vet(vet_id),
-  treat_time TIMESTAMP default CURRENT_TIMESTAMP,
-  primary key(treat_time,pet_id,vet_id)
-)partition by range(treat_time)interval(interval '1' year)
-(partition start_treatment values less than(TIMESTAMP '2023-09-01 00:00:00'));
 create table appointment(
   pet_id varchar2(20) references pet(pet_id),
   user_id varchar2(20) references user2(user_id),
@@ -207,7 +197,7 @@ create table appointment(
 CREATE TABLE post_images (
   image_id INT,
   post_id varchar2(50),
-  image_data BLOB,
+  image_path varchar2(100),
   FOREIGN KEY (post_id) REFERENCES forum_posts(post_id)
 );
 create table like_post(
@@ -247,80 +237,7 @@ create table collect_pet_info(
   primary key(collect_time,user_id,pet_id)
 )partition by range(collect_time)interval(interval '1' year)
 (partition start_collect_pet values less than(TIMESTAMP '2023-09-01 00:00:00'));
-CREATE OR REPLACE TRIGGER increase_like_count
-AFTER INSERT ON like_post
-FOR EACH ROW
-BEGIN
-   UPDATE forum_posts
-   SET like_num = like_num + 1
-   WHERE post_id = :NEW.post_id;
-END;
-/
 
-CREATE OR REPLACE TRIGGER decrease_like_count
-AFTER DELETE ON like_post
-FOR EACH ROW
-BEGIN
-   UPDATE forum_posts
-   SET like_num = like_num - 1
-   WHERE post_id = :OLD.post_id;
-END;
-/
-CREATE OR REPLACE TRIGGER increase_comment_count
-AFTER INSERT ON comment_post
-FOR EACH ROW
-BEGIN
-   UPDATE forum_posts
-   SET comment_num = comment_num + 1
-   WHERE post_id = :NEW.post_id;
-END;
-/
-CREATE OR REPLACE TRIGGER decrease_comment_count
-AFTER DELETE ON comment_post
-FOR EACH ROW
-BEGIN
-   UPDATE forum_posts
-   SET comment_num = comment_num - 1
-   WHERE post_id = :NEW.post_id;
-END;
-/
-
-CREATE OR REPLACE TRIGGER increase_pet_like_count
-AFTER INSERT ON like_pet
-FOR EACH ROW
-BEGIN
-   UPDATE pet
-   SET like_num = like_num + 1
-   WHERE pet_id = :NEW.pet_id;
-END;
-/
-CREATE OR REPLACE TRIGGER decrease_pet_like_count
-AFTER DELETE ON like_pet
-FOR EACH ROW
-BEGIN
-   UPDATE pet
-   SET like_num = like_num - 1
-   WHERE pet_id = :NEW.pet_id;
-END;
-/
-CREATE OR REPLACE TRIGGER increase_pet_collect_count
-AFTER INSERT ON collect_pet_info
-FOR EACH ROW
-BEGIN
-   UPDATE pet
-   SET collect_num = collect_num + 1
-   WHERE pet_id = :NEW.pet_id;
-END;
-/
-CREATE OR REPLACE TRIGGER decrease_pet_collect_count
-AFTER DELETE ON collect_pet_info
-FOR EACH ROW
-BEGIN
-   UPDATE pet
-   SET collect_num = collect_num - 1
-   WHERE pet_id = :NEW.pet_id;
-END;
-/
 --建立用户UID的序列用于生成ID
 DROP SEQUENCE user_id_seq;
 CREATE SEQUENCE user_id_seq START WITH 1 INCREMENT BY 1;
@@ -329,6 +246,12 @@ DROP SEQUENCE img_id_seq;
 CREATE SEQUENCE img_id_seq START WITH 1 INCREMENT BY 1;
 DROP SEQUENCE employee_id_seq;
 CREATE SEQUENCE employee_id_seq
+  START WITH     1
+  INCREMENT BY   1
+  NOCACHE
+  NOCYCLE;
+drop sequence bulletin_id_seq;
+CREATE SEQUENCE bulletin_id_seq
   START WITH     1
   INCREMENT BY   1
   NOCACHE
@@ -346,18 +269,6 @@ from vet WITH CHECK OPTION;
 Create or replace view employee_labor 
 as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
 from employee WITH CHECK OPTION;
-create or replace view foster_window 
-as select user2.user_id,user2.user_name as owner,accommodate.pet_id,pet_name,species,pet.psize,duration,
-to_char(foster.start_year)||'-'||to_char(foster.start_month)||'-'||to_char(foster.start_day) as foster_start_date,
-TO_CHAR(
-        TO_DATE(foster.start_year || '-' || foster.start_month || '-' || foster.start_day, 'YYYY-MM-DD') + duration,
-        'YYYY-MM-DD'
-    ) AS foster_end_date,
-to_char(accommodate.storey)||'-'||to_char(accommodate.compartment) as room_id,room_size,censor_state
-from foster 
-join  pet on pet.pet_id=foster.pet_id join  user2 on fosterer=user_id join accommodate on accommodate.owner_id=foster.fosterer and accommodate.pet_id=foster.pet_id 
-join room on room.storey=accommodate.storey and
-room.compartment=accommodate.compartment;
 create or replace view verbosepost as 
 select forum_posts.post_id,forum_posts.user_id as poster,heading,read_count,comment_num,like_num,comment_post.user_id 
 as commenter,comment_post.comment_contents,forum_posts.post_contents,post_images.image_data,comment_post.comment_time 
@@ -442,6 +353,17 @@ BEGIN
   );
 END;
 /
+create or replace 
+FUNCTION collect_num_func(pid IN VARCHAR2) RETURN NUMBER IS
+    collect_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO collect_count
+    FROM collect_pet_info
+    WHERE pet_id = pid;
+
+    RETURN collect_count;
+END;
+/
 CREATE OR REPLACE FUNCTION comment_num_func(pid IN VARCHAR2) RETURN NUMBER IS
     comment_count NUMBER;
 BEGIN
@@ -452,20 +374,63 @@ BEGIN
     RETURN comment_count;
 END;
 /
+  create or replace 
+FUNCTION comment_numpost_func(pid IN VARCHAR2) RETURN NUMBER IS
+    comment_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO comment_count
+    FROM comment_post
+    WHERE post_id = pid;
+
+    RETURN comment_count;
+END;
+/
+create or replace 
+FUNCTION like_numpost_func(pid IN VARCHAR2) RETURN NUMBER IS
+    like_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO like_count
+    FROM like_post
+    WHERE post_id = pid;
+
+    RETURN like_count;
+END;
+create or replace 
+FUNCTION like_num_func(pid IN VARCHAR2) RETURN NUMBER IS
+    like_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO like_count
+    FROM like_pet
+    WHERE pet_id = pid;
+
+    RETURN like_count;
+END;
+/
 create or replace view  pet_profile as SELECT
-   p.read_num * 1 + p.like_num * 2 + comment_num_func(p.pet_id) * 5 + p.collect_num as popularity, p.*,
-    comment_num_func(p.pet_id) as comment_num,comment_pet.comment_contents,comment_pet.comment_time
+   p.read_num * 1 + p.like_num * 2 + comment_num_func(p.pet_id) * 5 + collect_num_func(p.pet_id) as popularity, p."PET_ID",p."PET_NAME",p."SPECIES",p."SEX",p."PSIZE",p."BIRTHDATE",p."AVATAR",p."HEALTH_STATE",p."VACCINE",p."READ_NUM",
+   TRUNC(MONTHS_BETWEEN(SYSDATE, p.birthdate) / 12) AS age,
+   collect_num_func(p.pet_id) as collect_num,like_num_func(p.pet_id) as like_num,
+    comment_num_func(p.pet_id) as comment_num,comment_pet.user_id as commenter,comment_pet.comment_contents,comment_pet.comment_time
     
 FROM
     pet p left outer join comment_pet  on comment_pet.pet_id=p.pet_id order by popularity desc;
-create or replace view adopt_view as SELECT 
+create or replace view adopt_view asSELECT 
     apply_date,pet_id,
     adopter_id,
      '该' || adopter_gender || '性用户想要' || 
      '领养一只宠物'|| '-养宠经验:' || pet_experience ||
-    '-长期照顾:' || long_term_care || '-愿意治疗:' || willing_to_treat || '-每日照顾小时:' || 
-    TO_CHAR(daily_care_hours) || '-主要照顾者:' || primary_caregiver || '-家庭人口:' || 
+    '-长期照顾:' || long_term_care || '-愿意治疗:' || willing_to_treat || '-每日照顾'||TO_CHAR(daily_care_hours)||'小时:' || 
+      '-主要照顾者:' || primary_caregiver || '-家庭人口:' || 
     TO_CHAR(family_population) || '-有孩子:' || has_children || '-接受访问:' || accept_visits  
      AS reason
 FROM 
     adopt_apply where censor_state='to be censored';
+create view pet_source as SELECT pet_id,
+    CASE
+        WHEN pet_id IN (SELECT pet_id FROM appointment) THEN 'Appointment'
+        WHEN pet_id IN (SELECT pet_id FROM foster) THEN 'Foster'
+        WHEN pet_id IN (SELECT pet_id FROM adopt) THEN 'Adopt'
+        ELSE 'Wander'
+        -- Add more WHEN conditions here if needed
+    END AS status
+FROM pet;
