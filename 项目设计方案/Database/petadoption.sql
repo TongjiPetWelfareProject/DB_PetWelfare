@@ -38,7 +38,7 @@ create table pet(
   sex varchar2(1) default 'M' check( sex in('M','F')),
   psize varchar2(20) default 'small' check (psize in('small','large','medium')),
   birthdate DATE,
-  avatar BLOB,
+  avatar varchar2(100),
   health_state varchar2(15),
   vaccine char(1),--Y represents vaccination done while N represents undone.
   read_num int default 0,
