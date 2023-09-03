@@ -141,9 +141,13 @@
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
-                        <span style="font-size: 40px; color:#edb055;font-weight: bold;">{{adlist.PET_NAME}}{{ adlist.STATE }}</span>
+                        <div style="display:flex;text-align: center;align-items: center;justify-content: space-between;">
+                          <span style="font-size: 40px; color:#edb055;font-weight: bold;">{{adlist.PET_NAME}}</span>
+                           <span style="font-size: 24px;font-weight: bold;color:#eb7543">{{adlist.STATE}}</span>
+                        </div>
+                       
                         <br>
-                        <span style="font-size: 18px">{{adlist.SEX}}</span>
+                        <span style="font-size: 18px;color:#393939">{{adlist.SEX}}</span>
                         <span style="font-size: 16px; color:#6b6a68">{{adlist.AGE}}</span>
                         <br>
                       </div>
@@ -175,6 +179,20 @@
 
         <el-tab-pane label="我的论坛" name="second">
           <el-tabs tab-position="left"  class="demo-tabs">
+            <el-tab-pane label="我的发帖">
+              <div v-for="spo in postsend" :key="spo.post_id" @click="goToPost(spo)">
+                <el-card class="post-card" shadow="always" style="margin-top:10px">
+                  <div class="post-title">{{spo.heading}}</div>
+                  <div class="post-info">
+                    <div>发表时间：{{spo.time}}</div>
+                    <div>阅读量：{{spo.click}}</div>
+                    <div>喜爱数量：{{spo.likenum}}</div>
+                    <div>评论数量：{{spo.commentnum}}</div>
+                    <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
+                  </div>
+                </el-card>
+              </div>
+            </el-tab-pane>
             <el-tab-pane label="我的点赞">
               <div v-for="lpo in postlike" :key="lpo.post_id" @click="goToPost(lpo)">
                 <el-card class="post-card" shadow="always" style="margin-top:10px">
@@ -300,6 +318,7 @@ const infoform = ref({
 });
 const postcomment = ref([])
 const postlike = ref([])
+const postsend = ref([])
 const donations = ref([])
 const medicallist = ref([])
 const collectedpetlist = ref([])
@@ -443,6 +462,25 @@ const getUserLike = async () => {
     }
 };
 
+const getUserSend = async () => {
+    try {
+      const response = await userinfo.userPostSendAPI(userStore.userInfo.User_ID);
+      for(const like of response ){
+        console.log('帖子点赞'+like.HEADING+like.COMMENT_NUM)
+        postsend.value.push({
+          post_id: like.POST_ID,
+          heading: like.HEADING,
+          click: like.READ_COUNT,
+          likenum: like.LIKE_NUM,
+          commentnum: like.COMMENT_NUM,
+          time:like.POST_TIME
+        })
+      }
+    } catch (error) {
+      console.error('获取用户发帖时出错：', error);
+    }
+};
+
 const getUserDonation = async () => {
     try {
       const response = await userinfo.userDonationAPI(userStore.userInfo.User_ID);
@@ -559,6 +597,7 @@ onMounted(() => {
     getUserInfo();
     getUserComment();
     getUserLike();
+   // getUserSend();
     getUserDonation();
     getUserMedical();
     getUserCollectPets();
@@ -566,6 +605,7 @@ onMounted(() => {
     getUserCommentPets();
     getUserAdoptPets();
     getUseRFosterPets();
+    
 });
 
 const size = ref('')
