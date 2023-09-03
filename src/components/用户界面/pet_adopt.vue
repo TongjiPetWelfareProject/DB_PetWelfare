@@ -263,14 +263,15 @@ select:focus {
 .pet-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .pet-card {
   display: flex;
   /* height: 200px; */
-  width: 22%; /* 设置每个宠物卡片的宽度为占比的48% */
+  width: 24%; /* 设置每个宠物卡片的宽度为占比的48% */
   justify-content: space-between; /*子元素平均分布*/
-  margin: 10px;
+  margin-bottom: 10px;
   border-radius: 4px; /* 设置圆角 */
 }
 
