@@ -447,7 +447,7 @@ const getUserLike = async () => {
     try {
       const response = await userinfo.userPostLikeAPI(userStore.userInfo.User_ID);
       for(const like of response ){
-        console.log('帖子点赞'+like.HEADING+like.COMMENT_NUM)
+        //console.log('帖子点赞'+like.HEADING+like.COMMENT_NUM)
         postlike.value.push({
           post_id: like.POST_ID,
           heading: like.HEADING,
@@ -466,7 +466,7 @@ const getUserSend = async () => {
     try {
       const response = await userinfo.userPostSendAPI(userStore.userInfo.User_ID);
       for(const like of response ){
-        console.log('帖子点赞'+like.HEADING+like.COMMENT_NUM)
+        console.log(like)
         postsend.value.push({
           post_id: like.POST_ID,
           heading: like.HEADING,
@@ -597,7 +597,7 @@ onMounted(() => {
     getUserInfo();
     getUserComment();
     getUserLike();
-   // getUserSend();
+    getUserSend();
     getUserDonation();
     getUserMedical();
     getUserCollectPets();
