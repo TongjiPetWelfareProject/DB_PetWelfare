@@ -153,7 +153,6 @@ const editedPet = ref<Pet>({
   petname: '',
   health: '',
   vaccine: '',
-  imageList: '',
 });
 
 const newPet = ref<Pet>({
@@ -236,8 +235,15 @@ const submitNewPet = async() => {
 
 const submitEditedPet = async() => {
   try {
-      editedPet.value.imageList = fileList.value;
-      const response = await petcard.editPet(editedPet.value);//注意：需保证id不能被修改
+      let param = new FormData()
+      param.append('id', editedPet.value.id)
+      param.append('petname', editedPet.value.petname)
+      param.append('health', editedPet.value.health)
+      param.append('vaccine', editedPet.value.vaccine)
+      fileList.value.forEach((it,index)=>{
+          param.append('filename',it.file)
+      })
+      const response = await petcard.editPet(param);//注意：需保证id不能被修改
       const editedIndex = tableData.value.findIndex(item => item.id === editedPet.value.id);
       if (editedIndex !== -1) {
         // 更新表格中对应行的数据
