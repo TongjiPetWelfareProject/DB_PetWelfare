@@ -48,6 +48,15 @@
             <el-option label="未接种" value="未接种"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="宠物图片">
+          <el-upload
+            :http-request="httpRequest"
+            multiple
+            :show-file-list="true"
+            list-type="picture-card"
+        ><el-icon><Plus /></el-icon>
+        </el-upload>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editDialogVisible = false">取消</el-button>
@@ -112,6 +121,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Delete, Plus } from '@element-plus/icons-vue'
 import petcard from '@/api/cw_yh_yl_jk'
 
 
@@ -126,6 +136,13 @@ interface Pet {
   health: string;
   vaccine: string;
   from: string;
+}
+
+//以下部分和传图有关
+const fileList = ref([])
+
+function httpRequest(option) {
+    fileList.value.push(option)
 }
 
 const tableData = ref<Pet[]>([]);
@@ -218,7 +235,15 @@ const submitNewPet = async() => {
 
 const submitEditedPet = async() => {
   try {
-      const response = await petcard.editPet(editedPet.value);//注意：需保证id不能被修改
+      let param = new FormData()
+      param.append('id', editedPet.value.id)
+      param.append('petname', editedPet.value.petname)
+      param.append('health', editedPet.value.health)
+      param.append('vaccine', editedPet.value.vaccine)
+      fileList.value.forEach((it,index)=>{
+          param.append('filename',it.file)
+      })
+      const response = await petcard.editPet(param);//注意：需保证id不能被修改
       const editedIndex = tableData.value.findIndex(item => item.id === editedPet.value.id);
       if (editedIndex !== -1) {
         // 更新表格中对应行的数据
@@ -242,5 +267,7 @@ const resetAddDialog = () => {//关闭对话框时重新赋值
     vaccine: '未接种',
   };
 };
+
+
 
 </script>

@@ -124,14 +124,8 @@ export default {
             });
     },
 
-    editPet(editedPet) {
-        console.log('编辑宠物')
-        console.log(editedPet);
-        return axios.post('/api/edited-pet', JSON.stringify(editedPet), {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })//需要后端自己找出宠物ID
+    editPet(param) {
+        return axios.post('/api/edited-pet', param)//需要后端自己找出宠物ID
             .then(response => {
             return response.data;
             })

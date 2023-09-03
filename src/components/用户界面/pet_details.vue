@@ -12,7 +12,7 @@
   <div class="card-content">
     <div>
     <div class="pet-image">
-      <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" alt="Pet Image" />
+      <img :src=pet.image alt="Pet Image" />
     </div>
     <!--<el-row>
         <el-col :span="24">
@@ -189,7 +189,7 @@ const getPetDetails = async (PID) => {
       like_num: response.original_pet.Like_Num,
       favorite_num: response.original_pet.Collect_Num,
       comment_num: response.Comment_Num,
-      image: images[0]//等后端图片，后期修改
+      image: response.original_pet.Avatar,//等后端图片，后期修改
     };
     for (const comment of response.comments) {
       comments.value.push({
