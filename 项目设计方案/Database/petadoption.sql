@@ -47,7 +47,7 @@ create table pet(
   primary key(pet_id),
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
-)LOB(avatar) STORE AS SECUREFILE;
+);
 
 --table room
 create table room(
@@ -85,6 +85,7 @@ create table employee(
   employee_name varchar(20),
   salary numeric(9,2),
   duty varchar2(50),
+  avatar varchar2(100),
   --the following attributes as an integrity represents the interval of working hours
   working_start_hr numeric(2,0),
   working_start_min numeric(2,0),
