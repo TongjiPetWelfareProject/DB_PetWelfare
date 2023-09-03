@@ -99,7 +99,7 @@
   </div>
   <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
   <p></p>
-  <div v-for="comment in comments" :key="comment.commenter_id" class="comment">
+  <div v-for="comment in sortedComments" :key="comment.commenter_id" class="comment">
     <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
     <div class="comment-content">
       <p class="post-label">{{ comment.commenter }}</p>
@@ -295,13 +295,13 @@ const favoritePet = async () => {
     }
 };
 
-const sortedComments = computed(() => {
+/*const sortedComments = computed(() => {
   return comment_contents.value.slice().sort((a, b) => {
     const dateA = new Date(a.time);
     const dateB = new Date(b.time);
     return dateB - dateA;
   });
-});
+});*/
 
 const deleteComment = async (comment) => {
   try {
@@ -334,7 +334,9 @@ const addComment = async () => {
     }
   else {
     try {
-      const response = await getpetinfo.addComment(userStore.userInfo.User_ID, petId.value, newComment.value.comment_content);
+      let temp = newComment.value.comment_content;
+      newComment.value.comment_content = '';
+      const response = await getpetinfo.addComment(userStore.userInfo.User_ID, petId.value, temp);
         ElMessage.success({
         message: '评论成功',
         duration: 1000 // 持续显示时间（毫秒）
@@ -377,6 +379,25 @@ function formatBackendTime(backendTime) {
   const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   return formattedTime;
 }
+
+// 创建一个计算属性来按时间排序评论
+const sortedComments = computed(() => {
+  // 使用.slice()创建副本以避免修改原始数据
+  const commentsCopy = [...comments.value];
+
+  // 使用JavaScript的Array.sort()方法进行排序
+  commentsCopy.sort((a, b) => {
+    // 使用 formatBackendTime 返回值比较评论的时间顺序
+    const timeA = formatBackendTime(a.comment_time);
+    const timeB = formatBackendTime(b.comment_time);
+
+    // 你需要根据你的日期格式来比较时间
+    // 这里假设时间是可比较的字符串格式，如果不是，需要相应地调整比较逻辑
+    return timeB.localeCompare(timeA);//这里是时间倒序
+  });
+
+  return commentsCopy;
+});
 </script>
 <style scoped>
 
