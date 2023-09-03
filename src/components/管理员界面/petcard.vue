@@ -52,8 +52,12 @@
           <el-upload
             :http-request="httpRequest"
             multiple
+            :limit="1"
             :show-file-list="true"
             list-type="picture-card"
+            :class="{hide:hideUpload}"
+            :on-change="handleEditChange"
+            :on-remove="handleRemove"
         ><el-icon><Plus /></el-icon>
         </el-upload>
         </el-form-item>
@@ -117,6 +121,11 @@
     </el-dialog>
 </template>
 
+<style>
+.hide .el-upload--picture-card {
+    display: none;
+}
+</style>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
@@ -140,9 +149,19 @@ interface Pet {
 
 //以下部分和传图有关
 const fileList = ref([])
+const limitNum = 1;
+const hideUpload = ref(false);
 
 function httpRequest(option) {
-    fileList.value.push(option)
+    fileList.value.push(option);
+}
+
+function handleEditChange(file,fileList){
+  hideUpload.value = fileList.length >= 1;
+}
+
+function handleRemove(file,fileList){
+  hideUpload.value = fileList.length >= 1;
 }
 
 const tableData = ref<Pet[]>([]);
