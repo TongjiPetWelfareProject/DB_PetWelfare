@@ -42,9 +42,7 @@
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取消</el-button>
-            <el-button type="primary" @click="editInfo">
-              确认
-            </el-button>
+            <el-button type="primary" :disabled="!editedform.name || !editedform.phone || !selectedProvince || !selectedCity" @click="editInfo">确认</el-button>
           </span>
         </template>
       </el-dialog>

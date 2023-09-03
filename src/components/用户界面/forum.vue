@@ -47,8 +47,8 @@
               <div class="post-info">
                 <div>发表时间：{{ post.post_time }}</div>
                 <div>阅读量：{{ post.read_count }}</div>
-                <div>喜爱数量：{{ post.like_num }}</div>
-                <div>评论数量：{{ post.comment_num }}</div>
+                <div>点赞数：{{ post.like_num }}</div>
+                <div>评论数：{{ post.comment_num }}</div>
                 <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
               </div>
             </el-card>
