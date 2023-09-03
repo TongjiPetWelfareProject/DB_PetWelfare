@@ -10,8 +10,8 @@
       <el-header style="height: 200px;">
         <div class="avatar-container">
           <label for="avatar-upload">
-            <img id="avatar-img" class="avatar" src="@/photos/头像.jpg">
-            <input type="file" id="avatar-upload" accept="image/*" @change="handleFileChange" ref="fileInput">
+            <img id="avatar-img" class="avatar" :src="userStore.userInfo.Avatar">
+            <input type="file" id="avatar-upload" accept="image/*" @change="submitAvatar">
           </label>
           <img class="background-image" src="@/photos/mypagepet.jpg">
         </div>
@@ -281,6 +281,7 @@ import { Iphone, OfficeBuilding, Tickets, User, Star } from '@element-plus/icons
 import jsonData from '@/components/登录注册/values.json'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 const router = useRouter()
 const avatarUrl = ref('@/photos/头像.jpg')
 
@@ -301,12 +302,11 @@ const handleFileChange = (event) => {
 
 
 
-
-const provinces = ref(jsonData.provinces);
-const selectedProvince = ref('');
-const cities = ref([]);
-const selectedCity = ref('');
-
+const provinces = ref(jsonData.provinces)
+const selectedProvince = ref('')
+const cities = ref([])
+const selectedCity = ref('')
+const avatar= ref()
 const userStore = useUserStore()
 const activeName = ref('first')
 const infoform = ref({
@@ -339,6 +339,45 @@ const editedform = reactive({
   desc: '',
   phone:''
 })
+
+const submitAvatar = async (event) => {
+  try {
+    let param = new FormData()
+    const file = event.target.files[0];
+    param.append('user_id', userStore.userInfo.User_ID)
+    param.append('filename',file)
+    console.log(param)
+    await axios({
+        method: 'POST',
+        url: '/api/editavatar',
+        data: param,
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    }).then(response => {
+        console.log(response.data)
+    })
+
+
+    // 显示成功提示
+    ElMessage.success({
+      message: '上传成功',
+      duration: 1000
+    });
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+
+  } catch (error) {
+    console.error('修改失败：', error);
+
+    // 显示失败提示
+    ElMessage.error({
+      message: '修改失败，错误信息：' + error.message,
+      duration: 3000 
+    });
+  }
+}
 
 watch(selectedProvince, (newSelectedProvince) => {
   cities.value = Object.entries(jsonData[newSelectedProvince] || {}).map(([key, value]) => ({
@@ -417,9 +456,12 @@ const getUserInfo = async () => {
       infoform.value.phone= response.phone,
       infoform.value.like_num= response.likes,
       infoform.value.read_num= response.reads,
+      infoform.value.avatar= response.avatar,
       userStore.userInfo.User_Name= response.user_name,
       userStore.userInfo.Phone_Number= response.phone,
-      userStore.userInfo.Address= response.address
+      userStore.userInfo.Address= response.address,
+      userStore.userInfo.Avatar=response.avatar;
+      console.log('useravatar'+userStore.userInfo.Avatar)
     } catch (error) {
       console.error('获取用户人气数据时出错：', error);
     }
