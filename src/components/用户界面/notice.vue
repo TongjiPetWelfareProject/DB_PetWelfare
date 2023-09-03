@@ -172,7 +172,7 @@ const toggleSortOrder = () => {
 
 
 
-<style scoped>
+<style>
 
 .dialog-content{
   max-width: 100%; /* 限制最大宽度以适应 dialog */
