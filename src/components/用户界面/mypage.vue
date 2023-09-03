@@ -48,58 +48,23 @@
       </el-dialog>
     </template>
     <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <user />
-          </el-icon>
-         用户名
-        </div>
-      </template>
-     {{ infoform.username }}
+      <template #label><div class="cell-item"><el-icon :style="iconStyle"><user/></el-icon>用户名</div></template>
+      {{ infoform.username }}
     </el-descriptions-item>
     <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <iphone />
-          </el-icon>
-          Telephone
-        </div>
-      </template>
+      <template #label><div class="cell-item"><el-icon :style="iconStyle"><iphone/></el-icon>Telephone</div></template>
       {{ infoform.phone }}
     </el-descriptions-item>
     <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <star />
-          </el-icon>
-          点赞量
-        </div>
-      </template>
+      <template #label><div class="cell-item"><el-icon :style="iconStyle"><star/></el-icon>点赞量</div></template>
       {{ infoform.like_num }}
     </el-descriptions-item>
     <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <tickets />
-          </el-icon>
-          阅读量
-        </div>
-      </template>
+      <template #label><div class="cell-item"><el-icon :style="iconStyle"><tickets/></el-icon>阅读量</div></template>
       {{ infoform.read_num }}
     </el-descriptions-item>
     <el-descriptions-item>
-      <template #label>
-        <div class="cell-item">
-          <el-icon :style="iconStyle">
-            <office-building />
-          </el-icon>
-         地址
-        </div>
-      </template>
+      <template #label><div class="cell-item"><el-icon :style="iconStyle"><office-building/></el-icon>地址</div></template>
       {{ infoform.address }}
     </el-descriptions-item>
   </el-descriptions>

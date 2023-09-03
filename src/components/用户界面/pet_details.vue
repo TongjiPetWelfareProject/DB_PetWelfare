@@ -94,7 +94,7 @@
       <el-input v-model="newComment.comment_content" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
     </div>
     <div class="comment-button">
-      <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
+      <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;" :disabled="!newComment.comment_content">发布</button>
     </div>
   </div>
   <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
