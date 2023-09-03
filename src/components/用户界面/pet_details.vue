@@ -189,7 +189,7 @@ const getPetDetails = async (PID) => {
       like_num: response.original_pet.Like_Num,
       favorite_num: response.original_pet.Collect_Num,
       comment_num: response.Comment_Num,
-      image: response.original_pet.image,//等后端图片，后期修改
+      image: response.original_pet.Avatar,//等后端图片，后期修改
     };
     for (const comment of response.comments) {
       comments.value.push({
