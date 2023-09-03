@@ -35,7 +35,13 @@
         <span class="text-gray-500" style="margin-left: 30px;">-</span>
       </el-col>
       <el-col :span="11">
-       
+        <el-time-select
+          v-model="value"
+          start="08:30"
+          step="00:15"
+          end="18:30"
+          placeholder="Select time"
+        />
       </el-col>
 
     </el-form-item>

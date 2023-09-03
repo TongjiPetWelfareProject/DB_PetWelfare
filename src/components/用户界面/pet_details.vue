@@ -10,16 +10,17 @@
 <div class="pet-card">
 <el-card class="card" >
   <div class="card-content">
-    <div>
-    <div class="pet-image">
-      <img :src=pet.image alt="Pet Image" />
-    </div>
+    <el-col :span="12">
+      <div class="pet-image">
+        <img :src=pet.image alt="Pet Image" />
+      </div>
+    </el-col>
     <!--<el-row>
         <el-col :span="24">
           <p class="pet-value">{{ pet.description }}</p>
         </el-col>
       </el-row>-->
-  </div>
+    <el-col :span="12">
     <div class="pet-info">
       <p class="read-count">阅读{{ pet.read_num }}</p>
       <span style="font-size: 30px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
@@ -64,6 +65,7 @@
         <button class="modern-button" @click="handleApplyForAdopt">领养Ta</button>
       </div>
     </div>
+    </el-col>
   </div>
 </el-card>
 </div>
@@ -156,9 +158,17 @@ const getPetDetails = async (PID) => {
     }
     let health_state = '';
     if (response.original_pet.Health_State === 'Vibrant') {
+      health_state = '充满活力';
+    } else if (response.original_pet.Health_State === 'Well') {
       health_state = '健康';
+    } else if (response.original_pet.Health_State === 'Decent') {
+      health_state = '尚可';
     } else if (response.original_pet.Health_State === 'Unhealthy') {
       health_state = '不健康';
+    } else if (response.original_pet.Health_State === 'Sickly') {
+      health_state = '生病';
+    } else if (response.original_pet.Health_State === 'Critical') {
+      health_state = '危急';
     }
     console.log("宠物生日")
     console.log(response.original_pet.birthdate);

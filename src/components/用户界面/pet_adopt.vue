@@ -23,16 +23,22 @@ const getpetlist = async () => {
       if (!uniquePets[adoptpet.PET_ID]) { // 检查是否已经遍历过该 pet_id
         uniquePets[adoptpet.PET_ID] = true; // 将 pet_id 记录为已遍历
         let gender = '';
+        let species = '';
     if (adoptpet.SEX === 'M') {
       gender = '弟弟';
     } else if (adoptpet.SEX === 'F') {
       gender = '妹妹';
     }
+    if (adoptpet.SPECIES === 'cat') {
+      species = '猫';
+    } else if (adoptpet.SPECIES === 'dog') {
+      species = '狗';
+    }
     console.log(adoptpet.PET_NAME);
     pets.value.push({
       id: adoptpet.PET_ID,
       name: adoptpet.PET_NAME,
-      breed: adoptpet.SPECIES,
+      species: species,
       gender: gender,
       age: adoptpet.AGE,
       image: adoptpet.AVATAR
@@ -188,7 +194,7 @@ const options3 = [
         <span style="font-size: 18px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
         <span style="font-size: 40px; color:#edb055;font-weight: bold;">{{ pet.name }}</span>
         <br>
-        <span style="font-size: 18px">{{ pet.gender }}</span>
+        <span style="font-size: 18px">{{ pet.species }}{{ pet.gender }}</span>
         <span style="font-size: 16px; color:#6b6a68">{{ pet.age }}岁</span>
         <br>
       <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none; color:#edb055 ;">
