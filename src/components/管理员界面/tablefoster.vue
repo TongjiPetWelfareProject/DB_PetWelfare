@@ -7,8 +7,6 @@
       </el-table-column>
       <el-table-column prop="userName" label="用户名" width="170">
       </el-table-column>
-       <el-table-column prop="date" label="起始日期" width="170">
-      </el-table-column>
       <el-table-column prop="days" label="天数" width="170">
       </el-table-column>
       <el-table-column label="操作" width="200">
