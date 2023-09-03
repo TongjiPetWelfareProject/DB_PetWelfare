@@ -10,7 +10,7 @@
       <el-header style="height: 200px;">
         <div class="avatar-container">
           <label for="avatar-upload">
-            <img id="avatar-img" class="avatar" src="@/photos/头像.jpg">
+            <img id="avatar-img" class="avatar" :src="userStore.userInfo.Avatar">
             <input type="file" id="avatar-upload" accept="image/*" @change="submitAvatar">
           </label>
           <img class="background-image" src="@/photos/mypagepet.jpg">
@@ -456,9 +456,12 @@ const getUserInfo = async () => {
       infoform.value.phone= response.phone,
       infoform.value.like_num= response.likes,
       infoform.value.read_num= response.reads,
+      infoform.value.avatar= response.avatar,
       userStore.userInfo.User_Name= response.user_name,
       userStore.userInfo.Phone_Number= response.phone,
-      userStore.userInfo.Address= response.address
+      userStore.userInfo.Address= response.address,
+      userStore.userInfo.Avatar=response.avatar;
+      console.log('useravatar'+userStore.userInfo.Avatar)
     } catch (error) {
       console.error('获取用户人气数据时出错：', error);
     }
