@@ -153,6 +153,7 @@ const editedPet = ref<Pet>({
   petname: '',
   health: '',
   vaccine: '',
+  imageList: '',
 });
 
 const newPet = ref<Pet>({
@@ -235,7 +236,8 @@ const submitNewPet = async() => {
 
 const submitEditedPet = async() => {
   try {
-      const response = await petcard.editPet(editedPet.value, fileList.value);//注意：需保证id不能被修改
+      editedPet.value.imageList = fileList.value;
+      const response = await petcard.editPet(editedPet.value);//注意：需保证id不能被修改
       const editedIndex = tableData.value.findIndex(item => item.id === editedPet.value.id);
       if (editedIndex !== -1) {
         // 更新表格中对应行的数据

@@ -124,7 +124,7 @@ export default {
             });
     },
 
-    editPet(editedPet) {
+    editPet(editedPet, imageList) {
         console.log('编辑宠物')
         console.log(editedPet);
         return axios.post('/api/edited-pet', JSON.stringify(editedPet), {
