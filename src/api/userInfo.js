@@ -43,6 +43,14 @@ export default {
                 throw new Error('获取个人点赞信息数据时出错：' + error.message);
             });
     },
+    userPostSendAPI(user_id) {
+        return axios
+            .post('/api/userpostsend',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人发帖信息数据时出错：' + error.message);
+            });
+    },
     userDonationAPI(user_id) {
         return axios
             .post('/api/userdonation',{user_id})
