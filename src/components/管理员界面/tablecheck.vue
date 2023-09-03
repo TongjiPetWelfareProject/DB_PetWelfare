@@ -21,6 +21,28 @@
       </el-table-column>
     </el-table>
     <!-- <el-button type="primary" @click="addEmptyRow">添加</el-button> -->
+    <el-dialog
+            v-model="dialogVisible"
+            :title="postTitle"
+            width="30%"
+            :before-close="handleClose"
+          >
+          <div class="dialog-content">
+            <div v-if="postUrls.length > 0">
+              <div v-for="(image,index) in postUrls" :key="index">
+                <img :src="image" :alt="'Image ' + (index + 1)" class="post-image">
+              </div>
+            </div>
+            {{ postContent }}
+          </div>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button type="primary" @click="dialogVisible = false">
+                  确认
+                </el-button>
+              </span>
+            </template>
+          </el-dialog>
   </div>
 </template>
 
@@ -34,19 +56,25 @@ export default {
   components: {
     ElButton,
     ElTable,
+    ElMessageBox,
   },
   setup() {
     const tableRef = ref(null)
     const tableData = ref([])
+    const postContent=ref('')
+    const postTitle=ref('')
+    const postUrls=ref([])
+    const dialogVisible=ref(false)
 
     const sortTime = (a, b) => {
       return new Date(a.postTime) - new Date(b.postTime)
     }
 
     function showContent(row) {
-      ElMessageBox.alert(row.content, '内容', {
-        confirmButtonText: '关闭',
-      });
+      postContent.value=row.content
+      postTitle.value=row.title
+      postUrls.value=row.urls
+      dialogVisible.value=true
     }
 
     function getShortenedContent(content) {
@@ -109,12 +137,24 @@ export default {
     return {
       tableRef,
       tableData,
-      handleSelectionChange,
+      postContent,
+      postTitle,
+      postUrls,
+      dialogVisible,
       sortTime,
       approveApplication,
       rejectApplication,
-      refreshTableData
+      refreshTableData,
+      showContent,
+      getShortenedContent
     }
   }
 }
 </script>
+
+<style>
+.post-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+</style>
