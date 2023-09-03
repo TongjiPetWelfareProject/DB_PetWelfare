@@ -26,7 +26,7 @@
     <el-button type="primary" @click="addRow">添加宠物</el-button>
 
     <!-- Edit Doctor Dialog -->
-    <el-dialog v-model="editDialogVisible" title="编辑宠物信息" >
+    <el-dialog v-model="editDialogVisible" title="编辑宠物信息" @close="editDialogInvisible">
       <el-form :model="editedPet" label-width="80px">
         <!-- 表单内容 -->
         <el-form-item label="宠物名">
@@ -44,7 +44,7 @@
         </el-form-item>
         <el-form-item label="疫苗状况">
           <el-select v-model="editedPet.vaccine">
-            <el-option label="已经接种" value="已经接种"></el-option>
+            <el-option label="已接种" value="已接种"></el-option>
             <el-option label="未接种" value="未接种"></el-option>
           </el-select>
         </el-form-item>
@@ -63,13 +63,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="editDialogVisible = false">取消</el-button>
+        <el-button @click="editDialogInvisible">取消</el-button>
         <el-button type="primary" @click="submitEditedPet">保存</el-button>
       </div>
     </el-dialog>
 
     <!-- Add Doctor Dialog -->
-    <el-dialog v-model="addDialogVisible" title="添加宠物信息" @close="resetAddDialog">
+    <el-dialog v-model="addDialogVisible" title="添加宠物信息" @close="addDialogInvisible">
       <el-form :model="newPet" label-width="80px">
         <!-- 表单内容 -->
         <el-form-item label="宠物名">
@@ -109,13 +109,13 @@
         </el-form-item>
         <el-form-item label="疫苗状况">
           <el-select v-model="newPet.vaccine">
-            <el-option label="已经接种" value="已经接种"></el-option>
+            <el-option label="已接种" value="已接种"></el-option>
             <el-option label="未接种" value="未接种"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取消</el-button>
+        <el-button @click="addDialogInvisible">取消</el-button>
         <el-button type="primary" @click="submitNewPet">添加</el-button>
       </div>
     </el-dialog>
@@ -167,6 +167,21 @@ function handleRemove(file,fileList){
 const tableData = ref<Pet[]>([]);
 const editDialogVisible = ref(false);
 const addDialogVisible = ref(false);
+
+
+const editDialogInvisible = async() => {
+  editDialogVisible.value = false;//和接口的连接在dialog里
+  console.log("输出图片列表1");
+  console.log(fileList.value);
+  location.reload(); // 这里会刷新整个页面
+
+};
+
+const addDialogInvisible = async() => {
+  addDialogVisible.value = false;//和接口的连接在dialog里
+  location.reload(); // 这里会刷新整个页面
+};
+
 const editedPet = ref<Pet>({
   id: '',
   petname: '',
@@ -204,6 +219,7 @@ const getPetList = async () => {
         health: adoptpet.HEALTH_STATE,
         vaccine: adoptpet.VACCINE,
         from:adoptpet.SOURCE,
+        avatar:adoptpet.AVATAR,
       });
     }
   }
@@ -228,13 +244,19 @@ const editRow = (index: number) => {
   health: tableData.value[index].health,
   vaccine: tableData.value[index].vaccine,
 };
+  fileList.value.push({
+    name: 'default.jpg',
+    url: tableData.value[index].avatar, // 修改为你的默认图片 URL
+  })
+  console.log("输出图片列表2");
+  console.log(fileList.value);
   editDialogVisible.value = true;//和接口的连接在dialog里
 };
 
 const deleteRow = async (index: number) => {
   try {
-      const response = await petcard.deletePet(tableData.value[index].id);
-      tableData.value.splice(index, 1);
+      await petcard.deletePet(tableData.value[index].id);
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('删除数据失败：', error);
     }
@@ -242,11 +264,8 @@ const deleteRow = async (index: number) => {
 
 const submitNewPet = async() => {
   try {
-      const response = await petcard.addPet(newPet.value);//注意：需保证id不能被修改
-      const newPetId = response.data.id;
-      newPet.value.id = newPetId;
-      tableData.value.push(newPet.value);
-      addDialogVisible.value = false;
+      await petcard.addPet(newPet.value);//注意：需保证id不能被修改
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('添加数据失败：', error);
     }
@@ -262,31 +281,11 @@ const submitEditedPet = async() => {
       fileList.value.forEach((it,index)=>{
           param.append('filename',it.file)
       })
-      const response = await petcard.editPet(param);//注意：需保证id不能被修改
-      const editedIndex = tableData.value.findIndex(item => item.id === editedPet.value.id);
-      if (editedIndex !== -1) {
-        // 更新表格中对应行的数据
-        tableData.value[editedIndex] = { ...editedPet.value };
-        // 关闭编辑对话框
-        editDialogVisible.value = false;
-      }
+      await petcard.editPet(param);//注意：需保证id不能被修改
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('编辑数据失败：', error);
     }
 };
-
-const resetAddDialog = () => {//关闭对话框时重新赋值
-  newPet.value = {
-    petname: '',
-    breed: '猫',
-    age: 0,
-    sex: '公',
-    size: '小型',
-    health: '充满活力',
-    vaccine: '未接种',
-  };
-};
-
-
 
 </script>
