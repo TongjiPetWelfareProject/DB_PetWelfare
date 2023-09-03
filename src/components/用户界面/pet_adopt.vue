@@ -35,7 +35,7 @@ const getpetlist = async () => {
       breed: adoptpet.SPECIES,
       gender: gender,
       age: adoptpet.AGE,
-      image: images[0]
+      image: adoptpet.AVATAR
     });
   }
 }
@@ -178,9 +178,10 @@ const options3 = [
         </router-link>
           </div>
         </div> -->
-        <div v-for="pet in filteredPets" :key="pet.id" class="pet-card">
+        <div v-for="pet in filteredPets" :key="pet.id" class="pet-card ">
           <el-card :body-style="{ padding: '0px' }" style="width:100%">
-      <img src="../../../public/home5.jpg" class="adopt_image">
+      <img v-if="pet.image" :src="pet.image" class="adopt_image image-container">
+      <img v-else src="../../../public/home5.jpg" class="adopt_image image-container" alt="Default Image">
       <div style="padding: 14px;display: flex;
   justify-content: center;
   flex-direction: column; ">
@@ -311,9 +312,17 @@ select:focus {
   background-repeat: no-repeat;
   display: flex;
 }
+.image-container {
+  width: 252.41px; /* 设置背景框的宽度 */
+  height: 160.45px; /* 设置背景框的高度 */
+  overflow: hidden; /* 超出背景框的部分将被隐藏 */
+}
 .adopt_image {
     width: 100%;
     display: block;
-  }
-
+    max-width: 252.41px; /* 设置最大宽度 */
+    max-height: 160.45px; /* 设置最大高度 */
+    width: auto; /* 使宽度自动调整以保持宽高比 */
+  height: auto; /* 使高度自动调整以保持宽高比 */
+}
 </style>
