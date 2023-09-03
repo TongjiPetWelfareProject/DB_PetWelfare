@@ -20,6 +20,7 @@ const confirm = () => {
 
 onMounted(() => {
   formatCurrentDateTime();
+  router.push('/mytableemployee')
 });
 
 const formatCurrentDateTime = () => {
