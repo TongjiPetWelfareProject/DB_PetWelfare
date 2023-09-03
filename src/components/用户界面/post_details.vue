@@ -36,7 +36,8 @@
     <div class="comment-part">
       <div class="comment-form">
         <div class="comment-input">
-          <el-input v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
+          <el-input v-if="userStore.userInfo.User_ID" v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
+          <el-input v-else v-model="newComment.text" type="textarea" placeholder="请登录后评论"></el-input>
         </div>
         <div class="comment-button">
           <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
@@ -193,7 +194,8 @@ const showCommentForm = ref(false);
 //     };
 
 const addComment = async () => {
-  try {
+  if (userStore.userInfo.User_ID) {
+    try {
     const response = await getpostinfo.addcomment(userStore.userInfo.User_ID,postId.value,newComment.value.text);
       ElMessage.success({
       message: '评论成功',
@@ -211,6 +213,14 @@ const addComment = async () => {
       duration: 1000 // 持续显示时间（毫秒）
     });
       }
+      } else {
+        // 用户未登录，跳转到 /login
+         ElMessage({
+          message: '请先登录',
+          type: 'warning',
+        });
+        router.push('/login');
+      }
 };
 
 const isOwnPost = (userid) => {
@@ -218,10 +228,6 @@ const isOwnPost = (userid) => {
       return true
     else 
       return false
-}
-
-const showAddComment = () => {
-    showCommentForm.value = true;
 }
 
 const likePost = async () => {
