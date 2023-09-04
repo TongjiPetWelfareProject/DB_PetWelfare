@@ -37,8 +37,34 @@ watch(selectedProvince, (newSelectedProvince) => {
   }));
 });
 
+const handlePhoneInput = () => {
+  console.log(phone.value)
+  // 获取输入框的值并移除所有非数字字符
+  const digitsOnly = phone.value.replace(/\D/g, "");
+
+  // 在第4个和第9个位置插入空格
+  const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+
+  phone.value = formattedValue;
+};
+
+const insertSpaces = (str, positions) => {
+  const result = [];
+  let positionIndex = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    if (positionIndex < positions.length && i === positions[positionIndex]) {
+      result.push(" ");
+      positionIndex++;
+    }
+    result.push(str[i]);
+  }
+
+  return result.join("");
+};
+
 const validatePhoneNumber = () => {
-  const phoneNumberPattern = /^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199|(147))\d{8}$/;
+  const phoneNumberPattern = /^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9]|98|99)\s\d{4}\s\d{4}$/;
   phoneError.value = !phoneNumberPattern.test(phone.value);
 };
 
@@ -112,7 +138,7 @@ const submitForm = async() => {
           margin-left: 35%;"></span>
           <span v-if="phoneError && phone" class="error-phone">您的号码格式不正确</span>
         </div>
-          <input type="text" v-model="phone" name="phone" placeholder="请输入电话" @input="validatePhoneNumber"/>
+          <input type="text" v-model="phone" name="phone" placeholder="请输入电话" @input="handlePhoneInput"/>
       </div>
       <div class="form-group">
         <label for="region">选择地区</label>
