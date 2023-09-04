@@ -134,10 +134,10 @@ const getcomment= async () => {
             comment_contents.value.push({
             id: postcomment.pid,
             user_id: postcomment.uid,
+            avatar:postcomment.avatar,
             author: postcomment.user_Name,
             text: postcomment.content,
             time: postcomment.comment_Time,
-            avatar:'./src/photos/阿尼亚.jpg'
           });
         }
       } catch (error) {
