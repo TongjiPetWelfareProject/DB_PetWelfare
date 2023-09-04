@@ -192,6 +192,7 @@ const submitEditedDoctor = () => {
         // 关闭编辑对话框
         editDialogVisible.value = false;
       }
+      fetchData();
     })
     .catch(error => {
       console.error('编辑数据时出错:', error);
@@ -219,6 +220,7 @@ const submitNewDoctor = () => {
       newDoctor.value.id = newDoctorId;
       tableData.value.push(newDoctor.value);
       addDialogVisible.value = false;
+      fetchData();
     })
     .catch(error => {
       console.error('添加数据时出错：', error);
