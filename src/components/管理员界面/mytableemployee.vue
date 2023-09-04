@@ -101,7 +101,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { ElButton, ElTable, ElDialog, ElForm, ElInput } from 'element-plus';
+import { ElButton, ElTable, ElDialog, ElForm, ElInput, ElMessage } from 'element-plus';
 import axios from 'axios';
 
 interface Employee {
@@ -227,6 +227,17 @@ const editRow = (index: number) => {
 };
 
 const submitEditedEmployee = () => {
+    const phoneNumber = editedEmployee.value.phone.replace(/\D/g, '');
+
+    if (!editedEmployee.value.name || phoneNumber.length !== 11) {
+        if (!editedEmployee.value.name) {
+            ElMessage.error('员工信息不能为空');
+        }
+        if (phoneNumber.length !== 11) {
+            ElMessage.error('电话号码必须是11位数字');
+        }
+        return;
+    }
     axios.put(`/api/edit-employee/${editedEmployee.value.id}`, editedEmployee.value)
         .then(() => {
             const editedIndex = tableData.value.findIndex(item => item.id === editedEmployee.value.id);
@@ -259,6 +270,17 @@ const addRow = () => {
 
 
 const submitNewEmployee = () => {
+    const phoneNumber1 = newEmployee.value.phone.replace(/\D/g, '');
+
+    if (!newEmployee.value.name || phoneNumber1.length !== 11) {
+        if (!newEmployee.value.name) {
+            ElMessage.error('员工信息不能为空');
+        }
+        if (phoneNumber1.length !== 11) {
+            ElMessage.error('电话号码必须是11位数字');
+        }
+        return;
+    }
     axios.post('/api/add-employee', newEmployee.value)
         .then(response => {
             const newEmployeeId = response.data.id;

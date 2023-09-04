@@ -89,7 +89,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { ElButton, ElTable, ElDialog, ElForm, ElInput } from 'element-plus';
+import { ElButton, ElTable, ElDialog, ElForm, ElInput, ElMessage } from 'element-plus';
 import axios from 'axios';
 
 interface Doctor {
@@ -173,6 +173,17 @@ const editRow = (index: number) => {
 };
 
 const submitEditedDoctor = () => {
+  const phoneNumber = editedDoctor.value.phone.replace(/\D/g, '');
+
+  if (!editedDoctor.value.name || phoneNumber.length !== 11) {
+    if (!editedDoctor.value.name) {
+      ElMessage.error('医生信息不能为空');
+    }
+    if (phoneNumber.length !== 11) {
+      ElMessage.error('电话号码必须是11位数字');
+    }
+    return;
+  }
   axios.put(`/api/edit-doctor/${editedDoctor.value.id}`, editedDoctor.value)
     .then(() => {
       const editedIndex = tableData.value.findIndex(item => item.id === editedDoctor.value.id);
@@ -203,6 +214,17 @@ const addRow = () => {
 };
 
 const submitNewDoctor = () => {
+  const phoneNumber1 = newDoctor.value.phone.replace(/\D/g, '');
+
+  if (!newDoctor.value.name || phoneNumber1.length !== 11) {
+    if (!newDoctor.value.name) {
+      ElMessage.error('医生信息不能为空');
+    }
+    if (phoneNumber1.length !== 11) {
+      ElMessage.error('电话号码必须是11位数字');
+    }
+    return;
+  }
   axios.post('/api/add-doctor', newDoctor.value)
     .then(response => {
       const newDoctorId = response.data.id;
