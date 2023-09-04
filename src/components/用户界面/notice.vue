@@ -265,10 +265,12 @@ const toggleSortOrder = () => {
   color:#c2c3c3
 }
 
-.notice-card{
-  padding-bottom:0px;
-  height:12vh;
+.notice-card {
+  padding-bottom: 0;
+  height: 12vh;
+  width: 100%; /* 设置宽度为父元素宽度的100%，可以根据需要调整百分比 */
 }
+
 
 .noticebody{
   display: flex;
@@ -297,10 +299,12 @@ li {
   padding: 10px;
   /* border-bottom: 1px solid #ccc; */
   cursor: pointer;
+  transition: background-color 0.3s; /* 添加渐变效果 */
 }
 
 li:hover {
   background-color: #f5f5f5;
+  border-radius: 10px; /* 添加圆角效果，可以根据需要调整像素值 */
 }
 
 .headcontainer{

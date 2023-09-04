@@ -380,6 +380,13 @@ const images = [
   background-color: #deeaf9;
 }
 
+/* 当用户悬停在卡片元素上时应用的样式 */
+.el-card:hover {
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+}
+
 .name1 {
   color: #ffbd5a;
   font-weight: bold;
@@ -457,6 +464,13 @@ const images = [
   /* 去除边框 */
   border-radius: 5px;
   /* color:#eebe77 */
+}
+
+/* 添加悬停效果 */
+.my_button:hover {
+  background-color: blue; /* 修改背景颜色 */
+  color: #eebe77; /* 修改文本颜色 */
+  transform: scale(1.05); /* 稍微放大按钮 */
 }
 
 .foster_line0 {

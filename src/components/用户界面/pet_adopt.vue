@@ -270,17 +270,23 @@ select:focus {
 .pet-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
 }
 
 .pet-card {
   display: flex;
-  /* height: 200px; */
-  width: 24%; /* 设置每个宠物卡片的宽度为占比的48% */
-  justify-content: space-between; /*子元素平均分布*/
+  width: 24%;
+  margin-right: 18px;
   margin-bottom: 10px;
-  border-radius: 4px; /* 设置圆角 */
+  border-radius: 4px;
+  transition: transform 0.2s, box-shadow 0.2s; /* 添加渐变效果 */
+  margin-top: 10px; /* 设置距离上面容器的距离，可以根据需要调整像素值 */
 }
+
+.pet-card:hover {
+  transform: scale(1.02); /* 放大 2% */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+}
+
 
 .pet-image {
   display: flex; /* 使用flex布局 */
