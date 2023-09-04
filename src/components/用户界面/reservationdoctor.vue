@@ -146,13 +146,47 @@ export default defineComponent({
 
     const onSubmit = async () => {
       try {
+        if(form.isOld==='它已经在此治疗过'){
+          form.name = petMap1.value.get(form.petID); // 根据映射关系获取宠物名字
+          form.pet_kind=petMap2.value.get(form.petID);
+        }
+
+        const dateObject = new Date(form.date1);
+        const currentDate=new Date();
+
+        const oneWeekLater = new Date(currentDate);
+        oneWeekLater.setDate(currentDate.getDate() + 7);
+
+        // console.log(dateObject); 
+        // const month = dateObject.getMonth(); // 获取月份，0 表示一月，1 表示二月，以此类推
+        // const day = dateObject.getDate(); // 获取日期
+        // const year = dateObject.getFullYear(); // 获取年份
+
+        // console.log(`月份: ${month}, 日期: ${day}, 年份: ${year}`);
+
+        // console.log(form.name)
+        // console.log(form.kind)
+        // console.log(form.date1)
+        // console.log(form.desc)
+        // console.log(form.selectedDoctorID)
+
+        if (dateObject > currentDate && dateObject < oneWeekLater) {
+          console.log('dateObject 在今天之后的一周内。');
+        } else {
+          ElMessage.error({
+            message: '预约失败,请预约在今天后的一周时间内' ,
+            duration: 3000 // 持续显示时间（毫秒）
+        });
+          return;
+        }
         if (!form.name || !form.kind || !form.date1 || !form.desc || !form.selectedDoctorID) {
             ElMessage.error({
             message: '预约失败,请填写完整信息' ,
             duration: 3000 // 持续显示时间（毫秒）
         });
         return; // 阻止提交
-      }
+         }
+
 
 
         // 调用 submitAppointmentAPI 函数并传入表单数据
