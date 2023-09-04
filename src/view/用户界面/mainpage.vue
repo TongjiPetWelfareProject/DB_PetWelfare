@@ -93,15 +93,18 @@ watch(() => route.path, (newPath, oldPath) => {
         <div class="main_content">
           <div class="contact">
             <p style="font-size: 17px;font-weight: bold;color:#729cd4;margin-bottom: 8px;margin-top: 8px;">联系我们</p>
-            <div style="display: flex;align-items: center;">
-               <el-icon class="textmini"><phone/></el-icon><span class="textmini" style="display: flex;align-items: center;justify-content: center;  ">18981729781</span>
-             </div>
-             <div style="display: flex;align-items: center;">
-               <el-icon class="textmini"><message/></el-icon><span class="textmini" style="display: flex;align-items: center;justify-content: center;  ">1040687614@qq.com</span>
-             </div>
-             <div style="display: flex;align-items: center;">
-               <el-icon class="textmini"><location/></el-icon><span class="textmini" style="display: flex;align-items: center;justify-content: center;  ">上海市嘉定区</span>
-             </div>
+            <div style="display: flex; align-items: center;">
+    <el-icon class="textmini"><phone/></el-icon>
+    <a href="tel:18981729781" class="textmini" style="display: flex; align-items: center; justify-content: center;">18981729781</a>
+</div>
+<div style="display: flex; align-items: center;">
+    <el-icon class="textmini"><message/></el-icon>
+    <a href="mailto:1040687614@qq.com" class="textmini" style="display: flex; align-items: center; justify-content: center;">1040687614@qq.com</a>
+</div>
+<div style="display: flex; align-items: center;">
+    <el-icon class="textmini"><location/></el-icon>
+    <a href="https://maps.google.com/?q=上海市嘉定区" class="textmini" style="display: flex; align-items: center; justify-content: center;">上海市嘉定区</a>
+</div>
           </div>
           <div class="footerimg">
             <img src="  ../../../public/animal-shelter.png" style="width:100px;height:100px;">

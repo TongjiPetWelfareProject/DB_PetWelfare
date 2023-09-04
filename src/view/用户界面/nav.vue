@@ -63,9 +63,9 @@ const mainpage = () => {
             </template>
                <div class="contactus">
               <div>
-                <p>电话：18981729781</p>
-                <p>邮箱：charlotteyanggg@qq.com</p>
-                <p>地址：上海市嘉定区曹安公路4800号</p>
+                <p>电话：<a href="tel:18981729781">18981729781</a></p>
+                <p>邮箱：<a href="mailto:charlotteyanggg@qq.com">charlotteyanggg@qq.com</a></p>
+                <p>地址：<a href="https://maps.google.com/?q=上海市嘉定区曹安公路4800号">上海市嘉定区曹安公路4800号</a></p>
               </div>
               <div>
                 <img src="@/photos/contactus.png" style="height: 120px;">
