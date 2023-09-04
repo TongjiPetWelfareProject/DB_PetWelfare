@@ -101,7 +101,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { ElButton, ElTable, ElDialog, ElForm, ElInput } from 'element-plus';
+import { ElButton, ElTable, ElDialog, ElForm, ElInput, ElMessage } from 'element-plus';
 import axios from 'axios';
 
 interface Employee {
@@ -175,10 +175,8 @@ const options = [
 const handleeditPhoneInput = () => {
     // 获取输入框的值并移除所有非数字字符
     const digitsOnly = editedEmployee.value.phone.replace(/\D/g, "");
-
     // 在第4个和第9个位置插入空格
     const formattedValue = insertSpaces(digitsOnly, [3, 7]);
-
     editedEmployee.value.phone = formattedValue; // 更新 editedEmployee.value.phone
 };
 
@@ -237,6 +235,17 @@ const editRow = (index: number) => {
 };
 
 const submitEditedEmployee = () => {
+    const phoneNumber = editedEmployee.value.phone.replace(/\D/g, '');
+
+    if (!editedEmployee.value.name || phoneNumber.length !== 11) {
+        if (!editedEmployee.value.name) {
+            ElMessage.error('员工信息不能为空');
+        }
+        if (phoneNumber.length !== 11) {
+            ElMessage.error('电话号码必须是11位数字');
+        }
+        return;
+    }
     axios.put(`/api/edit-employee/${editedEmployee.value.id}`, editedEmployee.value)
         .then(() => {
             const editedIndex = tableData.value.findIndex(item => item.id === editedEmployee.value.id);
@@ -246,6 +255,7 @@ const submitEditedEmployee = () => {
                 // 关闭编辑对话框
                 editDialogVisible.value = false;
             }
+            fetchData();
         })
         .catch(error => {
             console.error('编辑数据时出错:', error);
@@ -269,12 +279,24 @@ const addRow = () => {
 
 
 const submitNewEmployee = () => {
+    const phoneNumber1 = newEmployee.value.phone.replace(/\D/g, '');
+
+    if (!newEmployee.value.name || phoneNumber1.length !== 11) {
+        if (!newEmployee.value.name) {
+            ElMessage.error('员工信息不能为空');
+        }
+        if (phoneNumber1.length !== 11) {
+            ElMessage.error('电话号码必须是11位数字');
+        }
+        return;
+    }
     axios.post('/api/add-employee', newEmployee.value)
         .then(response => {
             const newEmployeeId = response.data.id;
             newEmployee.value.id = newEmployeeId;
             tableData.value.push(newEmployee.value);
             addDialogVisible.value = false;
+            fetchData();
         })
         .catch(error => {
             console.error('添加数据时出错：', error);
