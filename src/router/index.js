@@ -59,6 +59,7 @@ const routes = [
     { path: '/login', component: login},
     { path: '/register', component: register},
     { path:'/manager', component: manager,children:[
+      { path: '',component: MyTableEmployee},
       { path: '/mytableuser', component: MyTableUser },
       { path: '/mytableemployee', component: MyTableEmployee },
       { path: '/petcard', component: PetCard },
