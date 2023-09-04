@@ -15,11 +15,11 @@
       </el-table-column>
       <el-table-column prop="vetName" label="医生姓名" width="100">
       </el-table-column>
-      <el-table-column prop="reserveTime" label="预约时间" sortable width="100">
+      <el-table-column prop="reserveTime" label="预约时间" sortable width="150">
       </el-table-column>
-      <el-table-column prop="treatTime" label="看病时间" sortable width="100">
+      <el-table-column prop="treatTime" label="看病时间" sortable width="150">
       </el-table-column>
-      <el-table-column prop="category" label="医疗内容" width="200">
+      <el-table-column prop="category" label="医疗内容" width="300">
       </el-table-column>
       <el-table-column label="操作" width="120">
         <template #default="scope">

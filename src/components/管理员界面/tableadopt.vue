@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-table :data="tableData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
-      <el-table-column prop="date" label="时间" sortable width="120">
+      <el-table-column prop="date" label="时间" sortable width="170">
       </el-table-column>
       <el-table-column prop="petName" label="宠物名" width="170">
       </el-table-column>
       <el-table-column prop="userName" label="用户名" width="170">
       </el-table-column>
-      <el-table-column prop="reason" label="理由" width="250">
+      <el-table-column prop="reason" label="理由" width="500">
       </el-table-column>
       <el-table-column label="操作" width="200">
         <template #default="scope">

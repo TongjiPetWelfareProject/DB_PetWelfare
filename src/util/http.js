@@ -19,7 +19,7 @@ httpInstance.interceptors.response.use(res => res.data,e =>{
     // 统一错误提示
     ElMessage({
         type:'warning',
-        message:'账号、密码输入错误，请重新输入'
+        message:'账号、密码输入错误，或已被封号，请重新尝试或联系管理员'
     })
     return Promise.reject(e)
 })
