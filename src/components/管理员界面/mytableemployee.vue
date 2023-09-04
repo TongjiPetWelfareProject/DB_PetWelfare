@@ -247,6 +247,7 @@ const submitEditedEmployee = () => {
                 // 关闭编辑对话框
                 editDialogVisible.value = false;
             }
+            fetchData();
         })
         .catch(error => {
             console.error('编辑数据时出错:', error);
@@ -287,6 +288,7 @@ const submitNewEmployee = () => {
             newEmployee.value.id = newEmployeeId;
             tableData.value.push(newEmployee.value);
             addDialogVisible.value = false;
+            fetchData();
         })
         .catch(error => {
             console.error('添加数据时出错：', error);
