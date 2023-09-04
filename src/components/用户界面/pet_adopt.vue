@@ -274,8 +274,9 @@ select:focus {
 
 .pet-card {
   display: flex;
-  width: 24%;
-  margin-right: 18px;
+  width: 23%;
+  margin-left: 1%;
+  margin-right: 1%;
   margin-bottom: 10px;
   border-radius: 4px;
   transition: transform 0.2s, box-shadow 0.2s; /* 添加渐变效果 */
