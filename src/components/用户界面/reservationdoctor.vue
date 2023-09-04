@@ -146,6 +146,15 @@ export default defineComponent({
 
     const onSubmit = async () => {
       try {
+        if (!form.name || !form.kind || !form.date1 || !form.desc || !form.selectedDoctorID) {
+            ElMessage.error({
+            message: '预约失败,请填写完整信息' ,
+            duration: 3000 // 持续显示时间（毫秒）
+        });
+        return; // 阻止提交
+      }
+
+
         // 调用 submitAppointmentAPI 函数并传入表单数据
         const userId = userStore.userInfo.User_ID;
 
@@ -162,10 +171,10 @@ export default defineComponent({
           message: '预约医疗成功',
           duration: 3000 // 持续显示时间（毫秒）
         });
-        // 停顿3秒后跳转到 '/forum'
+        // 停顿2秒后跳转到 '/forum'
         setTimeout(() => {
           router.push('/medical');
-        }, 3000);
+        }, 2000);
 
       } catch (error) {
         console.error('提交数据时出错：', error);

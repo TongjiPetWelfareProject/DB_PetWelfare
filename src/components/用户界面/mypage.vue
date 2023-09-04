@@ -70,10 +70,11 @@
   </el-descriptions>
       </el-header>
       <el-main>
+        <br>
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" type="border-card">
-        <el-tab-pane label="我的宠物" name="first">
-          <el-tabs tab-position="left"  class="demo-tabs">
-            <el-tab-pane label="我的点赞">
+        <el-tab-pane class="tabspane" label="我的宠物" name="first">
+          <el-tabs tab-position="left"  class="demo-tabs2">
+            <el-tab-pane label="我的点赞" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                   <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(lplist.PET_ID)">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
@@ -93,7 +94,7 @@
                     </el-card>
                 </div>
             </el-tab-pane>
-            <el-tab-pane label="我的收藏">
+            <el-tab-pane label="我的收藏" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                 <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(cplist.PET_ID)">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
@@ -113,7 +114,7 @@
                     </el-card>
                 </div>
             </el-tab-pane>
-            <el-tab-pane label="我的评论">
+            <el-tab-pane label="我的评论" class="demo-tabs-pane2">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
                   <el-card v-for="cmplist in commentedpetlist" class="mypage-card" shadow="always" >
                     <template #header>
@@ -134,7 +135,7 @@
               <!-- </li> -->
               
             </el-tab-pane>
-            <el-tab-pane label="我的领养">
+            <el-tab-pane label="我的领养" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                 <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(adlist.PET_ID)">
                       <img src="../../../public/home5.jpg" class="mypagepetimage">
@@ -158,7 +159,7 @@
                     </el-card>
                 </div>
             </el-tab-pane>
-            <el-tab-pane label="我的寄养">
+            <el-tab-pane label="我的寄养" class="demo-tabs-pane2">
               <div class="donatecardcontainer">
                 <el-card v-for="flist in fosteredpetlist" class="mypagefoster" shadow="always">
                   <template #header>
@@ -178,8 +179,8 @@
 
 
         <el-tab-pane label="我的论坛" name="second">
-          <el-tabs tab-position="left"  class="demo-tabs">
-            <el-tab-pane label="我的发帖">
+          <el-tabs tab-position="left"  class="demo-tabs2">
+            <el-tab-pane label="我的发帖" class="demo-tabs-pane2">
               <div v-for="spo in postsend" :key="spo.post_id" @click="goToPost(spo)">
                 <el-card class="post-card" shadow="always" style="margin-top:10px">
                   <div class="post-title">{{spo.heading}}</div>
@@ -193,7 +194,7 @@
                 </el-card>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="我的点赞">
+            <el-tab-pane label="我的点赞" class="demo-tabs-pane2">
               <div v-for="lpo in postlike" :key="lpo.post_id" @click="goToPost(lpo)">
                 <el-card class="post-card" shadow="always" style="margin-top:10px">
                   <div class="post-title">{{lpo.heading}}</div>
@@ -208,7 +209,7 @@
               </div>
             </el-tab-pane>
 
-            <el-tab-pane label="我的评论">
+            <el-tab-pane label="我的评论" class="demo-tabs-pane2">
               <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="$router.push('/post_details')"> -->
                 <el-card v-for="postcom in postcomment" class="mypage-card" shadow="always" @click="goToPost(postcom)">
                     <template #header>
@@ -235,8 +236,8 @@
 
 
         <el-tab-pane label="其他" name="third">
-          <el-tabs tab-position="left"  class="demo-tabs">
-            <el-tab-pane label="我的医疗">
+          <el-tabs tab-position="left"  class="demo-tabs2">
+            <el-tab-pane label="我的医疗" class="demo-tabs-pane2">
               <div class="donatecardcontainer">
                 <el-card v-for="medi in medicallist" class="mypagefoster" shadow="always">
                   <template #header>
@@ -250,7 +251,7 @@
                 </el-card>
               </div>        
             </el-tab-pane>
-            <el-tab-pane label="我的捐款">
+            <el-tab-pane label="我的捐款" class="demo-tabs-pane2">
               <div class="donatecardcontainer">
                 <el-card v-for="dona in donations" class="mypagedonate" shadow="always">
                 <!-- <template #header>
@@ -890,5 +891,9 @@ input[type="file"] {
   width:300px;
 }
 
+.demo-tabs-pane2{
+  max-height: 400px; /* 设置最大高度，根据需要进行调整 */
+  overflow-y: auto; 
+}
 
 </style>

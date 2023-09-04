@@ -11,6 +11,25 @@ const noticeContent=ref('')
 const noticeTitle=ref('')
 const dialogVisible=ref(false)
 
+const currentPage = ref(1); // 当前页数，默认为第1页
+const pageSize = ref(8);
+
+function handlePageChange(newPage) {
+  currentPage.value = newPage;
+}
+
+const startIndex = computed(() => {
+  return (currentPage.value - 1) * pageSize.value;
+});
+
+const endIndex = computed(() => {
+  return startIndex.value + pageSize.value;
+});
+
+const slicedNotices = computed(() => {
+  return filteredNotices.value.slice(startIndex.value, endIndex.value);
+});
+
 function formatBackendTime(backendTime) {
   const date = new Date(backendTime);
 
@@ -131,7 +150,7 @@ const toggleSortOrder = () => {
       <div class="content">
     <div class="notices">
       <ul>
-        <li v-for="notice in filteredNotices" :key="notice.id" @click="goToNotice(notice)">
+        <li v-for="notice in slicedNotices" :key="notice.id" @click="goToNotice(notice)">
           <el-card class="notice-card" >
             <span class="notice-title">{{ notice.title }}</span>
             <div class="noticebody">
@@ -141,6 +160,14 @@ const toggleSortOrder = () => {
           
         </li>
       </ul>
+      <el-pagination
+        :total="filteredNotices.length"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        layout="prev, pager, next, jumper"
+        @current-change="handlePageChange"
+        style="text-align: center;justify-content: center;"
+      />
       <el-dialog
             v-model="dialogVisible"
             :title="noticeTitle"
@@ -252,7 +279,7 @@ const toggleSortOrder = () => {
 }
 
 .notices {
-  max-height: 800px;
+  /* max-height: 800px; */
   overflow-y: auto;
   width: 80%;
   font-size: 17px;
