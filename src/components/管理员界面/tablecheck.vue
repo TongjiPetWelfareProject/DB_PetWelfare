@@ -19,7 +19,7 @@
           <el-button size="mini" type="danger" @click="rejectApplication(scope.$index)">N</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </el-table> 
     <!-- <el-button type="primary" @click="addEmptyRow">添加</el-button> -->
     <el-dialog
             v-model="dialogVisible"
@@ -28,12 +28,12 @@
             :before-close="handleClose"
           >
           <div class="dialog-content">
-            <div v-if="postUrls.length > 0">
+            <pre>{{ postContent }}</pre>
+            <!-- <div v-if="postUrls.length > 0">
               <div v-for="(image,index) in postUrls" :key="index">
                 <img :src="image" :alt="'Image ' + (index + 1)" class="post-image">
               </div>
-            </div>
-            {{ postContent }}
+            </div> -->
           </div>
             <template #footer>
               <span class="dialog-footer">
