@@ -1,14 +1,14 @@
 <template>
   <div>
-    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
-      <el-table-column prop="id" label="宠物ID" width="200" align="center"/>
-      <el-table-column prop="name" label="宠物名字" width="200" align="center"/>
-      <el-table-column prop="views" label="阅读量" width="220" sortable :sort-method="sortViews" align="center"/>
-      <el-table-column prop="likes" label="点赞量" width="220" sortable :sort-method="sortLikes" align="center"/>
-      <el-table-column type="selection" width="155" />
+    <el-table ref="tableRef" :data="tableData" :row-class-name="rowClassName"  style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
+      <el-table-column prop="id" label="宠物ID" align="center"/>
+      <el-table-column prop="name" label="宠物名字"  align="center"/>
+      <el-table-column prop="views" label="阅读量"  sortable :sort-method="sortViews" align="center"/>
+      <el-table-column prop="likes" label="点赞量"  sortable :sort-method="sortLikes" align="center"/>
+      <!-- <el-table-column type="selection" width="155" /> -->
     </el-table>
     <br>
-    <el-button type="primary" @click="publishPopular">发布</el-button>
+    <!-- <el-button type="primary" @click="publishPopular">发布</el-button>
     <br>
     <div class="currenthot">
       <br>
@@ -18,7 +18,7 @@
       <el-tag class="mx-1" size="large" type="warning">{{ topThreePetNames[0] }}</el-tag>
       <el-tag class="mx-2" size="large" type="success">{{ topThreePetNames[1] }}</el-tag>
       <el-tag class="mx-3" size="large">{{ topThreePetNames[2] }}</el-tag>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -67,6 +67,17 @@ export default {
       });
     };
 
+    const rowClassName = ({row, rowIndex}) => {
+      if (rowIndex === 0) {
+        return 'orange-row';
+      } else if (rowIndex === 1) {
+        return 'green-row';
+      } else if (rowIndex === 2) {
+        return 'blue-row';
+      }
+      return ''; // 如果不是前三行，返回空字符串
+    };
+
     function publishPopular() {
 
     if (selectedPetIds.value.length !== 3) {
@@ -104,7 +115,8 @@ export default {
       sortViews,
       sortLikes,
       publishPopular,
-      topThreePetNames 
+      topThreePetNames ,
+      rowClassName
     }
   },
 }
@@ -125,6 +137,23 @@ export default {
   font-weight: bold;
   color: rgb(131, 131, 131);
 }
+
+::v-deep .el-table .red-row td {
+  background-color: rgba(255, 195, 195, 0.255) !important;
+}
+
+::v-deep .el-table .orange-row td {
+  background-color: rgba(249, 241, 225, 0.255) !important;
+}
+
+::v-deep .el-table .green-row td {
+  background-color: rgba(231, 243, 220, 0.255) !important;
+}
+
+::v-deep .el-table .blue-row td {
+  background-color: rgba(233, 242, 248, 0.255) !important;
+}
+
 
 
 .el-tag{

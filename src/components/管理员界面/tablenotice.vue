@@ -17,7 +17,7 @@
       <el-table-column label="操作" width="180" align="center">
         <template v-slot="{row}">
           <el-button size="mini" type="primary" @click="showEditNoticeDialog(row)">编辑</el-button>
-          <el-dialog title="编辑公告" v-model="editNoticeDialogVisible">
+          <el-dialog title="编辑公告" v-model="editNoticeDialogVisible" :modal="true">
             <el-form>
               <el-form-item label="公告标题">
                 <el-input v-model="editedNoticeTitle" placeholder="输入公告标题" type="textarea"></el-input>
@@ -108,6 +108,8 @@ export default {
     const totalItems = ref(0);
     const editedNoticeId=ref('');
 
+    const selectedRowIndex = ref(-1); 
+
     const noticeContent=ref('')
     const noticeTitle=ref('')
     const dialogVisible=ref(false)
@@ -161,6 +163,13 @@ export default {
 
     function submitNewNotice() {
       //console.log(newNoticeTitle.value)
+      if (!newNoticeTitle.value || !newNoticeContent.value) {
+            ElMessage.error({
+            message: '提交失败,请确认公告完整' ,
+            duration: 2000 // 持续显示时间（毫秒）
+        });
+        return; // 阻止提交
+      }
       const currentTime=getCurrentTime();
       gg_rqb_jk.sendNewNoticeAPI(employeeId, newNoticeTitle.value, newNoticeContent.value, currentTime.value)
       .then(response => {
@@ -181,6 +190,13 @@ export default {
     
     function submitEditedNotice() {
       // console.log(editedNoticeId.value)
+      if (!editedNoticeTitle.value || !editedNoticeContent.value) {
+            ElMessage.error({
+            message: '提交失败,请发布完整公告' ,
+            duration: 2000 // 持续显示时间（毫秒）
+        });
+        return; // 阻止提交
+      }
       const currentTime=getCurrentTime();
 
       const editedNoticeIndex = tableData.value.findIndex(notice => {
@@ -256,6 +272,7 @@ export default {
 
     function handlePageChange(newPage) {
       currentPage.value = newPage;
+      selectedRowIndex.value = -1; 
       fetchNoticeData(); // 页面变化时重新获取数据
     }
 
@@ -297,7 +314,8 @@ export default {
       employeeId,
       noticeContent,
       noticeTitle,
-      dialogVisible
+      dialogVisible,
+      selectedRowIndex
     }
   },
 }
