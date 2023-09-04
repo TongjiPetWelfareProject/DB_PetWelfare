@@ -74,6 +74,9 @@
           />
         </el-col>
       </el-form-item>
+      <div class="notice">
+        <span class="red-asterisk">*</span> 医疗服务请选择从今天开始的一周内时间预约
+      </div>
       <!-- <el-form-item label="Instant delivery">
         <el-switch v-model="form.delivery" />
       </el-form-item> -->
@@ -104,7 +107,7 @@
 <script>
 import { ref,defineComponent, reactive,onMounted } from 'vue';
 import medical_donate from '@/api/medical_donate';
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'; // 导入用户信息管理模块
 import { useRouter } from 'vue-router'
 
@@ -172,23 +175,20 @@ export default defineComponent({
 
         if (!form.name || !form.kind || !form.date1 || !form.desc || !form.selectedDoctorID) {
             ElMessage.warning({
-            message: '预约失败,请填写完整信息' ,
-            duration: 3000 // 持续显示时间（毫秒）
-        });
-        return; // 阻止提交
+              message: '预约失败,请填写完整信息' ,
+              duration: 3000 // 持续显示时间（毫秒）
+            });
+          return; // 阻止提交
          }
-
-        if (dateObject > currentDate && dateObject < oneWeekLater) {
-          console.log('dateObject 在今天之后的一周内。');
-        } else {
-          ElMessage.warning({
-            message: '预约失败,请预约在今天后的一周时间内' ,
-            duration: 3000 // 持续显示时间（毫秒）
-        });
-          return;
-        }
       
-
+        if (dateObject > oneWeekLater) {
+          ElMessage.warning('预约时间必须在一周内');
+          return; // 不继续执行
+        }
+        if (dateObject < currentDate) {
+          ElMessage.warning('预约时间在当前时间前，请重新选择');
+          return; // 不继续执行
+        }
 
 
         // 调用 submitAppointmentAPI 函数并传入表单数据
@@ -237,4 +237,20 @@ export default defineComponent({
     };
   },
 });
+
   </script>
+
+<style>
+.notice {
+  font-size: small; /* 使用小字形式的字体大小 */
+  margin-top: 10px; /* 可以根据需要调整顶部边距 */
+  margin-bottom: 15px;
+  color: #666; /* 可以根据需要调整文字颜色 */
+  margin-left: 105px;
+}
+
+.red-asterisk {
+  color: red; /* 红色的星号颜色 */
+  margin-right: 5px; /* 可以根据需要调整星号与文字之间的间距 */
+}
+</style>

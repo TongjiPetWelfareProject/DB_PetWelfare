@@ -96,6 +96,13 @@ const onSubmit = () => {
   const oneWeekLater = new Date();
   oneWeekLater.setDate(currentDate.getDate() + 7);
 
+  if (!form.name || !form.date || !form.num || !form.remark) {
+    ElMessage.warning({
+      message: '预约失败,请填写完整信息' ,
+      duration: 3000 // 持续显示时间（毫秒）
+    });
+  return; // 阻止提交
+  }
   if (selectedDate > oneWeekLater) {
     ElMessage.warning('寄养起始时间必须在一周内');
     return; // 不继续执行
