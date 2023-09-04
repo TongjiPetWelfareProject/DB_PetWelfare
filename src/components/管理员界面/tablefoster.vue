@@ -1,23 +1,29 @@
 <template>
   <div>
-    <el-table :data="tableData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
+    <el-button-group>
+      <el-button @click="filterTag('全部')">全部</el-button>
+      <el-button @click="filterTag('to be censored')">未审核</el-button>
+      <el-button @click="filterTag('aborted')">审核失败</el-button>
+      <el-button @click="filterTag('legitimate')">审核成功</el-button>
+      <el-button @click="filterTag('invalid')">无效申请</el-button>
+      <el-button @click="filterTag('outdated')">过期申请</el-button>
+    </el-button-group>
+    <el-table :data="filteredData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
       <el-table-column prop="date" label="时间" sortable width="120">
       </el-table-column>
       <el-table-column prop="petName" label="宠物名" width="170">
       </el-table-column>
       <el-table-column prop="userName" label="用户名" width="170">
       </el-table-column>
-       <el-table-column prop="date" label="起始日期" width="170">
-      </el-table-column>
       <el-table-column prop="days" label="天数" width="170">
       </el-table-column>
       <el-table-column label="操作" width="200">
         <template #default="scope">
-          <el-button  link type="success" size="small"
+          <el-button  v-if="scope.row.censor_status === 'to be censored'" link type="success" size="small"
             @click.prevent="approveApplication(scope.$index)">
             同意
           </el-button>
-          <el-button  link type="danger" size="small"
+          <el-button  v-if="scope.row.censor_status === 'to be censored'" link type="danger" size="small"
             @click.prevent="rejectApplication(scope.$index)">
             拒绝
           </el-button>
@@ -26,9 +32,11 @@
       <el-table-column prop="censor_status" label="审核状态" width="170">
         <template #default="scope">
          <!-- 使用条件语句来显示对应的标签 -->
-          <span v-if="scope.row.censor_status === 'to be censored'">未审核</span>
-          <span v-else-if="scope.row.censor_status === 'aborted'">审核成功</span>
-          <span v-else-if="scope.row.censor_status === 'legitimate'">审核失败</span>
+         <span class="status-label to-be-censored" v-if="scope.row.censor_status === 'to be censored'">未审核</span>
+        <span class="status-label aborted" v-else-if="scope.row.censor_status === 'aborted'">审核失败</span>
+        <span class="status-label legitimate" v-else-if="scope.row.censor_status === 'legitimate'">审核成功</span>
+        <span class="status-label invalid" v-else-if="scope.row.censor_status === 'invalid'">无效申请</span>
+        <span class="status-label outdated" v-else-if="scope.row.censor_status === 'outdated'">过期申请</span>
        </template>
       </el-table-column>
     </el-table>
@@ -53,9 +61,24 @@ interface FosterRecord {
 
 const tableData = ref<FosterRecord[]>([])
 
+const selectedTag = ref('全部')
+
+const filteredData = computed(() => {
+  if (selectedTag.value === '全部') {
+    return tableData.value
+  } else {
+    return tableData.value.filter((record) => record.censor_status === selectedTag.value)
+  }
+})
+
+const filterTag = (tag: string) => {
+  selectedTag.value = tag
+}
+
 const fetchData = async () => {
   try {
     tableData.value = await fetchFosterRecords();
+    console.log(tableData);
   } catch (error) {
     console.error('获取数据时出错：', error);
   }
@@ -94,3 +117,41 @@ const rejectApplication = async(index: number) => {
 }
 
 </script>
+<style>
+.status-label {
+    font-weight: bold;
+    padding: 6px 12px; /* 调整内边距以控制背景样式大小 */
+    border-radius: 20px; /* 添加圆角 */
+    display: inline-block; /* 使元素成为行内块级元素，以适应文本大小 */
+  }
+
+  /* 未审核样式 */
+  .status-label.to-be-censored {
+    background-color: deepskyblue; /* 背景深，文字白色 */
+    color: white;
+  }
+
+  /* 审核失败样式 */
+  .status-label.aborted {
+    background-color: tomato; /* 背景深，文字白色 */
+    color: white;
+  }
+
+  /* 审核成功样式 */
+  .status-label.legitimate {
+    background-color: lightgreen; /* 背景浅，文字黑色 */
+    color: black;
+  }
+
+  /* 无效申请样式 */
+  .status-label.invalid {
+    background-color: gray; /* 背景深，文字白色 */
+    color: white;
+  }
+
+  /* 过期申请样式 */
+  .status-label.outdated {
+    background-color: #ffcc00; /* 自定义背景颜色，背景深，文字黑色 */
+    color: black;
+  }
+</style>
