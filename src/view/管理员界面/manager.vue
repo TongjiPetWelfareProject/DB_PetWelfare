@@ -20,7 +20,7 @@ const confirm = () => {
 
 onMounted(() => {
   formatCurrentDateTime();
-  router.push('/mytableemployee')
+  // router.push('/mytableemployee')
 });
 
 const formatCurrentDateTime = () => {
@@ -51,12 +51,14 @@ const handleClose = (key, keyPath) => {
         <img src="@/photos/animal-shelter.png" style="height: 40px;width: 40px;margin-left: 90px;margin-top: 6px">
 
         <el-menu
-        default-active="/mytableemployee"
+        default-active="2"
+        :collapse=false
+        :default-opened=true
         class="el-menu-vertical"
         @open="handleOpen"
         @close="handleClose"
         router >
-        <el-sub-menu index="1">
+        <el-sub-menu index="1" :collapse=false :default-opened=true> 
           <template #title>
             <el-icon><Position/></el-icon>
             <span>工作人员</span>
