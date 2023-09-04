@@ -31,14 +31,9 @@ const mainpage = () => {
           <el-button style="color:#5d86ba;font-size:15px;height:20px" @click="drawerOn = true;" text>
                  关于我们
               </el-button>
-              <el-drawer
-                v-model="drawerOn"
-                title="关于我们"
-                :direction="direction"
-                :before-close="handleClose"
-              >
+              <el-drawer v-model="drawerOn" title="关于我们" :direction="direction" :before-close="handleClose">
               <div style="display:flex;justify-content:center;align-items: center;flex-direction: column;">
-                 <span style="font-size: 15px;color:#5d86ba">
+              <span style="font-size: 15px;color:#5d86ba">
                   
 &nbsp;&nbsp;&nbsp;&nbsp;当宠物们需要关怀和救助的时候，同济宠物救助中心始终坚守宠物健康和幸福。作为一个致力于为需要庇护的动物提供关爱的组织，我们汇聚了热情的志愿者和专业的兽医团队，共同致力于改善宠物们的生活质量。<br><br>
 
@@ -52,12 +47,7 @@ const mainpage = () => {
                 </div>
                 </el-drawer>
     
-          <el-popover
-            placement="bottom"
-            title="联系我们"
-            :width="400"
-            trigger="click"
-          >
+          <el-popover placement="bottom" title="联系我们" :width="400" trigger="click">
             <template #reference>
               <el-button style="color:#5d86ba;font-size: 15px;"  text>联系我们</el-button>
             </template>
@@ -79,7 +69,7 @@ const mainpage = () => {
               <li>
                 <el-popover placement="bottom"  :width="50" trigger="hover" style="width:30px">
                   <template #reference>
-                    <img src="@/photos/我的.png" alt="我的" style="height: 30px; width: 30px;">
+                    <img :src="userStore.userInfo.Avatar" alt="我的" style="height: 30px; width: 30px; border-radius: 50%;">
                   </template>
                   
                   <router-link to="/mypage">
