@@ -51,8 +51,8 @@
           <p class="post-label">{{ comment.author }}</p>
           <p class="post-value">{{ comment.text }}</p>
           <div class="comment-actions">
-            <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.time) }}</p>
-            <a v-if="comment.avatar && isOwnPost(comment.user_id)" href="#" @click="deleteComment(comment)">删除</a>
+            <p v-if="comment.id" class="comment-time custom-comment-time">{{ formatBackendTime(comment.time) }}</p>
+            <a v-if="comment.id && isOwnPost(comment.user_id)" href="#" @click="deleteComment(comment)">删除</a>
           </div>
         </div>
       </div>
