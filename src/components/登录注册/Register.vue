@@ -50,6 +50,35 @@ const validconfirmPassword = () => {
 }
 
 const submitForm = async() => {
+
+    // 先进行错误检测
+    validatePhoneNumber();
+    validatePasswordLength();
+    validconfirmPassword();
+
+    // 检查是否有错误
+    if (phoneError.value) {
+      // 如果有错误，使用 ElMessage 提示错误信息
+      ElMessage({ type: 'warning', message: '电话号码填入有误，请修改' });
+      return; // 不继续执行提交
+    }
+    if (passwordTooShort.value) {
+      // 如果有错误，使用 ElMessage 提示错误信息
+      ElMessage({ type: 'warning', message: '密码过短，请修改' });
+      return; // 不继续执行提交
+    }
+    if (passwordTooLong.value) {
+      // 如果有错误，使用 ElMessage 提示错误信息
+      ElMessage({ type: 'warning', message: '密码过长，请修改' });
+      return; // 不继续执行提交
+    }
+    if (passwordError.value) {
+      // 如果有错误，使用 ElMessage 提示错误信息
+      ElMessage({ type: 'warning', message: '密码格式有误或前后密码不一致，密码长度在8~14之间，必须包含数字、大小写字母、特殊字符（/!@#$%^&*()）' });
+      return; // 不继续执行提交
+    }
+
+
     const data = {
       username: username.value,
       password: password.value,
@@ -108,7 +137,7 @@ const submitForm = async() => {
           <div class="custom-input-container">
             <el-tooltip 
             placement="right" 
-            content="密码长度在8~14之间，必须包含数字、大小写字母、特殊字符" 
+            content="密码长度在8~14之间，必须包含数字、大小写字母、特殊字符（/!@#$%^&*()）" 
             open-delay="500"
             effect="light">
               <div class="input-with-tooltip">
@@ -134,10 +163,6 @@ const submitForm = async() => {
         已有账号？<router-link to="/login">去登录</router-link>
       </div>
     </div>
-
-
-
-
 	</div>
 </template>
 
