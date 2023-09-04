@@ -170,22 +170,24 @@ export default defineComponent({
         // console.log(form.desc)
         // console.log(form.selectedDoctorID)
 
-        if (dateObject > currentDate && dateObject < oneWeekLater) {
-          console.log('dateObject 在今天之后的一周内。');
-        } else {
-          ElMessage.error({
-            message: '预约失败,请预约在今天后的一周时间内' ,
-            duration: 3000 // 持续显示时间（毫秒）
-        });
-          return;
-        }
         if (!form.name || !form.kind || !form.date1 || !form.desc || !form.selectedDoctorID) {
-            ElMessage.error({
+            ElMessage.warning({
             message: '预约失败,请填写完整信息' ,
             duration: 3000 // 持续显示时间（毫秒）
         });
         return; // 阻止提交
          }
+
+        if (dateObject > currentDate && dateObject < oneWeekLater) {
+          console.log('dateObject 在今天之后的一周内。');
+        } else {
+          ElMessage.warning({
+            message: '预约失败,请预约在今天后的一周时间内' ,
+            duration: 3000 // 持续显示时间（毫秒）
+        });
+          return;
+        }
+      
 
 
 
