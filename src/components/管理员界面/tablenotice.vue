@@ -164,8 +164,8 @@ export default {
     function submitNewNotice() {
       //console.log(newNoticeTitle.value)
       if (!newNoticeTitle.value || !newNoticeContent.value) {
-            ElMessage.error({
-            message: '提交失败,请确认公告完整' ,
+            ElMessage.warning({
+            message: '提交失败,请发布完整公告' ,
             duration: 2000 // 持续显示时间（毫秒）
         });
         return; // 阻止提交
@@ -191,8 +191,8 @@ export default {
     function submitEditedNotice() {
       // console.log(editedNoticeId.value)
       if (!editedNoticeTitle.value || !editedNoticeContent.value) {
-            ElMessage.error({
-            message: '提交失败,请发布完整公告' ,
+            ElMessage.warning({
+            message: '提交失败,请确认公告完整' ,
             duration: 2000 // 持续显示时间（毫秒）
         });
         return; // 阻止提交
