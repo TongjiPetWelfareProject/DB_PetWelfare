@@ -100,7 +100,8 @@
             <el-tab-pane label="我的点赞" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                   <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(lplist.PET_ID)">
-                      <img src="../../../public/home5.jpg" class="mypagepetimage">
+                      <img v-if="lplist.AVATAR" :src="lplist.AVATAR" class="mypagepetimage">
+                      <img v-else src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -120,7 +121,8 @@
             <el-tab-pane label="我的收藏" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                 <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(cplist.PET_ID)">
-                      <img src="../../../public/home5.jpg" class="mypagepetimage">
+                      <img v-if="cplist.AVATAR" :src="cplist.AVATAR" class="mypagepetimage">
+                      <img v-else src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -161,7 +163,8 @@
             <el-tab-pane label="我的领养" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                 <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(adlist.PET_ID)">
-                      <img src="../../../public/home5.jpg" class="mypagepetimage">
+                      <img v-if="adlist.AVATAR" :src="adlist.AVATAR" class="mypagepetimage">
+                      <img v-else src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -648,7 +651,8 @@ const getUserCollectPets = async () => {
           PET_ID: pet.PET_ID,
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
-          AGE: pet.AGE+'岁'
+          AGE: pet.AGE+'岁',
+          AVATAR:pet.AVATAR
         })
       }
     } catch (error) {
@@ -664,7 +668,8 @@ const getUserLikePets = async () => {
           PET_ID: pet.PET_ID,
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
-          AGE: pet.AGE+'岁'
+          AGE: pet.AGE+'岁',
+          AVATAR: pet.AVATAR
         })
       }
     } catch (error) {
@@ -698,7 +703,8 @@ const getUserAdoptPets = async () => {
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
           AGE: pet.AGE+'岁',
-          STATE:pet.CENSOR_STATE
+          STATE:pet.CENSOR_STATE,
+          AVATAR:pet.AVATAR
         })
       }
     } catch (error) {
