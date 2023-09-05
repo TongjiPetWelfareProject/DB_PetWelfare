@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div style="display:flex;align-items: center;margin-bottom: 20px;">
+        <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="doctorNameFilter" @input="filterHandler" placeholder="搜索医生姓名" style="margin-right:40px;width:200px;px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
+        </div>
     <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
       max-height="550">
       <el-table-column prop="id" label="医生ID"  :width="120" align="center"/>
@@ -118,6 +121,16 @@ const newDoctor = ref<Doctor>({
   salary: '',
 });
 
+
+const tableData2=ref([])
+const doctorNameFilter = ref('');
+function filterHandler(value){
+    tableData.value = tableData2.value.filter(item => {
+      const doctornameMatch = item.name.toLowerCase().includes(doctorNameFilter.value.toLowerCase());
+    return doctornameMatch;
+  });
+};
+
 const handleeditPhoneInput = () => {
   // 获取输入框的值并移除所有非数字字符
   const digitsOnly = editedDoctor.value.phone.replace(/\D/g, "");
@@ -161,6 +174,7 @@ const fetchData = async () => {
   try {
     const response = await axios.get('/api/doctor');
     tableData.value = response.data;
+    tableData2.value=tableData.value;
   } catch (error) {
     console.error('获取数据时出错：', error);
   }

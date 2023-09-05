@@ -1,5 +1,8 @@
 <template>
     <div>
+        <div style="display:flex;align-items: center;margin-bottom: 20px;">
+        <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="employeeNameFilter" @input="filterHandler" placeholder="搜索员工姓名" style="margin-right:40px;width:200px;px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
+        </div>
         <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
             max-height="550">
             <el-table-column prop="id" label="员工ID" align="center" :width="100" />
@@ -133,6 +136,15 @@ const newEmployee = ref<Employee>({
     salary: '',
 });
 
+const tableData2=ref([])
+const employeeNameFilter = ref('');
+function filterHandler(value){
+    tableData.value = tableData2.value.filter(item => {
+      const employeenameMatch = item.name.toLowerCase().includes(employeeNameFilter.value.toLowerCase());
+    return employeenameMatch;
+  });
+};
+
 const options = [
     {
         value: '领养顾问',
@@ -213,6 +225,7 @@ const fetchData = async () => {
     try {
         const response = await axios.get('/api/employee');
         tableData.value = response.data;
+        tableData2.value=tableData.value;
     } catch (error) {
         console.error('获取数据时出错：', error);
     }

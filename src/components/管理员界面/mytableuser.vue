@@ -1,6 +1,15 @@
 <template>
+    <div style="display: flex;align-items: center;margin-bottom: 20px;">
+    <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="userNameFilter" @input="filterHandler" placeholder="搜索用户姓名" style="display: flex;align-items: center;text-align: center;width:180px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
+    <span style="font-size:14px;margin-left:25px;font-weight:bold;color: rgb(123, 123, 123);">状态 &nbsp;&nbsp;</span>
+    <el-select @change="filterHandler" style="width:180px;display: flex;align-items: center;text-align: center;" v-model="userStatusFilter" clearable placeholder="选择用户状态">
+      <el-option label="良好" value="良好"></el-option>
+      <el-option label="审核中" value="审核中"></el-option>  
+      <el-option label="已封禁" value="已封禁"></el-option>  
+  </el-select>
+</div>
  <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
-        max-height="580"  >
+        max-height="530"  >
  <el-table-column label="用户ID" prop="id"  align="center"></el-table-column>
  <el-table-column label="用户名" prop="username" align="center"></el-table-column>
    <el-table-column label="电话" prop="phone"  align="center"></el-table-column>
@@ -30,6 +39,19 @@ interface User {
   unmuted: boolean;
   unbanned: boolean;
 }
+
+const tableData2=ref([])
+const userNameFilter = ref('');
+const userStatusFilter = ref('');
+function filterHandler(value){
+    tableData.value = tableData2.value.filter(item => {
+      const usernameMatch = item.username.toLowerCase().includes(userNameFilter.value.toLowerCase());
+    const statusMatch = item.account_status === userStatusFilter.value || !userStatusFilter.value;
+    return usernameMatch && statusMatch;
+  });
+};
+
+
 const tableData = ref<User[]>([]);
 const fetchUserRecords = async () => {
 try {
@@ -55,6 +77,7 @@ try {
       unbanned: unbanned,
     });
     console.log(tableData.value);
+    tableData2.value=tableData.value;
   }
 } catch (error) {
   console.error('获取用户列表时出错：', error);
