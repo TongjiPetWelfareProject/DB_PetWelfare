@@ -1,16 +1,11 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import petadopt from '@/api/pet_adopt'
 
-const images = [//等后端图片，后期去掉
-'./src/components/photos/pet1.jpg',
-'./src/components/photos/pet2.jpg',
-'./src/components/photos/pet3.jpg',
-'./src/components/photos/pet4.jpg',
-'./src/components/photos/pet5.jpg',
-];
-
 const pets = ref([])
+const router = useRouter();
+
 const getpetlist = async () => {
   try {
     const response = await petadopt.getPetList();
@@ -75,7 +70,7 @@ const ageRangeMatches = (petAge: number, ageRange: string) => {
 const filteredPets = computed(() => {
   return pets.value.filter(pet => {
     return (
-      (value1.value === '' || pet.breed === value1.value) &&
+      (value1.value === '' || pet.species === value1.value) &&
       (value2.value === '' || pet.gender === value2.value) &&
       (value3.value === '' || ageRangeMatches(pet.age, value3.value))
     );
@@ -84,8 +79,8 @@ const filteredPets = computed(() => {
 
 const options1 = [
   { value: '', label: '不限' },
-  { value: 'cat', label: '猫' },
-  { value: 'dog', label: '狗' },
+  { value: '猫', label: '猫' },
+  { value: '狗', label: '狗' },
 ];
 const options2 = [
   { value: '', label: '不限' },
@@ -100,6 +95,12 @@ const options3 = [
   { value: '8-10', label: '8-10岁' },
   { value: '11', label: '11岁及以上' },
 ];
+
+const goToPet = (pet) => {
+      // 跳转到帖子详情页
+      console.log('跳转到帖子详情页：' + pet.id);
+      router.push({ name: 'pet_details', params: { id: pet.id } });
+    };
 
 </script>
 
@@ -171,23 +172,10 @@ const options3 = [
     <br>
     <div class="pet-list-container">
       <div class="pet-list">
-        <!-- <div v-for="pet in filteredPets" :key="pet.id" class="pet-card">
-          <div class="pet-image">
-            <img :src="pet.image" alt="宠物图片" />
-          </div>
-          <div class="pet-details">
-            <h2>{{ pet.name }}</h2>
-            <p>品种: {{ pet.breed }}</p>
-            <p>性别: {{ pet.gender }}</p>
-            <p>年龄: {{ pet.age }}</p>
-            <router-link to="/pet_details">查看详情
-        </router-link>
-          </div>
-        </div> -->
-        <div v-for="pet in filteredPets" :key="pet.id" class="pet-card ">
+        <div v-for="pet in filteredPets" :key="pet.id" class="pet-card" @click="goToPet(pet)">
           <el-card :body-style="{ padding: '0px' }" style="width:100%">
-      <img v-if="pet.image" :src="pet.image" class="adopt_image image-container">
-      <img v-else src="../../../public/home5.jpg" class="adopt_image image-container" alt="Default Image">
+      <img v-if="pet.image" :src="pet.image" class="adopt-image">
+      <img v-else src="../../../public/home5.jpg" class="adopt-image" alt="Default Image">
       <div style="padding: 14px;display: flex;
   justify-content: center;
   flex-direction: column; ">
@@ -197,9 +185,6 @@ const options3 = [
         <span style="font-size: 18px">{{ pet.species }}{{ pet.gender }}</span>
         <span style="font-size: 16px; color:#6b6a68">{{ pet.age }}岁</span>
         <br>
-      <router-link :to="{ name: 'pet_details', params: { id: pet.id } }" style=" text-decoration: none; color:#edb055 ;">
-        查看详情  —>
-      </router-link>
       </div>
     </el-card>
         </div>
@@ -270,41 +255,22 @@ select:focus {
 .pet-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
 }
-
 .pet-card {
   display: flex;
-  width: 23%;
-  margin-left: 1%;
-  margin-right: 1%;
+  /* height: 200px; */
+  width: 24%; /* 设置每个宠物卡片的宽度为占比的48% */
+  justify-content: space-between; /*子元素平均分布*/
+  margin-right: 10px;
   margin-bottom: 10px;
-  border-radius: 4px;
-  transition: transform 0.2s, box-shadow 0.2s; /* 添加渐变效果 */
-  margin-top: 10px; /* 设置距离上面容器的距离，可以根据需要调整像素值 */
+  border-radius: 4px; /* 设置圆角 */
+  cursor: pointer; /* 鼠标悬停时显示手型光标 */
 }
 
 .pet-card:hover {
   transform: scale(1.02); /* 放大 2% */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-}
-
-
-.pet-image {
-  display: flex; /* 使用flex布局 */
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
-  margin-right: 10px; /* 设置宠物图片区域右边距为 10px */
-  /* 添加以下样式 */
-  width: 200px; /* 设置宠物图片区域的宽度为 100px */
-  height: 200px; /* 设置宠物图片区域的高度为 100px */
-  overflow: hidden; /* 隐藏溢出部分的图片内容 */
-}
-
-.pet-image img {
-  width: 80%; /* 设置宠物图片的宽度为容器的100% */
-  height: 80%; /* 设置宠物图片的高度为容器的100% */
-  object-fit: cover; /* 拉伸图片以填充容器，保持宽高比例 */
-  border-radius: 50%; /* 设置边框半径为50%，将图片裁剪为圆形 */
 }
 
 .pet-details {
@@ -325,17 +291,13 @@ select:focus {
   background-repeat: no-repeat;
   display: flex;
 }
-.image-container {
-  width: 252.41px; /* 设置背景框的宽度 */
-  height: 160.45px; /* 设置背景框的高度 */
-  overflow: hidden; /* 超出背景框的部分将被隐藏 */
-}
-.adopt_image {
-    width: 100%;
-    display: block;
-    max-width: 252.41px; /* 设置最大宽度 */
-    max-height: 160.45px; /* 设置最大高度 */
-    width: auto; /* 使宽度自动调整以保持宽高比 */
-  height: auto; /* 使高度自动调整以保持宽高比 */
+
+.adopt-image {
+  width: 100%;
+  display: block;
+  max-width: 252.41px; /* 设置最大宽度 */
+  height: 160.45px; /* 设置最大高度 */
+  width: auto; /* 使宽度自动调整以保持宽高比 */
+  border-radius: 10px; /* 设置圆角半径为10像素 */
 }
 </style>

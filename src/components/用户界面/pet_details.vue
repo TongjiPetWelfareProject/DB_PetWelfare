@@ -90,25 +90,25 @@
 <div class="comment-part">
   <div class="comment-form">
     <div class="comment-input" v-if="userStore.userInfo.User_ID">
-      <el-input v-model="newComment.comment_content" type="textarea" placeholder="在这里评论"></el-input>
+      <el-input v-model="newComment" type="textarea" placeholder="在这里评论"></el-input>
     </div>
     <div class="comment-input" v-else>
-      <el-input v-model="newComment.comment_content" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
+      <el-input v-model="newComment" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
     </div>
     <div class="comment-button">
-      <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;" :disabled="!newComment.comment_content">发布</button>
+      <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;" :disabled="!newComment">发布</button>
     </div>
   </div>
   <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
   <p></p>
   <div v-for="comment in sortedComments" :key="comment.commenter_id" class="comment">
-    <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
+    <el-avatar v-if="comment.commenter_avatar" :src="comment.commenter_avatar" :size="50"></el-avatar>
     <div class="comment-content">
       <p class="post-label">{{ comment.commenter }}</p>
       <p class="post-value">{{ comment.comment_content }}</p>
       <div class="comment-actions">
-        <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.comment_time) }}</p>
-        <a v-if="comment.avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)">删除</a>
+        <p v-if="comment.commenter_avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.comment_time) }}</p>
+        <a v-if="comment.commenter_avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)">删除</a>
       </div>
     </div>
   </div>
@@ -124,13 +124,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import getpetinfo from '@/api/pet_adopt'
 
-const images = [//等后端图片，后期去掉
-'./src/components/photos/pet1.jpg',
-'./src/components/photos/pet2.jpg',
-'./src/components/photos/pet3.jpg',
-'./src/components/photos/pet4.jpg',
-'./src/components/photos/pet5.jpg',
-];
 const userStore = useUserStore();
 console.log(userStore);
 const router = useRouter();
@@ -207,7 +200,7 @@ const getPetDetails = async (PID) => {
         commenter: comment.commenter,
         comment_time: comment.comment_time,
         comment_content: comment.comment_contents,
-        avatar:'./src/photos/阿尼亚.jpg'
+        commenter_avatar: comment.commenter_avatar,
       });
     }
   } catch (error) {
@@ -226,15 +219,7 @@ const handleApplyForAdopt = () => {
 }
 
 pet.read_num++;
-const newComment = ref({ 
-  commenter_id: '',
-  commenter: '',
-  comment_time: '',
-  comment_content: '',
-  avatar:'./src/photos/阿尼亚.jpg'
-});//传照片没成功
-newComment.value.commenter = '某某某';
-const showCommentForm = ref(false);
+const newComment = ref('');
 
 const liked = ref(false);
 const favorited = ref(false);
@@ -305,14 +290,6 @@ const favoritePet = async () => {
     }
 };
 
-/*const sortedComments = computed(() => {
-  return comment_contents.value.slice().sort((a, b) => {
-    const dateA = new Date(a.time);
-    const dateB = new Date(b.time);
-    return dateB - dateA;
-  });
-});*/
-
 const deleteComment = async (comment) => {
   try {
     console.log("删除时间为"+comment.comment_time+"的评论")
@@ -344,8 +321,8 @@ const addComment = async () => {
     }
   else {
     try {
-      let temp = newComment.value.comment_content;
-      newComment.value.comment_content = '';
+      let temp = newComment.value;
+      newComment.value = '';
       const response = await getpetinfo.addComment(userStore.userInfo.User_ID, petId.value, temp);
         ElMessage.success({
         message: '评论成功',
@@ -371,10 +348,6 @@ const isOwnPost = (UID) => {
       return true
     else 
       return false
-}
-
-const showAddComment = () => {
-    showCommentForm.value = true;
 }
 
 function formatBackendTime(backendTime) {
