@@ -413,7 +413,7 @@ const images = [
 }
 
 .image {
-  width: 200px;
+  width: auto;
   height: 200px;
   display: block;
   margin-left: auto;
