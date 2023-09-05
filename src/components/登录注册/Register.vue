@@ -120,7 +120,7 @@ const submitForm = async() => {
         const res = await registerAPI(data);
         ElMessage({type:'success',message:res})
         // userStore.userInfo.
-        router.push('/')
+        router.push('/login')
         console.log(res); // 输出注册API返回的结果到控制台
     } catch (error) {
         console.error('出错'); // 如果有错误发生，输出错误到控制台
