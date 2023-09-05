@@ -5,15 +5,25 @@
                <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
                &nbsp;<a href="\forum" style="text-decoration: none;color:#538adc;">返回论坛</a>
          </div>
-      <h2>{{ post.title }}</h2>
-      <p>{{ post.author }}</p>
+         <div style="display: flex;align-items: center;">
+           <h2 style="font-size: 30px;">{{ post.title }}</h2>
+           <!-- <a v-if="isOwnPost(post.userid)" href="#" @click="deletePost(post.id,post.userid)" style=" text-decoration: none;color:rgb(217, 108, 108);font-size: 20px;" >删除</a> -->
+           <el-button type="danger" v-if="isOwnPost(post.userid)" @click="deletePost(post.id,post.userid)" size="small" style="margin-left:2vw" >删除</el-button>
+          </div>
+    
+        <!-- <el-avatar :src="comment.avatar" :size="50"></el-avatar> -->
+        <div style="display:flex;justify-content: space-between;align-items:center;margin-top:-15px">
+          <p style="font-size: 20px;">{{ post.author }}</p>
+           <span style="font-size: 14px;color:rgb(153, 153, 153)">{{ post.like_num }}人赞同了该帖子</span>
+        </div>
+
       <pre>{{ post.content }}</pre>
       <div v-if="post.urls.length > 0">
         <div v-for="(image,index) in post.urls" :key="index">
           <img :src="image" :alt="'Image ' + (index + 1)" style="max-width: 100%; height: auto;">
         </div>
       </div>
-      <a v-if="isOwnPost(post.userid)" href="#" @click="deletePost(post.id,post.userid)">删除</a>
+      
     </div>
     <br>
     <div class="interactions">
@@ -40,22 +50,31 @@
           <el-input v-else v-model="newComment.text" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
         </div>
         <div class="comment-button">
-          <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;" :disabled="!newComment.text">发布</button>
+          <button type="primary" class="modern-button" @click="addComment" style="font-size: 18px;" :disabled="!newComment.text">发布</button>
         </div>
       </div>
-      <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ post.comment_num }}</h3>
-      <p></p>
-      <div v-for="comment in sortedComments" :key="comment.id" class="comment">
-        <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
-        <div class="comment-content">
-          <p class="post-label">{{ comment.author }}</p>
-          <p class="post-value">{{ comment.text }}</p>
-          <div class="comment-actions">
-            <p v-if="comment.id" class="comment-time custom-comment-time">{{ formatBackendTime(comment.time) }}</p>
-            <a v-if="comment.id && isOwnPost(comment.user_id)" href="#" @click="deleteComment(comment)">删除</a>
+      <br>
+      <el-card class="commentcard" shadow="always">
+        <template #header>
+          <h3 style="margin-top: -5px;margin-bottom:-5px;font-size: 22px; color:#4b6fa5;font-weight: bold;">评论 &nbsp;{{ post.comment_num }}</h3>
+        </template>
+        <!-- <h3 style="font-size: 25px; color:#4b6fa5;font-weight: bold;">评论 &nbsp;{{ post.comment_num }}</h3> -->
+        <p></p>
+        <div v-for="comment in sortedComments" :key="comment.id" class="comment">
+
+          <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
+          <div v-if="comment.id" class="comment-content">
+            <p class="post-label">{{ comment.author }}</p>
+            <p class="post-value">{{ comment.text }}</p>
+            <div class="comment-actions">
+              <p v-if="comment.id" class="comment-time custom-comment-time">{{ formatBackendTime(comment.time) }}</p>
+              <el-button type="warning" v-if="comment.id && isOwnPost(comment.user_id)" href="#" @click="deleteComment(comment)" link>删除</el-button>
+            </div>
           </div>
+    
         </div>
-      </div>
+      </el-card>
+
     </div>
   </div>
   </template>
@@ -324,6 +343,10 @@ const deletePost = async (postid,userid) => {
 margin-left: 0.5rem;
 }
 
+.commentcard{
+  padding-top: 0px;
+  /* margin-top:-20px */
+}
 
 .comment-part {
 margin-left: auto;
@@ -337,6 +360,9 @@ display: flex;
 
 .comment-content {
 margin-left: 10px;
+border-bottom:1px solid #dad9d9;
+width:100%;
+padding:0;
 }
 
 .comment-form {
@@ -361,7 +387,7 @@ margin-left: 10px;
 
 .modern-button {
     font-weight: bold; /* 设置标签的字体为粗体 */
-    background-color: #4b6fa5; /* 背景颜色 */
+    background-color: #5683c7; /* 背景颜色 */
     color: white; /* 字体颜色 */
     font-size: 24px; /* 字体大小 */
     border: none; /* 去掉边框 */
@@ -395,6 +421,7 @@ margin-left: 10px;
     white-space: pre-wrap;
     word-wrap: break-word;
     background-color: #f5f5f5;
+    /* box-shadow: 0 0px 4px rgba(133, 133, 133, 0.2); */
     padding: 1rem;
     border-radius: 10px;
 }
@@ -412,5 +439,7 @@ margin-left: 10px;
   display: flex;
   align-items: center;
   gap: 10px; /* 调整日期和链接之间的间距 */
+  margin-top:-10px;
+  width:100%
 }
 </style>
