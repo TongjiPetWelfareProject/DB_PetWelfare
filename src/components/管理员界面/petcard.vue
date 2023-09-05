@@ -1,27 +1,7 @@
 <template>
-  <div style="display: flex;align-items: center;margin-bottom: 20px;">
-    <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="petNameFilter" @input="filterHandler" placeholder="搜索宠物姓名" style="display: flex;align-items: center;text-align: center;width:180px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
-    <span style="font-size:14px;margin-left:25px;font-weight:bold;color: rgb(123, 123, 123);">品种 &nbsp;&nbsp;</span>
-    <el-select @change="filterHandler" style="width:180px;display: flex;align-items: center;text-align: center;" v-model="petKindFilter" clearable placeholder="选择宠物种类">
-      <el-option label="猫" value="猫"></el-option>
-      <el-option label="狗" value="狗"></el-option>  
-  </el-select>
-  <span style="font-size:14px;margin-left:25px;font-weight:bold;color: rgb(123, 123, 123);">健康状况 &nbsp;&nbsp;</span>
-    <el-select @change="filterHandler" style="width:180px;display: flex;align-items: center;text-align: center;" v-model="petHealthFilter" clearable placeholder="选择健康状况">
-      <el-option label="充满活力" value="充满活力"></el-option>  
-      <el-option label="健康" value="健康"></el-option>
-      <el-option label="不健康" value="不健康"></el-option>  
-  </el-select>
-  <span style="font-size:15px;margin-left:25px;font-weight:bold;color: rgb(123, 123, 123);">接种情况 &nbsp;&nbsp;</span>
-    <el-select @change="filterHandler" style="width:180px;display: flex;align-items: center;text-align: center;" v-model="petVaccineFilter" clearable placeholder="选择接种情况">
-      <el-option label="已接种" value="已接种"></el-option>  
-      <el-option label="未接种" value="未接种"></el-option>
-  </el-select>
-</div>
-    <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="520">
+    <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="550">
       <el-table-column label="宠物ID" prop="id"  align="center"></el-table-column>
-      <el-table-column label="宠物名" prop="petname" align="center">
-      </el-table-column>
+      <el-table-column label="宠物名" prop="petname" align="center"></el-table-column>
       <el-table-column label="种类" prop="breed"  align="center"></el-table-column>
       <el-table-column label="年龄" prop="age"  align="center"></el-table-column>
       <el-table-column label="性别" prop="sex"  align="center"></el-table-column>
@@ -146,13 +126,28 @@
 }
 </style>
 
-<script  setup>
-import { ref, onMounted, computed } from 'vue';
+<script lang="ts" setup>
+import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Plus } from '@element-plus/icons-vue';
-import petcard from '@/api/cw_yh_yl_jk';
+import { Delete, Plus } from '@element-plus/icons-vue'
+import petcard from '@/api/cw_yh_yl_jk'
 
-const fileList = ref([]);
+
+interface Pet {
+  id: string;
+  petname: string;
+  breed: string;
+  age: int;
+  sex: string;
+  size: string;
+  popularity: string;
+  health: string;
+  vaccine: string;
+  from: string;
+}
+
+//以下部分和传图有关
+const fileList = ref([])
 const limitNum = 1;
 const hideUpload = ref(false);
 
@@ -160,149 +155,137 @@ function httpRequest(option) {
     fileList.value.push(option);
 }
 
-function handleEditChange(file, fileList) {
-    hideUpload.value = fileList.length >= 1;
+function handleEditChange(file,fileList){
+  hideUpload.value = fileList.length >= 1;
 }
 
-function handleRemove(file, fileList) {
-    hideUpload.value = fileList.length >= 1;
+function handleRemove(file,fileList){
+  hideUpload.value = fileList.length >= 1;
 }
 
-const tableData = ref([]);
-const tableData2= ref([]);
+const tableData = ref<Pet[]>([]);
 const editDialogVisible = ref(false);
 const addDialogVisible = ref(false);
 
-const petNameFilter = ref('');
-const petKindFilter = ref('');
-const petHealthFilter = ref('');
-const petVaccineFilter = ref('');
-function filterHandler(value){
-    tableData.value = tableData2.value.filter(item => {
-    const petnameMatch = item.petname.toLowerCase().includes(petNameFilter.value.toLowerCase());
-    const kindMatch = item.breed === petKindFilter.value || !petKindFilter.value;
-    const healthMatch=item.health===petHealthFilter.value||!petHealthFilter.value
-    const vaccineMatch=item.vaccine===petVaccineFilter.value||!petVaccineFilter.value
-    return petnameMatch && kindMatch&&healthMatch&&vaccineMatch;
-  });
+
+const editDialogInvisible = async() => {
+  editDialogVisible.value = false;//和接口的连接在dialog里
+  console.log("输出图片列表1");
+  console.log(fileList.value);
+  location.reload(); // 这里会刷新整个页面
+
 };
 
-const editDialogInvisible = async () => {
-    editDialogVisible.value = false;
-    console.log("输出图片列表1");
-    console.log(fileList.value);
-    location.reload(); 
+const addDialogInvisible = async() => {
+  addDialogVisible.value = false;//和接口的连接在dialog里
+  location.reload(); // 这里会刷新整个页面
 };
 
-const addDialogInvisible = async () => {
-    addDialogVisible.value = false;
-    location.reload();
-};
-
-const editedPet = ref({
-    id: '',
-    petname: '',
-    health: '',
-    vaccine: '',
-    image: '',
+const editedPet = ref<Pet>({
+  id: '',
+  petname: '',
+  health: '',
+  vaccine: '',
+  image:'',
 });
 
-const newPet = ref({
-    petname: '',
-    breed: '猫',
-    age: 0,
-    sex: '公',
-    size: '小型',
-    health: '充满活力',
-    vaccine: '未接种',
+const newPet = ref<Pet>({
+  petname: '',
+  breed: '猫',
+  age: 0,
+  sex: '公',
+  size: '小型',
+  health: '充满活力',
+  vaccine: '未接种',
 });
 
 const getPetList = async () => {
-    try {
-        const response = await petcard.getPetList();
-        console.log(response);
-        const uniquePets = {};
-        for (const adoptpet of response) {
-            if (!uniquePets[adoptpet.PET_ID]) {
-                uniquePets[adoptpet.PET_ID] = true;
-                console.log(adoptpet.PET_NAME);
-                tableData.value.push({
-                    id: adoptpet.PET_ID,
-                    petname: adoptpet.PET_NAME,
-                    breed: adoptpet.SPECIES,
-                    age: adoptpet.AGE,
-                    sex: adoptpet.SEX,
-                    size: adoptpet.PSIZE,
-                    popularity: adoptpet.POPULARITY,
-                    health: adoptpet.HEALTH_STATE,
-                    vaccine: adoptpet.VACCINE,
-                    from: adoptpet.SOURCE,
-                    avatar: adoptpet.AVATAR,
-                });
-            }
-        }
-        tableData2.value=tableData.value
-    } catch (error) {
-        console.error('获取所有宠物数据时出错：', error);
+  try {
+    const response = await petcard.getPetList();
+    console.log(response);
+    const uniquePets = {};
+    for (const adoptpet of response) {
+      if (!uniquePets[adoptpet.PET_ID]) { // 检查是否已经遍历过该 pet_id
+        uniquePets[adoptpet.PET_ID] = true;
+      console.log(adoptpet.PET_NAME)
+      tableData.value.push({
+        id: adoptpet.PET_ID,
+        petname: adoptpet.PET_NAME,
+        breed: adoptpet.SPECIES,
+        age: adoptpet.AGE,
+        sex: adoptpet.SEX,
+        size: adoptpet.PSIZE,
+        popularity: adoptpet.POPULARITY,
+        health: adoptpet.HEALTH_STATE,
+        vaccine: adoptpet.VACCINE,
+        from:adoptpet.SOURCE,
+        avatar:adoptpet.AVATAR,
+      });
     }
+  }
+  } catch (error) {
+    console.error('获取所有宠物数据时出错：', error);
+  }
 };
 
 onMounted(() => {
-    getPetList();
+  getPetList();
 });
 
 const addRow = () => {
-    addDialogVisible.value = true;
+  addDialogVisible.value = true;//和接口的连接在dialog里
 };
 
-const editRow = (index) => {
-    editedPet.value = {
-        id: tableData.value[index].id,
-        petname: tableData.value[index].petname,
-        health: tableData.value[index].health,
-        vaccine: tableData.value[index].vaccine,
-    };
-    fileList.value.push({
-        name: 'default.jpg',
-        url: tableData.value[index].avatar,
-    });
-    console.log("输出图片列表2");
-    console.log(fileList.value);
-    editDialogVisible.value = true;
+const editRow = (index: number) => {
+  //editedPet.value = { ...tableData.value[index] };
+  editedPet.value = {
+  id: tableData.value[index].id,
+  petname: tableData.value[index].petname,
+  health: tableData.value[index].health,
+  vaccine: tableData.value[index].vaccine,
+};
+  fileList.value.push({
+    name: 'default.jpg',
+    url: tableData.value[index].avatar, // 修改为你的默认图片 URL
+  })
+  console.log("输出图片列表2");
+  console.log(fileList.value);
+  editDialogVisible.value = true;//和接口的连接在dialog里
 };
 
-const deleteRow = async (index) => {
-    try {
-        await petcard.deletePet(tableData.value[index].id);
-        location.reload();
+const deleteRow = async (index: number) => {
+  try {
+      await petcard.deletePet(tableData.value[index].id);
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
-        console.error('删除数据失败：', error);
+      console.error('删除数据失败：', error);
     }
 };
 
-const submitNewPet = async () => {
-    try {
-        await petcard.addPet(newPet.value);
-        location.reload();
+const submitNewPet = async() => {
+  try {
+      await petcard.addPet(newPet.value);//注意：需保证id不能被修改
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
-        console.error('添加数据失败：', error);
+      console.error('添加数据失败：', error);
     }
 };
 
-const submitEditedPet = async () => {
-    try {
-        let param = new FormData();
-        param.append('id', editedPet.value.id);
-        param.append('petname', editedPet.value.petname);
-        param.append('health', editedPet.value.health);
-        param.append('vaccine', editedPet.value.vaccine);
-        fileList.value.forEach((it, index) => {
-            param.append('filename', it.file);
-        });
-        await petcard.editPet(param);
-        location.reload();
+const submitEditedPet = async() => {
+  try {
+      let param = new FormData()
+      param.append('id', editedPet.value.id)
+      param.append('petname', editedPet.value.petname)
+      param.append('health', editedPet.value.health)
+      param.append('vaccine', editedPet.value.vaccine)
+      fileList.value.forEach((it,index)=>{
+          param.append('filename',it.file)
+      })
+      await petcard.editPet(param);//注意：需保证id不能被修改
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
-        console.error('编辑数据失败：', error);
+      console.error('编辑数据失败：', error);
     }
 };
+
 </script>

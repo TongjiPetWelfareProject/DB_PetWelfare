@@ -121,16 +121,6 @@ const newDoctor = ref<Doctor>({
   salary: '',
 });
 
-
-const tableData2=ref([])
-const doctorNameFilter = ref('');
-function filterHandler(value){
-    tableData.value = tableData2.value.filter(item => {
-      const doctornameMatch = item.name.toLowerCase().includes(doctorNameFilter.value.toLowerCase());
-    return doctornameMatch;
-  });
-};
-
 const handleeditPhoneInput = () => {
   // 获取输入框的值并移除所有非数字字符
   const digitsOnly = editedDoctor.value.phone.replace(/\D/g, "");
