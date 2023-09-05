@@ -19,6 +19,7 @@
         <el-descriptions class="margin-top" :column="3" :size="size" border>
     <template #extra>
       <el-button type="primary" @click="dialogFormVisible = true">编辑</el-button>
+      <el-button type="primary" @click="showChangePasswordDialog = true">修改密码</el-button>
 
       <el-dialog v-model="dialogFormVisible" title="修改个人信息">
         <el-form :model="editedform">
@@ -46,7 +47,29 @@
           </span>
         </template>
       </el-dialog>
+
+      <el-dialog v-model="showChangePasswordDialog" title="修改密码">
+        <el-form :model="passwordform">
+          <el-form-item label="当前密码" :label-width="formLabelWidth">
+            <el-input type="password" v-model="passwordform.currentpassword" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="修改密码" :label-width="formLabelWidth">
+            <el-input type="password" v-model="passwordform.editedpassword" autocomplete="off"/>
+          </el-form-item>
+          <el-form-item label="确认密码" :label-width="formLabelWidth">
+            <el-input type="password" v-model="passwordform.confirmedpassword" autocomplete="off"/>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取消</el-button>
+            <el-button type="primary" :disabled="!passwordform.currentpassword || !passwordform.editedpassword || !passwordform.confirmedpassword" @click="editPassword">确认</el-button>
+          </span>
+        </template>
+      </el-dialog>
+
     </template>
+
     <el-descriptions-item>
       <template #label><div class="cell-item"><el-icon :style="iconStyle"><user/></el-icon>用户名</div></template>
       {{ infoform.username }}
@@ -77,8 +100,7 @@
             <el-tab-pane label="我的点赞" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                   <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(lplist.PET_ID)">
-                    <img v-if="lplist.IMAGE" :src="lplist.IMAGE" class="mypagepetimage">
-                    <img v-else src="../../../public/home5.jpg" class="mypagepetimage" alt="Default Image">
+                      <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -98,8 +120,7 @@
             <el-tab-pane label="我的收藏" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                 <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(cplist.PET_ID)">
-                  <img v-if="cplist.IMAGE" :src="cplist.IMAGE" class="mypagepetimage">
-                    <img v-else src="../../../public/home5.jpg" class="mypagepetimage" alt="Default Image">
+                      <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -126,7 +147,7 @@
                     </template>
                     <div class="mypagecardbody">
                       <div style="display: flex; align-items: center; margin-left: 5px;font-size: 15px;">
-                        <img src="@/photos/头像.jpg" style="width: 30px; height: 30px; border-radius: 50%;">
+                        <img :src="userStore.userInfo.Avatar" style="width: 30px; height: 30px; border-radius: 50%;">
                         <span style="margin-left: 5px;">{{cmplist.USER_NAME}}:</span>
                         <span>{{cmplist.CONTENTS}}</span>
                       </div>            
@@ -140,8 +161,7 @@
             <el-tab-pane label="我的领养" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
                 <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(adlist.PET_ID)">
-                  <img v-if="adlist.IMAGE" :src="adlist.IMAGE" class="mypagepetimage">
-                    <img v-else src="../../../public/home5.jpg" class="mypagepetimage" alt="Default Image">
+                      <img src="../../../public/home5.jpg" class="mypagepetimage">
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -222,7 +242,7 @@
                     </template>
                     <div class="mypagecardbody">
                       <div style="display: flex; align-items: center; margin-left: 5px;font-size: 15px;">
-                        <img src="@/photos/头像.jpg" style="width: 30px; height: 30px; border-radius: 50%;">
+                        <img :src="userStore.userInfo.Avatar" style="width: 30px; height: 30px; border-radius: 50%;">
                         <span style="margin-left: 5px;">{{ postcom.username }}:</span>
                         <span>{{ postcom.content }}</span>
                       </div>            
@@ -287,24 +307,6 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 const router = useRouter()
-const avatarUrl = ref('@/photos/头像.jpg')
-
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    avatarUrl.value = URL.createObjectURL(file);
-    const formData = new FormData();
-    formData.append('avatar', file);
-    console.log(file)
-    try {
-      const response = userinfo.avatarAPI(userStore.userInfo.User_ID,formData)
-    } catch (error) {
-      console.error('发送头像数据时出错：', error);
-    }
-  }
-}
-
-
 
 const provinces = ref(jsonData.provinces)
 const selectedProvince = ref('')
@@ -331,6 +333,7 @@ const commentedpetlist = ref([])
 const adoptedpetlist = ref([])
 const fosteredpetlist = ref([])
 const dialogFormVisible = ref(false)
+const showChangePasswordDialog = ref(false)
 const formLabelWidth = '140px'
 const editedform = reactive({
   name: '',
@@ -342,6 +345,12 @@ const editedform = reactive({
   resource: '',
   desc: '',
   phone:''
+})
+
+const passwordform = reactive({
+  currentpassword:'',
+  editedpassword:'',
+  confirmedpassword:''
 })
 
 const submitAvatar = async (event) => {
@@ -431,6 +440,80 @@ const editInfo = async () => {
     console.log(selectedCity)
     try {
       const response = await userinfo.editInfoAPI(userStore.userInfo.User_ID,editedform.name,editedform.phone,selectedProvince.value,selectedCity.value);
+      ElMessage.success({
+      message: '修改成功',
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    userStore.userInfo.User_Name=editedform.name
+    userStore.userInfo.Phone_Number=editedform.phone
+    userStore.userInfo.Address=selectedProvince.value+selectedCity.value
+    // 停顿1秒后刷新
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+    } catch (error) {
+      console.error('获取用户帖子评论时出错：', error);
+      // 显示失败提示
+      ElMessage.error({
+      message: '修改失败，错误信息：' + error.message,
+      duration: 1000 // 持续显示时间（毫秒）
+    });
+    }
+};
+
+const passwordTooShort = ref(false);
+const passwordTooLong = ref(false);
+const passwordError = ref(false)
+const passwordError0 = ref(false)
+const passwordMinLength = 8;
+const passwordMaxLength = 14;
+
+const validatePasswordLength = () => {
+  const passwordLength = passwordform.editedpassword.length;
+  passwordTooShort.value = passwordLength < passwordMinLength;
+  passwordTooLong.value = passwordLength > passwordMaxLength;
+};
+const validconfirmPassword = () => {
+  const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()]).{8,14}$/;
+  
+  if (passwordform.editedpassword !== passwordform.confirmedpassword) {
+    passwordError.value = true;
+  }  else {
+    passwordError.value = false;
+  }
+  if (!passwordRegex.test(passwordform.editedpassword)) {
+    passwordError0.value = true;
+  }
+}
+
+
+const editPassword = async () => {
+
+    // 先进行错误检测
+    validatePasswordLength();
+    validconfirmPassword();
+
+    // 检查是否有错误
+    if (passwordTooShort.value) {
+      ElMessage({ type: 'warning', message: '密码过短，请修改' });
+      return;
+    }
+    if (passwordTooLong.value) {
+      ElMessage({ type: 'warning', message: '密码过长，请修改' });
+      return;
+    }
+    if (passwordError.value) {
+      ElMessage({ type: 'warning', message: '前后密码不一致' });
+      return; 
+    }
+    if (passwordError0.value) {
+      ElMessage({ type: 'warning', message: '密码格式有误，密码长度在8~14之间，必须包含数字、大小写字母、特殊字符（!@#$%^&*()）' });
+      return;
+    }
+
+    showChangePasswordDialog.value = false
+    try {
+      const response = await userinfo.editPasswordAPI(userStore.userInfo.User_ID,passwordform.currentpassword,passwordform.editedpassword);
       ElMessage.success({
       message: '修改成功',
       duration: 1000 // 持续显示时间（毫秒）
@@ -565,8 +648,7 @@ const getUserCollectPets = async () => {
           PET_ID: pet.PET_ID,
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
-          AGE: pet.AGE+'岁',
-          IMAGE:pet.IMAGE
+          AGE: pet.AGE+'岁'
         })
       }
     } catch (error) {
@@ -582,8 +664,7 @@ const getUserLikePets = async () => {
           PET_ID: pet.PET_ID,
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
-          AGE: pet.AGE+'岁',
-          IMAGE:pet.IMAGE
+          AGE: pet.AGE+'岁'
         })
       }
     } catch (error) {
@@ -617,8 +698,7 @@ const getUserAdoptPets = async () => {
           PET_NAME: pet.PET_NAME,
           SEX: pet.SEX=='M'?'弟弟':'妹妹',
           AGE: pet.AGE+'岁',
-          STATE:pet.CENSOR_STATE,
-          IMAGE:pet.IMAGE
+          STATE:pet.CENSOR_STATE
         })
       }
     } catch (error) {

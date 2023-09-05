@@ -19,6 +19,14 @@ export default {
                 throw new Error('编辑个人信息数据时出错：' + error.message);
             });
     },
+    editPasswordAPI(user_id,currentpassword,editedpassword) {
+        return axios
+            .post('/api/editpassword',{user_id,currentpassword,editedpassword})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('修改密码时出错：' + error.message);
+            });
+    },
     userInfoAPI(user_id) {
         return axios
             .post('/api/userinfo',{user_id})
