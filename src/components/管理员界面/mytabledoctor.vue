@@ -9,7 +9,7 @@
       <el-table-column prop="name" label="医生姓名" :width="240" align="center"/>
       <el-table-column prop="phone" label="电话" :width="240" align="center"/>
       <el-table-column prop="workingHours" label="工作时间" :width="200" align="center"/>
-      <!-- <el-table-column prop="salary" label="工资"  /> -->
+      <el-table-column prop="salary" label="工资"  /> 
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button plain type="primary" size="small" @click.prevent="editRow(scope.$index)">
