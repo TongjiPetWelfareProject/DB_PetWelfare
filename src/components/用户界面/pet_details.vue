@@ -383,141 +383,139 @@ const sortedComments = computed(() => {
 });
 </script>
 <style scoped>
-
-  
-  .pet-card {
-    display: flex;
-    justify-content: center;
-  }
-  .card {
-    width: 85%;
-    position: relative; /* 添加相对定位 */
-  }
-  .read-count {
+.pet-card {
+  display: flex;
+  justify-content: center;
+}
+.card {
+  width: 85%;
+  position: relative; /* 添加相对定位 */
+}
+.read-count {
   position: absolute;
   top: 20px; /* 调整距离顶部的位置 */
   right: 20px; /* 调整距离右侧的位置 */
   font-size: 12px;
   color: #888;
-  }
-  .card-content {
-    display: flex;
-  }
-  .pet-image {
-    flex: 1;
-    padding: 10px;
-  }
-  .pet-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  .pet-info {
-    flex: 2;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .pet-info h3 {
-    margin: 0;
-    font-size: 1.2rem;
-  }
-  .pet-info p {
-    margin: 4px 0;
-    font-size: 1rem;
-    color: #888;
-  }
-  .round-button {
-    border-radius: 20%; /* 圆形按钮 */
-    border: none; /* 去掉按钮边框 */
-    background-color: transparent; /* 设置背景颜色为透明 */
-  }
-  .round-button img {
-    vertical-align: middle;
-  }
-  .icon {
-    vertical-align: middle;
-    width: 40px; /* 调整图片宽度 */
-    height: 40px; /* 调整图片高度 */
-  }
-  .interactions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .demonstration {
-    color: var(--el-text-color-secondary);
-  }
-  .el-carousel__item h3 {
-    color: #475669;
-    opacity: 0.75;
-    line-height: 150px;
-    margin: 0;
-    text-align: center;
-  }
-  .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-  }
-  .el-carousel__item:nth-child(2n + 1) {
-    background-color: #d3dce6;
-  }
-  .image-container {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-  .single-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .interactions {
+}
+.card-content {
+  display: flex;
+}
+.pet-image {
+  flex: 1;
+  padding: 10px;
+}
+.pet-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.pet-info {
+  flex: 2;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.pet-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.pet-info p {
+  margin: 4px 0;
+  font-size: 1rem;
+  color: #888;
+}
+.round-button {
+  border-radius: 20%; /* 圆形按钮 */
+  border: none; /* 去掉按钮边框 */
+  background-color: transparent; /* 设置背景颜色为透明 */
+  cursor: pointer;
+}
+.round-button img {
+  vertical-align: middle;
+}
+.icon {
+  vertical-align: middle;
+  width: 30px; /* 调整图片宽度 */
+  height: 30px; /* 调整图片高度 */
+}
+.interactions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.demonstration {
+  color: var(--el-text-color-secondary);
+}
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 0.75;
+  line-height: 150px;
+  margin: 0;
+  text-align: center;
+}
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+.image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.single-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.interactions {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
-  }
-  .interactions span {
+}
+.interactions span {
   margin-left: 0.5rem;
-  }
-  .comment-part {
-    margin-left: auto;
-    margin-right: auto;
-    width: 85%;
-    }
-    .comment {
-    display: flex;
-    }
-    .comment-content {
-    margin-left: 10px;
-    border-bottom:1px solid #dad9d9;
-    width:90%;
+}
+.comment-part {
+  margin-left: auto;
+  margin-right: auto;
+  width: 85%;
+}
+.comment {
+display: flex;
+}
+.comment-content {
+  margin-left: 10px;
+  border-bottom:1px solid #dad9d9;
+  width:90%;
+}
   
-    }
-    
-    .comment-form {
-      display: flex;
-      align-items: center; /* 垂直居中对齐 */
-    }
-    .comment-input {
-      flex: 1; /* 评论输入框占据剩余空间 */
-      margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
-    }
-  h2, h3 {
+.comment-form {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+}
+.comment-input {
+  flex: 1; /* 评论输入框占据剩余空间 */
+  margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
+}
+h2, h3 {
   font-weight: bold;
-  }
-  .pet-label {
-    font-weight: bold; /* 设置标签的字体为粗体 */
-    color: #000; /* 设置标签的文字颜色 */
-    font-size: 20px;
-  }
-  .pet-value {
-    font-weight: normal; /* 设置数值的字体为普通（非粗体） */
-    color: #666; /* 设置数值的文字颜色 */
-  }
-  .modern-button {
+}
+.pet-label {
+  font-weight: bold; /* 设置标签的字体为粗体 */
+  color: #000; /* 设置标签的文字颜色 */
+  font-size: 20px;
+}
+.pet-value {
+  font-weight: normal; /* 设置数值的字体为普通（非粗体） */
+  color: #666; /* 设置数值的文字颜色 */
+}
+.modern-button {
   font-weight: bold; /* 设置标签的字体为粗体 */
   background-color: #5683c7; /* 背景颜色 */
   color: white; /* 字体颜色 */
@@ -528,27 +526,27 @@ const sortedComments = computed(() => {
   cursor: pointer; /* 鼠标悬停时显示手型光标 */
   transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
 }
-  .modern-button:hover {
-    background-color: #396097; /* 鼠标悬停时的背景颜色 */
-    color: white; /* 鼠标悬停时的字体颜色 */
-  }
-  .post-label {
-    font-weight: bold; /* 设置标签的字体为粗体 */
-    color: #000; /* 设置标签的文字颜色 */
-    font-size: 15px;
-  }
-  .post-value {
-      font-weight: normal; /* 设置数值的字体为普通（非粗体） */
-      color: #666; /* 设置数值的文字颜色 */
-  }
-  .custom-comment-time {
-    font-size: 12px; /* Adjust the font size */
-    color: #999; /* Adjust the text color to a lighter gray */
-  }
-  .comment-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* 调整日期和链接之间的间距 */
-    margin-top:-10px
-  }
-  </style>
+.modern-button:hover {
+  background-color: #396097; /* 鼠标悬停时的背景颜色 */
+  color: white; /* 鼠标悬停时的字体颜色 */
+}
+.post-label {
+  font-weight: bold; /* 设置标签的字体为粗体 */
+  color: #000; /* 设置标签的文字颜色 */
+  font-size: 15px;
+}
+.post-value {
+    font-weight: normal; /* 设置数值的字体为普通（非粗体） */
+    color: #666; /* 设置数值的文字颜色 */
+}
+.custom-comment-time {
+  font-size: 12px; /* Adjust the font size */
+  color: #999; /* Adjust the text color to a lighter gray */
+}
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 调整日期和链接之间的间距 */
+  margin-top:-10px
+}
+</style>

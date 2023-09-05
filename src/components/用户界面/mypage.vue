@@ -979,8 +979,12 @@ input[type="file"] {
 }
 
 .mypagepetimage{
-  min-height:200px;
-  width:300px;
+  width: 100%;
+  display: block;
+  max-width: 252.41px; /* 设置最大宽度 */
+  height: 160.45px; /* 设置最大高度 */
+  width: auto; /* 使宽度自动调整以保持宽高比 */
+  border-radius: 10px; /* 设置圆角半径为10像素 */
 }
 
 .demo-tabs-pane2{
