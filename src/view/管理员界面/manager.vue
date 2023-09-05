@@ -114,12 +114,12 @@ const handleClose = (key, keyPath) => {
         <el-header class="manager">
           <div class="headercontent">
             <div class="left-content">
-              <el-text class="welcome">Hello!&nbsp;&nbsp;</el-text>
-              <el-text v-if="userStore.userInfo.User_ID" class="welcome">{{ userStore.userInfo.User_Name }}</el-text>
-              
+              <el-avatar :src="userStore.userInfo.Avatar" size="50"></el-avatar>
+              <el-text v-if="userStore.userInfo.User_ID" class="welcome">&nbsp;Hello!&nbsp;{{ userStore.userInfo.User_Name }}</el-text>
+              <el-text v-if="userStore.userInfo.User_ID" class="welcome2">{{ formattedDateTime }}</el-text>
             </div>
             <div class="right-content">
-              <el-text v-if="userStore.userInfo.User_ID" class="welcome2">{{ formattedDateTime }}</el-text>
+            
               <el-button class="usermodel">
                 <router-link to="/" class="link-text">进入用户模式</router-link>
               </el-button>
@@ -267,8 +267,8 @@ body, html {
 
 .welcome2{
  /* margin-top: 10px; */
- margin-left:8vw;
- font-size: 16px;
+ margin-left:15vw;
+ font-size: 15px;
  font-weight: light;
  /* justify-content: center;
  text-align: center; */
@@ -276,8 +276,8 @@ body, html {
 
 .usermodel {
   /* margin-top: 10px; */
-  margin-left: 25vw;
-  background-color: #edf4f9; /* 背景颜色 */
+  margin-left: 20vw;
+  background-color: rgb(234, 245, 252); /* 背景颜色 */
   color: white; /* 字体颜色 */
   border: none; /* 去除边框 */
   border-radius: 5px; /* 圆角 */
@@ -305,7 +305,8 @@ body, html {
   display: flex;
   align-items: center;
   float:right;
-  right:2vw
+  margin-right:2vw;
+  /* margin-left:4vw */
 }
 
 .manager{
