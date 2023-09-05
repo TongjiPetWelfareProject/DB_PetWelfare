@@ -173,9 +173,11 @@ const goToPet = (pet) => {
     <div class="pet-list-container">
       <div class="pet-list">
         <div v-for="pet in filteredPets" :key="pet.id" class="pet-card" @click="goToPet(pet)">
-          <el-card :body-style="{ padding: '0px' }" style="width:100%">
+          <el-card :body-style="{ padding: '0px' }" style="width:100%" class="pet-card-inside">
+      <div class="center-container">
       <img v-if="pet.image" :src="pet.image" class="adopt-image">
       <img v-else src="../../../public/home5.jpg" class="adopt-image" alt="Default Image">
+      </div>
       <div style="padding: 14px;display: flex;
   justify-content: center;
   flex-direction: column; ">
@@ -273,6 +275,11 @@ select:focus {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
 }
 
+/*.pet-card-inside {
+  display: flex;
+  justify-content: center;
+}*/
+
 .pet-details {
   flex: 1; /* 设置其他元素区域占据剩余的可用空间 */
   margin-bottom: 0px; /* 调整每个段落元素（品种、性别、年龄、人气）的底部边距 */
@@ -292,12 +299,20 @@ select:focus {
   display: flex;
 }
 
+.center-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
+
 .adopt-image {
   width: 100%;
   display: block;
-  max-width: 252.41px; /* 设置最大宽度 */
+  /*max-width: 252.41px;*/ /* 设置最大宽度 */
+  width: 252.41px;
   height: 160.45px; /* 设置最大高度 */
-  width: auto; /* 使宽度自动调整以保持宽高比 */
+  /*width: auto;*/ /* 使宽度自动调整以保持宽高比 */
   border-radius: 10px; /* 设置圆角半径为10像素 */
+  margin-top: 10px;
 }
 </style>
