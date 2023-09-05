@@ -5,7 +5,6 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import jsonData from './values.json';
 import background from './login-register.vue'
-
 const provinces = ref(jsonData.provinces);
 const selectedProvince = ref('');
 const cities = ref([]);
@@ -16,10 +15,11 @@ const username= ref('');
 const password= ref('');
 const confirmPassword= ref('');
 const passwordError = ref(false);
+const passwordError0 = ref(false);
 const passwordTooShort = ref(false);
 const passwordTooLong = ref(false);
 const passwordMinLength = 8;
-const passwordMaxLength = 16;
+const passwordMaxLength = 14;
 
 const router = useRouter();
 
@@ -69,10 +69,16 @@ const validatePhoneNumber = () => {
 };
 
 const validconfirmPassword = () => {
-  if(password.value!=confirmPassword.value)
+  const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()]).{8,14}$/;
+  
+  if (password.value !== confirmPassword.value) {
     passwordError.value = true;
-  else
+  }  else {
     passwordError.value = false;
+  }
+  if (!passwordRegex.test(password.value)) {
+    passwordError0.value = true;
+  }
 }
 
 const submitForm = async() => {
@@ -84,27 +90,25 @@ const submitForm = async() => {
 
     // 检查是否有错误
     if (phoneError.value) {
-      // 如果有错误，使用 ElMessage 提示错误信息
       ElMessage({ type: 'warning', message: '电话号码填入有误，请修改' });
-      return; // 不继续执行提交
+      return;
     }
     if (passwordTooShort.value) {
-      // 如果有错误，使用 ElMessage 提示错误信息
       ElMessage({ type: 'warning', message: '密码过短，请修改' });
-      return; // 不继续执行提交
+      return;
     }
     if (passwordTooLong.value) {
-      // 如果有错误，使用 ElMessage 提示错误信息
       ElMessage({ type: 'warning', message: '密码过长，请修改' });
-      return; // 不继续执行提交
+      return;
     }
     if (passwordError.value) {
-      // 如果有错误，使用 ElMessage 提示错误信息
-      ElMessage({ type: 'warning', message: '密码格式有误或前后密码不一致，密码长度在8~14之间，必须包含数字、大小写字母、特殊字符（/!@#$%^&*()）' });
-      return; // 不继续执行提交
+      ElMessage({ type: 'warning', message: '前后密码不一致' });
+      return;
     }
-
-
+    if (passwordError0.value) {
+      ElMessage({ type: 'warning', message: '密码格式有误，密码长度在8~14之间，必须包含数字、大小写字母、特殊字符（!@#$%^&*()）' });
+      return;
+    }
     const data = {
       username: username.value,
       password: password.value,
@@ -115,7 +119,8 @@ const submitForm = async() => {
     try {
         const res = await registerAPI(data);
         ElMessage({type:'success',message:res})
-        router.push('/login')
+        // userStore.userInfo.
+        router.push('/')
         console.log(res); // 输出注册API返回的结果到控制台
     } catch (error) {
         console.error('出错'); // 如果有错误发生，输出错误到控制台
@@ -309,7 +314,7 @@ html, body {
 .error-password {
   color: red;
   position: absolute;
-  margin-left: 25%;
+  margin-left: 15%;
 }
 
 .register-link {
