@@ -2,12 +2,12 @@
   <div>
     <div class="tablecontainerdonate2">
        <el-table :data="currentPageData" stripe style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" show-header="false">
-          <el-table-column prop="time" label="捐款日期" sortable :sort-method="sortTime" />
-          <el-table-column prop="name" label="用户名"   />
-          <el-table-column prop="amount" label="捐款金额"  sortable :sort-method="sortAmount"/>
+          <el-table-column prop="time" label="捐款日期" align="center"  sortable :sort-method="sortTime" />
+          <el-table-column prop="name" label="用户名" align="center"   />
+          <el-table-column prop="amount" label="捐款金额" align="center" sortable :sort-method="sortAmount"/>
         </el-table>
       </div>
-    <br>
+  
     <el-pagination
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"

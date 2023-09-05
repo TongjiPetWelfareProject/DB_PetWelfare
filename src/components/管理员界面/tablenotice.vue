@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
+    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" max-height="550">
       <el-table-column prop="id" label="公告ID" width="70" align="center"/>
       <el-table-column prop="title" label="公告标题" width="120" align="center"/>   
-      <el-table-column label="公告内容" width="460" align="center">
+      <el-table-column label="公告内容"  align="center">
         <template v-slot="{ row }">
           <div class="announcement-cell">
             <el-button type="text" @click="showAnnouncement(row)">
@@ -16,7 +16,7 @@
       <el-table-column prop="employeeName" label="员工姓名" width="80" align="center"/>
       <el-table-column label="操作" width="180" align="center">
         <template v-slot="{row}">
-          <el-button size="mini" type="primary" @click="showEditNoticeDialog(row)">编辑</el-button>
+          <el-button size="small" plain type="primary" @click="showEditNoticeDialog(row)">编辑</el-button>
           <el-dialog title="编辑公告" v-model="editNoticeDialogVisible" :modal="true">
             <el-form>
               <el-form-item label="公告标题">
@@ -33,7 +33,8 @@
               <el-button type="primary" @click="submitEditedNotice">保存</el-button>
             </span>
           </el-dialog>
-          <el-button size="mini" type="danger" @click="deleteRow(row)">删除</el-button>
+          &nbsp;
+          <el-button size="small" plain type="danger" @click="deleteRow(row)">删除</el-button>
           <!-- <el-popconfirm title="Are you sure to delete this?">
             <template #reference>
               <el-button size="mini" type="danger" @click="deleteRow(row)">删除</el-button>
@@ -42,9 +43,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <br>
     <el-pagination layout="prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize"  @update:current-page="handlePageChange"  /><br>
-    <el-button type="primary" @click="showAddNoticeDialog">添加</el-button>
+    <el-button type="primary" @click="showAddNoticeDialog">添加公告</el-button>
     <el-dialog title="发布新公告" v-model="addNoticeDialogVisible">
       <el-form>
       <el-form-item label="公告标题">
@@ -54,7 +54,6 @@
         <el-input v-model="newNoticeContent" placeholder="输入公告内容" type="textarea" :rows="6"></el-input>
       </el-form-item>
     </el-form>
-      <br>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addNoticeDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="submitNewNotice">发布</el-button>

@@ -6,22 +6,23 @@
       <el-button @click="filterTag('aborted')">审核失败</el-button>
       <el-button @click="filterTag('legitimate')">审核成功</el-button>
     </el-button-group>
-    <el-table :data="filteredData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
-      <el-table-column prop="date" label="时间" sortable width="170">
+    <el-table :data="filteredData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);"
+    max-height="550">
+      <el-table-column prop="date" label="时间" :width="180" align="center" sortable>
       </el-table-column>
-      <el-table-column prop="petName" label="宠物名" width="170">
+      <el-table-column prop="petName" label="宠物名" :width="100" align="center" >
       </el-table-column>
-      <el-table-column prop="userName" label="用户名" width="170">
+      <el-table-column prop="userName" label="用户名" :width="100" align="center">
       </el-table-column>
-      <el-table-column prop="reason" label="理由" width="500">
+      <el-table-column prop="reason" label="理由" :width="400" align="center">
       </el-table-column>
-      <el-table-column label="操作" width="200">
+      <el-table-column label="操作" align="center">
         <template #default="scope">
-          <el-button  v-if="scope.row.censor_status === 'to be censored'" link type="success" size="small"
+          <el-button  v-if="scope.row.censor_status === 'to be censored'" plain type="success" size="small"
             @click.prevent="approveApplication(scope.$index)">
             同意
           </el-button>
-          <el-button  v-if="scope.row.censor_status === 'to be censored'" link type="danger" size="small"
+          <el-button  v-if="scope.row.censor_status === 'to be censored'" plain type="danger" size="small"
             @click.prevent="rejectApplication(scope.$index)">
             拒绝
           </el-button>
@@ -43,7 +44,8 @@
 <style>
 .status-label {
     font-weight: bold;
-    padding: 6px 12px; /* 调整内边距以控制背景样式大小 */
+    font-size:13px;
+    padding:4px 10px; /* 调整内边距以控制背景样式大小 */
     border-radius: 20px; /* 添加圆角 */
     display: inline-block; /* 使元素成为行内块级元素，以适应文本大小 */
   }

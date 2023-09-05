@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
-      <el-table-column prop="postId" label="帖子ID" width="80"></el-table-column>
-      <el-table-column prop="employeeId" label="用户ID" width="120"></el-table-column>
-      <el-table-column prop="postTime" label="发帖时间" width="200" sortable :sort-method="sortTime"></el-table-column>
+    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" max-height="580">
+      <el-table-column prop="postId" label="帖子ID" :width="80" align="center"></el-table-column>
+      <el-table-column prop="employeeId" label="用户ID" width="120" align="center"></el-table-column>
+      <el-table-column prop="postTime" label="发帖时间" width="200" align="center" sortable :sort-method="sortTime"></el-table-column>
       <el-table-column label="内容" width="500" align="center">
         <template v-slot="{ row }">
           <div class="announcement-cell">
@@ -13,10 +13,10 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="是否通过" width="120">
+      <el-table-column label="是否通过" align="center">
         <template v-slot="scope">
-          <el-button size="mini" type="primary" @click="approveApplication(scope.$index)">Y</el-button>
-          <el-button size="mini" type="danger" @click="rejectApplication(scope.$index)">N</el-button>
+          <el-button  plain type="success" @click="approveApplication(scope.$index)">Y</el-button>
+          <el-button  plain type="danger" @click="rejectApplication(scope.$index)">N</el-button>
         </template>
       </el-table-column>
     </el-table> 

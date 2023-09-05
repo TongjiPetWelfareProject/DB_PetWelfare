@@ -1,18 +1,18 @@
 <template>
   <div>
     <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
-      max-height="500">
-      <el-table-column prop="id" label="医生ID" width="120" />
-      <el-table-column prop="name" label="医生姓名" width="170" />
-      <el-table-column prop="phone" label="电话" width="150" />
-      <el-table-column prop="workingHours" label="工作时间" width="120" />
-      <el-table-column prop="salary" label="工资" width="120" />
-      <el-table-column label="操作" width="160">
+      max-height="550">
+      <el-table-column prop="id" label="医生ID"  :width="120" align="center"/>
+      <el-table-column prop="name" label="医生姓名" :width="240" align="center"/>
+      <el-table-column prop="phone" label="电话" :width="240" align="center"/>
+      <el-table-column prop="workingHours" label="工作时间" :width="200" align="center"/>
+      <!-- <el-table-column prop="salary" label="工资"  /> -->
+      <el-table-column label="操作" align="center">
         <template #default="scope">
-          <el-button link type="primary" size="small" @click.prevent="editRow(scope.$index)">
+          <el-button plain type="primary" size="small" @click.prevent="editRow(scope.$index)">
             编辑
           </el-button>
-          <el-button link type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
+          <el-button plain type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
             删除
           </el-button>
         </template>

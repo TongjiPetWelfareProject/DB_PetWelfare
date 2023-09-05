@@ -8,28 +8,28 @@
       <el-button @click="filterTag('invalid')">无效申请</el-button>
       <el-button @click="filterTag('outdated')">过期申请</el-button>
     </el-button-group>
-    <el-table :data="filteredData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
-      <el-table-column prop="date" label="时间" sortable width="120">
+    <el-table :data="filteredData" :default-sort="{ prop: 'date', order: 'descending' }" max-height="550" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
+      <el-table-column prop="date" label="时间" :width="180" align="center" sortable >
       </el-table-column>
-      <el-table-column prop="petName" label="宠物名" width="170">
+      <el-table-column prop="petName" label="宠物名" :width="180" align="center">
       </el-table-column>
-      <el-table-column prop="userName" label="用户名" width="170">
+      <el-table-column prop="userName" label="用户名" :width="180" align="center">
       </el-table-column>
-      <el-table-column prop="days" label="天数" width="170">
+      <el-table-column prop="days" label="天数"  align="center">
       </el-table-column>
-      <el-table-column label="操作" width="200">
+      <el-table-column label="操作" align="center">
         <template #default="scope">
-          <el-button  v-if="scope.row.censor_status === 'to be censored'" link type="success" size="small"
+          <el-button  v-if="scope.row.censor_status === 'to be censored'" plain type="success" size="small"
             @click.prevent="approveApplication(scope.$index)">
             同意
           </el-button>
-          <el-button  v-if="scope.row.censor_status === 'to be censored'" link type="danger" size="small"
+          <el-button  v-if="scope.row.censor_status === 'to be censored'" plain type="danger" size="small"
             @click.prevent="rejectApplication(scope.$index)">
             拒绝
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="censor_status" label="审核状态" width="170">
+      <el-table-column prop="censor_status" label="审核状态" :width="180" align="center">
         <template #default="scope">
          <!-- 使用条件语句来显示对应的标签 -->
          <span class="status-label to-be-censored" v-if="scope.row.censor_status === 'to be censored'">未审核</span>
@@ -120,7 +120,7 @@ const rejectApplication = async(index: number) => {
 <style>
 .status-label {
     font-weight: bold;
-    padding: 6px 12px; /* 调整内边距以控制背景样式大小 */
+    padding: 4px 10px; /* 调整内边距以控制背景样式大小 */
     border-radius: 20px; /* 添加圆角 */
     display: inline-block; /* 使元素成为行内块级元素，以适应文本大小 */
   }

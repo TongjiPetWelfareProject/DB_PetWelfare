@@ -1,21 +1,21 @@
 <template>
-    <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="500">
-      <el-table-column label="宠物ID" prop="id" width="120"></el-table-column>
-      <el-table-column label="宠物名" prop="petname" width="120"></el-table-column>
-      <el-table-column label="种类" prop="breed" width="80"></el-table-column>
-      <el-table-column label="年龄" prop="age" width="80"></el-table-column>
-      <el-table-column label="性别" prop="sex" width="80"></el-table-column>
-      <el-table-column label="体型" prop="size" width="80"></el-table-column>
-      <el-table-column label="人气" prop="popularity" width="80"></el-table-column>
-      <el-table-column label="健康状况" prop="health" width="120"></el-table-column>
-      <el-table-column label="疫苗状况" prop="vaccine" width="120"></el-table-column>
-      <el-table-column label="来源" prop="from" width="120"></el-table-column>
-      <el-table-column label="操作" width="200">
+    <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="550">
+      <el-table-column label="宠物ID" prop="id"  align="center"></el-table-column>
+      <el-table-column label="宠物名" prop="petname" align="center"></el-table-column>
+      <el-table-column label="种类" prop="breed"  align="center"></el-table-column>
+      <el-table-column label="年龄" prop="age"  align="center"></el-table-column>
+      <el-table-column label="性别" prop="sex"  align="center"></el-table-column>
+      <el-table-column label="体型" prop="size"  align="center"></el-table-column>
+      <el-table-column label="人气" prop="popularity"  align="center"></el-table-column>
+      <el-table-column label="健康状况" prop="health"  align="center"></el-table-column>
+      <el-table-column label="疫苗状况" prop="vaccine"  align="center"></el-table-column>
+      <el-table-column label="来源" prop="from"  align="center"></el-table-column>
+      <el-table-column label="操作" width="200" align="center">
         <template #default="scope">
-          <el-button link type="primary" size="small" @click.prevent="editRow(scope.$index)">
+          <el-button plain type="primary" size="small" @click.prevent="editRow(scope.$index)">
             编辑
           </el-button>
-          <el-button link type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
+          <el-button plain type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
             删除
           </el-button>
         </template>
@@ -186,6 +186,7 @@ const editedPet = ref<Pet>({
   petname: '',
   health: '',
   vaccine: '',
+  image:'',
 });
 
 const newPet = ref<Pet>({

@@ -2,26 +2,26 @@
   <div>
     <el-button-group>
       <el-button @click="filterTag('全部')">全部</el-button>
-      <el-button @click="filterTag('记录')">记录</el-button>
       <el-button @click="filterTag('申请')">申请</el-button>
+      <el-button @click="filterTag('记录')">记录</el-button>
     </el-button-group>
     <el-table :data="filteredData" :default-sort="{ prop: 'medicalDate', order: 'descending' }"
-      style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" max-height="500">
-      <el-table-column prop="petId" label="宠物ID" width="100">
+      style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" max-height="550">
+      <el-table-column prop="petId" label="宠物ID" :width="80" align="center">
       </el-table-column>
-      <el-table-column prop="petName" label="宠物名" width="100">
+      <el-table-column prop="petName" label="宠物名" :width="100" align="center">
       </el-table-column>
-      <el-table-column prop="vetId" label="医生ID" width="100">
+      <el-table-column prop="vetId" label="医生ID" :width="80" align="center">
       </el-table-column>
-      <el-table-column prop="vetName" label="医生姓名" width="100">
+      <el-table-column prop="vetName" label="医生姓名" :width="140" align="center">
       </el-table-column>
-      <el-table-column prop="reserveTime" label="预约时间" sortable width="150">
+      <el-table-column prop="reserveTime" label="预约时间" sortable :width="160" align="center">
       </el-table-column>
-      <el-table-column prop="treatTime" label="看病时间" sortable width="150">
+      <el-table-column prop="treatTime" label="看病时间" sortable :width="160" align="center">
       </el-table-column>
-      <el-table-column prop="category" label="医疗内容" width="300">
+      <el-table-column prop="category" label="医疗内容" :width="240" align="center">
       </el-table-column>
-      <el-table-column label="操作" width="120">
+      <el-table-column label="操作"  align="center">
         <template #default="scope">
           <!--<el-button v-if="scope.row.tag === '记录'" link type="primary" size="small"
             @click.prevent="editRow(scope.$index)">
@@ -31,11 +31,11 @@
             @click.prevent="deleteRow(scope.$index)">
             删除
           </el-button>-->
-          <el-button v-if="scope.row.tag === '申请'" link type="success" size="small"
+          <el-button v-if="scope.row.tag === '申请'" plain type="success" size="small"
             @click.prevent="approveRow(scope.$index)">
             完成
           </el-button>
-          <el-button v-if="scope.row.tag === '申请'" link type="danger" size="small"
+          <el-button v-if="scope.row.tag === '申请'" plain type="danger" size="small"
             @click.prevent="postponeRow(scope.$index)">
             延期
           </el-button>

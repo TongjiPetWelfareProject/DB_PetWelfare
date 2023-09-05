@@ -1,14 +1,14 @@
 <template>
   <div>
-    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange">
-      <el-table-column prop="roomId" label="房间号" width="180%"></el-table-column>
-      <el-table-column prop="roomStatus" label="房间情况" width="180%"></el-table-column>
-      <el-table-column prop="storey" label="楼层" width="180%"></el-table-column>
-      <el-table-column prop="lastCleaningTime" label="上次清理时间" width="180%" sortable
+    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" @selection-change="handleSelectionChange" max-height="580">
+      <el-table-column prop="roomId" label="房间号" width="160" align="center"> </el-table-column>
+      <el-table-column prop="roomStatus" label="房间情况" width="160" align="center"></el-table-column>
+      <el-table-column prop="storey" label="楼层" width="220" align="center"></el-table-column>
+      <el-table-column prop="lastCleaningTime" label="上次清理时间" width="220" align="center" sortable
         :sort-method="sortTime"></el-table-column>
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" align="center">
         <template v-slot="scope">
-          <el-button size="mini" type="primary" @click="showEditRoomDialog(scope.row)">完成打扫</el-button>
+          <el-button size="small" type="primary" plain @click="showEditRoomDialog(scope.row)">完成打扫</el-button>
           <!--
           <el-dialog title="编辑房间信息" v-model="editRoomDialogVisible">
             <el-form>
