@@ -1,13 +1,18 @@
 <template>
   <div>
+    <div style="display:flex;align-items: center;margin-bottom: 20px;">
+      <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="petNameFilter" @input="filterHandler" placeholder="搜索宠物姓名" style="margin-right:40px;width:200px;px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
     <el-button-group>
       <el-button @click="filterTag('全部')">全部</el-button>
       <el-button @click="filterTag('to be censored')">未审核</el-button>
       <el-button @click="filterTag('aborted')">审核失败</el-button>
       <el-button @click="filterTag('legitimate')">审核成功</el-button>
     </el-button-group>
+    
+  </div>
+
     <el-table :data="filteredData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);"
-    max-height="550">
+    max-height="530">
       <el-table-column prop="date" label="时间" :width="180" align="center" sortable>
       </el-table-column>
       <el-table-column prop="petName" label="宠物名" :width="100" align="center" >
@@ -110,12 +115,21 @@ const filterTag = (tag: string) => {
   selectedTag.value = tag
 }
 
+const tableData2= ref([]);
+const petNameFilter = ref('');
+function filterHandler(value){
+    petNameFilter.value = value;
+    tableData.value = tableData2.value.filter(item => {
+        return item.petName.toLowerCase().includes(petNameFilter.value.toLowerCase());
+    });
+};
 const fetchData = async () => {
   try {
     // const response = await axios.get('/api/manage-adopt');
     // tableData.value = response.data; // 假设API返回一个符合AdoptionRecord结构的对象数组
     tableData.value = await fetchAdoptionRecords();
     console.log(tableData);
+    tableData2.value=tableData.value;
   } catch (error) {
     console.error('获取数据时出错：', error);
   }

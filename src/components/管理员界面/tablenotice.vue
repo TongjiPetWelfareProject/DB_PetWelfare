@@ -84,7 +84,7 @@ import { ref,onMounted,nextTick } from 'vue'
 import { ElTable, ElMessageBox, ElButton,ElMessage } from 'element-plus'
 import gg_rqb_jk from '@/api/gg_rqb_jk'
 import { useUserStore } from '@/store/user'; 
-
+import { useRouter } from 'vue-router'
 export default {
   components: {
     ElButton,
@@ -106,6 +106,8 @@ export default {
     const pageSize = ref(10);
     const totalItems = ref(0);
     const editedNoticeId=ref('');
+
+    const router=useRouter();
 
     const selectedRowIndex = ref(-1); 
 
@@ -178,6 +180,7 @@ export default {
         })
         console.log('公告内容发布成功', response);
         addNoticeDialogVisible.value = false;
+        window.location.reload();
       })
       .catch(error => {
         console.error('发布公告内容失败', error);

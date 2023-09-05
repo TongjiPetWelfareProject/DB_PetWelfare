@@ -1,10 +1,13 @@
 <template>
   <div>
+    <div style="display:flex;align-items: center;margin-bottom: 20px;">
+      <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="petNameFilter" @input="filterHandler" placeholder="搜索宠物姓名" style="margin-right:40px;width:200px;px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
     <el-button-group>
       <el-button @click="filterTag('全部')">全部</el-button>
       <el-button @click="filterTag('申请')">申请</el-button>
       <el-button @click="filterTag('记录')">记录</el-button>
     </el-button-group>
+    </div>
     <el-table :data="filteredData" :default-sort="{ prop: 'medicalDate', order: 'descending' }"
       style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" max-height="550">
       <el-table-column prop="petId" label="宠物ID" :width="80" align="center">
@@ -103,6 +106,17 @@ const editedMedicalRecord = ref<Pet>({
   category: '',
 });
 
+const tableData2= ref([]);
+const petNameFilter = ref('');
+const petKindFilter=ref('')
+function filterHandler(value){
+    petNameFilter.value = value;
+    tableData.value = tableData2.value.filter(item => {
+        return item.petName.toLowerCase().includes(petNameFilter.value.toLowerCase());
+    });
+};
+
+
 const postponedMedicalApplication = ref<Pet>({
   petId: '',
   vetId: '',
@@ -129,6 +143,7 @@ const getTreatList = async () => {
       console.log(data.RESERVE_TIME.length)
     }
     console.log(tableData)
+    tableData2.value=tableData.value;
   } catch (error) {
     console.error('获取医疗列表时出错：', error);
   }
