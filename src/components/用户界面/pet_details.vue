@@ -99,16 +99,16 @@
       <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;" :disabled="!newComment">发布</button>
     </div>
   </div>
-  <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
+  <h3 style="font-size: 24px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
   <p></p>
   <div v-for="comment in sortedComments" :key="comment.commenter_id" class="comment">
-    <el-avatar v-if="comment.commenter_avatar" :src="comment.commenter_avatar" :size="50"></el-avatar>
-    <div class="comment-content">
+    <el-avatar style="margin-top:20px" v-if="comment.commenter_avatar" :src="comment.commenter_avatar" :size="50"></el-avatar>
+    <div style="margin-top:20px" class="comment-content">
       <p class="post-label">{{ comment.commenter }}</p>
       <p class="post-value">{{ comment.comment_content }}</p>
       <div class="comment-actions">
         <p v-if="comment.commenter_avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.comment_time) }}</p>
-        <a v-if="comment.commenter_avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)">删除</a>
+        <el-button type="warning" v-if="comment.commenter_avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)" link>删除</el-button>
       </div>
     </div>
   </div>
@@ -438,8 +438,8 @@ const sortedComments = computed(() => {
   }
   .icon {
     vertical-align: middle;
-    width: 50px; /* 调整图片宽度 */
-    height: 50px; /* 调整图片高度 */
+    width: 40px; /* 调整图片宽度 */
+    height: 40px; /* 调整图片高度 */
   }
   .interactions {
     display: flex;
@@ -492,6 +492,9 @@ const sortedComments = computed(() => {
     }
     .comment-content {
     margin-left: 10px;
+    border-bottom:1px solid #dad9d9;
+    width:90%;
+  
     }
     
     .comment-form {
@@ -516,11 +519,11 @@ const sortedComments = computed(() => {
   }
   .modern-button {
   font-weight: bold; /* 设置标签的字体为粗体 */
-  background-color: #4b6fa5; /* 背景颜色 */
+  background-color: #5683c7; /* 背景颜色 */
   color: white; /* 字体颜色 */
-  font-size: 24px; /* 字体大小 */
+  font-size: 22px; /* 字体大小 */
   border: none; /* 去掉边框 */
-  border-radius: 20px; /* 圆角 */
+  border-radius: 15px; /* 圆角 */
   padding: 15px 20px; /* 按钮内边距，根据需要调整 */
   cursor: pointer; /* 鼠标悬停时显示手型光标 */
   transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
@@ -546,5 +549,6 @@ const sortedComments = computed(() => {
     display: flex;
     align-items: center;
     gap: 10px; /* 调整日期和链接之间的间距 */
+    margin-top:-10px
   }
   </style>
