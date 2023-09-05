@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref,reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
@@ -8,14 +8,14 @@ import background from './login-register.vue'
 const router = useRouter()
 const userStore = useUserStore()
 
-const form = ref({
-  username:'',
-  password:''
-})
+const form = reactive({
+  username: '',
+  password: ''
+});
 
 const rules = {
   username: [
-    { required:true,message:'账号不能为空',trigger:'blur'}
+    { required:true,message:'手机号不能为空',trigger:'blur'}
   ],
   password:[
     { required:true,message:'密码不能为空',trigger:'blur'},
@@ -23,16 +23,32 @@ const rules = {
   ]
 }
 
-const validateForm = () => {
-  usernameError.value = username.value.trim() === '';
-  passwordError.value = password.value.trim() === '';
+const handlePhoneInput = () => {
+  const digitsOnly = form.username.replace(/\D/g, '');
+  const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+  form.username = formattedValue;
+};
+
+const insertSpaces = (str, positions) => {
+  const result = [];
+  let positionIndex = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    if (positionIndex < positions.length && i === positions[positionIndex]) {
+      result.push(' ');
+      positionIndex++;
+    }
+    result.push(str[i]);
+  }
+
+  return result.join('');
 };
 
 const formRef = ref(null)
 
 const submitForm = async () => {
   formRef.value.validate(async (valid) => {
-    const { username, password } = form.value;
+    const { username, password } = form;
     if (valid) {
         await userStore.getUserInfo({ username, password });
           ElMessage({ type: 'success', message: '登录成功' });
@@ -55,14 +71,14 @@ const submitForm = async () => {
 	  <!-- 登录表单 -->
 		<form>
 			<h1>欢迎登录</h1>
-      <h2>请输入您的账号和密码</h2>
+      <h2>请输入您的手机号和密码</h2>
       <el-form ref="formRef" :model="form" :rules="rules" label-position="center" label-width="60px" status-ico>
         <div class="inputtext">
           <img src="  ../../../public/224用户.png" style="height:20px;width: 20px;margin-right: 0;">
-          <label for="phone">账号</label>
+          <label for="phone">手机号</label>
         </div>
        
-        <el-form-item prop="username"><el-input class="custom-input" resize="true" v-model="form.username"/></el-form-item>
+        <el-form-item prop="username"><el-input class="custom-input" resize="true" v-model="form.username" @input="handlePhoneInput"/></el-form-item>
         <div class="inputtext">
           <img src="  ../../../public/pswd.png" style="height:20px;width: 20px;">
           <label for="phone">密码</label>

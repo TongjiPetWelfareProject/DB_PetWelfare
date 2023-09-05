@@ -41,7 +41,7 @@ httpInstance.interceptors.response.use(res => res.data,e =>{
       } else {
         ElMessage({
             type: 'warning',
-            message: '服务器出错',
+            message: '服务器错误',
           });
       }
     
