@@ -81,10 +81,10 @@ ALTER DATABASE DEFAULT TABLESPACE pet;
 ```
 -- 连接到新用户
 CONNECT c##pet/************;
-在连接成功后会立即断开，这是因为在SQL Developer中是无法切换用户的，只能在SQL Plus中切换，因此我们选择再次创建一个数据库连接，用户名为c##petrescue
-在左侧视窗中的其他用户右键，按模式C##petrescue过滤用户，此时只可以看到当前用户的数据，系统用户的数据被过滤了。
+在连接成功后会立即断开，这是因为在SQL Developer中是无法切换用户的，只能在SQL Plus中切换，因此我们选择再次创建一个数据库连接，用户名为c##pet
+在左侧视窗中的其他用户右键，按模式C##pet过滤用户，此时只可以看到当前用户的数据，系统用户的数据被过滤了。
 然后我们导入SQL文档petrescue.sql，创建表格。
-如果手动创建，那么需要切换模式到C##petrescue，但是由于默认模式即与用户名重名，因此忽略以下步骤：
+如果手动创建，那么需要切换模式到C##pet，但是由于默认模式即与用户名重名，因此忽略以下步骤：
 ```sql
 ALTER SESSION SET CURRENT_SCHEMA = C##pet;
 ```
@@ -94,7 +94,4 @@ SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER='C##pet';
 ```
 注意到有一些特殊字段是不能作为表格名的，例如user,time，因此将user后加2.
 
-
-
-
-
+以上方式为本地配置，远程配置需要配置服务器的listener.ora，设置监听字段。

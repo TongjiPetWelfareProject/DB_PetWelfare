@@ -3,13 +3,13 @@ drop table comment_pet;
 drop table like_pet;
 drop table comment_post;
 drop table like_post;
-drop table post_images;
 drop table appointment;
 drop table accommodate;
 drop table foster;
 drop table adopt;
 drop table adopt_apply;
 drop table donation;
+drop table post_images;
 drop table forum_posts;
 drop table bulletin;
 drop table employee;
@@ -38,7 +38,7 @@ create table pet(
   sex varchar2(1) default 'M' check( sex in('M','F')),
   psize varchar2(20) default 'small' check (psize in('small','large','medium')),
   birthdate DATE,
-  avatar BLOB,
+  avatar varchar2(100),
   health_state varchar2(15),
   vaccine char(1),--Y represents vaccination done while N represents undone.
   read_num int default 0,
@@ -47,7 +47,7 @@ create table pet(
   primary key(pet_id),
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
-)LOB(avatar) STORE AS SECUREFILE;
+);
 
 --table room
 create table room(
@@ -85,6 +85,7 @@ create table employee(
   employee_name varchar(20),
   salary numeric(9,2),
   duty varchar2(50),
+  avatar varchar2(100),
   --the following attributes as an integrity represents the interval of working hours
   working_start_hr numeric(2,0),
   working_start_min numeric(2,0),
@@ -96,7 +97,6 @@ create table employee(
   working_start_hr between 0 and 23 and working_end_hr between working_start_hr and 23 
   and working_end_hr*60+working_end_min>=working_start_hr*60+working_start_min
   and working_start_min between 0 and 59 and working_end_min between 0 and 59 ),
-  CONSTRAINT CHK_PhoneNumber3 CHECK (REGEXP_LIKE (phone_number, '^\d{3}-\d{4}-\d{4}$') OR REGEXP_LIKE (phone_number, '^\d{11}$') OR REGEXP_LIKE (phone_number, '^\d{3} \d{4} \d{4}$')),
   CONSTRAINT CHK_DUTIES CHECK(duty in('Animal Care Specialist','Adoption Counselor','Veterinary Technician',
   'Animal Behaviorist','Volunteer Coordinator','Foster Coordinator',
   'Facility Manager','Fundraising and Outreach Coordinator','Rescue Transporter'))
@@ -128,6 +128,10 @@ create table forum_posts(
   and read_count>= like_num and read_count>=comment_num)
 )partition by range(post_time)interval(interval '1' year)
 (partition start_post values less than(TIMESTAMP '2023-09-01 00:00:00'));
+create table post_images(
+  post_id varchar2(20) references forum_posts(post_id),
+  image_path varchar2(100)
+);
 --potential primary key(donor_id,donation_time,donation_amounts)
 create table donation(
   donor_id varchar(20) references user2(user_id),
@@ -152,7 +156,7 @@ CREATE TABLE adopt_apply (
     has_children VARCHAR2(1) CHECK (has_children IN ('Y', 'N')), 
     accept_visits VARCHAR2(1) CHECK (accept_visits IN ('Y', 'N')),
     censor_state varchar2(20) default 'to be censored' check( censor_state in('to be censored','aborted','legitimate','outdated','invalid')),
-    PRIMARY KEY(adopter_id)
+    PRIMARY KEY(adopter_id,pet_id)
 );
 create table adopt (
   adopter_id varchar2(20),
@@ -162,7 +166,7 @@ create table adopt (
   foreign key (adopter_id, pet_id) references adopt_apply(adopter_id, pet_id)
 )
 partition by range (adoption_time) interval (interval '1' year) (
-  partition start_donate values less than (timestamp '2023-09-01 00:00:00')
+  partition start_adopt values less than (timestamp '2023-09-01 00:00:00')
 );
 create table foster(
   duration smallint,
@@ -191,15 +195,10 @@ create table appointment(
   species varchar2(20),
   reason varchar2(200) not null,
   custom_time TIMESTAMP default CURRENT_TIMESTAMP,
-  primary key(pet_id,user_id,apply_time)
-)partition by range(apply_time)interval(interval '1' year)
+  treat_time TIMESTAMP,
+  primary key(pet_id,user_id,custom_time)
+)partition by range(custom_time)interval(interval '1' year)
 (partition start_apply values less than(TIMESTAMP '2023-09-01 00:00:00'));
-CREATE TABLE post_images (
-  image_id INT,
-  post_id varchar2(50),
-  image_path varchar2(100),
-  FOREIGN KEY (post_id) REFERENCES forum_posts(post_id)
-);
 create table like_post(
   user_id varchar2(20) references user2(user_id),
   post_id varchar2(20) references forum_posts(post_id),
@@ -269,11 +268,6 @@ from vet WITH CHECK OPTION;
 Create or replace view employee_labor 
 as select employee_id,employee_name,salary,duty,ROUND((working_end_hr-working_start_hr)+(working_end_min-working_start_min)/60,2) as working_hours 
 from employee WITH CHECK OPTION;
-create or replace view verbosepost as 
-select forum_posts.post_id,forum_posts.user_id as poster,heading,read_count,comment_num,like_num,comment_post.user_id 
-as commenter,comment_post.comment_contents,forum_posts.post_contents,post_images.image_data,comment_post.comment_time 
-from forum_posts
-join post_images on post_images.post_id=forum_posts.post_id join comment_post on forum_posts.post_id = comment_post.post_id;
 create or replace view user_profile as select user2.user_id,coalesce(sum(forum_posts.like_num),0) as total_like,coalesce(sum(forum_posts.comment_num),0) as total_comment, 
 coalesce(sum(forum_posts.read_count),0) as clicks
 from user2 left outer join forum_posts on forum_posts.user_id=user2.user_id 
@@ -316,19 +310,23 @@ EXCEPTION
         NULL;
 END;
 /
-CREATE OR REPLACE PROCEDURE check_foster_duration_proc AS
+create or replace 
+PROCEDURE check_foster_duration_proc AS
     foster_start_date DATE;
     foster_end_date DATE;
 BEGIN
-    FOR foster_rec IN (SELECT * FROM foster WHERE censor_state = 'legitimate') LOOP
+    FOR foster_rec IN (SELECT * FROM foster) LOOP
         -- 计算寄养开始日期和结束日期
         foster_start_date := TO_DATE(foster_rec.start_year || '-' || foster_rec.start_month || '-' || foster_rec.start_day, 'YYYY-MM-DD');
-        foster_end_date := foster_start_date + foster_rec.duration;
-
-        IF foster_end_date < SYSDATE THEN
-            -- 当寄养期限超限时
-            UPDATE foster SET censor_state = 'outdated';
-        END IF;
+        foster_end_date := foster_start_date + NUMTODSINTERVAL(foster_rec.duration, 'DAY');
+        update foster set censor_state='invalid' 
+        WHERE TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD') < TRUNC(SYSDATE)
+        or TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD')-NUMTODSINTERVAL(7, 'DAY') > TRUNC(SYSDATE)
+        and censor_state='to be censored';
+        update foster set censor_state='outdated' 
+        WHERE TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD') + NUMTODSINTERVAL(duration, 'DAY')<TRUNC(SYSDATE)
+        and censor_state='to be censored';
+        
     END LOOP;
 END;
 /
@@ -354,6 +352,33 @@ BEGIN
 END;
 /
 create or replace 
+PROCEDURE resume_warned_account AS
+BEGIN
+ update user2 set account_status='In Good Standing' where account_status='Warning Issued';
+END;
+/
+BEGIN
+  -- Drop the job
+  DBMS_SCHEDULER.DROP_JOB(
+    job_name        => 'RESUME_WARNED_ACCOUNT_JOB',
+    force           => FALSE,
+    commit_semantics => 'TRANSACTIONAL'
+  );
+END;
+/
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+    job_name        => 'RESUME_WARNED_ACCOUNT_JOB',
+    job_type        => 'PLSQL_BLOCK',
+    job_action      => 'BEGIN resume_warned_account; END;',
+    start_date      => TRUNC(SYSDATE) + INTERVAL '1' DAY,
+    repeat_interval => 'FREQ=WEEKLY; BYHOUR=0; BYMINUTE=0; BYSECOND=0;',
+    enabled         => TRUE,
+    comments        => 'Weekly job to resume the status of warned account because of removal of posts'
+  );
+END;
+/
+create or replace 
 FUNCTION collect_num_func(pid IN VARCHAR2) RETURN NUMBER IS
     collect_count NUMBER;
 BEGIN
@@ -362,6 +387,17 @@ BEGIN
     WHERE pet_id = pid;
 
     RETURN collect_count;
+END;
+/
+create or replace 
+FUNCTION like_num_func(pid IN VARCHAR2) RETURN NUMBER IS
+    like_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO like_count
+    FROM like_pet
+    WHERE pet_id = pid;
+
+    RETURN like_count;
 END;
 /
 CREATE OR REPLACE FUNCTION comment_num_func(pid IN VARCHAR2) RETURN NUMBER IS
@@ -414,7 +450,7 @@ create or replace view  pet_profile as SELECT
     
 FROM
     pet p left outer join comment_pet  on comment_pet.pet_id=p.pet_id order by popularity desc;
-create or replace view adopt_view asSELECT 
+create or replace view adopt_view as SELECT 
     apply_date,pet_id,
     adopter_id,
      '该' || adopter_gender || '性用户想要' || 
@@ -425,7 +461,7 @@ create or replace view adopt_view asSELECT
      AS reason
 FROM 
     adopt_apply where censor_state='to be censored';
-create view pet_source as SELECT pet_id,
+create or replace view pet_source as SELECT pet_id,
     CASE
         WHEN pet_id IN (SELECT pet_id FROM appointment) THEN 'Appointment'
         WHEN pet_id IN (SELECT pet_id FROM foster) THEN 'Foster'
