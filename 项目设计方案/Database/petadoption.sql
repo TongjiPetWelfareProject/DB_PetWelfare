@@ -352,6 +352,33 @@ BEGIN
 END;
 /
 create or replace 
+PROCEDURE resume_warned_account AS
+BEGIN
+ update user2 set account_status='In Good Standing' where account_status='Warning Issued';
+END;
+/
+BEGIN
+  -- Drop the job
+  DBMS_SCHEDULER.DROP_JOB(
+    job_name        => 'RESUME_WARNED_ACCOUNT_JOB',
+    force           => FALSE,
+    commit_semantics => 'TRANSACTIONAL'
+  );
+END;
+/
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+    job_name        => 'RESUME_WARNED_ACCOUNT_JOB',
+    job_type        => 'PLSQL_BLOCK',
+    job_action      => 'BEGIN resume_warned_account; END;',
+    start_date      => TRUNC(SYSDATE) + INTERVAL '1' DAY,
+    repeat_interval => 'FREQ=WEEKLY; BYHOUR=0; BYMINUTE=0; BYSECOND=0;',
+    enabled         => TRUE,
+    comments        => 'Weekly job to resume the status of warned account because of removal of posts'
+  );
+END;
+/
+create or replace 
 FUNCTION collect_num_func(pid IN VARCHAR2) RETURN NUMBER IS
     collect_count NUMBER;
 BEGIN
