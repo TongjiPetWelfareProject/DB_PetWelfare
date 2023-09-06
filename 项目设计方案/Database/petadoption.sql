@@ -310,19 +310,23 @@ EXCEPTION
         NULL;
 END;
 /
-CREATE OR REPLACE PROCEDURE check_foster_duration_proc AS
+create or replace 
+PROCEDURE check_foster_duration_proc AS
     foster_start_date DATE;
     foster_end_date DATE;
 BEGIN
-    FOR foster_rec IN (SELECT * FROM foster WHERE censor_state = 'legitimate') LOOP
+    FOR foster_rec IN (SELECT * FROM foster) LOOP
         -- 计算寄养开始日期和结束日期
         foster_start_date := TO_DATE(foster_rec.start_year || '-' || foster_rec.start_month || '-' || foster_rec.start_day, 'YYYY-MM-DD');
-        foster_end_date := foster_start_date + foster_rec.duration;
-
-        IF foster_end_date < SYSDATE THEN
-            -- 当寄养期限超限时
-            UPDATE foster SET censor_state = 'outdated';
-        END IF;
+        foster_end_date := foster_start_date + NUMTODSINTERVAL(foster_rec.duration, 'DAY');
+        update foster set censor_state='invalid' 
+        WHERE TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD') < TRUNC(SYSDATE)
+        or TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD')-NUMTODSINTERVAL(7, 'DAY') > TRUNC(SYSDATE)
+        and censor_state='to be censored';
+        update foster set censor_state='outdated' 
+        WHERE TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD') + NUMTODSINTERVAL(duration, 'DAY')<TRUNC(SYSDATE)
+        and censor_state='to be censored';
+        
     END LOOP;
 END;
 /
