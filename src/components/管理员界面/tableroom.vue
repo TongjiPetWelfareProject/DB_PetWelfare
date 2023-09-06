@@ -73,7 +73,8 @@ export default {
     async function fetchRoomPet(roomID) {
       try {
         const petID = await sh_fj_jk.getRoomPetAPI(roomID); // 使用你的 getRoomPetID API 获取宠物的 ID 数据
-        roomPetID.value=petID.data
+        console.log(petID)
+        roomPetID.value+=petID.toString()
       } catch (error) {
         console.error('获取宠物数据时出错：', error);
       }
@@ -85,7 +86,7 @@ export default {
       if(room.roomStatus==='占用') {
         roomInfo.value='当前居住宠物为:'
         // roomPetID.value='1'
-        roomPetID.value=fetchRoomPet(room.roomId)
+        fetchRoomPet(room.roomId)
         roomPetID.value+='.'
       }
         ElMessageBox.confirm(`${roomInfo.value}${roomPetID.value}上次打扫时间：${lastCleaningTime}<br>确认完成打扫${roomId}房间吗?`, '提示', {
