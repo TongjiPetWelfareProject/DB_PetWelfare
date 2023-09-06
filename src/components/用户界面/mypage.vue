@@ -445,9 +445,18 @@ const goToPet = (petId) => {
     // 使用Vue Router进行路由跳转
     router.push({ name: 'pet_details', params: { id: petId } });
 };
-
+const phoneError = ref(false)
+const validatePhoneNumber = () => {
+  const phoneNumberPattern = /^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9]|98|99)\s\d{4}\s\d{4}$/;
+  phoneError.value = !phoneNumberPattern.test(editedform.phone);
+};
 const editInfo = async () => {
     dialogFormVisible.value = false
+    validatePhoneNumber();
+    if (phoneError.value) {
+      ElMessage({ type: 'warning', message: '电话号码填入有误，请修改' });
+      return;
+    }
     console.log(selectedCity)
     try {
       const response = await userinfo.editInfoAPI(userStore.userInfo.User_ID,editedform.name,editedform.phone,selectedProvince.value,selectedCity.value);
