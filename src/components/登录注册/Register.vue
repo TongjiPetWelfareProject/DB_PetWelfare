@@ -118,7 +118,7 @@ const submitForm = async() => {
     console.log(data)
     try {
         const res = await registerAPI(data);
-        ElMessage({type:'success',message:res})
+        ElMessage({type:'success',message:"注册成功，您的ID为"+res})
         // userStore.userInfo.
         router.push('/login')
         console.log(res); // 输出注册API返回的结果到控制台
