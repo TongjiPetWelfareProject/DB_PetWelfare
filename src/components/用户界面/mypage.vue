@@ -315,7 +315,6 @@ const provinces = ref(jsonData.provinces)
 const selectedProvince = ref('')
 const cities = ref([])
 const selectedCity = ref('')
-const avatar= ref()
 const userStore = useUserStore()
 const activeName = ref('first')
 const infoform = ref({
@@ -408,7 +407,6 @@ const handlePhoneInput = () => {
 
     // 在第4个和第9个位置插入空格
     const formattedValue = insertSpaces(digitsOnly, [3, 7]);
-    console.log(formattedValue)
     editedform.phone = formattedValue; // 更新 newEmployee.value.phone
 };
 
@@ -438,9 +436,20 @@ const goToPet = (petId) => {
     router.push({ name: 'pet_details', params: { id: petId } });
 };
 
+const phoneError = ref(false)
+const validatePhoneNumber = () => {
+  const phoneNumberPattern = /^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9]|98|99)\s\d{4}\s\d{4}$/;
+  phoneError.value = !phoneNumberPattern.test(editedform.phone);
+};
+
+
 const editInfo = async () => {
     dialogFormVisible.value = false
-    console.log(selectedCity)
+    validatePhoneNumber();
+    if (phoneError.value) {
+      ElMessage({ type: 'warning', message: '电话号码填入有误，请修改' });
+      return;
+    }
     try {
       const response = await userinfo.editInfoAPI(userStore.userInfo.User_ID,editedform.name,editedform.phone,selectedProvince.value,selectedCity.value);
       ElMessage.success({
@@ -455,11 +464,10 @@ const editInfo = async () => {
       location.reload();
     }, 1000);
     } catch (error) {
-      console.error('获取用户帖子评论时出错：', error);
       // 显示失败提示
       ElMessage.error({
-      message: '修改失败，错误信息：' + error.message,
-      duration: 1000 // 持续显示时间（毫秒）
+      message: error,
+      duration: 3000 // 持续显示时间（毫秒）
     });
     }
 };
