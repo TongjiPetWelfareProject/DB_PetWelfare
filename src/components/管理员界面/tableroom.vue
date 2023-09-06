@@ -50,6 +50,8 @@ export default {
   setup() {
     const tableRef = ref(null);
     const tableData = ref([]);
+    const roomInfo=ref('')
+    const roomPetID=ref('')
 
     const handleSelectionChange = (selectedItems) => {
       console.log(selectedItems);
@@ -73,10 +75,11 @@ export default {
       const lastCleaningTime = room.lastCleaningTime;
       if(room.roomStatus==='占用') {
         roomInfo.value='当前居住宠物为:'
-        roomBr.value='\n'
+        // roomPetID.value='1'
         roomPetID.value=fetchRoomPet(room.roomId)
+        roomPetID.value+='.'
       }
-        ElMessageBox.confirm(`${roomInfo.value}${roomPetID.value}${roomBr.value}上次打扫时间：${lastCleaningTime}<br>确认完成打扫${roomId}房间吗?`, '提示', {
+        ElMessageBox.confirm(`${roomInfo.value}${roomPetID.value}上次打扫时间：${lastCleaningTime}<br>确认完成打扫${roomId}房间吗?`, '提示', {
         type: 'info',
           confirmButtonText: '确认',
           cancelButtonText: '取消',
@@ -99,13 +102,10 @@ export default {
             }).catch(error => {
               console.error('操作已取消', error);
             })
-            .catch(error => {
-              console.error('信息更新失败', error);
-            });
-        }).catch(error => {
-          console.error('操作已取消', error);
-        })
-}
+
+            roomInfo.value=''
+            roomPetID.value=''
+    }
 
     onMounted(async () => {
       try {
