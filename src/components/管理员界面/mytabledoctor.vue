@@ -1,18 +1,21 @@
 <template>
   <div>
+    <div style="display:flex;align-items: center;margin-bottom: 20px;">
+        <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="doctorNameFilter" @input="filterHandler" placeholder="搜索医生姓名" style="margin-right:40px;width:200px;px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
+        </div>
     <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
-      max-height="500">
-      <el-table-column prop="id" label="医生ID" width="120" />
-      <el-table-column prop="name" label="医生姓名" width="120" />
-      <el-table-column prop="phone" label="电话" width="120" />
-      <el-table-column prop="workingHours" label="工作时间" width="120" />
-      <el-table-column prop="salary" label="工资" width="170" />
-      <el-table-column label="操作" width="160">
+      max-height="550">
+      <el-table-column prop="id" label="医生ID"  :width="120" align="center"/>
+      <el-table-column prop="name" label="医生姓名" :width="240" align="center"/>
+      <el-table-column prop="phone" label="电话" :width="240" align="center"/>
+      <el-table-column prop="workingHours" label="工作时间" :width="200" align="center"/>
+      <!-- <el-table-column prop="salary" label="工资"  /> -->
+      <el-table-column label="操作" align="center">
         <template #default="scope">
-          <el-button link type="primary" size="small" @click.prevent="editRow(scope.$index)">
+          <el-button plain type="primary" size="small" @click.prevent="editRow(scope.$index)">
             编辑
           </el-button>
-          <el-button link type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
+          <el-button plain type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
             删除
           </el-button>
         </template>
@@ -32,7 +35,7 @@
           <el-input v-model="editedDoctor.name"></el-input>
         </el-form-item>
         <el-form-item label="电话">
-          <el-input v-model="editedDoctor.phone"></el-input>
+          <el-input v-model="editedDoctor.phone" @input="handleeditPhoneInput"></el-input>
         </el-form-item>
         <el-form-item label="工作时间">
           <!-- <el-input v-model="editedDoctor.workingHours"></el-input> -->
@@ -118,6 +121,26 @@ const newDoctor = ref<Doctor>({
   salary: '',
 });
 
+
+const tableData2=ref([])
+const doctorNameFilter = ref('');
+function filterHandler(value){
+    tableData.value = tableData2.value.filter(item => {
+      const doctornameMatch = item.name.toLowerCase().includes(doctorNameFilter.value.toLowerCase());
+    return doctornameMatch;
+  });
+};
+
+const handleeditPhoneInput = () => {
+  // 获取输入框的值并移除所有非数字字符
+  const digitsOnly = editedDoctor.value.phone.replace(/\D/g, "");
+
+  // 在第4个和第9个位置插入空格
+  const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+
+  editedDoctor.value.phone = formattedValue;
+};
+
 const handlePhoneInput = () => {
   // 获取输入框的值并移除所有非数字字符
   const digitsOnly = newDoctor.value.phone.replace(/\D/g, "");
@@ -151,6 +174,7 @@ const fetchData = async () => {
   try {
     const response = await axios.get('/api/doctor');
     tableData.value = response.data;
+    tableData2.value=tableData.value;
   } catch (error) {
     console.error('获取数据时出错：', error);
   }
@@ -182,6 +206,7 @@ const submitEditedDoctor = () => {
         // 关闭编辑对话框
         editDialogVisible.value = false;
       }
+      fetchData();
     })
     .catch(error => {
       console.error('编辑数据时出错:', error);
@@ -209,6 +234,7 @@ const submitNewDoctor = () => {
       newDoctor.value.id = newDoctorId;
       tableData.value.push(newDoctor.value);
       addDialogVisible.value = false;
+      fetchData();
     })
     .catch(error => {
       console.error('添加数据时出错：', error);

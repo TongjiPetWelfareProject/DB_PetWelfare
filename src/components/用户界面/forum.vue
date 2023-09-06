@@ -41,20 +41,31 @@
    <div class="content">
       <ul class="forum-posts">
         <!-- <li v-for="post in filteredPosts" :key="post.post_id" @click="goToPost(post)"> -->
-          <li v-for="post in filteredPosts" :key="post.post_id" @click="goToPost(post)">
+          <li v-for="post in slicedPosts" :key="post.id" @click="goToPost(post)">
             <el-card class="post-card" >
               <div class="post-title">{{ post.title }}</div>
               <div class="post-info">
                 <div>发表时间：{{ post.post_time }}</div>
                 <div>阅读量：{{ post.read_count }}</div>
-                <div>喜爱数量：{{ post.like_num }}</div>
-                <div>评论数量：{{ post.comment_num }}</div>
+                <div>点赞数：{{ post.like_num }}</div>
+                <div>评论数：{{ post.comment_num }}</div>
                 <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
               </div>
             </el-card>
         </li>
       </ul>
+
+      <el-pagination
+      layout="prev, pager, next,jumper"
+      :total="filteredPosts.length"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      @current-change="handlePageChange"
+      style="float: left;"
+    />
     </div>
+   
+
   <!-- </el-main> -->
       
 </template>
@@ -75,6 +86,25 @@ export default {
     const sortOrder = ref('desc');
     const router = useRouter();
     const userStore = useUserStore();
+
+    const currentPage = ref(1); // 当前页数，默认为第1页
+    const pageSize = ref(8); // 每页显示的帖子数量，默认为10条
+
+    function handlePageChange(newPage) {
+      currentPage.value = newPage;
+    }
+
+    const startIndex = computed(() => {
+      return (currentPage.value - 1) * pageSize.value;
+    });
+
+    const endIndex = computed(() => {
+      return startIndex.value + pageSize.value;
+    });
+
+    const slicedPosts = computed(() => {
+      return filteredPosts.value.slice(startIndex.value, endIndex.value);
+    });
 
     function formatBackendTime(backendTime) {
       const date = new Date(backendTime);
@@ -104,7 +134,9 @@ export default {
           like_num:forum_post.likeNum,
           comment_num:forum_post.commentNum,
         });
+
       }
+      handlePageChange(currentPage.value);
       } catch (error) {
         console.error('获取帖子数据时出错：', error);
       }
@@ -180,7 +212,11 @@ export default {
       toggleSortOrder,
       sortByLikeNum,
       search,
-      Delete, EditPen, Search, Share, Upload,SortDown
+      Delete, EditPen, Search, Share, Upload,SortDown,
+      handlePageChange,
+      slicedPosts,
+      currentPage,
+      pageSize
     };
   }
 }
@@ -239,7 +275,7 @@ export default {
 }
 
 .forum-posts {
-  max-height: 800px;
+  /* max-height: 800px; */
   overflow-y: auto;
   width: 80%;
   align-items: center;

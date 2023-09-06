@@ -1,20 +1,20 @@
 <template>
-    <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
-        max-height="500"  >
-      <el-table-column label="用户ID" prop="id" width=100></el-table-column>
-      <el-table-column label="用户名" prop="username" width=100></el-table-column>
-      <el-table-column label="电话" prop="phone" width="150"></el-table-column>
-      <el-table-column label="地址" prop="address" width="150"></el-table-column>
-      <el-table-column label="帐号状态" prop="account_status" width="100"></el-table-column>
-      <el-table-column label="操作" width="360">
-        <template #default="scope">
-          <el-button v-if="scope.row.unmuted" size="mini" type="danger" @click="muteUser(scope.$index)">禁言</el-button>
-          <el-button v-else size="mini" type="success" @click="removeMuteUser(scope.$index)">解禁</el-button>  
-          <el-button v-if="scope.row.unbanned" size="mini" type="danger" @click="blockUser(scope.$index)">封号</el-button>
-          <el-button v-else size="mini" type="success" @click="removeBlockUser(scope.$index)">解封</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+ <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
+        max-height="580"  >
+ <el-table-column label="用户ID" prop="id"  align="center"></el-table-column>
+ <el-table-column label="用户名" prop="username" align="center"></el-table-column>
+   <el-table-column label="电话" prop="phone"  align="center"></el-table-column>
+ <el-table-column label="地址" prop="address"   align="center"></el-table-column>
+      <el-table-column label="帐号状态" prop="account_status"  align="center"></el-table-column>
+  <el-table-column label="操作" :width="200" align="center">
+ <template #default="scope">
+ <el-button v-if="scope.row.unmuted" size="small" plain type="danger" @click="muteUser(scope.$index)">禁言</el-button>
+  <el-button v-else size="small" type="success" plain  @click="removeMuteUser(scope.$index)">解禁</el-button>  
+ <el-button v-if="scope.row.unbanned" size="small"  plain type="danger" @click="blockUser(scope.$index)">封号</el-button>
+<el-button v-else size="small" type="success"  plain @click="removeBlockUser(scope.$index)">解封</el-button>
+ </template>
+  </el-table-column>
+ </el-table>
 </template>
   
 <script lang="ts" setup>
@@ -30,6 +30,19 @@ interface User {
   unmuted: boolean;
   unbanned: boolean;
 }
+
+const tableData2=ref([])
+const userNameFilter = ref('');
+const userStatusFilter = ref('');
+function filterHandler(value){
+    tableData.value = tableData2.value.filter(item => {
+      const usernameMatch = item.username.toLowerCase().includes(userNameFilter.value.toLowerCase());
+    const statusMatch = item.account_status === userStatusFilter.value || !userStatusFilter.value;
+    return usernameMatch && statusMatch;
+  });
+};
+
+
 const tableData = ref<User[]>([]);
 const fetchUserRecords = async () => {
 try {
@@ -55,6 +68,7 @@ try {
       unbanned: unbanned,
     });
     console.log(tableData.value);
+    tableData2.value=tableData.value;
   }
 } catch (error) {
   console.error('获取用户列表时出错：', error);

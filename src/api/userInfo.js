@@ -16,7 +16,15 @@ export default {
             .post('/api/editinfo',{user_id,user_name,phone,province,city})
             .then((response) => response.data)
             .catch(error => {
-                throw new Error('编辑个人信息数据时出错：' + error.message);
+                throw new Error(error.response.data);
+            });
+    },
+    editPasswordAPI(user_id,currentpassword,editedpassword) {
+        return axios
+            .post('/api/editpassword',{user_id,currentpassword,editedpassword})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('修改密码时出错：' + error.message);
             });
     },
     userInfoAPI(user_id) {
@@ -41,6 +49,14 @@ export default {
             .then((response) => response.data)
             .catch(error => {
                 throw new Error('获取个人点赞信息数据时出错：' + error.message);
+            });
+    },
+    userPostSendAPI(user_id) {
+        return axios
+            .post('/api/userpostsend',{user_id})
+            .then((response) => response.data)
+            .catch(error => {
+                throw new Error('获取个人发帖信息数据时出错：' + error.message);
             });
     },
     userDonationAPI(user_id) {

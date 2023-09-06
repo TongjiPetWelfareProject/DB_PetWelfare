@@ -74,6 +74,9 @@
           />
         </el-col>
       </el-form-item>
+      <div class="notice">
+        <span class="red-asterisk">*</span> 医疗服务请选择从今天开始的一周内时间预约
+      </div>
       <!-- <el-form-item label="Instant delivery">
         <el-switch v-model="form.delivery" />
       </el-form-item> -->
@@ -104,7 +107,7 @@
 <script>
 import { ref,defineComponent, reactive,onMounted } from 'vue';
 import medical_donate from '@/api/medical_donate';
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'; // 导入用户信息管理模块
 import { useRouter } from 'vue-router'
 
@@ -146,6 +149,48 @@ export default defineComponent({
 
     const onSubmit = async () => {
       try {
+        if(form.isOld==='它已经在此治疗过'){
+          form.name = petMap1.value.get(form.petID); // 根据映射关系获取宠物名字
+          form.pet_kind=petMap2.value.get(form.petID);
+        }
+
+        const dateObject = new Date(form.date1);
+        const currentDate=new Date();
+
+        const oneWeekLater = new Date(currentDate);
+        oneWeekLater.setDate(currentDate.getDate() + 7);
+
+        // console.log(dateObject); 
+        // const month = dateObject.getMonth(); // 获取月份，0 表示一月，1 表示二月，以此类推
+        // const day = dateObject.getDate(); // 获取日期
+        // const year = dateObject.getFullYear(); // 获取年份
+
+        // console.log(`月份: ${month}, 日期: ${day}, 年份: ${year}`);
+
+        // console.log(form.name)
+        // console.log(form.kind)
+        // console.log(form.date1)
+        // console.log(form.desc)
+        // console.log(form.selectedDoctorID)
+
+        if (!form.name || !form.kind || !form.date1 || !form.desc || !form.selectedDoctorID) {
+            ElMessage.warning({
+              message: '预约失败,请填写完整信息' ,
+              duration: 3000 // 持续显示时间（毫秒）
+            });
+          return; // 阻止提交
+         }
+      
+        if (dateObject > oneWeekLater) {
+          ElMessage.warning('预约时间必须在一周内');
+          return; // 不继续执行
+        }
+        if (dateObject < currentDate) {
+          ElMessage.warning('预约时间在当前时间前，请重新选择');
+          return; // 不继续执行
+        }
+
+
         // 调用 submitAppointmentAPI 函数并传入表单数据
         const userId = userStore.userInfo.User_ID;
 
@@ -162,10 +207,10 @@ export default defineComponent({
           message: '预约医疗成功',
           duration: 3000 // 持续显示时间（毫秒）
         });
-        // 停顿3秒后跳转到 '/forum'
+        // 停顿2秒后跳转到 '/forum'
         setTimeout(() => {
           router.push('/medical');
-        }, 3000);
+        }, 2000);
 
       } catch (error) {
         console.error('提交数据时出错：', error);
@@ -192,4 +237,20 @@ export default defineComponent({
     };
   },
 });
+
   </script>
+
+<style>
+.notice {
+  font-size: small; /* 使用小字形式的字体大小 */
+  margin-top: 10px; /* 可以根据需要调整顶部边距 */
+  margin-bottom: 15px;
+  color: #666; /* 可以根据需要调整文字颜色 */
+  margin-left: 105px;
+}
+
+.red-asterisk {
+  color: red; /* 红色的星号颜色 */
+  margin-right: 5px; /* 可以根据需要调整星号与文字之间的间距 */
+}
+</style>

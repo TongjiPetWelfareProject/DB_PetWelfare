@@ -1,19 +1,22 @@
 <template>
     <div>
+        <div style="display:flex;align-items: center;margin-bottom: 20px;">
+        <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="employeeNameFilter" @input="filterHandler" placeholder="搜索员工姓名" style="margin-right:40px;width:200px;px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
+        </div>
         <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
-            max-height="600">
-            <el-table-column prop="id" label="员工ID" width="120" />
-            <el-table-column prop="name" label="员工姓名" width="120" />
-            <el-table-column prop="phone" label="电话" width="120" />
-            <el-table-column prop="responsibility" label="职责" width="120" />
-            <el-table-column prop="workingHours" label="工作时间" width="120" />
-            <el-table-column prop="salary" label="工资" width="170" />
-            <el-table-column label="操作" width="360">
+            max-height="550">
+            <el-table-column prop="id" label="员工ID" align="center" :width="100" />
+            <el-table-column prop="name" label="员工姓名"  align="center"/>
+            <el-table-column prop="phone" label="电话"  align="center"/>
+            <el-table-column prop="responsibility" label="职责"  :width="260" align="center"/>
+            <el-table-column prop="workingHours" label="工作时间" :width="100" align="center"/>
+            <!-- <el-table-column prop="salary" label="工资" width="120" /> -->
+            <el-table-column label="操作" width="360" align="center">
                 <template #default="scope">
-                    <el-button link type="primary" size="small" @click.prevent="editRow(scope.$index)">
+                    <el-button plain type="primary" size="small" @click.prevent="editRow(scope.$index)">
                         编辑
                     </el-button>
-                    <el-button link type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
+                    <el-button plain type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
                         删除
                     </el-button>
                 </template>
@@ -32,7 +35,7 @@
                     <el-input v-model="editedEmployee.name"></el-input>
                 </el-form-item>
                 <el-form-item label="电话">
-                    <el-input v-model="editedEmployee.phone"></el-input>
+                    <el-input v-model="editedEmployee.phone" @input="handleeditPhoneInput"></el-input>
                 </el-form-item>
                 <el-form-item label="职责">
                     <!-- <el-input v-model="editedEmployee.responsibility"></el-input> -->
@@ -101,7 +104,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { ElButton, ElTable, ElDialog, ElForm, ElInput } from 'element-plus';
+import { ElButton, ElTable, ElDialog, ElForm, ElInput, ElMessage } from 'element-plus';
 import axios from 'axios';
 
 interface Employee {
@@ -132,6 +135,15 @@ const newEmployee = ref<Employee>({
     workingHours: '8',
     salary: '',
 });
+
+const tableData2=ref([])
+const employeeNameFilter = ref('');
+function filterHandler(value){
+    tableData.value = tableData2.value.filter(item => {
+      const employeenameMatch = item.name.toLowerCase().includes(employeeNameFilter.value.toLowerCase());
+    return employeenameMatch;
+  });
+};
 
 const options = [
     {
@@ -172,6 +184,14 @@ const options = [
     },
 ]
 
+const handleeditPhoneInput = () => {
+    // 获取输入框的值并移除所有非数字字符
+    const digitsOnly = editedEmployee.value.phone.replace(/\D/g, "");
+    // 在第4个和第9个位置插入空格
+    const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+    editedEmployee.value.phone = formattedValue; // 更新 editedEmployee.value.phone
+};
+
 const handlePhoneInput = () => {
     // 获取输入框的值并移除所有非数字字符
     const digitsOnly = newEmployee.value.phone.replace(/\D/g, "");
@@ -205,6 +225,7 @@ const fetchData = async () => {
     try {
         const response = await axios.get('/api/employee');
         tableData.value = response.data;
+        tableData2.value=tableData.value;
     } catch (error) {
         console.error('获取数据时出错：', error);
     }
@@ -227,6 +248,17 @@ const editRow = (index: number) => {
 };
 
 const submitEditedEmployee = () => {
+    const phoneNumber = editedEmployee.value.phone.replace(/\D/g, '');
+
+    if (!editedEmployee.value.name || phoneNumber.length !== 11) {
+        if (!editedEmployee.value.name) {
+            ElMessage.error('员工信息不能为空');
+        }
+        if (phoneNumber.length !== 11) {
+            ElMessage.error('电话号码必须是11位数字');
+        }
+        return;
+    }
     axios.put(`/api/edit-employee/${editedEmployee.value.id}`, editedEmployee.value)
         .then(() => {
             const editedIndex = tableData.value.findIndex(item => item.id === editedEmployee.value.id);
@@ -236,6 +268,7 @@ const submitEditedEmployee = () => {
                 // 关闭编辑对话框
                 editDialogVisible.value = false;
             }
+            fetchData();
         })
         .catch(error => {
             console.error('编辑数据时出错:', error);
@@ -259,12 +292,24 @@ const addRow = () => {
 
 
 const submitNewEmployee = () => {
+    const phoneNumber1 = newEmployee.value.phone.replace(/\D/g, '');
+
+    if (!newEmployee.value.name || phoneNumber1.length !== 11) {
+        if (!newEmployee.value.name) {
+            ElMessage.error('员工信息不能为空');
+        }
+        if (phoneNumber1.length !== 11) {
+            ElMessage.error('电话号码必须是11位数字');
+        }
+        return;
+    }
     axios.post('/api/add-employee', newEmployee.value)
         .then(response => {
             const newEmployeeId = response.data.id;
             newEmployee.value.id = newEmployeeId;
             tableData.value.push(newEmployee.value);
             addDialogVisible.value = false;
+            fetchData();
         })
         .catch(error => {
             console.error('添加数据时出错：', error);

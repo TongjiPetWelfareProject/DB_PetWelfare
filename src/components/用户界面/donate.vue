@@ -132,11 +132,12 @@
 }
 
 .demo-image__lazy {
-  height: 350px;
+  height: 450px;
   overflow-y: auto;
-  width:90%;
+  width: 50%;
   box-shadow: 0 4px 0px rgba(0, 0, 0, .2);
-  border-radius:10px
+  border-radius: 10px;
+  margin: 0 auto; /* 将左右外边距设置为自动，实现水平居中 */
 }
 .demo-image__lazy .el-image {
   display: block;
@@ -172,9 +173,9 @@ const userStore = useUserStore()
 const router = useRouter()
 const tabPosition = ref('left')
 const urls = [
-  '../../../public/home8.jpg',
-  '../../../public/home2.png',
-  '../../../public/home7.jpg', 
+  'home8.jpg',
+  'fosterbg.jpg',
+  'fosterbg3.jpg', 
 ]
 
 const donationTime = new Date().toISOString(); // 当前时间转换为字符串格式

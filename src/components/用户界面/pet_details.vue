@@ -10,16 +10,17 @@
 <div class="pet-card">
 <el-card class="card" >
   <div class="card-content">
-    <div>
-    <div class="pet-image">
-      <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" alt="Pet Image" />
-    </div>
+    <el-col :span="12">
+      <div class="pet-image">
+        <img :src=pet.image alt="Pet Image" />
+      </div>
+    </el-col>
     <!--<el-row>
         <el-col :span="24">
           <p class="pet-value">{{ pet.description }}</p>
         </el-col>
       </el-row>-->
-  </div>
+    <el-col :span="12">
     <div class="pet-info">
       <p class="read-count">阅读{{ pet.read_num }}</p>
       <span style="font-size: 30px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
@@ -64,6 +65,7 @@
         <button class="modern-button" @click="handleApplyForAdopt">领养Ta</button>
       </div>
     </div>
+    </el-col>
   </div>
 </el-card>
 </div>
@@ -87,23 +89,26 @@
 </div>
 <div class="comment-part">
   <div class="comment-form">
-    <div class="comment-input">
-      <el-input v-model="newComment.comment_content" type="textarea" placeholder="在这里评论"></el-input>
+    <div class="comment-input" v-if="userStore.userInfo.User_ID">
+      <el-input v-model="newComment" type="textarea" placeholder="在这里评论"></el-input>
+    </div>
+    <div class="comment-input" v-else>
+      <el-input v-model="newComment" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
     </div>
     <div class="comment-button">
-      <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;">发布</button>
+      <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;" :disabled="!newComment">发布</button>
     </div>
   </div>
-  <h3 style="font-size: 27px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
+  <h3 style="font-size: 24px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
   <p></p>
-  <div v-for="comment in comments" :key="comment.commenter_id" class="comment">
-    <el-avatar v-if="comment.avatar" :src="comment.avatar" :size="50"></el-avatar>
-    <div class="comment-content">
+  <div v-for="comment in sortedComments" :key="comment.commenter_id" class="comment">
+    <el-avatar style="margin-top:20px" v-if="comment.commenter_avatar" :src="comment.commenter_avatar" :size="50"></el-avatar>
+    <div style="margin-top:20px" class="comment-content">
       <p class="post-label">{{ comment.commenter }}</p>
       <p class="post-value">{{ comment.comment_content }}</p>
       <div class="comment-actions">
-        <p v-if="comment.avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.comment_time) }}</p>
-        <a v-if="comment.avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)">删除</a>
+        <p v-if="comment.commenter_avatar" class="comment-time custom-comment-time">{{ formatBackendTime(comment.comment_time) }}</p>
+        <el-button type="warning" v-if="comment.commenter_avatar && isOwnPost(comment.commenter_id)" href="#" @click="deleteComment(comment)" link>删除</el-button>
       </div>
     </div>
   </div>
@@ -119,13 +124,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import getpetinfo from '@/api/pet_adopt'
 
-const images = [//等后端图片，后期去掉
-'./src/components/photos/pet1.jpg',
-'./src/components/photos/pet2.jpg',
-'./src/components/photos/pet3.jpg',
-'./src/components/photos/pet4.jpg',
-'./src/components/photos/pet5.jpg',
-];
 const userStore = useUserStore();
 console.log(userStore);
 const router = useRouter();
@@ -153,9 +151,17 @@ const getPetDetails = async (PID) => {
     }
     let health_state = '';
     if (response.original_pet.Health_State === 'Vibrant') {
+      health_state = '充满活力';
+    } else if (response.original_pet.Health_State === 'Well') {
       health_state = '健康';
+    } else if (response.original_pet.Health_State === 'Decent') {
+      health_state = '尚可';
     } else if (response.original_pet.Health_State === 'Unhealthy') {
       health_state = '不健康';
+    } else if (response.original_pet.Health_State === 'Sickly') {
+      health_state = '生病';
+    } else if (response.original_pet.Health_State === 'Critical') {
+      health_state = '危急';
     }
     console.log("宠物生日")
     console.log(response.original_pet.birthdate);
@@ -177,7 +183,7 @@ const getPetDetails = async (PID) => {
       id: response.original_pet.Pet_ID,
       name: response.original_pet.Pet_Name,
       species: species,
-      gender: response.original_pet.sex,
+      gender: response.sex,
       age: age,
       popularity: response.Popularity,
       health_state: health_state,
@@ -186,7 +192,7 @@ const getPetDetails = async (PID) => {
       like_num: response.original_pet.Like_Num,
       favorite_num: response.original_pet.Collect_Num,
       comment_num: response.Comment_Num,
-      image: images[0]//等后端图片，后期修改
+      image: response.original_pet.Avatar,//等后端图片，后期修改
     };
     for (const comment of response.comments) {
       comments.value.push({
@@ -194,7 +200,7 @@ const getPetDetails = async (PID) => {
         commenter: comment.commenter,
         comment_time: comment.comment_time,
         comment_content: comment.comment_contents,
-        avatar:'./src/photos/阿尼亚.jpg'
+        commenter_avatar: comment.commenter_avatar,
       });
     }
   } catch (error) {
@@ -213,15 +219,7 @@ const handleApplyForAdopt = () => {
 }
 
 pet.read_num++;
-const newComment = ref({ 
-  commenter_id: '',
-  commenter: '',
-  comment_time: '',
-  comment_content: '',
-  avatar:'./src/photos/阿尼亚.jpg'
-});//传照片没成功
-newComment.value.commenter = '某某某';
-const showCommentForm = ref(false);
+const newComment = ref('');
 
 const liked = ref(false);
 const favorited = ref(false);
@@ -249,40 +247,48 @@ const getifinteract= async (PID) => {
   
 const likePet = async () => {
     console.log("点击点赞了")
-    liked.value = liked.value === true ? false : true;
-    if(liked.value === false)
-      pet.value.like_num--
-    else
-      pet.value.like_num++
-    try {
-      const response = await getpetinfo.submitLike(userStore.userInfo.User_ID,petId.value);
-    } catch (error) {
-      console.error('提交点赞信息失败：', error);
+    if (!userStore.userInfo.User_ID) {
+      ElMessage({
+          type: 'warning',
+          message: '请先登录',
+        })
+    }
+    else {
+        liked.value = liked.value === true ? false : true;
+      if(liked.value === false)
+        pet.value.like_num--
+      else
+        pet.value.like_num++
+      try {
+        const response = await getpetinfo.submitLike(userStore.userInfo.User_ID,petId.value);
+      } catch (error) {
+        console.error('提交点赞信息失败：', error);
+      }
     }
 };
 
 
 const favoritePet = async () => {
     console.log("点击收藏了")
-    favorited.value = favorited.value === true ? false : true;
-    if(favorited.value === false)
-      pet.value.favorite_num--
-    else
-      pet.value.favorite_num++
-    try {
-      const response = await getpetinfo.submitFavorite(userStore.userInfo.User_ID,petId.value);
-    } catch (error) {
-      console.error('提交收藏信息失败：', error);
+    if (!userStore.userInfo.User_ID) {
+      ElMessage({
+          type: 'warning',
+          message: '请先登录',
+        })
+    }
+      else {
+      favorited.value = favorited.value === true ? false : true;
+      if(favorited.value === false)
+        pet.value.favorite_num--
+      else
+        pet.value.favorite_num++
+      try {
+        const response = await getpetinfo.submitFavorite(userStore.userInfo.User_ID,petId.value);
+      } catch (error) {
+        console.error('提交收藏信息失败：', error);
+      }
     }
 };
-
-const sortedComments = computed(() => {
-  return comment_contents.value.slice().sort((a, b) => {
-    const dateA = new Date(a.time);
-    const dateB = new Date(b.time);
-    return dateB - dateA;
-  });
-});
 
 const deleteComment = async (comment) => {
   try {
@@ -307,24 +313,34 @@ const deleteComment = async (comment) => {
 }
 
 const addComment = async () => {
-  try {
-    const response = await getpetinfo.addComment(userStore.userInfo.User_ID, petId.value, newComment.value.comment_content);
-      ElMessage.success({
-      message: '评论成功',
-      duration: 1000 // 持续显示时间（毫秒）
-    });
-    // 停顿3秒后刷新
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
-      } catch (error) {
-        console.error('评论失败：', error);
-      // 显示失败提示
-      ElMessage.error({
-      message: '评论失败，错误信息：' + error.message,
-      duration: 1000 // 持续显示时间（毫秒）
-    });
-      }
+  if (!userStore.userInfo.User_ID) {
+      ElMessage({
+          type: 'warning',
+          message: '请先登录',
+        })
+    }
+  else {
+    try {
+      let temp = newComment.value;
+      newComment.value = '';
+      const response = await getpetinfo.addComment(userStore.userInfo.User_ID, petId.value, temp);
+        ElMessage.success({
+        message: '评论成功',
+        duration: 1000 // 持续显示时间（毫秒）
+      });
+      // 停顿3秒后刷新
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+        } catch (error) {
+          console.error('评论失败：', error);
+        // 显示失败提示
+        ElMessage.error({
+        message: '评论失败，错误信息：' + error.message,
+        duration: 1000 // 持续显示时间（毫秒）
+      });
+    }
+  }
 };
 
 const isOwnPost = (UID) => {
@@ -332,10 +348,6 @@ const isOwnPost = (UID) => {
       return true
     else 
       return false
-}
-
-const showAddComment = () => {
-    showCommentForm.value = true;
 }
 
 function formatBackendTime(backendTime) {
@@ -350,170 +362,191 @@ function formatBackendTime(backendTime) {
   const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   return formattedTime;
 }
+
+// 创建一个计算属性来按时间排序评论
+const sortedComments = computed(() => {
+  // 使用.slice()创建副本以避免修改原始数据
+  const commentsCopy = [...comments.value];
+
+  // 使用JavaScript的Array.sort()方法进行排序
+  commentsCopy.sort((a, b) => {
+    // 使用 formatBackendTime 返回值比较评论的时间顺序
+    const timeA = formatBackendTime(a.comment_time);
+    const timeB = formatBackendTime(b.comment_time);
+
+    // 你需要根据你的日期格式来比较时间
+    // 这里假设时间是可比较的字符串格式，如果不是，需要相应地调整比较逻辑
+    return timeB.localeCompare(timeA);//这里是时间倒序
+  });
+
+  return commentsCopy;
+});
 </script>
 <style scoped>
-
-  
-  .pet-card {
-    display: flex;
-    justify-content: center;
-  }
-  .card {
-    width: 85%;
-    position: relative; /* 添加相对定位 */
-  }
-  .read-count {
+.pet-card {
+  display: flex;
+  justify-content: center;
+}
+.card {
+  width: 85%;
+  position: relative; /* 添加相对定位 */
+}
+.read-count {
   position: absolute;
   top: 20px; /* 调整距离顶部的位置 */
   right: 20px; /* 调整距离右侧的位置 */
   font-size: 12px;
   color: #888;
-  }
-  .card-content {
-    display: flex;
-  }
-  .pet-image {
-    flex: 1;
-    padding: 10px;
-  }
-  .pet-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  .pet-info {
-    flex: 2;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .pet-info h3 {
-    margin: 0;
-    font-size: 1.2rem;
-  }
-  .pet-info p {
-    margin: 4px 0;
-    font-size: 1rem;
-    color: #888;
-  }
-  .round-button {
-    border-radius: 20%; /* 圆形按钮 */
-    border: none; /* 去掉按钮边框 */
-    background-color: transparent; /* 设置背景颜色为透明 */
-  }
-  .round-button img {
-    vertical-align: middle;
-  }
-  .icon {
-    vertical-align: middle;
-    width: 50px; /* 调整图片宽度 */
-    height: 50px; /* 调整图片高度 */
-  }
-  .interactions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .demonstration {
-    color: var(--el-text-color-secondary);
-  }
-  .el-carousel__item h3 {
-    color: #475669;
-    opacity: 0.75;
-    line-height: 150px;
-    margin: 0;
-    text-align: center;
-  }
-  .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-  }
-  .el-carousel__item:nth-child(2n + 1) {
-    background-color: #d3dce6;
-  }
-  .image-container {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-  .single-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .interactions {
+}
+.card-content {
+  display: flex;
+}
+.pet-image {
+  flex: 1;
+  padding: 10px;
+}
+.pet-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.pet-info {
+  flex: 2;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.pet-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.pet-info p {
+  margin: 4px 0;
+  font-size: 1rem;
+  color: #888;
+}
+.round-button {
+  border-radius: 20%; /* 圆形按钮 */
+  border: none; /* 去掉按钮边框 */
+  background-color: transparent; /* 设置背景颜色为透明 */
+  cursor: pointer;
+}
+.round-button img {
+  vertical-align: middle;
+}
+.icon {
+  vertical-align: middle;
+  width: 30px; /* 调整图片宽度 */
+  height: 30px; /* 调整图片高度 */
+}
+.interactions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.demonstration {
+  color: var(--el-text-color-secondary);
+}
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 0.75;
+  line-height: 150px;
+  margin: 0;
+  text-align: center;
+}
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+.image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.single-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.interactions {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
-  }
-  .interactions span {
+}
+.interactions span {
   margin-left: 0.5rem;
-  }
-  .comment-part {
-    margin-left: auto;
-    margin-right: auto;
-    width: 85%;
-    }
-    .comment {
-    display: flex;
-    }
-    .comment-content {
-    margin-left: 10px;
-    }
-    
-    .comment-form {
-      display: flex;
-      align-items: center; /* 垂直居中对齐 */
-    }
-    .comment-input {
-      flex: 1; /* 评论输入框占据剩余空间 */
-      margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
-    }
-  h2, h3 {
+}
+.comment-part {
+  margin-left: auto;
+  margin-right: auto;
+  width: 85%;
+}
+.comment {
+display: flex;
+}
+.comment-content {
+  margin-left: 10px;
+  border-bottom:1px solid #dad9d9;
+  width:90%;
+}
+  
+.comment-form {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+}
+.comment-input {
+  flex: 1; /* 评论输入框占据剩余空间 */
+  margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
+}
+h2, h3 {
   font-weight: bold;
-  }
-  .pet-label {
-    font-weight: bold; /* 设置标签的字体为粗体 */
-    color: #000; /* 设置标签的文字颜色 */
-    font-size: 20px;
-  }
-  .pet-value {
-    font-weight: normal; /* 设置数值的字体为普通（非粗体） */
-    color: #666; /* 设置数值的文字颜色 */
-  }
-  .modern-button {
+}
+.pet-label {
   font-weight: bold; /* 设置标签的字体为粗体 */
-  background-color: #4b6fa5; /* 背景颜色 */
+  color: #000; /* 设置标签的文字颜色 */
+  font-size: 20px;
+}
+.pet-value {
+  font-weight: normal; /* 设置数值的字体为普通（非粗体） */
+  color: #666; /* 设置数值的文字颜色 */
+}
+.modern-button {
+  font-weight: bold; /* 设置标签的字体为粗体 */
+  background-color: #5683c7; /* 背景颜色 */
   color: white; /* 字体颜色 */
-  font-size: 24px; /* 字体大小 */
+  font-size: 22px; /* 字体大小 */
   border: none; /* 去掉边框 */
-  border-radius: 20px; /* 圆角 */
+  border-radius: 15px; /* 圆角 */
   padding: 15px 20px; /* 按钮内边距，根据需要调整 */
   cursor: pointer; /* 鼠标悬停时显示手型光标 */
   transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
 }
-  .modern-button:hover {
-    background-color: #396097; /* 鼠标悬停时的背景颜色 */
-    color: white; /* 鼠标悬停时的字体颜色 */
-  }
-  .post-label {
-    font-weight: bold; /* 设置标签的字体为粗体 */
-    color: #000; /* 设置标签的文字颜色 */
-    font-size: 15px;
-  }
-  .post-value {
-      font-weight: normal; /* 设置数值的字体为普通（非粗体） */
-      color: #666; /* 设置数值的文字颜色 */
-  }
-  .custom-comment-time {
-    font-size: 12px; /* Adjust the font size */
-    color: #999; /* Adjust the text color to a lighter gray */
-  }
-  .comment-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* 调整日期和链接之间的间距 */
-  }
-  </style>
+.modern-button:hover {
+  background-color: #396097; /* 鼠标悬停时的背景颜色 */
+  color: white; /* 鼠标悬停时的字体颜色 */
+}
+.post-label {
+  font-weight: bold; /* 设置标签的字体为粗体 */
+  color: #000; /* 设置标签的文字颜色 */
+  font-size: 15px;
+}
+.post-value {
+    font-weight: normal; /* 设置数值的字体为普通（非粗体） */
+    color: #666; /* 设置数值的文字颜色 */
+}
+.custom-comment-time {
+  font-size: 12px; /* Adjust the font size */
+  color: #999; /* Adjust the text color to a lighter gray */
+}
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 调整日期和链接之间的间距 */
+  margin-top:-10px
+}
+</style>

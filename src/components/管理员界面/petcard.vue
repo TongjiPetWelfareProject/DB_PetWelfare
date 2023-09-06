@@ -1,32 +1,31 @@
 <template>
-      <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
-        max-height="500">
-        <el-table-column label="宠物ID" prop="id" width="100"></el-table-column>
-        <el-table-column label="宠物名" prop="petname" width="100"></el-table-column>
-        <el-table-column label="种类" prop="breed" width="50"></el-table-column>
-        <el-table-column label="年龄" prop="age" width="50"></el-table-column>
-        <el-table-column label="性别" prop="sex" width="50"></el-table-column>
-        <el-table-column label="体型" prop="size" width="50"></el-table-column>
-        <el-table-column label="人气" prop="popularity" width="50"></el-table-column>
-        <el-table-column label="健康状况" prop="health" width="100"></el-table-column>
-        <el-table-column label="疫苗状况" prop="vaccine" width="100"></el-table-column>
-        <el-table-column label="来源" prop="from" width="100"></el-table-column>
-        <el-table-column label="操作" width="250">
-          <template #default="scope">
-                <el-button link type="primary" size="small" @click.prevent="editRow(scope.$index)">
-                    编辑
-                </el-button>
-                <el-button link type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
-                    删除
-                </el-button>
-            </template>
-        </el-table-column>
-      </el-table>
-    <br />
+    <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="550">
+      <el-table-column label="宠物ID" prop="id"  align="center"></el-table-column>
+      <el-table-column label="宠物名" prop="petname" align="center"></el-table-column>
+      <el-table-column label="种类" prop="breed"  align="center"></el-table-column>
+      <el-table-column label="年龄" prop="age"  align="center"></el-table-column>
+      <el-table-column label="性别" prop="sex"  align="center"></el-table-column>
+      <el-table-column label="体型" prop="size"  align="center"></el-table-column>
+      <el-table-column label="人气" prop="popularity"  align="center"></el-table-column>
+      <el-table-column label="健康状况" prop="health"  align="center"></el-table-column>
+      <el-table-column label="疫苗状况" prop="vaccine"  align="center"></el-table-column>
+      <el-table-column label="来源" prop="from"  align="center"></el-table-column>
+      <el-table-column label="操作" width="200" align="center">
+        <template #default="scope">
+          <el-button plain type="primary" size="small" @click.prevent="editRow(scope.$index)">
+            编辑
+          </el-button>
+          <el-button plain type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <br/>
     <el-button type="primary" @click="addRow">添加宠物</el-button>
 
     <!-- Edit Doctor Dialog -->
-    <el-dialog v-model="editDialogVisible" title="编辑宠物信息" >
+    <el-dialog v-model="editDialogVisible" title="编辑宠物信息" @close="editDialogInvisible">
       <el-form :model="editedPet" label-width="80px">
         <!-- 表单内容 -->
         <el-form-item label="宠物名">
@@ -44,19 +43,35 @@
         </el-form-item>
         <el-form-item label="疫苗状况">
           <el-select v-model="editedPet.vaccine">
-            <el-option label="已经接种" value="已经接种"></el-option>
+            <el-option label="已接种" value="已接种"></el-option>
             <el-option label="未接种" value="未接种"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="原图片">
+          <img :src = "editedPet.avatar" style="max-width: 148px; max-height: 148px; border-radius: 5%;" alt="原图片">
+        </el-form-item>
+        <el-form-item label="新图片(若新图片为空，保留原图)">
+          <el-upload
+            :http-request="httpRequest"
+            multiple
+            :limit="1"
+            :show-file-list="true"
+            list-type="picture-card"
+            :class="{hide:hideUpload}"
+            :on-change="handleEditChange"
+            :on-remove="handleRemove"
+        ><el-icon><Plus /></el-icon>
+        </el-upload>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="editDialogVisible = false">取消</el-button>
+        <el-button @click="editDialogInvisible">取消</el-button>
         <el-button type="primary" @click="submitEditedPet">保存</el-button>
       </div>
     </el-dialog>
 
     <!-- Add Doctor Dialog -->
-    <el-dialog v-model="addDialogVisible" title="添加宠物信息" @close="resetAddDialog">
+    <el-dialog v-model="addDialogVisible" title="添加宠物信息" @close="addDialogInvisible">
       <el-form :model="newPet" label-width="80px">
         <!-- 表单内容 -->
         <el-form-item label="宠物名">
@@ -96,22 +111,28 @@
         </el-form-item>
         <el-form-item label="疫苗状况">
           <el-select v-model="newPet.vaccine">
-            <el-option label="已经接种" value="已经接种"></el-option>
+            <el-option label="已接种" value="已接种"></el-option>
             <el-option label="未接种" value="未接种"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取消</el-button>
+        <el-button @click="addDialogInvisible">取消</el-button>
         <el-button type="primary" @click="submitNewPet">添加</el-button>
       </div>
     </el-dialog>
 </template>
 
+<style>
+.hide .el-upload--picture-card {
+    display: none;
+}
+</style>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Delete, Plus } from '@element-plus/icons-vue'
 import petcard from '@/api/cw_yh_yl_jk'
 
 
@@ -128,14 +149,47 @@ interface Pet {
   from: string;
 }
 
+//以下部分和传图有关
+const fileList = ref([])
+const limitNum = 1;
+const hideUpload = ref(false);
+
+function httpRequest(option) {
+    fileList.value.push(option);
+}
+
+function handleEditChange(file,fileList){
+  hideUpload.value = fileList.length >= 1;
+}
+
+function handleRemove(file,fileList){
+  hideUpload.value = fileList.length >= 1;
+}
+
 const tableData = ref<Pet[]>([]);
 const editDialogVisible = ref(false);
 const addDialogVisible = ref(false);
+
+
+const editDialogInvisible = async() => {
+  editDialogVisible.value = false;//和接口的连接在dialog里
+  console.log("输出图片列表1");
+  console.log(fileList.value);
+  location.reload(); // 这里会刷新整个页面
+
+};
+
+const addDialogInvisible = async() => {
+  addDialogVisible.value = false;//和接口的连接在dialog里
+  location.reload(); // 这里会刷新整个页面
+};
+
 const editedPet = ref<Pet>({
   id: '',
   petname: '',
   health: '',
   vaccine: '',
+  image:'',
 });
 
 const newPet = ref<Pet>({
@@ -168,6 +222,7 @@ const getPetList = async () => {
         health: adoptpet.HEALTH_STATE,
         vaccine: adoptpet.VACCINE,
         from:adoptpet.SOURCE,
+        avatar:adoptpet.AVATAR,
       });
     }
   }
@@ -184,21 +239,21 @@ const addRow = () => {
   addDialogVisible.value = true;//和接口的连接在dialog里
 };
 
-const editRow = (index: number) => {
-  //editedPet.value = { ...tableData.value[index] };
+const editRow = (index) => {
   editedPet.value = {
-  id: tableData.value[index].id,
-  petname: tableData.value[index].petname,
-  health: tableData.value[index].health,
-  vaccine: tableData.value[index].vaccine,
-};
+    id: tableData.value[index].id,
+    petname: tableData.value[index].petname,
+    health: tableData.value[index].health,
+    vaccine: tableData.value[index].vaccine,
+    avatar: tableData.value[index].avatar,
+  };
   editDialogVisible.value = true;//和接口的连接在dialog里
 };
 
 const deleteRow = async (index: number) => {
   try {
-      const response = await petcard.deletePet(tableData.value[index].id);
-      tableData.value.splice(index, 1);
+      await petcard.deletePet(tableData.value[index].id);
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('删除数据失败：', error);
     }
@@ -206,41 +261,35 @@ const deleteRow = async (index: number) => {
 
 const submitNewPet = async() => {
   try {
-      const response = await petcard.addPet(newPet.value);//注意：需保证id不能被修改
-      const newPetId = response.data.id;
-      newPet.value.id = newPetId;
-      tableData.value.push(newPet.value);
-      addDialogVisible.value = false;
+      await petcard.addPet(newPet.value);//注意：需保证id不能被修改
+      location.reload(); // 这里会刷新整个页面
     } catch (error) {
       console.error('添加数据失败：', error);
     }
 };
 
-const submitEditedPet = async() => {
-  try {
-      const response = await petcard.editPet(editedPet.value);//注意：需保证id不能被修改
-      const editedIndex = tableData.value.findIndex(item => item.id === editedPet.value.id);
-      if (editedIndex !== -1) {
-        // 更新表格中对应行的数据
-        tableData.value[editedIndex] = { ...editedPet.value };
-        // 关闭编辑对话框
-        editDialogVisible.value = false;
-      }
+const submitEditedPet = async () => {
+    if (!editedPet.value.petname){
+      ElMessage({
+          type: 'warning',
+          message: '宠物名不能为空',
+        })
+    }else{
+    try {
+        let param = new FormData();
+        param.append('id', editedPet.value.id);
+        param.append('petname', editedPet.value.petname);
+        param.append('health', editedPet.value.health);
+        param.append('vaccine', editedPet.value.vaccine);
+        fileList.value.forEach((it, index) => {
+            param.append('filename', it.file);
+        });
+        await petcard.editPet(param);
+        location.reload();
     } catch (error) {
       console.error('编辑数据失败：', error);
     }
-};
-
-const resetAddDialog = () => {//关闭对话框时重新赋值
-  newPet.value = {
-    petname: '',
-    breed: '猫',
-    age: 0,
-    sex: '公',
-    size: '小型',
-    health: '充满活力',
-    vaccine: '未接种',
-  };
+  }
 };
 
 </script>

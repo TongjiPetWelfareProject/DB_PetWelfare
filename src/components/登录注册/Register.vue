@@ -5,7 +5,6 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import jsonData from './values.json';
 import background from './login-register.vue'
-
 const provinces = ref(jsonData.provinces);
 const selectedProvince = ref('');
 const cities = ref([]);
@@ -16,10 +15,11 @@ const username= ref('');
 const password= ref('');
 const confirmPassword= ref('');
 const passwordError = ref(false);
+const passwordError0 = ref(false);
 const passwordTooShort = ref(false);
 const passwordTooLong = ref(false);
 const passwordMinLength = 8;
-const passwordMaxLength = 16;
+const passwordMaxLength = 14;
 
 const router = useRouter();
 
@@ -37,19 +37,78 @@ watch(selectedProvince, (newSelectedProvince) => {
   }));
 });
 
+const handlePhoneInput = () => {
+  console.log(phone.value)
+  // 获取输入框的值并移除所有非数字字符
+  const digitsOnly = phone.value.replace(/\D/g, "");
+
+  // 在第4个和第9个位置插入空格
+  const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+
+  phone.value = formattedValue;
+};
+
+const insertSpaces = (str, positions) => {
+  const result = [];
+  let positionIndex = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    if (positionIndex < positions.length && i === positions[positionIndex]) {
+      result.push(" ");
+      positionIndex++;
+    }
+    result.push(str[i]);
+  }
+
+  return result.join("");
+};
+
 const validatePhoneNumber = () => {
-  const phoneNumberPattern = /^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|198|199|(147))\d{8}$/;
+  const phoneNumberPattern = /^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9]|98|99)\s\d{4}\s\d{4}$/;
   phoneError.value = !phoneNumberPattern.test(phone.value);
 };
 
 const validconfirmPassword = () => {
-  if(password.value!=confirmPassword.value)
+  const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()]).{8,14}$/;
+  
+  if (password.value !== confirmPassword.value) {
     passwordError.value = true;
-  else
+  }  else {
     passwordError.value = false;
+  }
+  if (!passwordRegex.test(password.value)) {
+    passwordError0.value = true;
+  }
 }
 
 const submitForm = async() => {
+
+    // 先进行错误检测
+    validatePhoneNumber();
+    validatePasswordLength();
+    validconfirmPassword();
+
+    // 检查是否有错误
+    if (phoneError.value) {
+      ElMessage({ type: 'warning', message: '电话号码填入有误，请修改' });
+      return;
+    }
+    if (passwordTooShort.value) {
+      ElMessage({ type: 'warning', message: '密码过短，请修改' });
+      return;
+    }
+    if (passwordTooLong.value) {
+      ElMessage({ type: 'warning', message: '密码过长，请修改' });
+      return;
+    }
+    if (passwordError.value) {
+      ElMessage({ type: 'warning', message: '前后密码不一致' });
+      return;
+    }
+    if (passwordError0.value) {
+      ElMessage({ type: 'warning', message: '密码格式有误，密码长度在8~14之间，必须包含数字、大小写字母、特殊字符（!@#$%^&*()）' });
+      return;
+    }
     const data = {
       username: username.value,
       password: password.value,
@@ -59,7 +118,8 @@ const submitForm = async() => {
     console.log(data)
     try {
         const res = await registerAPI(data);
-        ElMessage({type:'success',message:res})
+        ElMessage({type:'success',message:"注册成功，您的ID为"+res})
+        // userStore.userInfo.
         router.push('/login')
         console.log(res); // 输出注册API返回的结果到控制台
     } catch (error) {
@@ -83,7 +143,7 @@ const submitForm = async() => {
           margin-left: 35%;"></span>
           <span v-if="phoneError && phone" class="error-phone">您的号码格式不正确</span>
         </div>
-          <input type="text" v-model="phone" name="phone" placeholder="请输入电话" @input="validatePhoneNumber"/>
+          <input type="text" v-model="phone" name="phone" placeholder="请输入电话" @input="handlePhoneInput"/>
       </div>
       <div class="form-group">
         <label for="region">选择地区</label>
@@ -108,7 +168,7 @@ const submitForm = async() => {
           <div class="custom-input-container">
             <el-tooltip 
             placement="right" 
-            content="密码长度在8~16之间，必须包含数字、大小写字母、特殊字符" 
+            content="密码长度在8~14之间，必须包含数字、大小写字母、特殊字符（/!@#$%^&*()）" 
             open-delay="500"
             effect="light">
               <div class="input-with-tooltip">
@@ -134,10 +194,6 @@ const submitForm = async() => {
         已有账号？<router-link to="/login">去登录</router-link>
       </div>
     </div>
-
-
-
-
 	</div>
 </template>
 
@@ -258,7 +314,7 @@ html, body {
 .error-password {
   color: red;
   position: absolute;
-  margin-left: 25%;
+  margin-left: 15%;
 }
 
 .register-link {

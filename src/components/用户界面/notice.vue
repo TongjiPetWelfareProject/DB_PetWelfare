@@ -7,6 +7,28 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 const notices = ref([]);
 const searchText = ref("");
 const sortOrder = ref("desc");
+const noticeContent=ref('')
+const noticeTitle=ref('')
+const dialogVisible=ref(false)
+
+const currentPage = ref(1); // 当前页数，默认为第1页
+const pageSize = ref(8);
+
+function handlePageChange(newPage) {
+  currentPage.value = newPage;
+}
+
+const startIndex = computed(() => {
+  return (currentPage.value - 1) * pageSize.value;
+});
+
+const endIndex = computed(() => {
+  return startIndex.value + pageSize.value;
+});
+
+const slicedNotices = computed(() => {
+  return filteredNotices.value.slice(startIndex.value, endIndex.value);
+});
 
 function formatBackendTime(backendTime) {
   const date = new Date(backendTime);
@@ -64,7 +86,10 @@ const currentNotice = ref(null);
 
 const goToNotice = (notice) => {
   console.log("跳转到公告详情页：" + notice.title);
-  ElMessageBox.alert(notice.content,notice.title);
+ // ElMessageBox.alert(notice.content,notice.title);
+   noticeContent.value=notice.content
+   noticeTitle.value=notice.title
+   dialogVisible.value=true
   //currentNotice.value = notice;
   //showCustomMessageBox.value = true;
 };
@@ -112,7 +137,7 @@ const toggleSortOrder = () => {
     <el-row >
         <div style="width:100px"></div>
          <div class="search-bar">
-        <el-input v-model="searchText" placeholder="搜索帖子标题"></el-input>
+        <el-input v-model="searchText" placeholder="搜索公告标题"></el-input>
         <el-button type="primary" :icon="Search" @click="search">搜索</el-button>
         </div>
       <div >
@@ -125,15 +150,41 @@ const toggleSortOrder = () => {
       <div class="content">
     <div class="notices">
       <ul>
-        <li v-for="notice in filteredNotices" :key="notice.id" @click="goToNotice(notice)">
+        <li v-for="notice in slicedNotices" :key="notice.id" @click="goToNotice(notice)">
           <el-card class="notice-card" >
             <span class="notice-title">{{ notice.title }}</span>
             <div class="noticebody">
               <div class="notice-date">{{ notice.date }}</div>
             </div>
           </el-card>
+          
         </li>
       </ul>
+      <el-pagination
+        :total="filteredNotices.length"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        layout="prev, pager, next, jumper"
+        @current-change="handlePageChange"
+        style="text-align: center;justify-content: center;"
+      />
+      <el-dialog
+            v-model="dialogVisible"
+            :title="noticeTitle"
+            width="30%"
+            :before-close="handleClose"
+          >
+          <div class="dialog-content">
+            {{ noticeContent }}
+          </div>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button type="primary" @click="dialogVisible = false">
+                  确认
+                </el-button>
+              </span>
+            </template>
+          </el-dialog>
     </div>
     </div>
     <teleport to="body">
@@ -148,7 +199,12 @@ const toggleSortOrder = () => {
 
 
 
-<style scoped>
+<style>
+
+.dialog-content{
+  max-width: 100%; /* 限制最大宽度以适应 dialog */
+  white-space: pre-wrap;
+}
 .main_page{
   display: flex;
   align-items: center;
@@ -209,10 +265,12 @@ const toggleSortOrder = () => {
   color:#c2c3c3
 }
 
-.notice-card{
-  padding-bottom:0px;
-  height:12vh;
+.notice-card {
+  padding-bottom: 0;
+  height: 12vh;
+  width: 100%; /* 设置宽度为父元素宽度的100%，可以根据需要调整百分比 */
 }
+
 
 .noticebody{
   display: flex;
@@ -223,7 +281,7 @@ const toggleSortOrder = () => {
 }
 
 .notices {
-  max-height: 800px;
+  /* max-height: 800px; */
   overflow-y: auto;
   width: 80%;
   font-size: 17px;
@@ -241,10 +299,12 @@ li {
   padding: 10px;
   /* border-bottom: 1px solid #ccc; */
   cursor: pointer;
+  transition: background-color 0.3s; /* 添加渐变效果 */
 }
 
 li:hover {
   background-color: #f5f5f5;
+  border-radius: 10px; /* 添加圆角效果，可以根据需要调整像素值 */
 }
 
 .headcontainer{

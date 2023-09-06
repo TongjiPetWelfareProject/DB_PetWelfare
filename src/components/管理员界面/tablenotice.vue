@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);">
+    <el-table ref="tableRef" :data="tableData" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);" max-height="550">
       <el-table-column prop="id" label="公告ID" width="70" align="center"/>
       <el-table-column prop="title" label="公告标题" width="120" align="center"/>   
-      <el-table-column label="公告内容" width="480" align="center">
+      <el-table-column label="公告内容"  align="center">
         <template v-slot="{ row }">
           <div class="announcement-cell">
             <el-button type="text" @click="showAnnouncement(row)">
@@ -16,8 +16,8 @@
       <el-table-column prop="employeeName" label="员工姓名" width="80" align="center"/>
       <el-table-column label="操作" width="180" align="center">
         <template v-slot="{row}">
-          <el-button size="mini" type="primary" @click="showEditNoticeDialog(row)">编辑</el-button>
-          <el-dialog title="编辑公告" v-model="editNoticeDialogVisible">
+          <el-button size="small" plain type="primary" @click="showEditNoticeDialog(row)">编辑</el-button>
+          <el-dialog title="编辑公告" v-model="editNoticeDialogVisible" :modal="true">
             <el-form>
               <el-form-item label="公告标题">
                 <el-input v-model="editedNoticeTitle" placeholder="输入公告标题" type="textarea"></el-input>
@@ -33,7 +33,8 @@
               <el-button type="primary" @click="submitEditedNotice">保存</el-button>
             </span>
           </el-dialog>
-          <el-button size="mini" type="danger" @click="deleteRow(row)">删除</el-button>
+          &nbsp;
+          <el-button size="small" plain type="danger" @click="deleteRow(row)">删除</el-button>
           <!-- <el-popconfirm title="Are you sure to delete this?">
             <template #reference>
               <el-button size="mini" type="danger" @click="deleteRow(row)">删除</el-button>
@@ -42,9 +43,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <br>
     <el-pagination layout="prev, pager, next" :total="totalItems" :current-page="currentPage" :page-size="pageSize"  @update:current-page="handlePageChange"  /><br>
-    <el-button type="primary" @click="showAddNoticeDialog">添加</el-button>
+    <el-button type="primary" @click="showAddNoticeDialog">添加公告</el-button>
     <el-dialog title="发布新公告" v-model="addNoticeDialogVisible">
       <el-form>
       <el-form-item label="公告标题">
@@ -54,13 +54,28 @@
         <el-input v-model="newNoticeContent" placeholder="输入公告内容" type="textarea" :rows="6"></el-input>
       </el-form-item>
     </el-form>
-      <br>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addNoticeDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="submitNewNotice">发布</el-button>
       </span>
     </el-dialog>
-   
+    <el-dialog
+            v-model="dialogVisible"
+            :title="noticeTitle"
+            width="30%"
+            :before-close="handleClose"
+          >
+          <div class="dialog-content">
+            {{ noticeContent }}
+          </div>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button type="primary" @click="dialogVisible = false">
+                  确认
+                </el-button>
+              </span>
+            </template>
+          </el-dialog>
   </div>
 </template>
 
@@ -69,7 +84,7 @@ import { ref,onMounted,nextTick } from 'vue'
 import { ElTable, ElMessageBox, ElButton,ElMessage } from 'element-plus'
 import gg_rqb_jk from '@/api/gg_rqb_jk'
 import { useUserStore } from '@/store/user'; 
-
+import { useRouter } from 'vue-router'
 export default {
   components: {
     ElButton,
@@ -92,6 +107,11 @@ export default {
     const totalItems = ref(0);
     const editedNoticeId=ref('');
 
+    const selectedRowIndex = ref(-1); 
+
+    const noticeContent=ref('')
+    const noticeTitle=ref('')
+    const dialogVisible=ref(false)
     
 
     function showAddNoticeDialog() {// 打开添加公告对话框   
@@ -102,9 +122,9 @@ export default {
     }
 
     function showAnnouncement(row) {
-      ElMessageBox.alert(row.content, '公告内容', {
-        confirmButtonText: '关闭',
-      });
+      noticeContent.value=row.content
+      noticeTitle.value=row.title
+      dialogVisible.value=true
     }
 
     function getShortenedContent(content) {
@@ -142,6 +162,13 @@ export default {
 
     function submitNewNotice() {
       //console.log(newNoticeTitle.value)
+      if (!newNoticeTitle.value || !newNoticeContent.value) {
+            ElMessage.warning({
+            message: '提交失败,请发布完整公告' ,
+            duration: 2000 // 持续显示时间（毫秒）
+        });
+        return; // 阻止提交
+      }
       const currentTime=getCurrentTime();
       gg_rqb_jk.sendNewNoticeAPI(employeeId, newNoticeTitle.value, newNoticeContent.value, currentTime.value)
       .then(response => {
@@ -151,6 +178,7 @@ export default {
         })
         console.log('公告内容发布成功', response);
         addNoticeDialogVisible.value = false;
+        window.location.reload();
       })
       .catch(error => {
         console.error('发布公告内容失败', error);
@@ -162,6 +190,13 @@ export default {
     
     function submitEditedNotice() {
       // console.log(editedNoticeId.value)
+      if (!editedNoticeTitle.value || !editedNoticeContent.value) {
+            ElMessage.warning({
+            message: '提交失败,请确认公告完整' ,
+            duration: 2000 // 持续显示时间（毫秒）
+        });
+        return; // 阻止提交
+      }
       const currentTime=getCurrentTime();
 
       const editedNoticeIndex = tableData.value.findIndex(notice => {
@@ -237,6 +272,7 @@ export default {
 
     function handlePageChange(newPage) {
       currentPage.value = newPage;
+      selectedRowIndex.value = -1; 
       fetchNoticeData(); // 页面变化时重新获取数据
     }
 
@@ -275,8 +311,23 @@ export default {
       showAnnouncement,
       getShortenedContent,
       userStore,
-      employeeId
+      employeeId,
+      noticeContent,
+      noticeTitle,
+      dialogVisible,
+      selectedRowIndex
     }
   },
 }
 </script>
+
+<style>
+.dialog-content{
+  max-width: 100%; /* 限制最大宽度以适应 dialog */
+  white-space: pre-wrap;
+}
+
+.el-dialog__wrapper {
+  background-color: rgba(0, 0, 0, 0.6); /* 调整遮罩层背景色，半透明黑色 */
+}
+</style>

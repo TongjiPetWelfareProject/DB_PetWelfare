@@ -19,9 +19,8 @@
       <el-radio-button label="小型犬" />
     </el-radio-group>
     </el-row>
-
-
     </el-form-item>
+    
     <el-form-item label="寄养起始时间">
       <el-col :span="11">
         <el-date-picker
@@ -35,10 +34,19 @@
         <span class="text-gray-500" style="margin-left: 30px;">-</span>
       </el-col>
       <el-col :span="11">
-       
+        <el-time-select
+          v-model="value"
+          start="08:30"
+          step="00:15"
+          end="18:30"
+          placeholder="Select time"
+        />
       </el-col>
-
     </el-form-item>
+    <div class="notice">
+      <span class="red-asterisk">*</span> 寄养请选择从今天开始的一周内时间预约
+    </div>
+
     <el-form-item label="寄养天数">
       <el-input-number v-model="form.num" :min="1" :max="1000"  />
     </el-form-item>
@@ -53,6 +61,8 @@
     </el-form-item>
 
   </el-form>
+
+
 </template>
 
 <script lang="ts" setup>
@@ -78,6 +88,29 @@ const radio = ref("猫")
 const size_radio = ref('大型犬')
 
 const onSubmit = () => {
+  // 先将表单中的日期转换为 Date 对象
+  const selectedDate = new Date(form.date);
+  const currentDate = new Date();
+
+  // 计算一周后的日期
+  const oneWeekLater = new Date();
+  oneWeekLater.setDate(currentDate.getDate() + 7);
+
+  if (!form.name || !form.date || !form.num || !form.remark) {
+    ElMessage.warning({
+      message: '预约失败,请填写完整信息' ,
+      duration: 3000 // 持续显示时间（毫秒）
+    });
+  return; // 阻止提交
+  }
+  if (selectedDate > oneWeekLater) {
+    ElMessage.warning('寄养起始时间必须在一周内');
+    return; // 不继续执行
+  }
+  if (selectedDate < currentDate) {
+    ElMessage.warning('寄养起始时间在当前时间前，请重新选择');
+    return; // 不继续执行
+  }
   ElMessageBox.confirm(
     '点击确认将提交申请，要继续吗？',
     '确认',
@@ -153,4 +186,16 @@ const calculatedFee = computed(function() {
   flex: 0 0 auto;
 }
 
+.notice {
+  font-size: small; /* 使用小字形式的字体大小 */
+  margin-top: 10px; /* 可以根据需要调整顶部边距 */
+  margin-bottom: 15px;
+  color: #666; /* 可以根据需要调整文字颜色 */
+  margin-left: 105px;
+}
+
+.red-asterisk {
+  color: red; /* 红色的星号颜色 */
+  margin-right: 5px; /* 可以根据需要调整星号与文字之间的间距 */
+}
 </style>
