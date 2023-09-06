@@ -105,7 +105,7 @@ const goToPet = (pet) => {
     };
 
 const currentPage = ref(1)
-const pageSize = 12
+const pageSize = 8
 
 const handlePageChange = (page) => {
   currentPage.value = page
@@ -276,24 +276,20 @@ select:focus {
   height: 70%; /* 设置容器的高度 */
   width: 100%;
   overflow-y: auto; /* 设置垂直滚动条 */
-  display:flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .pet-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: center;
 }
 .pet-card {
   display: flex;
   /* height: 200px; */
-  width: 23%; /* 设置每个宠物卡片的宽度为占比的48% */
+  width: 24%; /* 设置每个宠物卡片的宽度为占比的48% */
   justify-content: space-between; /*子元素平均分布*/
-  margin-right: 1.5vw;
-  margin-bottom: 20px;
+  margin-right: 10px;
+  margin-bottom: 10px;
   border-radius: 4px; /* 设置圆角 */
   cursor: pointer; /* 鼠标悬停时显示手型光标 */
 }
@@ -336,6 +332,11 @@ select:focus {
 .adopt-image {
   width: 100%;
   display: block;
-  height:16vw;
+  /*max-width: 252.41px;*/ /* 设置最大宽度 */
+  width: 252.41px;
+  height: 160.45px; /* 设置最大高度 */
+  /*width: auto;*/ /* 使宽度自动调整以保持宽高比 */
+  border-radius: 10px; /* 设置圆角半径为10像素 */
+  margin-top: 10px;
 }
 </style>
