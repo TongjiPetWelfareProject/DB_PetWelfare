@@ -55,6 +55,7 @@ console.log(pets.value);
 const value1 = ref('');
 const value2 = ref('');
 const value3 = ref('');
+const searchName = ref('');
 let min = 0;
 let max = 100;
 const ageRangeMatches = (petAge: number, ageRange: string) => {
@@ -72,7 +73,8 @@ const filteredPets = computed(() => {
     return (
       (value1.value === '' || pet.species === value1.value) &&
       (value2.value === '' || pet.gender === value2.value) &&
-      (value3.value === '' || ageRangeMatches(pet.age, value3.value))
+      (value3.value === '' || ageRangeMatches(pet.age, value3.value)) &&
+      (searchName.value === '' || pet.name.toLowerCase().includes(searchName.value.toLowerCase()))
     );
   });
 });
@@ -101,6 +103,19 @@ const goToPet = (pet) => {
       console.log('跳转到帖子详情页：' + pet.id);
       router.push({ name: 'pet_details', params: { id: pet.id } });
     };
+
+const currentPage = ref(1)
+const pageSize = 8
+
+const handlePageChange = (page) => {
+  currentPage.value = page
+}
+
+const paginatedPets = computed(() => {
+  const startIndex = (currentPage.value - 1) * pageSize
+  const endIndex = startIndex + pageSize
+  return filteredPets.value.slice(startIndex, endIndex)
+})
 
 </script>
 
@@ -141,6 +156,8 @@ const goToPet = (pet) => {
   </el-row></div>
   <div class="background-container">
     <div class="filters-container">
+      <label>名字:</label>
+        <el-input v-model="searchName" placeholder="输入宠物名字" :style="{ width: '200px' }"></el-input>
         <label>品种:</label>
         <el-select v-model="value1" placeholder="选择品种">
           <el-option
@@ -172,7 +189,7 @@ const goToPet = (pet) => {
     <br>
     <div class="pet-list-container">
       <div class="pet-list">
-        <div v-for="pet in filteredPets" :key="pet.id" class="pet-card" @click="goToPet(pet)">
+        <div v-for="(pet, index) in paginatedPets" :key="pet.id" class="pet-card" @click="goToPet(pet)">
           <el-card :body-style="{ padding: '0px' }" style="width:100%" class="pet-card-inside">
       <div class="center-container">
       <img v-if="pet.image" :src="pet.image" class="adopt-image">
@@ -192,6 +209,13 @@ const goToPet = (pet) => {
         </div>
       </div>
     </div>
+    <el-pagination
+      :current-page="currentPage"
+      :page-size="pageSize"
+      :total="filteredPets.length"
+      layout="prev, pager, next"
+      @current-change="handlePageChange"
+    ></el-pagination>
   </div>
 </template>
 

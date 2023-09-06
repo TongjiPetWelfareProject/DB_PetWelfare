@@ -183,7 +183,7 @@ const getPetDetails = async (PID) => {
       id: response.original_pet.Pet_ID,
       name: response.original_pet.Pet_Name,
       species: species,
-      gender: response.original_pet.sex,
+      gender: response.sex,
       age: age,
       popularity: response.Popularity,
       health_state: health_state,
