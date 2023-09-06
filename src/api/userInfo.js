@@ -16,7 +16,7 @@ export default {
             .post('/api/editinfo',{user_id,user_name,phone,province,city})
             .then((response) => response.data)
             .catch(error => {
-                throw new Error('编辑个人信息数据时出错：' + error.message);
+                throw new Error(error.response.data);
             });
     },
     editPasswordAPI(user_id,currentpassword,editedpassword) {
