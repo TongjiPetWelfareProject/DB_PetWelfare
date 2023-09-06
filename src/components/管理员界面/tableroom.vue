@@ -70,6 +70,15 @@ export default {
       return currentTime;
     }
 
+    async function fetchRoomPet(roomID) {
+      try {
+        const petID = await sh_fj_jk.getRoomPetAPI(roomID); // 使用你的 getRoomPetID API 获取宠物的 ID 数据
+        roomPetID.value=petID.data
+      } catch (error) {
+        console.error('获取宠物数据时出错：', error);
+      }
+    }
+
     function showEditRoomDialog(room) {
       const roomId = room.roomId;
       const lastCleaningTime = room.lastCleaningTime;
