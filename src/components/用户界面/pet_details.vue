@@ -183,7 +183,7 @@ const getPetDetails = async (PID) => {
       id: response.original_pet.Pet_ID,
       name: response.original_pet.Pet_Name,
       species: species,
-      gender: response.original_pet.sex,
+      gender: response.sex,
       age: age,
       popularity: response.Popularity,
       health_state: health_state,
@@ -403,11 +403,14 @@ const sortedComments = computed(() => {
 }
 .pet-image {
   flex: 1;
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
   padding: 10px;
 }
 .pet-image img {
-  width: 100%;
-  height: auto;
+  width: auto;
+  height: 300px;
   border-radius: 8px;
 }
 .pet-info {

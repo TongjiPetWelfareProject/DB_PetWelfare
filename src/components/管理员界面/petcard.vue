@@ -47,7 +47,10 @@
             <el-option label="未接种" value="未接种"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="宠物图片">
+        <el-form-item label="原图片">
+          <img :src = "editedPet.avatar" style="max-width: 148px; max-height: 148px; border-radius: 5%;" alt="原图片">
+        </el-form-item>
+        <el-form-item label="新图片(若新图片为空，保留原图)">
           <el-upload
             :http-request="httpRequest"
             multiple
@@ -236,20 +239,14 @@ const addRow = () => {
   addDialogVisible.value = true;//和接口的连接在dialog里
 };
 
-const editRow = (index: number) => {
-  //editedPet.value = { ...tableData.value[index] };
+const editRow = (index) => {
   editedPet.value = {
-  id: tableData.value[index].id,
-  petname: tableData.value[index].petname,
-  health: tableData.value[index].health,
-  vaccine: tableData.value[index].vaccine,
-};
-  fileList.value.push({
-    name: 'default.jpg',
-    url: tableData.value[index].avatar, // 修改为你的默认图片 URL
-  })
-  console.log("输出图片列表2");
-  console.log(fileList.value);
+    id: tableData.value[index].id,
+    petname: tableData.value[index].petname,
+    health: tableData.value[index].health,
+    vaccine: tableData.value[index].vaccine,
+    avatar: tableData.value[index].avatar,
+  };
   editDialogVisible.value = true;//和接口的连接在dialog里
 };
 
@@ -271,21 +268,28 @@ const submitNewPet = async() => {
     }
 };
 
-const submitEditedPet = async() => {
-  try {
-      let param = new FormData()
-      param.append('id', editedPet.value.id)
-      param.append('petname', editedPet.value.petname)
-      param.append('health', editedPet.value.health)
-      param.append('vaccine', editedPet.value.vaccine)
-      fileList.value.forEach((it,index)=>{
-          param.append('filename',it.file)
-      })
-      await petcard.editPet(param);//注意：需保证id不能被修改
-      location.reload(); // 这里会刷新整个页面
+const submitEditedPet = async () => {
+    if (!editedPet.value.petname){
+      ElMessage({
+          type: 'warning',
+          message: '宠物名不能为空',
+        })
+    }else{
+    try {
+        let param = new FormData();
+        param.append('id', editedPet.value.id);
+        param.append('petname', editedPet.value.petname);
+        param.append('health', editedPet.value.health);
+        param.append('vaccine', editedPet.value.vaccine);
+        fileList.value.forEach((it, index) => {
+            param.append('filename', it.file);
+        });
+        await petcard.editPet(param);
+        location.reload();
     } catch (error) {
       console.error('编辑数据失败：', error);
     }
+  }
 };
 
 </script>
