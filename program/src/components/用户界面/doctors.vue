@@ -1,6 +1,6 @@
 <template>
   <div class="doctors">
-    <p style="font-size: 24px;font-weight: bold;color:#729cd4;">医生介绍</p>
+    <p style="font-size: 24px;font-weight: bold;color:#729cd4;margin-top: 5px;">医生介绍</p>
     <div width=50%>
       <el-carousel :interval="4000" type="card" height="300px" max-width="200" >   
           <el-carousel-item v-for="(doctor,index) in doctors" :key="index">  
@@ -25,7 +25,7 @@
         <br><br>
         </div>
         <div style="display:block">
-          <el-button type="primary" :icon="Select" circle @click="goToReservationPage" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">立即预约</el-button>
+          <button class="reservationbutton"  @click="goToReservationPage" style="border-radius: 10px;float:right;box-shadow: 1px 1px 1px 1px rgba(116, 114, 114, 0.2))">立即预约</button>
         </div>
         
       </div>
@@ -107,3 +107,16 @@ export default defineComponent({
 });
 
 </script>
+
+<style>
+.reservationbutton {
+  background-color: #60aaf4;
+  color: #fff;
+  padding: 9px 18px;
+  border: none;
+  /* 去除边框 */
+  border-radius: 5px;
+  font-size:16px
+  /* color:#eebe77 */
+}
+</style>

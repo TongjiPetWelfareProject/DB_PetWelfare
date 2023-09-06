@@ -382,7 +382,13 @@ const images = [
 
 /* 当用户悬停在卡片元素上时应用的样式 */
 .el-card:hover {
-  background-color: white;
+  background-color: #deeaf9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+}
+
+.box-card:hover {
+  background-color: #ffffff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   transform: scale(1.05);
 }
@@ -501,7 +507,7 @@ const images = [
 
 .foster_line5 {
   font-size: 14px;
-  color: #000407;
+  color: #636363;
 }
 
 .foster_line6 {
@@ -540,6 +546,8 @@ const images = [
   padding-top: 4.5em;
   padding-bottom: 3em;
 }
+
+
 
 
 .section-title-big {

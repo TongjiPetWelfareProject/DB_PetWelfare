@@ -1,20 +1,29 @@
 <template>
   <div class="common-layout">
     <div class="postdetail">
-        <div style="display: flex;align-items: center;">
-               <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
-               &nbsp;<a href="\forum" style="text-decoration: none;color:#538adc;">返回论坛</a>
-         </div>
+      <div style="display: flex;align-items: center;">
+           <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
+           &nbsp;<el-button text type="primary" style="padding-left:2px;padding-right:2px;font-size: 18px;" @click="router.go(-1)">返回</el-button> 
+     </div>
          <div style="display: flex;align-items: center;">
            <h2 style="font-size: 30px;">{{ post.title }}</h2>
-           <!-- <a v-if="isOwnPost(post.userid)" href="#" @click="deletePost(post.id,post.userid)" style=" text-decoration: none;color:rgb(217, 108, 108);font-size: 20px;" >删除</a> -->
-           <el-button type="danger" v-if="isOwnPost(post.userid)" @click="deletePost(post.id,post.userid)" size="small" style="margin-left:2vw" >删除</el-button>
+          
+           <el-popconfirm @confirm="confirmDelete" title="确认删除吗?" confirm-button-text="确认" cancel-button-text="取消">
+              <template #reference>
+                <el-button type="danger" v-if="isOwnPost(post.userid)"  size="small" style="margin-left:2vw" >删除</el-button>
+              </template>
+          </el-popconfirm>
+            <!-- <a v-if="isOwnPost(post.userid)" href="#" @click="deletePost(post.id,post.userid)" style=" text-decoration: none;color:rgb(217, 108, 108);font-size: 20px;" >删除</a> -->
+           <!-- <el-button type="danger" v-if="isOwnPost(post.userid)" @click="deletePost(post.id,post.userid)" size="small" style="margin-left:2vw" >删除</el-button> -->
           </div>
     
         <!-- <el-avatar :src="comment.avatar" :size="50"></el-avatar> -->
-        <div style="display:flex;justify-content: space-between;align-items:center;margin-top:-15px">
-          <p style="font-size: 20px;">{{ post.author }}</p>
-           <span style="font-size: 14px;color:rgb(153, 153, 153)">{{ post.like_num }}人赞同了该帖子</span>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: -15px;">
+          <div style="display: flex; align-items: center;">
+           
+            <p style="font-size: 18px">{{ post.author }}</p>
+          </div>
+          <span style="font-size: 14px; color: rgb(153, 153, 153);">{{ post.like_num }}人赞同了该帖子</span>
         </div>
 
       <pre>{{ post.content }}</pre>
@@ -45,9 +54,10 @@
 
     <div class="comment-part">
       <div class="comment-form">
+        <el-avatar v-if="userStore.userInfo.User_ID" :src="userStore.userInfo.Avatar" :size="50"></el-avatar>
         <div class="comment-input">
-          <el-input v-if="userStore.userInfo.User_ID" v-model="newComment.text" type="textarea" placeholder="在这里评论"></el-input>
-          <el-input v-else v-model="newComment.text" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
+          <el-input v-if="userStore.userInfo.User_ID" v-model="newComment.text" type="textarea"   placeholder="在这里评论" style="font-size:16px;margin-left:15px"></el-input>
+          <el-input v-else v-model="newComment.text" type="textarea" placeholder="请先登录后发表评论~"   :readonly="true" style="font-size:16px;margin-left:15px"></el-input>
         </div>
         <div class="comment-button">
           <button type="primary" class="modern-button" @click="addComment" style="font-size: 18px;" :disabled="!newComment.text">发布</button>
@@ -56,7 +66,7 @@
       <br>
       <el-card class="commentcard" shadow="always">
         <template #header>
-          <h3 style="margin-top: -5px;margin-bottom:-5px;font-size: 22px; color:#4b6fa5;font-weight: bold;">评论 &nbsp;{{ post.comment_num }}</h3>
+          <h3 style="margin-top: -5px;margin-bottom:-5px;font-size: 21px; color:#4b6fa5;font-weight: bold;">评论 &nbsp;{{ post.comment_num }}</h3>
         </template>
         <!-- <h3 style="font-size: 25px; color:#4b6fa5;font-weight: bold;">评论 &nbsp;{{ post.comment_num }}</h3> -->
         <p></p>
@@ -125,6 +135,10 @@ function formatBackendTime(backendTime) {
 }
 
 const postId = ref('')
+
+function confirmDelete(){
+  deletePost(post.value.id,post.value.user_id)
+}
 
 const getpost= async () => {
     try {
@@ -327,8 +341,8 @@ const deletePost = async (postid,userid) => {
 
 .icon {
     vertical-align: middle;
-    width: 30px; /* 调整图片宽度 */
-    height: 30px; /* 调整图片高度 */
+    width: 35px; /* 调整图片宽度 */
+    height: 35px; /* 调整图片高度 */
 }
 
 .interactions {
@@ -387,14 +401,15 @@ padding:0;
 
 .modern-button {
     font-weight: bold; /* 设置标签的字体为粗体 */
-    background-color: #5683c7; /* 背景颜色 */
+    background-color: #73a6e4; /* 背景颜色 */
     color: white; /* 字体颜色 */
-    font-size: 24px; /* 字体大小 */
+    font-size: 25px; /* 字体大小 */
     border: none; /* 去掉边框 */
-    border-radius: 10px; /* 圆角减小 */
-    padding: 10px 20px; /* 减小按钮内边距 */
+    border-radius: 15px; /* 圆角减小 */
+    padding: 14px 22px; /* 减小按钮内边距 */
     cursor: pointer; /* 鼠标悬停时显示手型光标 */
     transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+    margin-left:20px
 }
 
 .postdetail h2 {

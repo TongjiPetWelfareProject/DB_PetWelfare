@@ -1,8 +1,9 @@
 <template>
-  <div style="display: flex;align-items: center;margin-left: 5vw;">
-        <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
-        &nbsp;<a href="\" style="text-decoration: none;color:#538adc;">返回主页</a>
-  </div>
+    <div style="display: flex;align-items: center;margin-left: 5vw;">
+           <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
+           &nbsp;<el-button text type="primary" style="padding-left:2px;padding-right:2px;font-size: 18px;" @click="router.go(-1)">返回</el-button> 
+     </div>
+  
   <div class="bigcontainer">
 
   <div class="common-layout">
@@ -99,9 +100,11 @@
           <el-tabs tab-position="left"  class="demo-tabs2">
             <el-tab-pane label="我的点赞" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
-                  <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(lplist.PET_ID)">
+                  <el-card v-for="lplist in likedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:380px" @click="goToPet(lplist.PET_ID)">
+                    <div class="centercontainer">
                       <img v-if="lplist.AVATAR" :src="lplist.AVATAR" class="mypagepetimage">
                       <img v-else src="../../../public/home5.jpg" class="mypagepetimage">
+                      </div>
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -120,9 +123,12 @@
             </el-tab-pane>
             <el-tab-pane label="我的收藏" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
-                <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(cplist.PET_ID)">
+                <el-card v-for="cplist in collectedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:380px" @click="goToPet(cplist.PET_ID)">
+                     <div class="centercontainer">
                       <img v-if="cplist.AVATAR" :src="cplist.AVATAR" class="mypagepetimage">
                       <img v-else src="../../../public/home5.jpg" class="mypagepetimage">
+                     </div>
+    
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -162,9 +168,11 @@
             </el-tab-pane>
             <el-tab-pane label="我的领养" class="demo-tabs-pane2">
               <div class="donatecardcontainer" style="gap:40px">
-                <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:400px" @click="goToPet(adlist.PET_ID)">
+                <el-card v-for="adlist in adoptedpetlist" :body-style="{ padding: '0px' }" style="width: 300px;height:380px" @click="goToPet(adlist.PET_ID)">
+                  <div class="centercontainer">
                       <img v-if="adlist.AVATAR" :src="adlist.AVATAR" class="mypagepetimage">
                       <img v-else src="../../../public/home5.jpg" class="mypagepetimage">
+                      </div>
                       <div style="padding: 14px;display: flex;
                         justify-content: center;
                         flex-direction: column; ">
@@ -315,6 +323,7 @@ const provinces = ref(jsonData.provinces)
 const selectedProvince = ref('')
 const cities = ref([])
 const selectedCity = ref('')
+const avatar= ref()
 const userStore = useUserStore()
 const activeName = ref('first')
 const infoform = ref({
@@ -407,6 +416,7 @@ const handlePhoneInput = () => {
 
     // 在第4个和第9个位置插入空格
     const formattedValue = insertSpaces(digitsOnly, [3, 7]);
+    console.log(formattedValue)
     editedform.phone = formattedValue; // 更新 newEmployee.value.phone
 };
 
@@ -436,20 +446,9 @@ const goToPet = (petId) => {
     router.push({ name: 'pet_details', params: { id: petId } });
 };
 
-const phoneError = ref(false)
-const validatePhoneNumber = () => {
-  const phoneNumberPattern = /^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9]|98|99)\s\d{4}\s\d{4}$/;
-  phoneError.value = !phoneNumberPattern.test(editedform.phone);
-};
-
-
 const editInfo = async () => {
     dialogFormVisible.value = false
-    validatePhoneNumber();
-    if (phoneError.value) {
-      ElMessage({ type: 'warning', message: '电话号码填入有误，请修改' });
-      return;
-    }
+    console.log(selectedCity)
     try {
       const response = await userinfo.editInfoAPI(userStore.userInfo.User_ID,editedform.name,editedform.phone,selectedProvince.value,selectedCity.value);
       ElMessage.success({
@@ -464,10 +463,11 @@ const editInfo = async () => {
       location.reload();
     }, 1000);
     } catch (error) {
+      console.error('获取用户帖子评论时出错：', error);
       // 显示失败提示
       ElMessage.error({
-      message: error,
-      duration: 3000 // 持续显示时间（毫秒）
+      message: '修改失败，错误信息：' + error.message,
+      duration: 1000 // 持续显示时间（毫秒）
     });
     }
 };
@@ -774,11 +774,12 @@ const iconStyle = computed(() => {
   align-items: flex-end;
 }
 .avatar {
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   margin-bottom: -60px;
   cursor: pointer;
+  margin-left: 20px;
 }
 .background-image {
   width: 400px;
@@ -989,10 +990,18 @@ input[type="file"] {
 .mypagepetimage{
   width: 100%;
   display: block;
-  max-width: 252.41px; /* 设置最大宽度 */
-  height: 160.45px; /* 设置最大高度 */
-  width: auto; /* 使宽度自动调整以保持宽高比 */
-  border-radius: 10px; /* 设置圆角半径为10像素 */
+  height:16vw
+  /* max-width: 252.41px;  */
+  /* height: 160.45px;  */
+  /* width: auto; */
+  /* border-radius: 10px;  */
+}
+
+.centercontainer{
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  width:100%
 }
 
 .demo-tabs-pane2{

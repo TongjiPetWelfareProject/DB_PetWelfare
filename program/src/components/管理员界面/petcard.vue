@@ -1,4 +1,23 @@
 <template>
+  <div style="display: flex;align-items: center;margin-bottom: 20px;">
+    <span style="font-size:14px;font-weight:bold;color: rgb(123, 123, 123);">姓名 &nbsp;&nbsp;</span><el-input v-model="petNameFilter" @input="filterHandler" placeholder="搜索宠物姓名" style="display: flex;align-items: center;text-align: center;width:180px;box-shadow: 0 0px 1px rgba(66, 66, 66, 0.2);;"></el-input>
+    <span style="font-size:14px;margin-left:25px;font-weight:bold;color: rgb(123, 123, 123);">品种 &nbsp;&nbsp;</span>
+    <el-select @change="filterHandler" style="width:180px;display: flex;align-items: center;text-align: center;" v-model="petKindFilter" clearable placeholder="选择宠物种类">
+      <el-option label="猫" value="猫"></el-option>
+      <el-option label="狗" value="狗"></el-option>  
+  </el-select>
+  <span style="font-size:14px;margin-left:25px;font-weight:bold;color: rgb(123, 123, 123);">健康状况 &nbsp;&nbsp;</span>
+    <el-select @change="filterHandler" style="width:180px;display: flex;align-items: center;text-align: center;" v-model="petHealthFilter" clearable placeholder="选择健康状况">
+      <el-option label="充满活力" value="充满活力"></el-option>  
+      <el-option label="健康" value="健康"></el-option>
+      <el-option label="不健康" value="不健康"></el-option>  
+  </el-select>
+  <span style="font-size:15px;margin-left:25px;font-weight:bold;color: rgb(123, 123, 123);">接种情况 &nbsp;&nbsp;</span>
+    <el-select @change="filterHandler" style="width:180px;display: flex;align-items: center;text-align: center;" v-model="petVaccineFilter" clearable placeholder="选择接种情况">
+      <el-option label="已接种" value="已接种"></el-option>  
+      <el-option label="未接种" value="未接种"></el-option>
+  </el-select>
+</div>
     <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="550">
       <el-table-column label="宠物ID" prop="id"  align="center"></el-table-column>
       <el-table-column label="宠物名" prop="petname" align="center"></el-table-column>
@@ -166,9 +185,23 @@ function handleRemove(file,fileList){
   hideUpload.value = fileList.length >= 1;
 }
 
-const tableData = ref<Pet[]>([]);
+const tableData = ref([]);
+const tableData2= ref([]);
 const editDialogVisible = ref(false);
 const addDialogVisible = ref(false);
+const petNameFilter = ref('');
+const petKindFilter = ref('');
+const petHealthFilter = ref('');
+const petVaccineFilter = ref('');
+function filterHandler(value){
+    tableData.value = tableData2.value.filter(item => {
+    const petnameMatch = item.petname.toLowerCase().includes(petNameFilter.value.toLowerCase());
+    const kindMatch = item.breed === petKindFilter.value || !petKindFilter.value;
+    const healthMatch=item.health===petHealthFilter.value||!petHealthFilter.value
+    const vaccineMatch=item.vaccine===petVaccineFilter.value||!petVaccineFilter.value
+    return petnameMatch && kindMatch&&healthMatch&&vaccineMatch;
+  });
+};
 
 
 const editDialogInvisible = async() => {
@@ -203,32 +236,33 @@ const newPet = ref<Pet>({
 });
 
 const getPetList = async () => {
-  try {
-    const response = await petcard.getPetList();
-    console.log(response);
-    const uniquePets = {};
-    for (const adoptpet of response) {
-      if (!uniquePets[adoptpet.PET_ID]) { // 检查是否已经遍历过该 pet_id
-        uniquePets[adoptpet.PET_ID] = true;
-      console.log(adoptpet.PET_NAME)
-      tableData.value.push({
-        id: adoptpet.PET_ID,
-        petname: adoptpet.PET_NAME,
-        breed: adoptpet.SPECIES,
-        age: adoptpet.AGE,
-        sex: adoptpet.SEX,
-        size: adoptpet.PSIZE,
-        popularity: adoptpet.POPULARITY,
-        health: adoptpet.HEALTH_STATE,
-        vaccine: adoptpet.VACCINE,
-        from:adoptpet.SOURCE,
-        avatar:adoptpet.AVATAR,
-      });
+    try {
+        const response = await petcard.getPetList();
+        console.log(response);
+        const uniquePets = {};
+        for (const adoptpet of response) {
+            if (!uniquePets[adoptpet.PET_ID]) {
+                uniquePets[adoptpet.PET_ID] = true;
+                console.log(adoptpet.PET_NAME);
+                tableData.value.push({
+                    id: adoptpet.PET_ID,
+                    petname: adoptpet.PET_NAME,
+                    breed: adoptpet.SPECIES,
+                    age: adoptpet.AGE,
+                    sex: adoptpet.SEX,
+                    size: adoptpet.PSIZE,
+                    popularity: adoptpet.POPULARITY,
+                    health: adoptpet.HEALTH_STATE,
+                    vaccine: adoptpet.VACCINE,
+                    from: adoptpet.SOURCE,
+                    avatar: adoptpet.AVATAR,
+                });
+            }
+        }
+        tableData2.value=tableData.value
+    } catch (error) {
+        console.error('获取所有宠物数据时出错：', error);
     }
-  }
-  } catch (error) {
-    console.error('获取所有宠物数据时出错：', error);
-  }
 };
 
 onMounted(() => {

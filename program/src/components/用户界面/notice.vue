@@ -151,11 +151,16 @@ const toggleSortOrder = () => {
     <div class="notices">
       <ul>
         <li v-for="notice in slicedNotices" :key="notice.id" @click="goToNotice(notice)">
-          <el-card class="notice-card" >
-            <span class="notice-title">{{ notice.title }}</span>
-            <div class="noticebody">
-              <div class="notice-date">{{ notice.date }}</div>
+          <el-card style="box-shadow: 0 0 10px rgba(110, 110, 110, 0.2);" class="notice-card" >
+            <div style="display: flex;justify-content: space-between;">
+              <div>
+              <span class="notice-title">{{ notice.title }}</span>
+              </div>
+              <div class="noticebody">
+                <div class="notice-date">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ notice.date }}</div>
+              </div>
             </div>
+      
           </el-card>
           
         </li>
@@ -255,29 +260,35 @@ const toggleSortOrder = () => {
 
 .notice-title{
   color:#667ca8;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .notice-date {
-  text-align: left;
+  /* text-align: left; */
   font-weight: lighter;
-  font-size: 13px;
-  color:#c2c3c3
+  font-size: 14px;
+  color:#b5b5b5;
+  float: right;
+  margin-right: 2vw;
 }
 
 .notice-card {
   padding-bottom: 0;
   height: 12vh;
   width: 100%; /* 设置宽度为父元素宽度的100%，可以根据需要调整百分比 */
+  display: flex;
+  align-items: center;
 }
 
 
 .noticebody{
-  display: flex;
-  justify-content: space-between;
+  /* display: flex;
+  justify-content: space-between; */
   align-items: center;
   margin-top: 4px;
   padding-bottom:0px;
+  float: right;
+  margin-right: 2vw;
 }
 
 .notices {
@@ -285,7 +296,7 @@ const toggleSortOrder = () => {
   overflow-y: auto;
   width: 80%;
   font-size: 17px;
-  padding-left: 4%;
+  /* padding-left: 2%; */
   font-weight: bold;
 }
 

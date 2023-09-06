@@ -50,6 +50,8 @@ export default {
   setup() {
     const tableRef = ref(null);
     const tableData = ref([]);
+    const roomInfo=ref('')
+    const roomPetID=ref('')
 
     const handleSelectionChange = (selectedItems) => {
       console.log(selectedItems);
@@ -68,34 +70,52 @@ export default {
       return currentTime;
     }
 
-    function showEditRoomDialog(room) {
-  const roomId = room.roomId;
-  const lastCleaningTime = room.lastCleaningTime;
+    async function fetchRoomPet(roomID) {
+      try {
+        const petID = await sh_fj_jk.getRoomPetAPI(roomID); // 使用你的 getRoomPetID API 获取宠物的 ID 数据
+        console.log(petID)
+        roomPetID.value+=petID.toString()
+      } catch (error) {
+        console.error('获取宠物数据时出错：', error);
+      }
+    }
 
-  ElMessageBox.confirm(`上次打扫时间：${lastCleaningTime}<br>确认完成打扫${roomId}房间吗?`, '提示', {
-    type: 'info',
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    dangerouslyUseHTMLString:true,
-    center:true
-  })
-    .then(() => {
-          sh_fj_jk.sendEditedRoomAPI(roomId) // 调用 API 请求函数更新打扫时间
-            .then(response => {
-              console.log('信息更新成功', response);
-              room.lastCleaningTime = getCurrentTime();
-              ElMessage({
-                message:'信息更新成功',
-                type:'success',
-              })
-            })
-            .catch(error => {
-              console.error('信息更新失败', error);
-            });
-        }).catch(error => {
-          console.error('操作已取消', error);
+    function showEditRoomDialog(room) {
+      const roomId = room.roomId;
+      const lastCleaningTime = room.lastCleaningTime;
+      if(room.roomStatus==='占用') {
+        roomInfo.value='当前居住宠物为:'
+        // roomPetID.value='1'
+        fetchRoomPet(room.roomId)
+        roomPetID.value+='.'
+      }
+        ElMessageBox.confirm(`${roomInfo.value}${roomPetID.value}上次打扫时间：${lastCleaningTime}<br>确认完成打扫${roomId}房间吗?`, '提示', {
+        type: 'info',
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          dangerouslyUseHTMLString:true,
+          center:true
         })
-}
+        .then(() => {
+              sh_fj_jk.sendEditedRoomAPI(roomId) // 调用 API 请求函数更新打扫时间
+                .then(response => {
+                  console.log('信息更新成功', response);
+                  room.lastCleaningTime = getCurrentTime();
+                  ElMessage({
+                    message:'信息更新成功',
+                    type:'success',
+                  })
+                })
+                .catch(error => {
+                  console.error('信息更新失败', error);
+                });
+            }).catch(error => {
+              console.error('操作已取消', error);
+            })
+
+            roomInfo.value=''
+            roomPetID.value=''
+    }
 
     onMounted(async () => {
       try {

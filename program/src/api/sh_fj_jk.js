@@ -44,5 +44,14 @@ export default {
       throw new Error('更新审核数据时出错：' + error.message);
     });
   },
+ //获取当前房间的宠物
+  getRoomPetAPI(roomId) {
+    return axios
+      .get(`/api/room-pet/${roomId}`)
+      .then(response => response.data)
+      .catch(error => {
+        throw new Error('获取对应宠物数据时出错：' + error.message);
+      });
+  },
 
 };

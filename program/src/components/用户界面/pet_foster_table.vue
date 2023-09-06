@@ -1,4 +1,8 @@
 <template>
+   <div style="display: flex;align-items: center;margin-left: 2vw;">
+           <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
+           &nbsp;<el-button text type="primary" style="padding-left:2px;padding-right:2px;font-size: 18px;" @click="router.go(-1)">返回</el-button> 
+     </div>
   <div class="tableitem" >
         <img src="@/photos/狗狗头像.jpeg" style="height: 100px;width: 100px;margin-left: 20px;margin-right: 20px">
         <el-text class="welcome-text" size="Large">寄养申请表</el-text>

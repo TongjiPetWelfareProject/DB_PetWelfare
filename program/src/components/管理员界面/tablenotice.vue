@@ -106,7 +106,7 @@ export default {
     const pageSize = ref(10);
     const totalItems = ref(0);
     const editedNoticeId=ref('');
-
+    const router=useRouter();
     const selectedRowIndex = ref(-1); 
 
     const noticeContent=ref('')
