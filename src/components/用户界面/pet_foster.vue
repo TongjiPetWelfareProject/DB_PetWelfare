@@ -104,7 +104,8 @@ export default {
   justify-content: center;
 }
 .foster_title{
-  font-size: 40px;
+  font-size: 42px;
+  font-weight: bold;
   color:#ADD8E6;
 }
 .foster_sub_title{

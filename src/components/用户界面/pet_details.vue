@@ -2,7 +2,7 @@
   <div>
     <div style="display: flex;align-items: center;">
            <img src=" ../../../public/return.png" class="textreturn" style="width:24px;height: 24px;">
-           &nbsp;<a href="\pet_adopt" style="text-decoration: none;color:#538adc;">返回领养主页</a>
+           &nbsp;<el-button text type="primary" style="padding-left:2px;padding-right:2px;font-size: 18px;" @click="router.go(-1)">返回</el-button> 
      </div>
     
   </div>
@@ -24,8 +24,9 @@
     <div class="pet-info">
       <p class="read-count">阅读{{ pet.read_num }}</p>
       <span style="font-size: 30px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
+     
       <span style="font-size: 60px; color:#edb055;font-weight: bold;">{{ pet.name }}</span>
-      <p>  </p>
+      <br><p>  </p>
       <el-row>
         <el-col :span="8">
           <span class="pet-label">种类</span>
@@ -61,7 +62,7 @@
         </el-col>
       </el-row>
       <p>  </p>
-      <div style="text-align: center;">
+      <div>
         <button class="modern-button" @click="handleApplyForAdopt">领养Ta</button>
       </div>
     </div>
@@ -89,17 +90,18 @@
 </div>
 <div class="comment-part">
   <div class="comment-form">
+    <el-avatar v-if="userStore.userInfo.User_ID" :src="userStore.userInfo.Avatar" :size="50"></el-avatar>
     <div class="comment-input" v-if="userStore.userInfo.User_ID">
-      <el-input v-model="newComment" type="textarea" placeholder="在这里评论"></el-input>
+      <el-input v-model="newComment" type="textarea" placeholder="在这里评论"  style="font-size:16px;margin-left:15px"></el-input>
     </div>
     <div class="comment-input" v-else>
-      <el-input v-model="newComment" type="textarea" placeholder="请先登录后发表评论~" :readonly="true"></el-input>
+      <el-input v-model="newComment" type="textarea" placeholder="请先登录后发表评论~" style="font-size:16px;margin-left:15px" :readonly="true"></el-input>
     </div>
     <div class="comment-button">
-      <button type="primary" class="modern-button" @click="addComment" style="font-size: 20px;" :disabled="!newComment">发布</button>
+      <button type="primary" class="modern-button" @click="addComment" style="font-size: 18px;" :disabled="!newComment">发布</button>
     </div>
   </div>
-  <h3 style="font-size: 24px; color:#4b6fa5;font-weight: bold;">评论 {{ pet.comment_num }}</h3>
+  <h3 style="font-size: 22px; color:#4b6fa5;font-weight: bold;margin-bottom: -10px;margin-top:30px">评论 {{ pet.comment_num }}</h3>
   <p></p>
   <div v-for="comment in sortedComments" :key="comment.commenter_id" class="comment">
     <el-avatar style="margin-top:20px" v-if="comment.commenter_avatar" :src="comment.commenter_avatar" :size="50"></el-avatar>
@@ -403,11 +405,14 @@ const sortedComments = computed(() => {
 }
 .pet-image {
   flex: 1;
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
   padding: 10px;
 }
 .pet-image img {
-  width: 100%;
-  height: auto;
+  width: auto;
+  height: 330px;
   border-radius: 8px;
 }
 .pet-info {
@@ -501,19 +506,20 @@ display: flex;
 }
 .comment-input {
   flex: 1; /* 评论输入框占据剩余空间 */
-  margin-right: 10px; /* 设置评论输入框和发布按钮之间的间距 */
+  margin-right: 40px; /* 设置评论输入框和发布按钮之间的间距 */
 }
 h2, h3 {
   font-weight: bold;
 }
 .pet-label {
   font-weight: bold; /* 设置标签的字体为粗体 */
-  color: #000; /* 设置标签的文字颜色 */
-  font-size: 20px;
+  color: #505050; /* 设置标签的文字颜色 */
+  font-size: 18px;
 }
 .pet-value {
   font-weight: normal; /* 设置数值的字体为普通（非粗体） */
-  color: #666; /* 设置数值的文字颜色 */
+  color: #7d7d7d; /* 设置数值的文字颜色 */
+  font-size: 14px;
 }
 .modern-button {
   font-weight: bold; /* 设置标签的字体为粗体 */
@@ -522,9 +528,10 @@ h2, h3 {
   font-size: 22px; /* 字体大小 */
   border: none; /* 去掉边框 */
   border-radius: 15px; /* 圆角 */
-  padding: 15px 20px; /* 按钮内边距，根据需要调整 */
+  padding: 14px 22px; /* 按钮内边距，根据需要调整 */
   cursor: pointer; /* 鼠标悬停时显示手型光标 */
   transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+
 }
 .modern-button:hover {
   background-color: #396097; /* 鼠标悬停时的背景颜色 */

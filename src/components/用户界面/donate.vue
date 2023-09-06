@@ -134,10 +134,10 @@
 .demo-image__lazy {
   height: 450px;
   overflow-y: auto;
-  width: 50%;
+  width: 90%;
   box-shadow: 0 4px 0px rgba(0, 0, 0, .2);
   border-radius: 10px;
-  margin: 0 auto; /* 将左右外边距设置为自动，实现水平居中 */
+  /* margin: 0 auto;  */
 }
 .demo-image__lazy .el-image {
   display: block;

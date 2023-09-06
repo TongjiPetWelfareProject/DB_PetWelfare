@@ -46,9 +46,9 @@
               <div class="post-title">{{ post.title }}</div>
               <div class="post-info">
                 <div>发表时间：{{ post.post_time }}</div>
-                <div>阅读量：{{ post.read_count }}</div>
-                <div>点赞数：{{ post.like_num }}</div>
-                <div>评论数：{{ post.comment_num }}</div>
+                <div style="display:flex;align-items: center;"><el-icon :size="18"><list/></el-icon>阅读量：{{ post.read_count }}</div>
+                <div style="display:flex;align-items: center;"><el-icon :size="20"><StarFilled/></el-icon>点赞数：{{ post.like_num }}</div>
+                <div style="display:flex;align-items: center;"><el-icon :size="18"><management/></el-icon>评论数：{{ post.comment_num }}</div>
                 <!-- <el-button class="postbutton" type="plain" text style="text-align: center;justify-content: center;">查看详情</el-button> -->
               </div>
             </el-card>
@@ -71,15 +71,21 @@
 </template>
 
 <script>
-import { Delete, EditPen, Search, Share, Upload,SortDown} from '@element-plus/icons-vue'
+import { Delete, EditPen, Search, Share, Upload,SortDown,Management,List,StarFilled} from '@element-plus/icons-vue'
 import { ref, onMounted, computed } from 'vue'
 import notice_forum from '@/api/notice_forum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user';
 
+
 export default {
   name: "UserInfo",
+  components:{
+    StarFilled,
+    List,
+    Management
+  },
   setup() {
     const forum_posts = ref([]);
     const searchText = ref('');
@@ -216,13 +222,15 @@ export default {
       handlePageChange,
       slicedPosts,
       currentPage,
-      pageSize
+      pageSize,
+      StarFilled
     };
   }
 }
 </script>
 
 <style>
+
 
 .content{
   /* margin: 30px 50px 50px 50px; */
@@ -294,6 +302,12 @@ export default {
   flex-direction: column;
 }
 
+.el-card:hover{
+  background-color: #f3f3f3;
+  box-shadow: 0 0 10rgb(224, 150, 150)(0, 0, 0, 0.3);
+  transform: scale(1.0);
+}
+
 .forum-posts li:hover {
   background-color: #f5f5f5;
 }
@@ -319,6 +333,7 @@ export default {
   display: flex;
   justify-content: space-between;
   text-align: center;
+  align-items: center;
   font-size: 14px;
   color:#abacae;
   font-weight: lighter;
