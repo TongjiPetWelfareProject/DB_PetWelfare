@@ -403,14 +403,11 @@ const sortedComments = computed(() => {
 }
 .pet-image {
   flex: 1;
-  display: flex;
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
   padding: 10px;
 }
 .pet-image img {
-  width: auto;
-  height: 300px;
+  width: 100%;
+  height: auto;
   border-radius: 8px;
 }
 .pet-info {
