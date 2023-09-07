@@ -105,7 +105,7 @@ const goToPet = (pet) => {
     };
 
 const currentPage = ref(1)
-const pageSize = 8
+const pageSize = 12
 
 const handlePageChange = (page) => {
   currentPage.value = page
@@ -124,14 +124,14 @@ const paginatedPets = computed(() => {
   justify-content: center; /* 在水平方向上居中 */
   align-items: center; /* 在垂直方向上居中 */
   /* 其他样式 */">
-  <el-row :gutter="20" style="height: 500px; width: 100%; background-color:#4b6fa5;display: flex;
+  <el-row :gutter="20" style="height: 500px; width: 100%; background-color:#537ab5;display: flex;
   justify-content: center; /* 在水平方向上居中 */
   align-items: center; 
   ">
     <el-col :span="12" style="height:80%; display: flex;
   justify-content: center; /* 在水平方向上居中 */
   align-items: center; /* 在垂直方向上居中 */">
-       <div style="background-color: #4b6fa5;height:95%;padding:20px;border-radius: 10px;">
+       <div style="background-color: #537ab5;height:95%;padding:20px;border-radius: 10px;">
         <br>
         <br>
          <div style="color: #ccdff5;font-size: 35px;">
@@ -195,7 +195,7 @@ const paginatedPets = computed(() => {
       <img v-if="pet.image" :src="pet.image" class="adopt-image">
       <img v-else src="../../../public/home5.jpg" class="adopt-image" alt="Default Image">
       </div>
-      <div style="padding: 14px;display: flex;
+      <div style="padding: 12px;display: flex;
   justify-content: center;
   flex-direction: column; ">
         <span style="font-size: 18px; color:#4b6fa5;font-weight: bold;">你好呀！我的名字是</span>
@@ -203,7 +203,7 @@ const paginatedPets = computed(() => {
         <br>
         <span style="font-size: 18px">{{ pet.species }}{{ pet.gender }}</span>
         <span style="font-size: 16px; color:#6b6a68">{{ pet.age }}岁</span>
-        <br>
+        
       </div>
     </el-card>
         </div>
@@ -333,9 +333,9 @@ select:focus {
   width: 100%;
   display: block;
   /*max-width: 252.41px;*/ /* 设置最大宽度 */
-  width: 252.41px;
-  height: 160.45px; /* 设置最大高度 */
-  /*width: auto;*/ /* 使宽度自动调整以保持宽高比 */
+  width: 21vw;
+  height: 26vh; /* 设置最大高度 */
+  /*wivwdth: auto;*/ /* 使宽度自动调整以保持宽高比 */
   border-radius: 10px; /* 设置圆角半径为10像素 */
   margin-top: 10px;
 }

@@ -8,11 +8,13 @@
         </div>
       </el-col>
     </el-row>
+    <br>
     <el-row :gutter="20">
     <el-col :span="16">
       <div class="foster_center">
           <p class="foster_third_title">尽享关怀，让你的宝贝获得完美寄养</p>
-          <span style="display: block; text-indent: 2em;"> 在我们的寄养中心，你的宝贝将享受到舒适的睡眠环境、有趣的玩耍活动和美味的饮食。
+          <br>
+          <span style="display: block; text-indent: 2em;color:rgb(67, 67, 67);"> 在我们的寄养中心，你的宝贝将享受到舒适的睡眠环境、有趣的玩耍活动和美味的饮食。
             <br><br>
             我们为宠物提供专属的玩具和舒适的床铺，让他们感到宾至如归。</span>
         </div>
@@ -20,20 +22,22 @@
     </el-col>
     <el-col :span="8"> 
       <!-- <div class="foster_1"> -->
-      <p class="foster_third_title" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价格</p>
+        <div style="align-items: center;justify-content: center;text-align: center;">
+      <p class="foster_third_title" >价格</p>
       <div class="foster_card">
-      <div class="foster_center">
-         
-          <p>狗寄养</p>
-          <p>· 大型犬：30元/天</p>
-          <p>· 中型犬：25元/天</p>
-          <p>· 小型犬：20元/天</p>
-        </div>
-        <div class="foster_center">
-          <p>猫寄养</p>
-          <p>· 20元/天</p>
-        </div>
-      </div>
+          <div class="foster_center">
+          
+            <p style="font-size: 18px;color: rgb(67, 67, 67);">狗寄养</p>
+            <p style="font-size: 16px;color: rgb(101, 101, 101);">· 大型犬：30元/天</p>
+            <p style="font-size: 16px;color: rgb(101, 101, 101);">· 中型犬：25元/天</p>
+            <p style="font-size: 16px;color: rgb(101, 101, 101);">· 小型犬：20元/天</p>
+          </div>
+          <div class="foster_center">
+            <p style="font-size: 18px;color: rgb(67,67,67);">猫寄养</p>
+            <p style="font-size: 16px;color: rgb(101, 101, 101);">· 20元/天</p>
+          </div>
+      </div> 
+    </div>
       <!-- </div> -->
     </el-col>
   </el-row>

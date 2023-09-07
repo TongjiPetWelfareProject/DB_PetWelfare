@@ -19,8 +19,8 @@
         </div>
         
         <div style="display:block;text-align: center;justify-content: center;">
-          <p style="margin-bottom:1px;color: #828080;">这里，我们以医疗之爱，诠释着宠物健康的承诺</p>
-            <p style="margin-bottom:1px;color: #828080;">成就宠物健康的守护者。</p>
+          <p style="margin-bottom:1px;color: #828080;">这里，我们以医疗之爱，诠释着守护宠物健康的承诺</p>
+            <p style="margin-bottom:1px;color: #828080;">成就宠物健康，我们正在行动。</p>
         </div>
         <br><br>
         </div>
