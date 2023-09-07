@@ -9,7 +9,7 @@
   </el-select>
 </div>
  <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;"
-        max-height="580"  >
+        max-height="560"  >
  <el-table-column label="用户ID" prop="id"  align="center"></el-table-column>
  <el-table-column label="用户名" prop="username" align="center"></el-table-column>
    <el-table-column label="电话" prop="phone"  align="center"></el-table-column>

@@ -18,7 +18,7 @@
       <el-option label="未接种" value="未接种"></el-option>
   </el-select>
 </div>
-    <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="550">
+    <el-table :data="tableData" style="width: 100%;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);border-radius: 10px;" max-height="530">
       <el-table-column label="宠物ID" prop="id"  align="center"></el-table-column>
       <el-table-column label="宠物名" prop="petname" align="center"></el-table-column>
       <el-table-column label="种类" prop="breed"  align="center"></el-table-column>
