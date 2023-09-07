@@ -7,13 +7,13 @@
   style="width: 100%; border-radius: 10px; box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);"
   @selection-change="handleSelectionChange"
 >
-  <el-table-column label="楼层" width="60">
+  <el-table-column label="楼层" width="60" align="center">
     <template v-slot="scope">
       <span>{{ scope.row.y_name }}</span>
     </template>
   </el-table-column>
 
-  <el-table-column label="房间号" width="1100">
+  <el-table-column label="房间号" align="center">
           <template v-slot="scope">
             <div class="room-list">
               <el-tag v-for="room in scope.row.rooms" :key="room.roomId" class="room-item">
