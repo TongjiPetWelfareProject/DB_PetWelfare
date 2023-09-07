@@ -26,7 +26,7 @@
 
     <div class="medicalprice">
       <div class="priceimg">
-        <img src="ambulance.png" style="height: 200px;width:200px" alt="puppy">
+        <img src="../../../public/ambulance.png" style="height: 200px;width:200px" alt="puppy">
       </div>
       <div class="pricetext">
         <p class="pricetext1">费用说明</p>
