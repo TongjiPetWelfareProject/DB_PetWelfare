@@ -108,6 +108,7 @@ const approveApplication = async(index: number) => {
     await updateFosterRecord(recordToUpdate);
   } catch (error) {
     console.error('更新数据时出错：', error);
+    ElMessage({ type: 'warning', message: error.response.data});
     recordToUpdate.censor_status = 'to be censored';
   }
 }
@@ -122,6 +123,7 @@ const rejectApplication = async(index: number) => {
     await updateFosterRecord(recordToUpdate);
   } catch (error) {
     console.error('更新数据时出错：', error);
+    ElMessage({ type: 'warning', message: error.response.data});
     recordToUpdate.censor_status = 'to be censored';
 }
 }
