@@ -549,7 +549,7 @@ const editPassword = async () => {
       console.error('获取用户帖子评论时出错：', error);
       // 显示失败提示
       ElMessage.error({
-      message: '修改失败，错误信息：' + error.message,
+      message: '修改失败，错误信息：原密码输入错误' ,
       duration: 1000 // 持续显示时间（毫秒）
     });
     }
