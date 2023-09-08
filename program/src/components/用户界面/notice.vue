@@ -280,6 +280,11 @@ const toggleSortOrder = () => {
   align-items: center;
 }
 
+.notice-card:hover{
+  background-color: #f8f8f8;
+  box-shadow: 0 0 10rgb(224, 150, 150)(0, 0, 0, 0.3);
+  transform: scale(1.0);
+}
 
 .noticebody{
   /* display: flex;

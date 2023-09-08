@@ -411,8 +411,8 @@ const sortedComments = computed(() => {
   padding: 10px;
 }
 .pet-image img {
-  width: auto;
-  height: 330px;
+  width: 35vw;
+  height: 44vh;
   border-radius: 8px;
 }
 .pet-info {

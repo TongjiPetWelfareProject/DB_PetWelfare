@@ -50,6 +50,7 @@
 import { ref, computed , onMounted } from 'vue'
 import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElTag } from 'element-plus'
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 import { fetchFosterRecords, updateFosterRecord } from '@/api/jy_ly_jk.js'
 
 interface FosterRecord {
@@ -91,6 +92,7 @@ const fetchData = async () => {
     tableData2.value=tableData.value;
   } catch (error) {
     console.error('获取数据时出错：', error);
+    ElMessage({ type: 'warning', message: error.response.data});
   }
 };
 
@@ -108,6 +110,7 @@ const approveApplication = async(index: number) => {
     await updateFosterRecord(recordToUpdate);
   } catch (error) {
     console.error('更新数据时出错：', error);
+    ElMessage({ type: 'warning', message: error.response.data});
     recordToUpdate.censor_status = 'to be censored';
   }
 }
@@ -122,6 +125,7 @@ const rejectApplication = async(index: number) => {
     await updateFosterRecord(recordToUpdate);
   } catch (error) {
     console.error('更新数据时出错：', error);
+    ElMessage({ type: 'warning', message: error.response.data});
     recordToUpdate.censor_status = 'to be censored';
 }
 }

@@ -2,6 +2,9 @@
 import { useUserStore } from '@/store/user';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import {
+ User,SwitchButton
+} from '@element-plus/icons-vue'
 const userStore = useUserStore();
 const drawerOn = ref(false)
 const router = useRouter();
@@ -28,7 +31,7 @@ const mainpage = () => {
             <img src="  ../../../public/github.png" alt="描述">
           </a>
 
-          <el-button style="color:#5d86ba;font-size:15px;height:20px" @click="drawerOn = true;" text>
+          <el-button style="color:#5d86ba;font-size:15px;" @click="drawerOn = true;" text>
                  关于我们
               </el-button>
               <el-drawer v-model="drawerOn" title="关于我们" :direction="direction" :before-close="handleClose">
@@ -67,18 +70,25 @@ const mainpage = () => {
                          
             <template v-if="userStore.userInfo.User_ID">
               <li>
-                <el-popover placement="bottom"  :width="50" trigger="hover" style="width:30px">
+                <el-popover placement="bottom"  :width="40" trigger="hover" style="width:30px">
                   <template #reference>
                     <img :src="userStore.userInfo.Avatar" alt="我的" style="height: 30px; width: 30px; border-radius: 50%;">
                   </template>
-                  
+                  <div style="display: flex;align-items: center;justify-content: center;">
+                        <el-icon><user/></el-icon>
                   <router-link to="/mypage">
-                    &nbsp;&nbsp; &nbsp;&nbsp;我的主页
+                    &nbsp;我的主页
                   </router-link>
-                  <br><br>
+                  </div>
+                  <br>
 
                   <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
-                    <template #reference><a href="javascript:;"> &nbsp;&nbsp; &nbsp;&nbsp;退出登录</a></template>
+                    <template #reference>
+                      <div style="display: flex;align-items: center;justify-content: center;">
+                        <el-icon><switch-button/></el-icon>
+                        <a href="javascript:;"> &nbsp;退出登录</a>
+                      </div>
+                     </template>
                   </el-popconfirm>
                   
                 </el-popover>

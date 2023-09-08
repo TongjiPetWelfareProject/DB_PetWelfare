@@ -7,13 +7,13 @@
   style="width: 100%; border-radius: 10px; box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);"
   @selection-change="handleSelectionChange"
 >
-  <el-table-column label="楼层" width="60">
+  <el-table-column label="楼层" width="60" align="center">
     <template v-slot="scope">
       <span>{{ scope.row.y_name }}</span>
     </template>
   </el-table-column>
 
-  <el-table-column label="房间号" width="1100">
+  <el-table-column label="房间号" align="center">
           <template v-slot="scope">
             <div class="room-list">
               <el-tag v-for="room in scope.row.rooms" :key="room.roomId" class="room-item">
@@ -52,6 +52,7 @@ export default {
     const tableData = ref([]);
     const roomInfo=ref('')
     const roomPetID=ref('')
+    const roomBr=ref('')
 
     const handleSelectionChange = (selectedItems) => {
       console.log(selectedItems);
@@ -70,26 +71,37 @@ export default {
       return currentTime;
     }
 
-    async function fetchRoomPet(roomID) {
-      try {
-        const petID = await sh_fj_jk.getRoomPetAPI(roomID); // 使用你的 getRoomPetID API 获取宠物的 ID 数据
-        console.log(petID)
-        roomPetID.value+=petID.toString()
-      } catch (error) {
-        console.error('获取宠物数据时出错：', error);
-      }
-    }
+    // async function fetchRoomPet(roomID) {
+    //   try {
+    //     const petID = await sh_fj_jk.getRoomPetAPI(roomID); 
+    
+    //     roomPetID.value=petID
+    //     console.log(roomPetID.value)
+    //   } catch (error) {
+    //     console.error('获取宠物数据时出错：', error);
+    //   }
+    // }
 
-    function showEditRoomDialog(room) {
+    async function showEditRoomDialog(room) {
       const roomId = room.roomId;
       const lastCleaningTime = room.lastCleaningTime;
       if(room.roomStatus==='占用') {
         roomInfo.value='当前居住宠物为:'
-        // roomPetID.value='1'
-        fetchRoomPet(room.roomId)
-        roomPetID.value+='.'
+
+        try {
+          const petID = await sh_fj_jk.getRoomPetAPI(room.roomId); // 使用getRoomPetID API 获取宠物的 ID 数据
+          // console.log(petID)
+          roomPetID.value=petID
+          // console.log(roomPetID.value)
+        } catch (error) {
+          // console.error('获取宠物数据时出错：', error);
+        }
+
+        console.log(roomPetID.value)
+        roomBr.value='.'
+        console.log(roomPetID.value)
       }
-        ElMessageBox.confirm(`${roomInfo.value}${roomPetID.value}上次打扫时间：${lastCleaningTime}<br>确认完成打扫${roomId}房间吗?`, '提示', {
+        ElMessageBox.confirm(`${roomInfo.value}${roomPetID.value}${roomBr.value}上次打扫时间：${lastCleaningTime}<br>确认完成打扫${roomId}房间吗?`, '提示', {
         type: 'info',
           confirmButtonText: '确认',
           cancelButtonText: '取消',
@@ -115,6 +127,7 @@ export default {
 
             roomInfo.value=''
             roomPetID.value=''
+            roomBr.value=''
     }
 
     onMounted(async () => {
