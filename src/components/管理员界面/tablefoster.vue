@@ -102,7 +102,7 @@ onMounted(fetchData);
 
 const approveApplication = async(index: number) => {
   // 同意申请操作
-  const recordToUpdate = tableData.value[index];
+  const recordToUpdate = filteredData.value[index];
 
   recordToUpdate.censor_status = 'legitimate';
   fetchData();
@@ -117,7 +117,7 @@ const approveApplication = async(index: number) => {
 
 const rejectApplication = async(index: number) => {
   // 拒绝申请操作
-  const recordToUpdate = tableData.value[index];
+  const recordToUpdate = filteredData.value[index];
 
   recordToUpdate.censor_status = 'aborted';
   fetchData();
