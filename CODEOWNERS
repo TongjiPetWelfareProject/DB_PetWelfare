@@ -1,37 +1,41 @@
+# llRagdoll-杨乐雅 用户界面：医疗页、捐款页；管理员界面：总布局、捐款页、公告页、人气榜页全程编写，优化UI界面
 doctors.vue @llRagdoll
 medical.vue @llRagdoll
 recoverystory.vue @llRagdoll
 reservationdoctor.vue @llRagdoll
 src/api/medical_donate.js @llRagdoll
 src/api/gg_rqb_jk.js @llRagdoll
-
+tablehot.vue @llRagdoll
+# RayyyyyRGB-芮千寻 shiguangbiyi-沈家豪
 mypage.vue @RayyyyyRGB
 src/api/userInfo.js @RayyyyyRGB @shiguangbiyi
-
+# thesamechen-陈一洋 设计与实现文档和需求分析文档的部分内容、用户界面论坛和公告的部分代码、管理员界面审核和房间的部分代码
 forum.vue @thesamechen
 notice.vue @thesamechen
-tablecheck.vue @thesamechen
-tableroom.vue @thesamechen
+tablecheck.vue @thesamechen @M2030123
+tableroom.vue @thesamechen @llRagdoll
 src/api/sh_fj_jk.js @thesamechen
 src/api/notice_forum.js @shiguangbiyi @thesamechen
-
+# tuesaime-郑思怡
 tablehot.vue @tuesaime @llRagdoll
 mytabledoctor.vue @tuesaime
 mytableemployee.vue @tuesaime
 src/api/first_page.js @tuesaime
-
+# aodef-李欣 用户界面中的寄养板块，管理员界面的寄养领养板块，初期用户界面的整合，后期界面的ui设计风格统一与美化修改。
 pet_foster.vue @aodef
 manager.vue @aodef
 src/router/index.js @aodef
 src/api/pet_foster.js @aodef @shiguangbiyi
 src/api/jy_ly_jk.js @aodef
-
+# DaenerysTar蔡逸轩 用户页面宠物领养部分的最初页面设计、
+# 帖子详情和发帖部分的最初页面设计、宠物详情页面和领养申请表的后续设计、接口连接、
+# 管理员用户列表、宠物列表、医疗列表的接口连接、管理员宠物列表的重新设计、帮建网站的同学找了外援
 pet_details.vue @DaenerysTar
 pet_adopt_form.vue @DaenerysTar
 src/api/pet_adopt.js @DaenerysTar @shiguangbiyi
-
+## VictorHuu 胡云韬 DBA，后端逻辑业务逻辑层与数据访问层编写，负责部分Git操作。
 Database/ @VictorHuu
-
+# shiguangbiyi-沈家豪 组长，组织统筹各部分工作。参与编写我的页面、捐款、论坛、公告的前后端代码和部分接口连接代码。
 README.md @shiguangbiyi
 Login.vue @shiguangbiyi
 Register.vue @shiguangbiyi
@@ -39,5 +43,16 @@ login-register.vue @shiguangbiyi
 values.json @shiguangbiyi @VictorHuu
 src/components/view @shiguangbiyi
 src/api/user.js @shiguangbiyi
+# 文档 由M2030123 孟璟陆 芮千寻 郑思怡 陈一洋4人负责，其中
 
-*.pdf @M2030123 @RayyyyyRGB @tuesaime @thesamechen
+# 芮千寻系统的部分功能设计文档
+#（用户领养、寄养、捐款、医疗等，和几个同学一块做的，大概上学期期中），
+# 页面的设计（我的页面的设计图），mypage（前期，后期组长帮忙写了），
+# 后端的公告和人气榜部分的修改（后面才去改的，前期有人写过部分），项目文档（和指定的同学一块写的）
+
+# 孟璟陆 服务器的建立与维护，前后端部署，网站开发与维护，后端开发
+*.pdf *.docx *.doc @M2030123 @RayyyyyRGB @tuesaime @thesamechen
+# 孟璟陆错误提示补全
+mytableuser.vue @M2030123
+mytableemployee.vue @M2030123
+tablemedical.vue @M2030123
