@@ -1,10 +1,11 @@
 // 封装所有和个人页面用户信息相关的接口函数
 import request from '@/util/http'
+import axiosInstance from '@/util/token-config';
 import axios from 'axios';
 
 export default {
     avatarAPI(user_id,formdata) {
-        return axios
+        return axiosInstance
             .post('/api/avatar',{user_id,formdata})
             .then((response) => response.data)
             .catch(error => {
@@ -12,7 +13,7 @@ export default {
             });
     },
     editInfoAPI(user_id,user_name,phone,province,city) {
-        return axios
+        return axiosInstance
             .post('/api/editinfo',{user_id,user_name,phone,province,city})
             .then((response) => response.data)
             .catch(error => {
@@ -20,7 +21,7 @@ export default {
             });
     },
     editPasswordAPI(user_id,currentpassword,editedpassword) {
-        return axios
+        return axiosInstance
             .post('/api/editpassword',{user_id,currentpassword,editedpassword})
             .then((response) => response.data)
             .catch(error => {
@@ -28,7 +29,7 @@ export default {
             });
     },
     userInfoAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/userinfo',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -36,7 +37,7 @@ export default {
             });
     },
     userPostCommentAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/userpostcomment',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -44,7 +45,7 @@ export default {
             });
     },
     userPostLikeAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/userpostlike',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -52,7 +53,7 @@ export default {
             });
     },
     userPostSendAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/userpostsend',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -60,7 +61,7 @@ export default {
             });
     },
     userDonationAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/userdonation',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -68,7 +69,7 @@ export default {
             });
     },
     userMedicalAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/usermedical',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -76,7 +77,7 @@ export default {
             });
     },
     userCollectPetsAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/usercollectpet',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -84,7 +85,7 @@ export default {
             });
     },
     userLikePetsAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/userlikepet',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -92,7 +93,7 @@ export default {
             });
     },
     userCommentPetsAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/usercommentpet',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -100,7 +101,7 @@ export default {
             });
     },
     userAdoptPetsAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/useradoptpet',{user_id})
             .then((response) => response.data)
             .catch(error => {
@@ -108,7 +109,7 @@ export default {
             });
     },
     userFosterPetsAPI(user_id) {
-        return axios
+        return axiosInstance
             .post('/api/userfosterpet',{user_id})
             .then((response) => response.data)
             .catch(error => {

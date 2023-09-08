@@ -1,10 +1,11 @@
 //用户接口
+import axiosInstance from '@/util/token-config';
 import axios from 'axios';
 
 export default {
     //管理员页面用户列表接口
     fetchUserRecords() {
-        return axios.get('/api/tableuser')
+        return axiosInstance.get('/api/tableuser')
             .then(response => {
             return response.data;
             })
@@ -15,7 +16,7 @@ export default {
 
     muteUser(UID) {
         console.log(typeof UID);
-        return axios.post('/api/ban',  JSON.stringify(UID), {//英文名弄错了，不改了
+        return axiosInstance.post('/api/ban',  JSON.stringify(UID), {//英文名弄错了，不改了
             headers: {
                 'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
             },
@@ -29,7 +30,7 @@ export default {
     },
 
     removeMuteUser(UID) {
-        return axios.post('/api/remove-ban',  JSON.stringify(UID), {
+        return axiosInstance.post('/api/remove-ban',  JSON.stringify(UID), {
             headers: {
                 'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
             },
@@ -43,7 +44,7 @@ export default {
     },
 
     blockUser(UID) {
-        return axios.post('/api/block',  JSON.stringify(UID), {
+        return axiosInstance.post('/api/block',  JSON.stringify(UID), {
             headers: {
                 'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
             },
@@ -57,7 +58,7 @@ export default {
     },
 
     removeBlockUser(UID) {
-        return axios.post('/api/remove-block',  JSON.stringify(UID), {
+        return axiosInstance.post('/api/remove-block',  JSON.stringify(UID), {
             headers: {
                 'Content-Type': 'application/json', // 设置 Content-Type 为 JSON
             },
@@ -73,7 +74,7 @@ export default {
     
    //管理员页面宠物列表接口
     getPetList() {
-        return axios.get('/api/petlist')
+        return axiosInstance.get('/api/petlist')
         .then(response => {
             return response.data;
         })
@@ -95,7 +96,7 @@ export default {
         }
         console.log("宠物列表")
         console.log(newPet);
-        return axios.post('/api/add-pet', JSON.stringify(newPet), {
+        return axiosInstance.post('/api/add-pet', JSON.stringify(newPet), {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -111,7 +112,7 @@ export default {
     deletePet(PID) {
         console.log("删除宠物ID");
         console.log(PID);
-        return axios.delete('/api/delete-pet', {data:{PID}, 
+        return axiosInstance.delete('/api/delete-pet', {data:{PID}, 
             headers: {
               'Content-Type': 'application/json'
             }
@@ -125,7 +126,7 @@ export default {
     },
 
     editPet(param) {
-        return axios.post('/api/edited-pet', param)//需要后端自己找出宠物ID
+        return axiosInstance.post('/api/edited-pet', param)//需要后端自己找出宠物ID
             .then(response => {
             return response.data;
             })
@@ -137,7 +138,7 @@ export default {
 
     //管理员页面医疗列表接口    
     getTreatList() {
-        return axios.get('/api/treatlist')
+        return axiosInstance.get('/api/treatlist')
             .then(response => {
             return response.data;
             })
@@ -147,7 +148,7 @@ export default {
     },
 
     editMedicalRecord(editedMedicalRecord) {
-        return axios.post('/api/edited-medical-record', JSON.stringify(editedMedicalRecord), {
+        return axiosInstance.post('/api/edited-medical-record', JSON.stringify(editedMedicalRecord), {
                 headers: {
                 'Content-Type': 'application/json'
                 }
@@ -166,7 +167,7 @@ export default {
             vet: VID,
             reserveTime: reserveTime,
           };
-        return axios.post('/api/delete-medical-record', JSON.stringify(deletedMedicalRecord), {
+        return axiosInstance.post('/api/delete-medical-record', JSON.stringify(deletedMedicalRecord), {
                 headers: {
                 'Content-Type': 'application/json'
                 }
@@ -185,7 +186,7 @@ export default {
             vet: VID,
             reserveTime: reserveTime,
           };
-        return axios.post('/api/approve-medical-application', JSON.stringify(approvedMedicalApplication), {
+        return axiosInstance.post('/api/approve-medical-application', JSON.stringify(approvedMedicalApplication), {
                 headers: {
                 'Content-Type': 'application/json'
                 }
@@ -205,7 +206,7 @@ export default {
             reserveTime: reserveTime,
             newReserveTime: newReserveTime,
           };
-        return axios.post('/api/postpone-medical-application', JSON.stringify(postponedMedicalApplication), {
+        return axiosInstance.post('/api/postpone-medical-application', JSON.stringify(postponedMedicalApplication), {
                 headers: {
                 'Content-Type': 'application/json'
                 }
