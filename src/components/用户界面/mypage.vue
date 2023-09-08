@@ -447,7 +447,7 @@ const goToPet = (petId) => {
 };
 const phoneError = ref(false)
 const validatePhoneNumber = () => {
-  const phoneNumberPattern = /^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9]|98|99)\s\d{4}\s\d{4}$/;
+  const phoneNumberPattern = /^1\d{2}\s\d{4}\s\d{4}$/;
   phoneError.value = !phoneNumberPattern.test(editedform.phone);
 };
 const editInfo = async () => {
