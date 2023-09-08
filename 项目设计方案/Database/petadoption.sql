@@ -431,16 +431,6 @@ BEGIN
 
     RETURN like_count;
 END;
-create or replace 
-FUNCTION like_num_func(pid IN VARCHAR2) RETURN NUMBER IS
-    like_count NUMBER;
-BEGIN
-    SELECT COUNT(*) INTO like_count
-    FROM like_pet
-    WHERE pet_id = pid;
-
-    RETURN like_count;
-END;
 /
 create or replace view  pet_profile as SELECT
    p.read_num * 1 + p.like_num * 2 + comment_num_func(p.pet_id) * 5 + collect_num_func(p.pet_id) as popularity, p."PET_ID",p."PET_NAME",p."SPECIES",p."SEX",p."PSIZE",p."BIRTHDATE",p."AVATAR",p."HEALTH_STATE",p."VACCINE",p."READ_NUM",
