@@ -180,6 +180,10 @@ export default defineComponent({
             });
           return; // 阻止提交
          }
+		 if (dateObject.getDay() ==0||dateObject.getDay() ==6) {
+		   ElMessage.warning('预约时间必须在工作日内');
+		   return; // 不继续执行
+		 }
       
         if (dateObject > oneWeekLater) {
           ElMessage.warning('预约时间必须在一周内');
