@@ -49,7 +49,7 @@
 
 <script>
 import {  ref,onMounted } from 'vue'
-import { ElTable, ElMessageBox, ElButton } from 'element-plus'
+import { ElTable, ElMessageBox, ElButton,ElMessage } from 'element-plus'
 import sh_fj_jk from '@/api/sh_fj_jk'
 
 export default {
@@ -105,6 +105,11 @@ export default {
       try {
         await sh_fj_jk.updateCheckInfoAPI(infoToUpdate);
         refreshTableData();
+		// 显示成功提示
+		ElMessage.success({
+		  message: '已通过！',
+		  duration: 3000 // 持续显示时间（毫秒）
+		});
       } catch (error) {
         console.error('更新数据时出错：', error);
         infoToUpdate.censor_status = 'to be censored';
@@ -118,6 +123,11 @@ export default {
       try {
         await sh_fj_jk.updateCheckInfoAPI(infoToUpdate);
         refreshTableData();
+		// 显示成功提示
+		ElMessage.error({
+		  message: '已拒绝！',
+		  duration: 3000 // 持续显示时间（毫秒）
+		});
       } catch (error) {
         console.error('更新数据时出错：', error);
         infoToUpdate.censor_status = 'to be censored';

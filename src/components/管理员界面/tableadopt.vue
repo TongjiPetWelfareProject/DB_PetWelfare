@@ -148,6 +148,11 @@ const approveApplication = async (index: number) => {
     // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'abored' });
     await updateAdoptionRecord(recordToUpdate);
     fetchData();
+	// 显示成功提示
+	ElMessage.success({
+	  message: '已同意！',
+	  duration: 3000 // 持续显示时间（毫秒）
+	});
   } catch (error) {
     console.error('更新数据时出错：', error);
     ElMessage({ type: 'warning', message: error.response.data});
@@ -166,6 +171,11 @@ const rejectApplication = async(index: number) => {
     // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'legitimate' });
     await updateAdoptionRecord(recordToUpdate);
     fetchData();
+	// 显示成功提示
+	ElMessage.error({
+	  message: '已拒绝！',
+	  duration: 3000 // 持续显示时间（毫秒）
+	});
   } catch (error) {
     console.error('更新数据时出错：', error);
     ElMessage({ type: 'warning', message: error.response.data});
