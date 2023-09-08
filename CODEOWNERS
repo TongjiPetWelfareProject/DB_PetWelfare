@@ -51,7 +51,9 @@ src/api/user.js @shiguangbiyi
 # 后端的公告和人气榜部分的修改（后面才去改的，前期有人写过部分），项目文档（和指定的同学一块写的）
 
 # 孟璟陆 服务器的建立与维护，前后端部署，网站开发与维护，后端开发
-*.pdf *.doc @M2030123 @RayyyyyRGB @tuesaime @thesamechen
+*.pdf @M2030123 @RayyyyyRGB @tuesaime @thesamechen
+*.doc @M2030123 @RayyyyyRGB @tuesaime @thesamechen
+*.docx @M2030123 @RayyyyyRGB @tuesaime @thesamechen
 # 孟璟陆错误提示补全
 mytableuser.vue @M2030123
 mytableemployee.vue @M2030123
