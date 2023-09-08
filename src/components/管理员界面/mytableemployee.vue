@@ -281,6 +281,11 @@ const submitEditedEmployee = () => {
             fetchData();
         })
         .catch(error => {
+			// 显示成功提示
+			ElMessage.error({
+			  message: '手机号已被使用！',
+			  duration: 3000 // 持续显示时间（毫秒）
+			});
             console.error('编辑数据时出错:', error);
         });
 };
@@ -320,8 +325,18 @@ const submitNewEmployee = () => {
             tableData.value.push(newEmployee.value);
             addDialogVisible.value = false;
             fetchData();
+			// 显示成功提示
+			ElMessage.success({
+			  message: '添加成功！',
+			  duration: 3000 // 持续显示时间（毫秒）
+			});
         })
         .catch(error => {
+			// 显示成功提示
+			ElMessage.error({
+			  message: '手机号已被使用！',
+			  duration: 3000 // 持续显示时间（毫秒）
+			});
             console.error('添加数据时出错：', error);
         });
 };
