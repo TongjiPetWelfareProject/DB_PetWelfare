@@ -10,9 +10,10 @@ export const useUserStore = defineStore('user',() => {
     // 获取用户信息并存储
     const getUserInfo = async({username,password}) => {
         const token = '';
-        const res = await loginAPI({token, username,password})
+        const res = await loginAPI({username,password})
         userInfo.value = res.data
-        localStorage.setItem('jwt_token', token);
+        //console.log("token:"+res.data.token);
+        localStorage.setItem('jwt_token', res.data.token);
     }
 
     // 退出时清除用户信息

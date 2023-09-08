@@ -106,6 +106,7 @@
 import { ref, onMounted } from 'vue';
 import { ElButton, ElTable, ElDialog, ElForm, ElInput, ElMessage } from 'element-plus';
 import axios from 'axios';
+import axiosInstance from '@/util/token-config';
 
 interface Employee {
     id: string;
@@ -223,7 +224,7 @@ onMounted(async () => {
 
 const fetchData = async () => {
     try {
-        const response = await axios.get('/api/employee');
+        const response = await axiosInstance.get('/api/employee');
         tableData.value = response.data;
         tableData2.value=tableData.value;
     } catch (error) {
@@ -233,7 +234,7 @@ const fetchData = async () => {
 
 const deleteRow = (index: number) => {
     const employeeId = tableData.value[index].id;
-    axios.delete(`/api/delete-employee/${employeeId}`)
+    axiosInstance.delete(`/api/delete-employee/${employeeId}`)
         .then(() => {
             tableData.value.splice(index, 1);
         })
@@ -259,7 +260,7 @@ const submitEditedEmployee = () => {
         }
         return;
     }
-    axios.put(`/api/edit-employee/${editedEmployee.value.id}`, editedEmployee.value)
+    axiosInstance.put(`/api/edit-employee/${editedEmployee.value.id}`, editedEmployee.value)
         .then(() => {
             const editedIndex = tableData.value.findIndex(item => item.id === editedEmployee.value.id);
             if (editedIndex !== -1) {
@@ -303,7 +304,7 @@ const submitNewEmployee = () => {
         }
         return;
     }
-    axios.post('/api/add-employee', newEmployee.value)
+    axiosInstance.post('/api/add-employee', newEmployee.value)
         .then(response => {
             const newEmployeeId = response.data.id;
             newEmployee.value.id = newEmployeeId;

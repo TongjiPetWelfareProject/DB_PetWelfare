@@ -1,9 +1,10 @@
+import axiosInstance from '@/util/token-config';
 import axios from 'axios';
 
 export default {
   //提交预约的api
   submitAppointmentAPI(formData) {
-    return axios
+    return axiosInstance
       .post('/api/submitAppointment', formData)
       .then(response => response.data)
       .catch(error => {
@@ -12,7 +13,7 @@ export default {
   },
 //捐款的api
   donateAPI(userId, amount, donationTime) {
-    return axios
+    return axiosInstance
       .post('/api/donate', { userId, amount, donationTime })
       .then(response => response.data)
       .catch(error => {
@@ -21,7 +22,7 @@ export default {
   },
 //获取三个医生的照片
   doctorsAPI() {
-    return axios
+    return axiosInstance
       .get('/api/doctors')
       .then(response => response.data)
       .catch(error => {
@@ -30,7 +31,7 @@ export default {
   },
   //获取五个康复故事
   recoveryStoryAPI() {
-    return axios
+    return axiosInstance
       .get('/api/recoveryStory')
       .then(response => response.data)
       .catch(error => {
@@ -39,7 +40,7 @@ export default {
   },
   //获取捐助记录,时间、用户、金额
   donationRecordsAPI() {
-    return axios
+    return axiosInstance
     .get('/api/donation')
       .then((response) => response.data)
       .catch(error => {
@@ -48,7 +49,7 @@ export default {
   },
   //获取所有医生的姓名和id
   getDoctorsAPI() {
-    return axios
+    return axiosInstance
       .get('/api/doctors')
       .then((response) => {
         // response.data 包含了从服务器返回的数据
@@ -63,7 +64,7 @@ export default {
       });
     },
     getPetInfoAPI() {
-      return axios
+      return axiosInstance
         .get('/api/getPetInfo') 
         .then(response => response.data)
         .catch(error => {
