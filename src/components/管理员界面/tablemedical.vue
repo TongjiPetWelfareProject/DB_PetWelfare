@@ -46,22 +46,7 @@
       </el-table-column>
     </el-table><br>
   </div>
-    <!-- Edit Medical Dialog -->
-    <el-dialog v-model="editDialogVisible" title="编辑医疗信息" >
-      <el-form :model="editedMedicalRecord" label-width="80px">
-        <!-- 表单内容 -->
-        <el-form-item label="医疗时间">
-          <el-date-picker v-model="editedMedicalRecord.treatTime" type="datetime" placeholder="选择医疗时间"></el-date-picker>
-        </el-form-item>
-        <el-form-item label="医疗内容">
-          <el-input v-model="editedMedicalRecord.category"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="editDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="editMedicalRecord">保存</el-button>
-      </div>
-    </el-dialog>
+   
 
         <!-- Postpone Medical Dialog -->
     <el-dialog v-model="postponeDialogVisible" title="延期医疗时间" >
@@ -80,7 +65,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElTag } from 'element-plus'
+import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElTag,ElMessage } from 'element-plus'
 import medical from '@/api/cw_yh_yl_jk'
 
 interface MedicalRecord {
@@ -208,8 +193,19 @@ const deleteRow = async (index: number) => {
 const approveRow = async (index: number) => {
   try {
       const response = await medical.approveMedicalApplication(tableData.value[index].petId, tableData.value[index].vetId, tableData.value[index].reserveTime);
-      location.reload(); // 这里会刷新整个页面
+	  ElMessage.success({
+	    message: '修改成功！',
+	    duration: 1000 // 持续显示时间（毫秒）
+	  });
+	  setTimeout(() => {
+	    location.reload(); // 这里会刷新整个页面
+	  }, 1000);
+      
     } catch (error) {
+		ElMessage.error({
+		  message: '必须在预约日期后完成！',
+		  duration: 1000 // 持续显示时间（毫秒）
+		});
       console.error('同意（完成）数据失败：', error);
     }
 };
@@ -224,10 +220,15 @@ const postponeRow = async (index: number) => {
 };
 
 const postponeMedicalApplication = async(newReserveTime) => {
+	if (newReserveTime.getDay() == 0||newReserveTime.getDay() == 6) {
+	  ElMessage.warning('预约时间必须在工作日内');
+	  return; // 不继续执行
+	}
   try {
       const response = await medical.postponeMedicalApplication(postponeMedicalApplication.value.petId, postponeMedicalApplication.value.vetId, postponeMedicalApplication.value.reserveTime, newReserveTime);
       location.reload(); // 这里会刷新整个页面
     } catch (error) {
+		ElMessage.warning('预约时间必须在两周内');
       console.error('延期数据失败：', error);
     }
 }

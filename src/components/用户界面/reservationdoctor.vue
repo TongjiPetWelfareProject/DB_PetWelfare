@@ -158,7 +158,7 @@ export default defineComponent({
         const currentDate=new Date();
 
         const oneWeekLater = new Date(currentDate);
-        oneWeekLater.setDate(currentDate.getDate() + 7);
+        oneWeekLater.setDate(currentDate.getDate() + 14);
 
         // console.log(dateObject); 
         // const month = dateObject.getMonth(); // 获取月份，0 表示一月，1 表示二月，以此类推
