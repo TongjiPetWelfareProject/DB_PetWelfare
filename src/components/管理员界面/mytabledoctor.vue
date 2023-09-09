@@ -94,6 +94,7 @@
 import { ref, onMounted } from 'vue';
 import { ElButton, ElTable, ElDialog, ElForm, ElInput,ElMessage } from 'element-plus';
 import axios from 'axios';
+import axiosInstance from '@/util/token-config';
 
 interface Doctor {
   id: string;
@@ -172,7 +173,7 @@ onMounted(async () => {
 
 const fetchData = async () => {
   try {
-    const response = await axios.get('/api/doctor');
+    const response = await axiosInstance.get('/api/doctor');
     tableData.value = response.data;
     tableData2.value=tableData.value;
   } catch (error) {
@@ -182,7 +183,7 @@ const fetchData = async () => {
 
 const deleteRow = (index: number) => {
   const doctorId = tableData.value[index].id;
-  axios.delete(`/api/delete-doctor/${doctorId}`)
+  axiosInstance.delete(`/api/delete-doctor/${doctorId}`)
     .then(() => {
       tableData.value.splice(index, 1);
 	  // 显示成功提示
@@ -202,7 +203,7 @@ const editRow = (index: number) => {
 };
 
 const submitEditedDoctor = () => {
-  axios.put(`/api/edit-doctor/${editedDoctor.value.id}`, editedDoctor.value)
+  axiosInstance.put(`/api/edit-doctor/${editedDoctor.value.id}`, editedDoctor.value)
     .then(() => {
       const editedIndex = tableData.value.findIndex(item => item.id === editedDoctor.value.id);
       if (editedIndex !== -1) {
@@ -238,7 +239,7 @@ const addRow = () => {
 };
 
 const submitNewDoctor = () => {
-  axios.post('/api/add-doctor', newDoctor.value)
+  axiosInstance.post('/api/add-doctor', newDoctor.value)
     .then(response => {
       const newDoctorId = response.data.id;
       newDoctor.value.id = newDoctorId;
