@@ -1,0 +1,46 @@
+{
+    "dataSource": "localhost:1521/orcl",
+    "tableSpacePath": "B:\\Tablespace",
+    "tableSpaceTemp": "temp",
+    "tableSpaceData": "pets",
+    "systemID": "system",
+    "systemPwd": "Aa123456",
+    "managerID":"C##pet",
+    "managerPwd":"campus",
+    "adminID":"c##VictorHu",
+    "adminPwd":"FransisBacon",
+    "readerID":"c##Alice",
+    "readerPwd":"123456",
+    "PicturePath":"F:\\Picture",
+    "tables":["collect_pet_info", 
+      "comment_pet", 
+      "like_pet", 
+      "comment_post", 
+      "like_post", 
+      "application", 
+      "treatment", 
+      "accommodate", 
+      "foster", 
+      "adopt", 
+      "donation", 
+      "forum_posts", 
+      "bulletin", 
+      "employee", 
+      "vet", 
+      "room", 
+      "pet", 
+      "user2"
+    ],
+    "views":[
+      "employee_labor",
+      "foster_window",
+      "room_available",
+      "user_profile",
+      "vet_labor"
+    ],
+    "materialized_views":[
+      "ownership"
+    ]
+
+  }
+  
