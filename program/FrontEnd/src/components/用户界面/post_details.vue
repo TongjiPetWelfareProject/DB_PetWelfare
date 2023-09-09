@@ -210,22 +210,6 @@ onMounted(() => {
 const newComment = ref({ author: userStore.userInfo.User_Name, text: '', avatar: './src/photos/阿尼亚.jpg' });
 const showCommentForm = ref(false);
 
-// 这里是原本发布评论后立刻渲染的代码，后面看情况修改
-// const addComment = () => {
-//         if (newComment.value.author && newComment.value.text) {
-//             post.value.comments++;
-//             post.value.comment_contents.push({
-//                 id: post.value.comment_contents.length + 1,
-//                 author: newComment.value.author,
-//                 text: newComment.value.text,
-//                 avatar: newComment.value.avatar
-//             });
-//             newComment.value.author = '';
-//             newComment.value.text = '';
-//             showCommentForm.value = false;
-//         }
-//     };
-
 const addComment = async () => {
   if (userStore.userInfo.User_ID) {
     try {
@@ -242,7 +226,7 @@ const addComment = async () => {
         console.error('评论失败：', error);
       // 显示失败提示
       ElMessage.error({
-      message: '评论失败，错误信息：' + error.message,
+      message: '评论失败，您已被禁言，请等待解禁',
       duration: 1000 // 持续显示时间（毫秒）
     });
       }
