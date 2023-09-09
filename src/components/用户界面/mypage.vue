@@ -317,6 +317,7 @@ import jsonData from '@/components/登录注册/values.json'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import axiosInstance from '@/util/token-config'
 const router = useRouter()
 
 const provinces = ref(jsonData.provinces)
@@ -371,7 +372,7 @@ const submitAvatar = async (event) => {
     param.append('user_id', userStore.userInfo.User_ID)
     param.append('filename',file)
     console.log(param)
-    await axios({
+    await axiosInstance({
         method: 'POST',
         url: '/api/editavatar',
         data: param,

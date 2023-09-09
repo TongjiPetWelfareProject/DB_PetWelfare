@@ -47,6 +47,7 @@ import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import axios from "axios";
+import axiosInstance from '@/util/token-config'
 
 
 const input = ref('')
@@ -80,7 +81,7 @@ const submitPost = async () => {
         param.append('filename',it.file)
     })
 
-    await axios({
+    await axiosInstance({
         method: 'POST',
         url: '/api/postcontent',
         data: param,
