@@ -236,6 +236,11 @@ const deleteRow = (index: number) => {
     axios.delete(`/api/delete-employee/${employeeId}`)
         .then(() => {
             tableData.value.splice(index, 1);
+			// 显示成功提示
+			ElMessage.success({
+			  message: '删除成功！',
+			  duration: 3000 // 持续显示时间（毫秒）
+			});
         })
         .catch(error => {
             console.error('删除数据时出错：', error);
@@ -267,10 +272,20 @@ const submitEditedEmployee = () => {
                 tableData.value[editedIndex] = { ...editedEmployee.value };
                 // 关闭编辑对话框
                 editDialogVisible.value = false;
+				// 显示成功提示
+				ElMessage.success({
+				  message: '信息修改成功！',
+				  duration: 3000 // 持续显示时间（毫秒）
+				});
             }
             fetchData();
         })
         .catch(error => {
+			// 显示成功提示
+			ElMessage.error({
+			  message: '手机号已被使用！',
+			  duration: 3000 // 持续显示时间（毫秒）
+			});
             console.error('编辑数据时出错:', error);
         });
 };
@@ -310,8 +325,18 @@ const submitNewEmployee = () => {
             tableData.value.push(newEmployee.value);
             addDialogVisible.value = false;
             fetchData();
+			// 显示成功提示
+			ElMessage.success({
+			  message: '添加成功！',
+			  duration: 3000 // 持续显示时间（毫秒）
+			});
         })
         .catch(error => {
+			// 显示成功提示
+			ElMessage.error({
+			  message: '手机号已被使用！',
+			  duration: 3000 // 持续显示时间（毫秒）
+			});
             console.error('添加数据时出错：', error);
         });
 };

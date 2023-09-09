@@ -109,10 +109,13 @@ ElMessageBox.confirm(
               // 处理后端返回的响应
               ElMessage({
                 type: 'success',
-                message: '提交成功',
+                message: '禁言成功',
               });
               tableData.value[index].unmuted = false;
-              location.reload(); // 这里会刷新整个页面
+			  // 停顿3秒后跳转到 '/forum'
+			  setTimeout(() => {
+			  location.reload(); // 这里会刷新整个页面
+			  }, 1000);
             })
             .catch(error => {
               // 处理错误
@@ -148,10 +151,13 @@ ElMessageBox.confirm(
               // 处理后端返回的响应
               ElMessage({
                 type: 'success',
-                message: '提交成功',
+                message: '解禁成功',
               });
               tableData.value[index].unmuted = true;
-              location.reload(); // 这里会刷新整个页面
+			  // 停顿3秒后跳转到 '/forum'
+			  setTimeout(() => {
+			  location.reload(); // 这里会刷新整个页面
+			  }, 1000);
             })
             .catch(error => {
               // 处理错误
@@ -186,10 +192,13 @@ ElMessageBox.confirm(
               // 处理后端返回的响应
               ElMessage({
                 type: 'success',
-                message: '提交成功',
+                message: '封号成功',
               });
               tableData.value[index].unbanned = false;
+			  // 停顿3秒后跳转到 '/forum'
+			  setTimeout(() => {
               location.reload(); // 这里会刷新整个页面
+			  }, 1000);
             })
             .catch(error => {
               // 处理错误
@@ -224,11 +233,14 @@ ElMessageBox.confirm(
               // 处理后端返回的响应
               ElMessage({
                 type: 'success',
-                message: '提交成功',
+                message: '解封成功',
               });
               tableData.value[index].unbanned = true;
-              tableData.value[index].unmuted = true;//取消封号之后连禁言一起取消
-              location.reload(); // 这里会刷新整个页面
+              tableData.value[index].unmuted = true;//取消封号之后连禁言一起取消\
+			  // 停顿3秒后跳转到 '/forum'
+			  setTimeout(() => {
+			  location.reload(); // 这里会刷新整个页面
+			  }, 1000);
             })
             .catch(error => {
               // 处理错误

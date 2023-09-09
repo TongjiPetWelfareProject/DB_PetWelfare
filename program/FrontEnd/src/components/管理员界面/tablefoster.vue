@@ -102,12 +102,20 @@ onMounted(fetchData);
 
 const approveApplication = async(index: number) => {
   // 同意申请操作
-  const recordToUpdate = tableData.value[index];
+  const recordToUpdate = filteredData.value[index];
 
   recordToUpdate.censor_status = 'legitimate';
   fetchData();
   try {
     await updateFosterRecord(recordToUpdate);
+	// 显示成功提示
+	ElMessage.success({
+	  message: '已同意！',
+	  duration: 3000 // 持续显示时间（毫秒）
+	});
+	setTimeout(() => {
+	  location.reload(); // 这里会刷新整个页面
+	}, 1000);
   } catch (error) {
     console.error('更新数据时出错：', error);
     ElMessage({ type: 'warning', message: error.response.data});
@@ -117,12 +125,20 @@ const approveApplication = async(index: number) => {
 
 const rejectApplication = async(index: number) => {
   // 拒绝申请操作
-  const recordToUpdate = tableData.value[index];
+  const recordToUpdate = filteredData.value[index];
 
   recordToUpdate.censor_status = 'aborted';
   fetchData();
   try {
     await updateFosterRecord(recordToUpdate);
+	// 显示成功提示
+	ElMessage.error({
+	  message: '已拒绝！',
+	  duration: 3000 // 持续显示时间（毫秒）
+	});
+	setTimeout(() => {
+	  location.reload(); // 这里会刷新整个页面
+	}, 1000);
   } catch (error) {
     console.error('更新数据时出错：', error);
     ElMessage({ type: 'warning', message: error.response.data});

@@ -8,6 +8,8 @@
       <el-button @click="filterTag('to be censored')">未审核</el-button>
       <el-button @click="filterTag('aborted')">审核失败</el-button>
       <el-button @click="filterTag('legitimate')">审核成功</el-button>
+      <el-button @click="filterTag('invalid')">无效申请</el-button>
+      <el-button @click="filterTag('outdated')">过期申请</el-button>
     </el-button-group>
   </div>
     <el-table :data="filteredData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);"
@@ -139,7 +141,7 @@ onMounted(fetchData);
 
 const approveApplication = async (index: number) => {
   // 同意申请操作
-  const recordToUpdate = tableData.value[index];
+  const recordToUpdate = filteredData.value[index];
 
   recordToUpdate.censor_status = 'legitimate';
 
@@ -148,6 +150,11 @@ const approveApplication = async (index: number) => {
     // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'abored' });
     await updateAdoptionRecord(recordToUpdate);
     fetchData();
+	// 显示成功提示
+	ElMessage.success({
+	  message: '已同意！',
+	  duration: 3000 // 持续显示时间（毫秒）
+	});
   } catch (error) {
     console.error('更新数据时出错：', error);
     ElMessage({ type: 'warning', message: error.response.data});
@@ -157,7 +164,7 @@ const approveApplication = async (index: number) => {
 
 const rejectApplication = async(index: number) => {
   // 拒绝申请操作
-  const recordToUpdate = tableData.value[index];
+  const recordToUpdate = filteredData.value[index];
 
   recordToUpdate.censor_status = 'aborted';
 
@@ -166,6 +173,11 @@ const rejectApplication = async(index: number) => {
     // await axios.patch(`/api/manage-adopt-update`, { date, petId, userId, censor_status: 'legitimate' });
     await updateAdoptionRecord(recordToUpdate);
     fetchData();
+	// 显示成功提示
+	ElMessage.error({
+	  message: '已拒绝！',
+	  duration: 3000 // 持续显示时间（毫秒）
+	});
   } catch (error) {
     console.error('更新数据时出错：', error);
     ElMessage({ type: 'warning', message: error.response.data});

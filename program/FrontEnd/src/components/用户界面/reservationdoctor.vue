@@ -158,7 +158,7 @@ export default defineComponent({
         const currentDate=new Date();
 
         const oneWeekLater = new Date(currentDate);
-        oneWeekLater.setDate(currentDate.getDate() + 7);
+        oneWeekLater.setDate(currentDate.getDate() + 14);
 
         // console.log(dateObject); 
         // const month = dateObject.getMonth(); // 获取月份，0 表示一月，1 表示二月，以此类推
@@ -180,9 +180,13 @@ export default defineComponent({
             });
           return; // 阻止提交
          }
+		 if (dateObject.getDay() == 0||dateObject.getDay() == 6) {
+		   ElMessage.warning('预约时间必须在工作日内');
+		   return; // 不继续执行
+		 }
       
         if (dateObject > oneWeekLater) {
-          ElMessage.warning('预约时间必须在一周内');
+          ElMessage.warning('预约时间必须在两周内');
           return; // 不继续执行
         }
         if (dateObject < currentDate) {

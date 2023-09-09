@@ -155,6 +155,7 @@ const onSubmit = () => {
                   type: 'success',
                   message: '提交成功',
                 });
+                router.push('/');
               })
               .catch(error => {
                 // 处理错误
