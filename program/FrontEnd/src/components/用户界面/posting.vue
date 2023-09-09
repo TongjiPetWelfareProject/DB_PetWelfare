@@ -20,34 +20,6 @@
       placeholder="请输入正文"
       style="margin-top:-8px;font-size:15px;box-shadow: 0 0px 1px rgba(0, 0, 0, .2);"
     />
-    <!-- <el-upload
-      class="upload-demo"
-      action="#"
-      :auto-upload="false"
-      :headers="headers"
-      :on-change="handleChange"
-      list-type="picture-card"
-    >
-      <el-icon><Plus /></el-icon>
-      <template #file="{ file }">
-        <div>
-          <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-          <span class="el-upload-list__item-actions">
-            <span
-              v-if="!disabled"
-              class="el-upload-list__item-delete"
-              @click="handleRemove(file)"
-            >
-              <el-icon><Delete /></el-icon>
-            </span>
-          </span>
-        </div>
-      </template>
-    </el-upload>
-
-    <el-dialog v-model="dialogVisible">
-      <img w-full :src="dialogImageUrl" alt="Preview Image" />
-    </el-dialog> -->
     <div style="display: flex;align-items: center;">
       <el-icon src="../../../public/内容.png" style="height:20px;width:20px"><Upload/></el-icon><span class="textpost" style="display: flex;align-items: center;justify-content: center; font-weight:bold ">&nbsp;上传图片(可选)</span>
     </div>
@@ -80,8 +52,6 @@ import axios from "axios";
 const input = ref('')
 const textarea = ref('')
 
-// const fileList = ref<Array<UploadFile>>([]) // 创建fileList文件列表用于存储上传的照片
-
 const fileList = ref([])
 
 const userStore = useUserStore();
@@ -94,30 +64,21 @@ const headers = {
   'Content-Type': 'multipart/form-data'
 }
 
-
-
 const submitPost = async () => {
+  if (!input.value || !textarea.value) {
+    ElMessage.warning('标题或内容不可为空');
+    return;
+  }
   try {
     let param = new FormData()
 
     param.append('user_id', userStore.userInfo.User_ID)
     param.append('post_title', input.value)
     param.append('post_content', textarea.value)
-    // for (const file of fileList.value) {
-    //   param.append("files[]", file.raw)
-    // }
 
     fileList.value.forEach((it,index)=>{
         param.append('filename',it.file)
     })
-
-    //console.log(fileUpload.value)
-    console.log(param)
-    //const response = await posttocontent.postcontent(userStore.userInfo.User_ID, input.value, textarea.value,param);
-    //const response = await posttocontent.postcontent(param);
-    //console.log('发帖成功', response);
-
-
 
     await axios({
         method: 'POST',
@@ -147,13 +108,10 @@ const submitPost = async () => {
 
     // 显示失败提示
     ElMessage.error({
-      message: '发帖失败，错误信息：' + error.message,
+      message: '发帖失败，您已被禁言，请等待解禁',
       duration: 3000 // 持续显示时间（毫秒）
     });
   }
-  
-  input.value = '';
-  textarea.value = '';
 }
 
 
