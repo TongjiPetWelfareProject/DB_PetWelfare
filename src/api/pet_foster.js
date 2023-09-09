@@ -1,5 +1,4 @@
 // api.js
-import axiosInstance from '@/util/token-config';
 import axios from 'axios';
 
 export const submitFosterApplication = (userInfo, formData, radioValue, sizeRadioValue) => {
@@ -13,7 +12,7 @@ export const submitFosterApplication = (userInfo, formData, radioValue, sizeRadi
     remark: formData.remark,
   };
 
-  return axiosInstance.post('/api/pet-foster', fosterData)
+  return axios.post('/api/pet-foster', fosterData)
     .then(response => {
       return response.data; // You might want to return the response data here
     })

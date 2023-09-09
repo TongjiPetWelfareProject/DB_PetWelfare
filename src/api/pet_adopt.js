@@ -1,10 +1,9 @@
 // api.js
-import axiosInstance from '@/util/token-config';
 import axios from 'axios';
 
 export default{
   getPetList() {
-    return axiosInstance.get('/api/pet-adopt-list')
+    return axios.get('/api/pet-adopt-list')
       .then(response => {
         return response.data;
       })
@@ -14,7 +13,7 @@ export default{
   },
 
   getPetDetails(PID) {
-    return axiosInstance.get(`/api/pet-details/${PID}`)
+    return axios.get(`/api/pet-details/${PID}`)
       //return axios.get(`/api/pet-details/${data}`)
     //return axios.get('/api/pet-details', PID)
       .then(response => {
@@ -30,7 +29,7 @@ export default{
       user: UID,
       pet: PID,
     };
-    return axiosInstance.post('/api/ifinteractpet', ifInteractData)
+    return axios.post('/api/ifinteractpet', ifInteractData)
       .then((response) => response.data)
       .catch(error => {
           throw error;
@@ -43,7 +42,7 @@ export default{
       pet: PID,
     };
   
-    return axiosInstance.post('/api/pet-submit-favorite', submitFavoriteData)  // 假设后端有名为 pet-favorite 的接口来处理收藏请求
+    return axios.post('/api/pet-submit-favorite', submitFavoriteData)  // 假设后端有名为 pet-favorite 的接口来处理收藏请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -58,7 +57,7 @@ export default{
       pet: PID,
     };
   
-    return axiosInstance.post('/api/pet-cancel-favorite', cancelFavoriteData)  // 假设后端有名为 pet-favorite 的接口来处理收藏请求
+    return axios.post('/api/pet-cancel-favorite', cancelFavoriteData)  // 假设后端有名为 pet-favorite 的接口来处理收藏请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -73,7 +72,7 @@ export default{
       pet: PID,
     };
   
-    return axiosInstance.post('/api/pet-reading', submitReadingData)  // 假设后端有名为 pet-reading 的接口来处理阅读请求
+    return axios.post('/api/pet-reading', submitReadingData)  // 假设后端有名为 pet-reading 的接口来处理阅读请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -88,7 +87,7 @@ export default{
       pet: PID,
     };
   
-    return axiosInstance.post('/api/pet-submit-like', submitLikeData)  // 假设后端有名为 pet-like 的接口来处理点赞
+    return axios.post('/api/pet-submit-like', submitLikeData)  // 假设后端有名为 pet-like 的接口来处理点赞
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -103,7 +102,7 @@ export default{
       pet: PID,
     };
   
-    return axiosInstance.post('/api/pet-cancel-like', cancelLikeData)  // 假设后端有名为 pet-like 的接口来处理点赞
+    return axios.post('/api/pet-cancel-like', cancelLikeData)  // 假设后端有名为 pet-like 的接口来处理点赞
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -127,7 +126,7 @@ export default{
       accept_vis: formData.accept_vis,
     };
   
-    return axiosInstance.post('/api/pet-adopt', adoptData)//指后端服务器的pet-adopt接口
+    return axios.post('/api/pet-adopt', adoptData)//指后端服务器的pet-adopt接口
       .then(response => {
         return response.data; // You might want to return the response data here
       })
@@ -143,7 +142,7 @@ export default{
       commentText: commentText,
     };
   
-    return axiosInstance.post('/api/pet-submit-comment', addCommentData)  // 假设后端有名为 pet-comment 的接口来处理评论请求
+    return axios.post('/api/pet-submit-comment', addCommentData)  // 假设后端有名为 pet-comment 的接口来处理评论请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })
@@ -159,7 +158,7 @@ export default{
       time: commentTime,
     };
   
-    return axiosInstance.post('/api/pet-delete-comment', deleteCommentData)  // 假设后端有名为 pet-comment 的接口来处理删除评论请求
+    return axios.post('/api/pet-delete-comment', deleteCommentData)  // 假设后端有名为 pet-comment 的接口来处理删除评论请求
       .then(response => {
         return response.data; // 你可能希望在这里返回响应数据
       })

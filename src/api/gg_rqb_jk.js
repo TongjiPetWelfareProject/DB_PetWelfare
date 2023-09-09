@@ -1,10 +1,9 @@
-import axiosInstance from '@/util/token-config';
 import axios from 'axios';
 
 export default {
 //获取全部公告
   getNoticeAPI(page, pageSize) {
-    return axiosInstance
+    return axios
       .get(`/api/notice?page=${page}&pageSize=${pageSize}`)
       .then(response => response.data)
       .catch(error => {
@@ -13,7 +12,7 @@ export default {
   },
   //获取捐赠记录，捐赠id，用户id，时间，金额
   getDonationAPI() {
-    return axiosInstance
+    return axios
       .get('/api/donation')
       .then(response => response.data)
       .catch(error => {
@@ -29,7 +28,7 @@ export default {
       time: time
     };
 
-    return axiosInstance
+    return axios
       .post('/api/send-notice', data)
       .then(response => response.data)
       .catch(error => {
@@ -37,7 +36,7 @@ export default {
       });
   },
   getNoticeContentAPI(noticeId) {
-    return axiosInstance
+    return axios
       .get(`/api/get-notice-content/${noticeId}`)
       .then(response => response.data)
       .catch(error => {
@@ -54,7 +53,7 @@ export default {
       noticeId:noticeId
     };
     console.log
-    return axiosInstance
+    return axios
       .post('/api/send-edited-notice', data)
       .then(response => response.data)
       .catch(error => {
@@ -63,7 +62,7 @@ export default {
   },
   //删除公告的api
   deleteNoticeAPI(noticeId) {
-    return axiosInstance
+    return axios
       .delete(`/api/delete-notice/${noticeId}`) // 使用 DELETE 请求删除公告
       .then(response => response.data)
       .catch(error => {
@@ -72,7 +71,7 @@ export default {
   },
   //获取点赞量加阅读量最高的10个宠物信息，包括id、名字、阅读量、点赞量
   getTopPetsAPI() {
-    return axiosInstance
+    return axios
       .get('/api/top-pets') // 使用 GET 请求获取点赞量和阅读量最高的10个宠物信息
       .then(response => response.data)
       .catch(error => {
@@ -85,7 +84,7 @@ export default {
       selectedPetIds: selectedPetIds
     };
 
-    return axiosInstance
+    return axios
       .post('/api/publish-popularity-chart', data) // 使用 POST 请求将选中的宠物ID数组发送到后端
       .then(response => response.data)
       .catch(error => {
@@ -93,7 +92,7 @@ export default {
       });
   },
   getPopularAPI(userId) {
-    return axiosInstance
+    return axios
       .get(`/api/user-popularity-pets/${userId}`) // 使用 GET 请求获取用户发布的人气榜宠物信息
       .then(response => response.data)
       .catch(error => {

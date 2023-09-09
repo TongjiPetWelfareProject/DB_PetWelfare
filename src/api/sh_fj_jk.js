@@ -1,10 +1,9 @@
-import axiosInstance from '@/util/token-config';
 import axios from 'axios';
 
 export default {
   //获取房间记录，房间号，房间情况，楼层，上次清理时间
   getRoomAPI() {
-    return axiosInstance
+    return axios
       .get('/api/room')
       .then(response => response.data)
       .catch(error => {
@@ -18,7 +17,7 @@ export default {
       roomId: roomId
     };
   
-    return axiosInstance
+    return axios
       .post('/api/send-room', data)
       .then(response => response.data)
       .catch(error => {
@@ -28,7 +27,7 @@ export default {
 
   //获取审核信息
   getCheckAPI() {
-    return axiosInstance
+    return axios
       .get('/api/check')
       .then(response => response.data)
       .catch(error => {
@@ -38,7 +37,7 @@ export default {
 
   //更新审核信息
   updateCheckInfoAPI(info) {
-    return axiosInstance
+    return axios
     .patch('/api/check-info-update', info)
     .then(response => response.data)
     .catch(error => {
@@ -47,7 +46,7 @@ export default {
   },
  //获取当前房间的宠物
   getRoomPetAPI(roomId) {
-    return axiosInstance
+    return axios
       .get(`/api/room-pet/${roomId}`)
       .then(response => response.data)
       .catch(error => {
