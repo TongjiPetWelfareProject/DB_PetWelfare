@@ -42,8 +42,6 @@ create table pet(
   health_state varchar2(15),
   vaccine char(1),--Y represents vaccination done while N represents undone.
   read_num int default 0,
-  like_num int default 0,
-  collect_num int default 0,
   primary key(pet_id),
   CONSTRAINT CHK_HealthState CHECK(health_state in('Vibrant','Well','Decent','Unhealthy','Sicky','Critical')),
   CONSTRAINT CHK_Num CHECK(read_num>=0 AND like_num>=0 AND collect_num>=0 AND vaccine in('Y','N'))
@@ -119,8 +117,6 @@ create table forum_posts(
   heading varchar2(50),
   post_contents varchar2(1000) not null,
   read_count int default 0,
-  like_num int default 0,
-  comment_num int default 0,
   censored CHAR(1) default 'N' CHECK(censored in('Y','N')),
   post_time TIMESTAMP default CURRENT_TIMESTAMP,
   primary key(post_id),
@@ -433,7 +429,7 @@ BEGIN
 END;
 /
 create or replace view  pet_profile as SELECT
-   p.read_num * 1 + p.like_num * 2 + comment_num_func(p.pet_id) * 5 + collect_num_func(p.pet_id) as popularity, p."PET_ID",p."PET_NAME",p."SPECIES",p."SEX",p."PSIZE",p."BIRTHDATE",p."AVATAR",p."HEALTH_STATE",p."VACCINE",p."READ_NUM",
+   p.read_num * 1 +like_num_func(p.pet_id) * 2 + comment_num_func(p.pet_id) * 5 + collect_num_func(p.pet_id) as popularity, p."PET_ID",p."PET_NAME",p."SPECIES",p."SEX",p."PSIZE",p."BIRTHDATE",p."AVATAR",p."HEALTH_STATE",p."VACCINE",p."READ_NUM",
    TRUNC(MONTHS_BETWEEN(SYSDATE, p.birthdate) / 12) AS age,
    collect_num_func(p.pet_id) as collect_num,like_num_func(p.pet_id) as like_num,
     comment_num_func(p.pet_id) as comment_num,comment_pet.user_id as commenter,comment_pet.comment_contents,comment_pet.comment_time
