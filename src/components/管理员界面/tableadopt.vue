@@ -8,6 +8,8 @@
       <el-button @click="filterTag('to be censored')">未审核</el-button>
       <el-button @click="filterTag('aborted')">审核失败</el-button>
       <el-button @click="filterTag('legitimate')">审核成功</el-button>
+      <el-button @click="filterTag('invalid')">无效申请</el-button>
+      <el-button @click="filterTag('outdated')">过期申请</el-button>
     </el-button-group>
   </div>
     <el-table :data="filteredData" :default-sort="{ prop: 'date', order: 'descending' }" style="width: 100%;border-radius:10px;box-shadow: 0 0px 4px rgba(66, 66, 66, 0.2);"

@@ -28,17 +28,23 @@
       <el-table-column label="人气" prop="popularity"  align="center"></el-table-column>
       <el-table-column label="健康状况" prop="health"  align="center"></el-table-column>
       <el-table-column label="疫苗状况" prop="vaccine"  align="center"></el-table-column>
-      <el-table-column label="来源" prop="from"  align="center"></el-table-column>
-      <el-table-column label="操作" width="200" align="center">
-        <template #default="scope">
-          <el-button plain type="primary" size="small" @click.prevent="editRow(scope.$index)">
-            编辑
-          </el-button>
-          <el-button plain type="danger" size="small" @click.prevent="deleteRow(scope.$index)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
+      <el-table-column label="来源" prop="from" align="center"></el-table-column>
+<el-table-column label="操作" width="200" align="center">
+  <template #default="scope">
+    <el-button plain type="primary" size="small" @click.prevent="editRow(scope.$index)">
+      编辑
+    </el-button>
+    <el-button
+      plain
+      type="danger"
+      size="small"
+      @click.prevent="deleteRow(scope.$index)"
+      v-if="scope.row.from === '流浪'"
+    >
+      删除
+    </el-button>
+  </template>
+</el-table-column>
     </el-table>
     <br/>
     <el-button type="primary" @click="addRow">添加宠物</el-button>
