@@ -319,10 +319,15 @@ BEGIN
         WHERE TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD') < TRUNC(SYSDATE)
         or TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD')-NUMTODSINTERVAL(7, 'DAY') > TRUNC(SYSDATE)
         and censor_state='to be censored';
+        update adopt_apply set censor_state='invalid' 
+        WHERE (apply_date < TRUNC(SYSDATE)
+        or apply_date-NUMTODSINTERVAL(7, 'DAY') > TRUNC(SYSDATE))
+        and censor_state='to be censored';
         update foster set censor_state='outdated' 
         WHERE TO_DATE(start_year || '-' || start_month || '-' || start_day, 'YYYY-MM-DD') + NUMTODSINTERVAL(duration, 'DAY')<TRUNC(SYSDATE)
         and censor_state='to be censored';
-        
+        update room set room_status='Y' where storey*15+compartment not in (select storey*15+compartment from accommodate);
+        update room set room_status='N' where storey*15+compartment in (select storey*15+compartment from accommodate);
     END LOOP;
 END;
 /
