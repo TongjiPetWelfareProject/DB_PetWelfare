@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
-    "axios": "^1.6.5",
+    "axios": "^1.6.7",
     "element-plus": "^2.5.3",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
